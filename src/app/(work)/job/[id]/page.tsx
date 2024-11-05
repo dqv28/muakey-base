@@ -57,8 +57,9 @@ const page: React.FC<any> = async (props: {
   return (
     <Row>
       <Col className="min-h-[100vh]" span={17}>
-        <div className="h-full px-[20px] py-[12px]">
+        <div className="flex size-full flex-col items-start px-[20px] py-[12px]">
           <PageHeader
+            className="h-[58px] w-full"
             title={
               <div className="flex items-center gap-[8px] font-[500]">
                 <BackButton>
@@ -77,50 +78,52 @@ const page: React.FC<any> = async (props: {
               />
             }
           />
-          <h2 className="mt-[16px] text-[24px]">{task?.name}</h2>
+          <div className="flex-1 overflow-auto">
+            <h2 className="mt-[16px] text-[24px]">{task?.name}</h2>
 
-          <div className="mt-[8px] flex items-center gap-[8px] text-[#999]">
-            <ExclamationCircleFilled className="text-[14px]" />
-            <span className="text-[13px]">
-              Không có tổng quan ngắn về nhiệm vụ
-            </span>
-          </div>
-
-          <div className="mt-[4px] flex items-center gap-[8px] text-[#999]">
-            <ExclamationCircleFilled className="text-[14px]" />
-            <span className="text-[13px]">
-              Thời hạn trong giai đoạn:{' '}
-              <span className="text-[#000]">
-                {task?.expired
-                  ? dayjs(task?.expired).format('hh:mm DD/MM/YYYY')
-                  : 'Không thời hạn'}
+            <div className="mt-[8px] flex items-center gap-[8px] text-[#999]">
+              <ExclamationCircleFilled className="text-[14px]" />
+              <span className="text-[13px]">
+                Không có tổng quan ngắn về nhiệm vụ
               </span>
-            </span>
+            </div>
+
+            <div className="mt-[4px] flex items-center gap-[8px] text-[#999]">
+              <ExclamationCircleFilled className="text-[14px]" />
+              <span className="text-[13px]">
+                Thời hạn trong giai đoạn:{' '}
+                <span className="text-[#000]">
+                  {task?.expired
+                    ? dayjs(task?.expired).format('hh:mm DD/MM/YYYY')
+                    : 'Không thời hạn'}
+                </span>
+              </span>
+            </div>
+
+            <JobProgress
+              steps={filteredStages?.map((stage: any) => {
+                const failedStage = stages?.find((s: any) => s?.index === 0)
+
+                if (stage?.id === task?.stage_id) {
+                  INDEX = stage?.index
+                }
+
+                return {
+                  name: stage?.name,
+                  status:
+                    failedStage?.id === task?.stage_id
+                      ? 'failed'
+                      : generateStatus(stage, INDEX),
+                }
+              })}
+            />
+
+            <JobDescription value={task?.description} />
+
+            <JobCustomFields />
+
+            <JobComments />
           </div>
-
-          <JobProgress
-            steps={filteredStages?.map((stage: any) => {
-              const failedStage = stages?.find((s: any) => s?.index === 0)
-
-              if (stage?.id === task?.stage_id) {
-                INDEX = stage?.index
-              }
-
-              return {
-                name: stage?.name,
-                status:
-                  failedStage?.id === task?.stage_id
-                    ? 'failed'
-                    : generateStatus(stage, INDEX),
-              }
-            })}
-          />
-
-          <JobDescription value={task?.description} />
-
-          <JobCustomFields />
-
-          <JobComments />
         </div>
       </Col>
       <Col className="min-h-[100vh]" span={7}>

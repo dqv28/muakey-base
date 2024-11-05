@@ -58,7 +58,7 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
               renderItem={(item: any) => {
                 return (
                   <>
-                    <List.Item>
+                    <List.Item className="group">
                       <div>{item?.name}</div>
                       <div className="flex items-center gap-[12px]">
                         <div className="flex items-center gap-[12px]">
@@ -66,23 +66,30 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
                             action="edit"
                             options={{
                               initialValues: {
-                                name: item?.name,
-                                type: item?.type,
+                                ...item,
                                 require: item?.require === 1 ? true : false,
-                                stage_id: item?.stage_id,
                               },
                               stages,
                               fieldId: item?.id,
                             }}
                           >
-                            <EditOutlined className="cursor-pointer text-[14px]" />
+                            <EditOutlined className="hidden cursor-pointer text-[14px] text-[#aaa] group-hover:block" />
                           </CustomFieldsModalForm>
                           <CloseOutlined
-                            className="cursor-pointer text-[14px]"
+                            className="hidden cursor-pointer text-[14px] text-[#aaa] group-hover:block"
                             onClick={() => setConfirmModalOpen(true)}
                           />
+                          {item?.require === 1 ? (
+                            <span className="inline-block w-[110px] text-right text-[12px] text-[#c34343]">
+                              * BẮT BUỘC
+                            </span>
+                          ) : (
+                            <span className="inline-block w-[110px] text-right text-[12px] text-[#aaa]">
+                              KHÔNG BẮT BUỘC
+                            </span>
+                          )}
                         </div>
-                        <div className="min-w-[90px] rounded-[3px] bg-[#e5ecf3] p-[6px] text-center leading-[20px]">
+                        <div className="ml-[12px] min-w-[90px] rounded-[3px] bg-[#e5ecf3] p-[6px] text-center leading-[20px]">
                           {item?.type}
                         </div>
                       </div>

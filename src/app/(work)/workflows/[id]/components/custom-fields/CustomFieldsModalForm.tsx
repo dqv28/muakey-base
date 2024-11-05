@@ -18,6 +18,7 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
   action = 'create',
 }) => {
   const [open, setOpen] = useState(false)
+  const [type, setType] = useState('')
   const { stages, initialValues, fieldId } = options
   const params = useParams()
 
@@ -89,6 +90,7 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
                 { value: 'file', label: 'Tập tin' },
                 { value: 'list', label: 'Danh sách' },
               ]}
+              onChange={(value) => setType(value)}
             />
           </Form.Item>
           <Form.Item
@@ -111,19 +113,21 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
           >
             <Input placeholder="Một số ký tự đặc biệt không hỗ trợ, ví dụ: < > ;" />
           </Form.Item>
-          <Form.Item
-            label="Các lựa chọn cách nhau bởi dấu phẩy"
-            name="options"
-            rules={[
-              {
-                required: true,
-                message: 'Nhập lựa chọn.',
-              },
-            ]}
-            layout="vertical"
-          >
-            <Input placeholder="Một số ký tự đặc biệt không hỗ trợ, ví dụ: < > ;" />
-          </Form.Item>
+          {type === 'list' && (
+            <Form.Item
+              label="Các lựa chọn cách nhau bởi dấu phẩy"
+              name="options"
+              rules={[
+                {
+                  required: true,
+                  message: 'Nhập lựa chọn.',
+                },
+              ]}
+              layout="vertical"
+            >
+              <Input placeholder="Một số ký tự đặc biệt không hỗ trợ, ví dụ: < > ;" />
+            </Form.Item>
+          )}
           <Form.Item label="Trường bắt buộc" name="require" layout="vertical">
             <Select
               className="w-full"
