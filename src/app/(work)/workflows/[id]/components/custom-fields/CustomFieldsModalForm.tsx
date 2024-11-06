@@ -87,7 +87,6 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
                 { value: 'number', label: 'Số nguyên' },
                 { value: 'paragraph', label: 'Văn bản' },
                 { value: 'date', label: 'Ngày' },
-                { value: 'file', label: 'Tập tin' },
                 { value: 'list', label: 'Danh sách' },
               ]}
               onChange={(value) => setType(value)}

@@ -5,9 +5,8 @@ export type RequestOptions = NodeJS.RequestInit & {
 
 export const request = async (path: string, options?: RequestOptions) => {
   const url = new URL(path, process.env.BASE_API_URL)
-
+  
   const { params, headers, data, ...rest } = options || {}
-
   if (params) {
     for (const name in params) {
       const value = params[name]

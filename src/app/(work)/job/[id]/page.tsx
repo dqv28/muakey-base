@@ -1,16 +1,20 @@
 import { BackButton } from '@/components'
-import { getStagesByWorkflowId, getTaskById } from '@/libs/data'
+import {
+  getStagesByWorkflowId,
+  getTaskById,
+  getTaskFieldsByTaskId,
+} from '@/libs/data'
 import { Col, Row } from '@/ui'
 import { ArrowLeftOutlined, ExclamationCircleFilled } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { Metadata } from 'next'
 import React from 'react'
-import JobComments from './components/JobComments'
-import JobCustomFields from './components/JobCustomFields'
-import JobDescription from './components/JobDescription'
-import JobProgress from './components/JobProgress'
 import PageHeader from './components/PageHeader'
 import PageHeaderAction from './components/PageHeaderAction'
+import JobProgress from './components/JobProgress'
+import JobDescription from './components/JobDescription'
+import JobCustomFields from './components/JobCustomFields'
+import JobComments from './components/JobComments'
 
 export const generateMetadata = async (props: { params: any }) => {
   const params = await props.params
@@ -43,8 +47,13 @@ const page: React.FC<any> = async (props: {
   const params = await props.params
   const searchParams = await props.searchParams
 
-  const task = await getTaskById(params?.id)
-  const stages = await getStagesByWorkflowId(searchParams?.wid)
+  const [task, stages] = await Promise.all([
+    getTaskById(params?.id),
+    getStagesByWorkflowId(searchParams?.wid),
+  ])
+  const fields = await getTaskFieldsByTaskId(searchParams?.wid, {
+    task_id: task?.id,
+  })
 
   const filteredStages = stages?.filter(
     (stage: any) => ![0, 1].includes(stage.index),
@@ -56,8 +65,8 @@ const page: React.FC<any> = async (props: {
 
   return (
     <Row>
-      <Col className="min-h-[100vh]" span={17}>
-        <div className="flex size-full flex-col items-start px-[20px] py-[12px]">
+      <Col className="max-h-[100vh]" span={17}>
+        <div className="flex h-full flex-col items-start px-[20px] py-[12px]">
           <PageHeader
             className="h-[58px] w-full"
             title={
@@ -78,7 +87,7 @@ const page: React.FC<any> = async (props: {
               />
             }
           />
-          <div className="flex-1 overflow-auto">
+          <div className="w-full flex-1 overflow-auto">
             <h2 className="mt-[16px] text-[24px]">{task?.name}</h2>
 
             <div className="mt-[8px] flex items-center gap-[8px] text-[#999]">
@@ -120,7 +129,12 @@ const page: React.FC<any> = async (props: {
 
             <JobDescription value={task?.description} />
 
-            <JobCustomFields />
+            <JobCustomFields
+              fields={fields?.map((field: any) => ({
+                ...field,
+                task_id: task?.id,
+              }))}
+            />
 
             <JobComments />
           </div>

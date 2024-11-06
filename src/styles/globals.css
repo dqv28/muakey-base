@@ -4,13 +4,17 @@
 
 @import url('react-quill-new/dist/quill.snow.css');
 
-@layer utilities {
-  .no-scroll::-webkit-scrollbar {
-    display: none;
-    scrollbar-width: none;
-  }
+html *::-webkit-scrollbar {
+  border-radius: 0;
+  width: 8px;
+}
 
-  .scroll-smooth {
-    scroll-behavior: smooth;
-  }
+html *::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(22, 24, 35, 0.06);
+}
+
+html *::-webkit-scrollbar-track {
+  border-radius: 0;
+  background-color: rgba(0, 0, 0, 0);
 }

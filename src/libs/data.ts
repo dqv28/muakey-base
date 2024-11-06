@@ -125,13 +125,27 @@ export const getCustomFieldsByWorkflowId = async (id: number) => {
     .catch(() => [])
 }
 
-export const deleteCustomFieldById = async (id: number) => 
+export const deleteCustomFieldById = async (id: number) =>
   request(`api/fields/${id}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   }).then((data) => data)
 
-export const editCustomField = async (id: number, data: any) => 
+export const editCustomField = async (id: number, data: any) =>
   request(`api/fields/${id}`, {
     method: 'PUT',
-    data
+    data,
+  }).then((data) => data)
+
+export const getTaskFieldsByTaskId = async (id: number, query?: any) => {
+  return request(
+    `api/task-fields/${id}/workflow?` + new URLSearchParams(query),
+  )
+    .then((data) => data)
+    .catch(() => [])
+}
+
+export const editTaskField = async (id: number, data?: any) =>
+  request(`api/task-fields/${id}`, {
+    method: 'PUT',
+    data,
   }).then((data) => data)
