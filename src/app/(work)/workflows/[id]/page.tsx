@@ -42,9 +42,9 @@ const Page: React.FC<any> = async (prop: {
     getCustomFieldsByWorkflowId(workflowId),
   ])
 
-  const filteredStages = stages
-    ? stages.filter((stage: any) => ![0, 1].includes(stage.index))
-    : []
+  const filteredStages = stages?.filter(
+    (stage: any) => ![0, 1].includes(stage.index),
+  )
 
   switch (searchParams?.type) {
     case 'custom-field':

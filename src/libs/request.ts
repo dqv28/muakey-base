@@ -42,3 +42,16 @@ export const request = async (path: string, options?: RequestOptions) => {
 
   return response.json()
 }
+
+export const requestWithFile = async (
+  path: string,
+  options?: RequestOptions,
+) => {
+  return request(path, {
+    cache: 'no-store',
+    ...options,
+    headers: {
+      ...options?.headers,
+    },
+  })
+}

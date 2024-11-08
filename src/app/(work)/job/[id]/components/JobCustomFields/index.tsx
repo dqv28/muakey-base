@@ -1,14 +1,40 @@
 'use client'
 
 import { CaretRightOutlined } from '@ant-design/icons'
-import { Collapse } from 'antd'
+import { Collapse, Flex, Image, Tag } from 'antd'
 import clsx from 'clsx'
+import dayjs from 'dayjs'
 import React from 'react'
 import JobCustomFieldModalForm from '../JobCustomFieldModalForm'
-import dayjs from 'dayjs'
 
 type JobCustomFieldsProps = {
   fields?: any
+}
+
+const generateValue = (type: string, value: any) => {
+  if (!value) return value
+
+  switch (type) {
+    case 'date':
+      return dayjs(value).format('DD-MM-YYYY')
+
+    case 'file':
+      return <Image src={value} width="100%" height="100%" alt="" />
+
+    case 'list':
+      return (
+        <Flex wrap gap={8}>
+          {value.map((v: any) => (
+            <Tag className="!m-0" key={v}>
+              {v}
+            </Tag>
+          ))}
+        </Flex>
+      )
+
+    default:
+      return value
+  }
 }
 
 const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ fields }) => {
@@ -26,6 +52,8 @@ const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ fields }) => {
           />
         )}
         items={fields?.map((field: any) => {
+          const value = generateValue(field?.type, field?.value)
+
           return {
             label: (
               <div className="group flex items-center justify-between gap-[16px]">
@@ -45,7 +73,7 @@ const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ fields }) => {
                 </JobCustomFieldModalForm>
               </div>
             ),
-            children: <span className="pl-[24px]">{field?.type === 'date' ? dayjs(field?.value).format('DD-MM-YYYY') : field?.value}</span>,
+            children: <div className="pl-[24px]">{value}</div>,
             style: {
               marginBottom: 4,
               borderRadius: 4,

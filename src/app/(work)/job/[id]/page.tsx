@@ -3,18 +3,22 @@ import {
   getStagesByWorkflowId,
   getTaskById,
   getTaskFieldsByTaskId,
+  getTaskHistories,
+  getWorkflowById,
 } from '@/libs/data'
 import { Col, Row } from '@/ui'
 import { ArrowLeftOutlined, ExclamationCircleFilled } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { Metadata } from 'next'
 import React from 'react'
+import JobComments from './components/JobComments'
+import JobCustomFields from './components/JobCustomFields'
+import JobDescription from './components/JobDescription'
+import JobHistory from './components/JobHistory'
+import JobOverView from './components/JobOverview'
+import JobProgress from './components/JobProgress'
 import PageHeader from './components/PageHeader'
 import PageHeaderAction from './components/PageHeaderAction'
-import JobProgress from './components/JobProgress'
-import JobDescription from './components/JobDescription'
-import JobCustomFields from './components/JobCustomFields'
-import JobComments from './components/JobComments'
 
 export const generateMetadata = async (props: { params: any }) => {
   const params = await props.params
@@ -47,10 +51,15 @@ const page: React.FC<any> = async (props: {
   const params = await props.params
   const searchParams = await props.searchParams
 
-  const [task, stages] = await Promise.all([
+  const [task, stages, workflow] = await Promise.all([
     getTaskById(params?.id),
     getStagesByWorkflowId(searchParams?.wid),
+    getWorkflowById(searchParams?.wid),
   ])
+
+  const taskHistories = await getTaskHistories({
+    task_id: task?.id,
+  })
   const fields = await getTaskFieldsByTaskId(searchParams?.wid, {
     task_id: task?.id,
   })
@@ -60,6 +69,7 @@ const page: React.FC<any> = async (props: {
   )
 
   const failedStageId = stages?.find((stage: any) => stage.index === 0)?.['id']
+  const currentStage = stages?.find((stage: any) => stage.id === task?.stage_id)
 
   let INDEX: number = 0
 
@@ -127,7 +137,12 @@ const page: React.FC<any> = async (props: {
               })}
             />
 
-            <JobDescription value={task?.description} />
+            <JobDescription
+              value={task?.description}
+              params={{
+                taskId: task?.id,
+              }}
+            />
 
             <JobCustomFields
               fields={fields?.map((field: any) => ({
@@ -140,31 +155,14 @@ const page: React.FC<any> = async (props: {
           </div>
         </div>
       </Col>
-      <Col className="min-h-[100vh]" span={7}>
-        <div className="h-full bg-[#eee] p-[16px]">
-          <div className="space-y-[6px] rounded-[6px] bg-[#fff] px-[20px] py-[16px] text-[13px]">
-            <div className="mb-[12px] font-[600] text-[#888]">
-              THÔNG TIN NHIỆM VỤ
-            </div>
-            <div>
-              Mã nhiệm vụ: <span className="font-[700]">{task?.code}</span>
-            </div>
-            <div>
-              <span>
-                Tạo bởi <span className="font-[700]">Đỗ Quốc Vương</span> lúc
-                09:04 01/11/2024
-              </span>
-            </div>
-            <div>Cập nhật gần nhất lúc 02/11/2024</div>
-            <div>
-              Giai đoạn hiện tại: <span className="font-[700]">Nghĩ</span>
-            </div>
-            <div>Chuyển giai đoạn lúc 16:43 02/11/2024</div>
-            <div>
-              Người quản trị giai đoạn:{' '}
-              <span className="font-[700]">@minhtri204dz</span>
-            </div>
-          </div>
+      <Col className="h-[100vh] overflow-auto" span={7}>
+        <div className="h-max bg-[#eee] p-[16px]">
+          <JobOverView
+            task={task}
+            members={workflow?.members}
+            currentStage={currentStage?.name}
+          />
+          <JobHistory dataSource={taskHistories} />
         </div>
       </Col>
     </Row>

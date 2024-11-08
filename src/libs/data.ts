@@ -1,4 +1,4 @@
-import { request } from './request'
+import { request, requestWithFile } from './request'
 
 export const getWorkflows = async (query?: any) => {
   return request('api/workflows?' + new URLSearchParams(query))
@@ -149,3 +149,15 @@ export const editTaskField = async (id: number, data?: any) =>
     method: 'PUT',
     data,
   }).then((data) => data)
+
+export const uploadImage = async (data: any) => {
+  return await requestWithFile('api/upload-image', {
+    method: 'POST',
+    body: data
+  }).then((data) => data)
+}
+
+export const getTaskHistories = async (query?: any) => 
+  request('api/task-histories?' + new URLSearchParams(query))
+  .then((data) => data)
+  .catch(() => [])

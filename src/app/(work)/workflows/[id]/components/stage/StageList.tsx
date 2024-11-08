@@ -19,7 +19,7 @@ import {
 import clsx from 'clsx'
 import { cloneDeep } from 'lodash'
 import { useRouter } from 'next/navigation'
-import React, { createContext, useState } from 'react'
+import React, { createContext, useCallback, useState } from 'react'
 import { editTaskAction } from '../../../action'
 import StageColumn from './StageColumn'
 import StageModalForm from './StageModalForm'
@@ -48,7 +48,7 @@ const StageList: React.FC<StageListProps> = ({
 
   const sensors = useSensors(mouseSensor, touchSensor)
 
-  const handleDragEnd = async (e: DragEndEvent) => {
+  const handleDragEnd = useCallback(async (e: DragEndEvent) => {
     const { active, over } = e
 
     if (!over) return
@@ -113,7 +113,7 @@ const StageList: React.FC<StageListProps> = ({
         throw new Error(error)
       }
     }
-  }
+  }, [])
 
   const handleDragStart = (e: DragStartEvent) => {
     const { active } = e

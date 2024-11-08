@@ -1,50 +1,37 @@
 'use client'
 
-import { Button, DatePicker, Form, FormInstance, Input, Modal } from 'antd'
+import { UploadOutlined } from '@ant-design/icons'
+import {
+  Button,
+  DatePicker,
+  Form,
+  FormInstance,
+  Image,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+  Upload,
+} from 'antd'
+import { UploadChangeParam, UploadFile } from 'antd/es/upload'
 import dayjs from 'dayjs'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
-import { editTaskFieldAction } from '../../../actions'
+import { editTaskFieldAction, uploadImageAction } from '../../../actions'
 
 type JobCustomFieldModalFormProps = {
   children?: React.ReactNode
   initialValues?: any
 }
 
-interface NumericInputProps {
-  value: string
-  placeholder?: string
-  onChange: (value: string) => void
-}
+const generateInitialValues = (type: string, value: any) => {
+  switch (type) {
+    case 'date':
+      return dayjs(dayjs(value).format('YYYY-MM-DD')).valueOf()
 
-const NumericInput: React.FC<NumericInputProps> = (props) => {
-  const { value, onChange } = props
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value: inputValue } = e.target
-    const reg = /^-?\d*(\.\d*)?$/
-    if (reg.test(inputValue) || inputValue === '' || inputValue === '-') {
-      onChange(inputValue)
-    }
+    default:
+      return value
   }
-
-  const handleBlur = () => {
-    let valueTemp = value
-    if (value.charAt(value.length - 1) === '.' || value === '-') {
-      valueTemp = value.slice(0, -1)
-    }
-    onChange(valueTemp.replace(/0*(\d+)/, '$1'))
-  }
-
-  return (
-    <Input
-      {...props}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      placeholder=""
-      maxLength={16}
-    />
-  )
 }
 
 const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
@@ -52,15 +39,53 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
   initialValues,
 }) => {
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState('')
+  const [image, setImage] = useState<{ url: string; preview: string }>({
+    url: '',
+    preview: '',
+  })
   const formRef = useRef<FormInstance>(null)
 
-  const { require, taskId, value: initialValue, ...rest } = initialValues
+  const {
+    require,
+    taskId,
+    value: defaultValue,
+    options,
+    ...rest
+  } = initialValues
+  const initVal = generateInitialValues(rest?.type, defaultValue)
+
+  const handleUpload = useCallback(
+    async (info: UploadChangeParam<UploadFile<File>>) => {
+      const { file } = info
+      const formData = new FormData()
+
+      formData.append('image', file.originFileObj || '')
+
+      try {
+        const { url, error } = await uploadImageAction(formData)
+
+        if (error) {
+          toast.error(error)
+          return
+        }
+
+        setImage(() => ({
+          url,
+          preview: file.originFileObj
+            ? URL.createObjectURL(file.originFileObj)
+            : '',
+        }))
+      } catch (error: any) {
+        throw new Error(error)
+      }
+    },
+    [],
+  )
 
   const handleSubmit = async (formData: any) => {
     try {
       var { error, success } = await editTaskFieldAction(rest?.id, {
-        ...formData,
+        value: rest?.type === 'file' ? image.url : formData?.value,
         field_id: rest?.id,
         task_id: taskId,
       })
@@ -82,9 +107,22 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
     formRef.current?.resetFields()
   }, [open])
 
+  useEffect(() => {
+    if (image.preview) {
+      return () => URL.revokeObjectURL(image.preview)
+    }
+  }, [image])
+
   return (
     <>
-      <div onClick={() => setOpen(true)}>{children}</div>
+      <div
+        onClick={(e) => {
+          e.preventDefault()
+          setOpen(true)
+        }}
+      >
+        {children}
+      </div>
       <Modal
         title={`CHỈNH SỬA ${String(rest?.name).toLocaleUpperCase()}`}
         open={open}
@@ -98,10 +136,7 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
           wrapperCol={{ flex: 1 }}
           initialValues={{
             ...rest,
-            value:
-              rest?.type === 'date'
-                ? dayjs(dayjs(initialValue).format('YYYY-MM-DD')).valueOf()
-                : initialValue,
+            value: initVal,
           }}
           ref={formRef}
         >
@@ -133,10 +168,36 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
             )}
             {rest?.type === 'paragraph' && <Input placeholder={rest?.name} />}
             {rest?.type === 'number' && (
-              <NumericInput
+              <InputNumber
+                className="w-full"
                 placeholder={String(rest?.name)}
-                value={value}
-                onChange={setValue}
+              />
+            )}
+            {rest?.type === 'file' && (
+              <>
+                <Upload itemRender={() => <></>} onChange={handleUpload}>
+                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+                <div className="mt-[8px]">
+                  {(defaultValue || image.preview) && (
+                    <Image
+                      src={defaultValue || image.preview}
+                      width="100%"
+                      height="100%"
+                      alt="Preview Image"
+                    />
+                  )}
+                </div>
+              </>
+            )}
+            {rest?.type === 'list' && (
+              <Select
+                options={options?.map((val: any) => ({
+                  title: val,
+                  value: val,
+                }))}
+                mode="multiple"
+                placeholder="Chọn danh sách"
               />
             )}
           </Form.Item>

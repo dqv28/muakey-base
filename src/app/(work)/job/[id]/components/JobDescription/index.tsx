@@ -2,17 +2,63 @@
 
 import { Button, Form } from 'antd'
 import React, { useState } from 'react'
+import toast from 'react-hot-toast'
 import ReactQuill from 'react-quill-new'
+import { editTaskAction } from '../../../actions'
 
 type JobDescriptionProps = {
   value?: any
+  params?: any
 }
 
-const JobDescription: React.FC<JobDescriptionProps> = ({ value }) => {
+const JobDescription: React.FC<JobDescriptionProps> = ({
+  value: defaultValue,
+  params,
+}) => {
+  const [value, setValue] = useState(defaultValue || '')
   const [isEdit, setIsEdit] = useState(false)
 
+  const modules: ReactQuill.ReactQuillProps['modules'] = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' },
+      ],
+      ['link', 'image'],
+      ['clean'],
+    ],
+  }
+
+  const formats: ReactQuill.ReactQuillProps['formats'] = [
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'indent',
+    'link',
+    'image',
+  ]
+
   const handleSubmit = async (formData: any) => {
-    console.log(formData)
+    try {
+      const { success, error } = await editTaskAction(params?.taskId, formData)
+
+      if (error) {
+        toast.error(error)
+        return
+      }
+
+      toast.success(success)
+    } catch (error: any) {
+      throw new Error(error)
+    }
   }
 
   return (
@@ -35,35 +81,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({ value }) => {
           onFinish={handleSubmit}
         >
           <Form.Item name="description">
-            <ReactQuill
-              theme="snow"
-              modules={{
-                toolbar: [
-                  [{ header: [1, 2, false] }],
-                  ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-                  [
-                    { list: 'ordered' },
-                    { list: 'bullet' },
-                    { indent: '-1' },
-                    { indent: '+1' },
-                  ],
-                  ['link', 'image'],
-                  ['clean'],
-                ],
-              }}
-              formats={[
-                'header',
-                'bold',
-                'italic',
-                'underline',
-                'strike',
-                'blockquote',
-                'list',
-                'indent',
-                'link',
-                'image',
-              ]}
-            />
+            <ReactQuill theme="snow" modules={modules} formats={formats} />
           </Form.Item>
           <Form.Item>
             <Button htmlType="submit" type="primary">
