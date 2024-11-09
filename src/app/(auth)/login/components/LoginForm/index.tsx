@@ -34,17 +34,19 @@ const LoginForm: React.FC = () => {
 
   return (
     <Form
-      name="login"
+      className="w-[400px]"
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
-      style={{ maxWidth: 600 }}
       onFinish={login}
       autoComplete="off"
+      layout="vertical"
     >
       <Form.Item
         label="Email"
         name="email"
-        rules={[{ required: true, message: 'Please input your email!' }]}
+        rules={[{ required: true, message: 'Email không được bỏ trống.' }]}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
       >
         <Input />
       </Form.Item>
@@ -52,13 +54,15 @@ const LoginForm: React.FC = () => {
       <Form.Item
         label="Password"
         name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
+        rules={[{ required: true, message: 'Mật khẩu không được bỏ trống.' }]}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
       >
         <Input.Password />
       </Form.Item>
 
-      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Button type="primary" htmlType="submit" loading={loading}>
+      <Form.Item labelCol={{ span: 24 }} wrapperCol={{ span: 24 }}>
+        <Button type="primary" htmlType="submit" loading={loading} block>
           Đăng nhập
         </Button>
       </Form.Item>
