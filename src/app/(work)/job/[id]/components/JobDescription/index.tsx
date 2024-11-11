@@ -1,10 +1,10 @@
 'use client'
 
 import { Button, Form } from 'antd'
-import React, { useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import ReactQuill from 'react-quill-new'
-import { editTaskAction } from '../../../actions'
+import { editTaskAction, uploadImageAction } from '../../../actions'
 
 type JobDescriptionProps = {
   value?: any
@@ -17,24 +17,89 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
 }) => {
   const [value, setValue] = useState(defaultValue || '')
   const [isEdit, setIsEdit] = useState(false)
+  const quillRef = useRef<ReactQuill>(null)
+
+  const handleSubmit = async (formData: any) => {
+    try {
+      const { success, error } = await editTaskAction(params?.taskId, {
+        data: {
+          ...params?.task,
+          ...formData,
+        },
+      })
+
+      if (error) {
+        toast.error(error)
+        return
+      }
+
+      toast.success(success)
+      setIsEdit(false)
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+
+  const uploadImage = useCallback(async () => {
+    const input = document.createElement('input')
+    input.setAttribute('type', 'file')
+    input.setAttribute('accept', 'image/*')
+    input.click()
+    input.onchange = async (e) => {
+      const quill = quillRef.current
+
+      if (input !== null && input.files !== null) {
+        const file = input.files[0]
+        const formData = new FormData()
+
+        formData.append('image', file)
+
+        try {
+          const { url, error } = await uploadImageAction(formData)
+
+          if (error) {
+            toast.error(error)
+            return
+          }
+
+          if (!quill) return
+
+          const range = quill.getEditorSelection()
+
+          if (!range) return
+
+          quill.getEditor().insertEmbed(range.index, 'image', url)
+        } catch (error: any) {
+          throw new Error(error)
+        }
+      }
+    }
+  }, [])
 
   const modules: ReactQuill.ReactQuillProps['modules'] = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [
-        { list: 'ordered' },
-        { list: 'bullet' },
-        { indent: '-1' },
-        { indent: '+1' },
+    toolbar: {
+      container: [
+        [{ header: '1' }, { header: '2' }, { font: [] }],
+        [{ size: [] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [{ list: 'ordered' }, { indent: '-1' }, { indent: '+1' }],
+        ['link', 'image', 'video'],
+        ['code-block'],
+        ['clean'],
       ],
-      ['link', 'image'],
-      ['clean'],
-    ],
+      handlers: {
+        image: uploadImage,
+      },
+    },
+    clipboard: {
+      matchVisual: false,
+    },
   }
 
   const formats: ReactQuill.ReactQuillProps['formats'] = [
     'header',
+    'font',
+    'size',
     'bold',
     'italic',
     'underline',
@@ -44,22 +109,9 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     'indent',
     'link',
     'image',
+    'video',
+    'code-block',
   ]
-
-  const handleSubmit = async (formData: any) => {
-    try {
-      const { success, error } = await editTaskAction(params?.taskId, formData)
-
-      if (error) {
-        toast.error(error)
-        return
-      }
-
-      toast.success(success)
-    } catch (error: any) {
-      throw new Error(error)
-    }
-  }
 
   return (
     <div className="mt-[24px]">
@@ -81,7 +133,14 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
           onFinish={handleSubmit}
         >
           <Form.Item name="description">
-            <ReactQuill theme="snow" modules={modules} formats={formats} />
+            <ReactQuill
+              ref={quillRef}
+              theme="snow"
+              modules={modules}
+              formats={formats}
+              value={value}
+              onChange={setValue}
+            />
           </Form.Item>
           <Form.Item>
             <Button htmlType="submit" type="primary">

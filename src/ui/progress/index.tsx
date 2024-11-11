@@ -1,7 +1,10 @@
 import clsx from 'clsx'
 import React from 'react'
 
-export type ProgressProps = React.ComponentPropsWithoutRef<'div'> & {
+export type ProgressProps = Omit<
+  React.ComponentPropsWithoutRef<'div'>,
+  'color'
+> & {
   percent?: number | number[]
   format?: (percent?: number) => void
   size?: number | 'default' | 'small'
@@ -35,7 +38,13 @@ const ProgressBar: React.FC<
   }
 
   return (
-    <div style={{ width: `${percent}%`, backgroundColor: color, height }} />
+    <div
+      style={{
+        width: `${percent}%`,
+        backgroundColor: Array.isArray(color) ? color[0] : color,
+        height,
+      }}
+    />
   )
 }
 

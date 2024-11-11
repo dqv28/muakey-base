@@ -1,7 +1,7 @@
 'use client'
 
 import { Form, FormInstance, Input, Modal, ModalProps, toast } from '@/ui'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import { addStageAction, editStageAction } from '../../../action'
 
@@ -23,6 +23,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
   const [open, setOpen] = useState(false)
   const formRef = useRef<FormInstance>(null)
   const params = useParams()
+  const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
     try {
@@ -50,6 +51,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
       }
 
       setOpen(false)
+      router.refresh()
       toast.success(success)
     } catch (error: any) {
       throw new Error(error)
@@ -102,6 +104,23 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
             <Input
               className="border-b border-[#eee]"
               placeholder="Mô tả giai đoạn"
+              borderless
+              ghost
+            />
+          </Form.Item>
+          <Form.Item
+            name="expired_after-hours"
+            label="Thời gian dự kiến"
+            rules={{
+              pattern: {
+                value: /[0-9]/,
+                message: 'Vui lòng nhập dạng số.',
+              },
+            }}
+          >
+            <Input
+              className="border-b border-[#eee]"
+              placeholder="Thời gian (giờ)"
               borderless
               ghost
             />

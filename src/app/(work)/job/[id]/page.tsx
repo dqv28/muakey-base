@@ -4,6 +4,7 @@ import {
   getTaskById,
   getTaskFieldsByTaskId,
   getTaskHistories,
+  getTimeStagesByTaskId,
   getWorkflowById,
 } from '@/libs/data'
 import { Col, Row } from '@/ui'
@@ -17,6 +18,7 @@ import JobDescription from './components/JobDescription'
 import JobHistory from './components/JobHistory'
 import JobOverView from './components/JobOverview'
 import JobProgress from './components/JobProgress'
+import JobProgressTime from './components/JobProgressTime'
 import PageHeader from './components/PageHeader'
 import PageHeaderAction from './components/PageHeaderAction'
 
@@ -63,6 +65,7 @@ const page: React.FC<any> = async (props: {
   const fields = await getTaskFieldsByTaskId(searchParams?.wid, {
     task_id: task?.id,
   })
+  const timeStages = await getTimeStagesByTaskId(task?.id)
 
   const filteredStages = stages?.filter(
     (stage: any) => ![0, 1].includes(stage.index),
@@ -141,6 +144,7 @@ const page: React.FC<any> = async (props: {
               value={task?.description}
               params={{
                 taskId: task?.id,
+                task,
               }}
             />
 
@@ -156,13 +160,39 @@ const page: React.FC<any> = async (props: {
         </div>
       </Col>
       <Col className="h-[100vh] overflow-auto" span={7}>
-        <div className="h-max bg-[#eee] p-[16px]">
+        <div className="h-max min-h-[100vh] bg-[#eee] p-[16px]">
           <JobOverView
             task={task}
             members={workflow?.members}
             currentStage={currentStage?.name}
           />
-          <JobHistory dataSource={taskHistories} />
+          <JobProgressTime
+            stages={timeStages?.map((stage: any) => {
+              const failedStage = stages?.find((s: any) => s?.index === 0)
+
+              if (stage?.id === task?.stage_id) {
+                INDEX = stage?.index
+              }
+
+              return {
+                ...stage,
+                status:
+                  failedStage?.id === task?.stage_id
+                    ? 'failed'
+                    : generateStatus(stage, INDEX),
+              }
+            })}
+            total={timeStages.reduce(
+              (total: number, current: any) =>
+                Number(
+                  (total += current?.hours + current?.minutes / 60),
+                ).toFixed(2),
+              0,
+            )}
+          />
+          {taskHistories?.length > 0 && (
+            <JobHistory dataSource={taskHistories} />
+          )}
         </div>
       </Col>
     </Row>

@@ -73,7 +73,11 @@ const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ fields }) => {
                 </JobCustomFieldModalForm>
               </div>
             ),
-            children: <div className="pl-[24px]">{value}</div>,
+            children: (
+              <div className="pl-[24px] text-[#888]">
+                {value || `Không có ${field?.name}`}
+              </div>
+            ),
             style: {
               marginBottom: 4,
               borderRadius: 4,

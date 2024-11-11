@@ -52,7 +52,7 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
         </PageHeader>
         <div className="flex-1 overflow-auto bg-[#eee] px-[24px] py-[8px]">
           <WorkflowList
-            dataSource={workflowCategories.map((cate: any) => ({
+            dataSource={workflowCategories?.map((cate: any) => ({
               id: cate?.id,
               label: cate?.name,
               workflows: workflows.filter(

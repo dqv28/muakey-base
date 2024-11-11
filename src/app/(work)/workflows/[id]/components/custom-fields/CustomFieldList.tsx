@@ -6,6 +6,7 @@ import {
   ExclamationCircleFilled,
 } from '@ant-design/icons'
 import { List, Modal } from 'antd'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import { deleteCustomFieldByIdAction } from '../../../action'
@@ -21,6 +22,7 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
   options,
 }) => {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false)
+  const router = useRouter()
 
   const { stages } = options as any
   const stageIds = Array.from(new Set(dataSource?.map((d: any) => d.stage_id)))
@@ -37,6 +39,7 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
 
       toast.success(success)
       setConfirmModalOpen(false)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

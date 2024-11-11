@@ -15,6 +15,7 @@ import {
 } from 'antd'
 import { UploadChangeParam, UploadFile } from 'antd/es/upload'
 import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { editTaskFieldAction, uploadImageAction } from '../../../actions'
@@ -44,6 +45,7 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
     preview: '',
   })
   const formRef = useRef<FormInstance>(null)
+  const router = useRouter()
 
   const {
     require,
@@ -98,6 +100,7 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
 
       toast.success(success)
       setOpen(false)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

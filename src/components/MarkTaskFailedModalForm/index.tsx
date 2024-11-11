@@ -1,5 +1,6 @@
 import { editTaskAction } from '@/app/(work)/workflows/action'
 import { Form, FormInstance, Input, Modal, toast } from '@/ui'
+import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 
 type MarkTaskFailedModalFormProps = {
@@ -14,6 +15,7 @@ const MarkTaskFailedModalForm: React.FC<MarkTaskFailedModalFormProps> = ({
   const [markOpen, setMarkOpen] = useState(false)
   const formRef = useRef<FormInstance>(null)
   const { failedStageId, task } = options
+  const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
     if (!formData?.reason) {
@@ -39,6 +41,7 @@ const MarkTaskFailedModalForm: React.FC<MarkTaskFailedModalFormProps> = ({
       }
 
       setMarkOpen(false)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

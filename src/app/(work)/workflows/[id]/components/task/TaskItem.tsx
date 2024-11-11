@@ -6,7 +6,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import React, { useContext, useState } from 'react'
 import { deleteTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../stage/StageList'
@@ -23,12 +23,14 @@ const TaskItem: React.FC<TaskItemProps> = ({
   className,
   task,
   isCompleted,
+  isFailed,
   members,
 }) => {
   const [open, setOpen] = useState(false)
   const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
   const params = useParams()
   const { failedStageId } = useContext(StageContext)
+  const router = useRouter()
 
   const {
     attributes,
@@ -58,6 +60,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
       }
 
       setOpen(false)
+      router.refresh()
       toast.success(success)
     } catch (error: any) {
       throw new Error(error)
@@ -80,6 +83,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
       toast.success('Nhiệm vụ đã được giao.')
       setAssignConfirmOpen(false)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }
@@ -104,36 +108,49 @@ const TaskItem: React.FC<TaskItemProps> = ({
           <div className="line-clamp-2 flex items-center justify-between text-[14px] font-[600] leading-[18px]">
             {task?.name}
           </div>
-          <p>{task?.description || 'Không có mô tả'}</p>
-          {task?.account_id ? (
-            <div className="flex min-h-[28px] items-center justify-between gap-[8px]">
-              <div className="flex items-center gap-[4px]">
-                <Avatar shape="circle" size={20}>
-                  {user?.full_name}
-                </Avatar>
-                {user?.full_name}
-              </div>
-              <div className={isCompleted ? 'text-[#fff9]' : 'text-[#999]'}>
-                Không thời hạn
-              </div>
+          <div
+            className="line-clamp-1"
+            dangerouslySetInnerHTML={{
+              __html: task?.description || 'Không có mô tả',
+            }}
+          />
+          {!isCompleted && !isFailed && (
+            <div>
+              {task?.account_id ? (
+                <div className="flex min-h-[28px] items-center justify-between gap-[8px]">
+                  <div className="flex items-center gap-[4px]">
+                    <Avatar shape="circle" size={20}>
+                      {user?.full_name}
+                    </Avatar>
+                    {user?.full_name}
+                  </div>
+                  <div className={isCompleted ? 'text-[#fff9]' : 'text-[#999]'}>
+                    Không thời hạn
+                  </div>
+                </div>
+              ) : (
+                <span className="flex items-center gap-[4px] leading-[28px] text-[#D96C6C]">
+                  <ExclamationCircleFilled className="text-[16px]" />
+                  Chưa được giao
+                </span>
+              )}
             </div>
-          ) : (
-            <span className="flex items-center gap-[4px] leading-[28px] text-[#D96C6C]">
-              <ExclamationCircleFilled className="text-[16px]" />
-              Chưa được giao
-            </span>
           )}
         </div>
       </Link>
-      {!task?.account_id && (
-        <Button
-          className="absolute bottom-[12px] right-[16px] !p-[10px] !text-[12px] text-[#fff]"
-          size="small"
-          color="primary"
-          onClick={() => setAssignConfirmOpen(true)}
-        >
-          Giao
-        </Button>
+      {!isCompleted && !isFailed && (
+        <div>
+          {!task?.account_id && (
+            <Button
+              className="absolute bottom-[12px] right-[16px] !p-[10px] !text-[12px] text-[#fff]"
+              size="small"
+              color="primary"
+              onClick={() => setAssignConfirmOpen(true)}
+            >
+              Giao
+            </Button>
+          )}
+        </div>
       )}
       <Modal
         open={assignConfirmOpen}
@@ -166,6 +183,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           </div>
         </div>
       </Modal>
+      {/* {!isCompleted && !isFailed && ( */}
       <div className="absolute right-[16px] top-[12px]">
         <Dropdown
           trigger="hover"
@@ -178,28 +196,33 @@ const TaskItem: React.FC<TaskItemProps> = ({
               >
                 Xem nhiệm vụ
               </Link>
-              <TaskModalForm
-                title="CHỈNH SỬA NHIỆM VỤ"
-                initialValues={{
-                  ...task,
-                  members,
-                }}
-                action="edit"
-              >
-                <div className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
-                  Chỉnh sửa nhiệm vụ
-                </div>
-              </TaskModalForm>
-              <MarkTaskFailedModalForm
-                options={{
-                  failedStageId,
-                  task,
-                }}
-              >
-                <div className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
-                  Đánh dấu thất bại
-                </div>
-              </MarkTaskFailedModalForm>
+              {!isCompleted && !isFailed && (
+                <>
+                  <TaskModalForm
+                    title="CHỈNH SỬA NHIỆM VỤ"
+                    initialValues={{
+                      ...task,
+                      members,
+                    }}
+                    action="edit"
+                  >
+                    <div className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
+                      Chỉnh sửa nhiệm vụ
+                    </div>
+                  </TaskModalForm>
+                  <MarkTaskFailedModalForm
+                    options={{
+                      failedStageId,
+                      task,
+                    }}
+                  >
+                    <div className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
+                      Đánh dấu thất bại
+                    </div>
+                  </MarkTaskFailedModalForm>
+                </>
+              )}
+
               <div
                 className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] text-[#cc1111] transition-all hover:bg-[#f8f8f8]"
                 onClick={() => setOpen(true)}
@@ -233,9 +256,17 @@ const TaskItem: React.FC<TaskItemProps> = ({
             </div>
           )}
         >
-          <div className="pl-[8px] text-[20px] leading-none">··</div>
+          <div
+            className={clsx(
+              'pl-[8px] text-[20px] leading-none',
+              isCompleted && 'text-[#fff]',
+            )}
+          >
+            ··
+          </div>
         </Dropdown>
       </div>
+      {/* )} */}
     </div>
   )
 }

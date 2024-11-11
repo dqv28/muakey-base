@@ -2,6 +2,7 @@
 
 import { Button, Form, FormInstance, Input, Modal, toast } from '@/ui'
 import { PlusOutlined } from '@/ui/icons'
+import { useRouter } from 'next/navigation'
 import React, {
   ChangeEvent,
   useCallback,
@@ -25,6 +26,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
   const [value, setValue] = useState('')
   const [accounts, setAccounts] = useState([])
   const suggestInputRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
     try {
@@ -42,6 +44,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
 
       toast.success(success)
       setOpen(false)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

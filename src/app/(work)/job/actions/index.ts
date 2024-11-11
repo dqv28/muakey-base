@@ -15,7 +15,7 @@ export const uploadImageAction = async (data: any) => {
 }
 
 export const editTaskAction = async (id: number, options?: any) => {
-  const { error, success } = await editTask(id, options)
+  const { success, error } = await editTask(id, options)
 
-  return { error, success }
+  return { success, error }
 }

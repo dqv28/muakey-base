@@ -1,6 +1,7 @@
 'use client'
 
 import { Form, FormInstance, Input, Modal, ModalProps, toast } from '@/ui'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import { addTaskAction, editTaskAction } from '../../../action'
 import TaskSelect from './TaskSelect'
@@ -24,6 +25,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const [openSelectBox, setOpenSelectBox] = useState(false)
   const [value, setValue] = useState<string | undefined>()
   const formRef = useRef<FormInstance>(null)
+  const router = useRouter()
 
   const { account_id, members, ...restInitialValues } = initialValues
 
@@ -47,13 +49,19 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       }
 
       if (error) {
+        if (typeof error === 'string') {
+          toast.error(error)
+
+          return
+        }
+
         for (const key in error) {
           formRef.current?.setError(key, {
             message: error[key],
           })
         }
 
-        return false
+        return
       }
 
       toast.success(success)
@@ -61,6 +69,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     } catch (error: any) {
       throw new Error(error)
     }
+
+    router.refresh()
   }
 
   const mem: any = members?.find((m: any) => m?.id === account_id)

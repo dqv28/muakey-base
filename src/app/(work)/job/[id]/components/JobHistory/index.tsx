@@ -8,11 +8,11 @@ type JobHistoryProps = {
 
 const JobHistory: React.FC<JobHistoryProps> = ({ dataSource }) => {
   return (
-    <div className="mt-[16px] space-y-[6px] rounded-[6px] bg-[#fff] px-[20px] py-[24px]">
+    <div className="mt-[16px] space-y-[6px] rounded-[6px] bg-[#fff] px-[20px] pt-[24px]">
       <Timeline
         items={dataSource?.map((d: any) => ({
           children: (
-            <div>
+            <>
               <div>
                 <span className="font-[700]">{d?.full_name}</span> đã chuyển
                 công việc từ{' '}
@@ -22,7 +22,7 @@ const JobHistory: React.FC<JobHistoryProps> = ({ dataSource }) => {
               <div className="text-[12px]">
                 {dayjs(d?.created_at).format('HH:mm DD-MM-YYYY')}
               </div>
-            </div>
+            </>
           ),
         }))}
       />

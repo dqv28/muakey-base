@@ -14,7 +14,7 @@ const LoginForm: React.FC = () => {
     setLoading(true)
 
     try {
-      const { token, error } = await loginWidthCredentialsAction(formData)
+      const { error } = await loginWidthCredentialsAction(formData)
 
       if (error) {
         setLoading(false)
@@ -23,7 +23,6 @@ const LoginForm: React.FC = () => {
       }
 
       router.push('/workflows')
-      toast.success(token)
 
       setLoading(false)
     } catch (error: any) {

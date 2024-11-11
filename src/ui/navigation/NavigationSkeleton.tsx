@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { times } from 'lodash'
 import React from 'react'
-import { Skeleton } from '..'
+import { Skeleton } from '../skeleton'
 
 type NavigationSkeletonProps = React.ComponentPropsWithoutRef<'div'> & {
   items: number

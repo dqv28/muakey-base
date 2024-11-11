@@ -10,6 +10,7 @@ import {
   toast,
 } from '@/ui'
 import { PlusOutlined } from '@/ui/icons'
+import { useRouter } from 'next/navigation'
 import React, {
   ChangeEvent,
   useCallback,
@@ -30,6 +31,7 @@ const WorkflowExtra: React.FC<WorkflowExtraProps> = (props) => {
 
   const formRef = useRef<FormInstance>(null)
   const suggestInputRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   const handleChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
@@ -65,6 +67,7 @@ const WorkflowExtra: React.FC<WorkflowExtraProps> = (props) => {
 
       toast.success(success)
       setOpen(false)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

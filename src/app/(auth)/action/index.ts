@@ -3,7 +3,7 @@
 import { loginWidthCredentials } from "@/libs/auth"
 
 export const loginWidthCredentialsAction = async (data:any) => {
-  const { token, error } = await loginWidthCredentials(data)
+  const { error } = await loginWidthCredentials(data)
 
-  return { token, error }
+  return { error }
 }

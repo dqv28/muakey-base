@@ -1,3 +1,5 @@
+import { getSession } from "./session"
+
 export type RequestOptions = NodeJS.RequestInit & {
   params?: Record<string, any>
   data?: string | Record<string, any>
@@ -51,6 +53,26 @@ export const requestWithFile = async (
     cache: 'no-store',
     ...options,
     headers: {
+      ...options?.headers,
+    },
+  })
+}
+
+export const requestWithAuthorized = async (
+  path: string,
+  options?: RequestOptions,
+) => {
+  const { accessToken } = await getSession()
+
+  if (!accessToken) {
+    throw new Error('Unauthorized.')
+  }
+
+  return request(path, {
+    cache: 'no-store',
+    ...options,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
       ...options?.headers,
     },
   })

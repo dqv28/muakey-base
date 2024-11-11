@@ -18,13 +18,15 @@
     "antd": "^5.21.6",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
+    "iron-session": "^8.0.3",
     "lodash": "^4.17.21",
     "next": "15.0.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.53.1",
     "react-hot-toast": "^2.4.1",
-    "react-quill-new": "^3.3.3"
+    "react-quill-new": "^3.3.3",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.12",
