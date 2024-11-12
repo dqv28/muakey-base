@@ -4,15 +4,15 @@ import { Button, Form, Input, Modal, Select } from 'antd'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
-import { addTaskFieldsAction, editCustomFieldAction } from '../../../action'
+import { addReportFieldAction, editCustomFieldAction } from '../../../action'
 
-type CustomFieldsModalFormProps = {
+type ReportFieldsModalFormProps = {
   children?: React.ReactNode
   options?: any
   action?: 'create' | 'edit'
 }
 
-const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
+const ReportFieldsModalForm: React.FC<ReportFieldsModalFormProps> = ({
   children,
   options,
   action = 'create',
@@ -26,7 +26,7 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
   const handleSubmit = async (formData: any) => {
     try {
       if (action === 'create') {
-        var { success, error } = await addTaskFieldsAction({
+        var { success, error } = await addReportFieldAction({
           ...formData,
           workflow_id: Number(params?.id),
         })
@@ -57,8 +57,8 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
       <Modal
         title={
           action === 'create'
-            ? 'THÊM TRƯỜNG DỮ LIỆU TÙY CHỈNH'
-            : 'CHỈNH SỬA TRƯỜNG DỮ LIỆU TÙY CHỈNH'
+            ? 'THÊM TRƯỜNG DỮ LIỆU BÁO CÁO'
+            : 'CHỈNH SỬA TRƯỜNG DỮ LIỆU BÁO CÁO'
         }
         open={open}
         width={520}
@@ -180,4 +180,4 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
   )
 }
 
-export default CustomFieldsModalForm
+export default ReportFieldsModalForm

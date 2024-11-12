@@ -66,11 +66,10 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
       toast.success(success)
       setOpen(false)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }
-
-    router.refresh()
   }
 
   const mem: any = members?.find((m: any) => m?.id === account_id)

@@ -165,3 +165,31 @@ export const getTimeStagesByTaskId = async (id: number) =>
   request(`time-stage/${id}`)
   .then((data) => data)
   .catch(() => [])
+
+export const getReportFieldsByWorkflowId = async (wid: number) => 
+  request(`report-fields/${wid}/workflow`)
+  .then((data) => data)
+  .catch(() => [])
+
+export const addReportField = async (data: any) => 
+  request('report-fields', {
+    method: 'POST',
+    data
+  }).then((data) => data)
+
+export const updateReportField = async (id: number, data: any) => 
+  request(`report-fields/${id}`, {
+    method: 'PUT',
+    data
+  }).then((data) => data)
+
+export const deleteReportField = async (id: number) => 
+  request(`report-fields/${id}`, {
+    method: 'DELETE',
+  }).then((data) => data)
+
+export const addTaskReport = async (data: any) => 
+  request('task-reports', {
+    method: 'POST',
+    data
+  }).then((data) => data)

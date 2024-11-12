@@ -60,8 +60,8 @@ const TaskItem: React.FC<TaskItemProps> = ({
       }
 
       setOpen(false)
-      router.refresh()
       toast.success(success)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

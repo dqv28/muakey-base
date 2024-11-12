@@ -3,15 +3,15 @@
 import { EditOutlined } from '@ant-design/icons'
 import { List } from 'antd'
 import React from 'react'
-import CustomFieldDeleteButton from './CustomFieldDeleteButton'
-import CustomFieldsModalForm from './CustomFieldsModalForm'
+import ReportFieldDeleteButton from './ReportFieldDeleteButton'
+import ReportFieldsModalForm from './ReportFieldsModalForm'
 
-type CustomFieldListProps = {
+type ReportFieldListProps = {
   dataSource?: any
   options?: any
 }
 
-const CustomFieldList: React.FC<CustomFieldListProps> = ({
+const ReportFieldList: React.FC<ReportFieldListProps> = ({
   dataSource,
   options,
 }) => {
@@ -38,7 +38,7 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
                       <div>{item?.name}</div>
                       <div className="flex items-center gap-[12px]">
                         <div className="flex items-center gap-[12px]">
-                          <CustomFieldsModalForm
+                          <ReportFieldsModalForm
                             action="edit"
                             options={{
                               initialValues: {
@@ -50,8 +50,8 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
                             }}
                           >
                             <EditOutlined className="hidden cursor-pointer text-[14px] text-[#aaa] group-hover:block" />
-                          </CustomFieldsModalForm>
-                          <CustomFieldDeleteButton fieldId={item?.id} />
+                          </ReportFieldsModalForm>
+                          <ReportFieldDeleteButton fieldId={item?.id} />
                           {item?.require === 1 ? (
                             <span className="inline-block w-[110px] text-right text-[12px] text-[#c34343]">
                               * BẮT BUỘC
@@ -78,4 +78,4 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
   )
 }
 
-export default CustomFieldList
+export default ReportFieldList

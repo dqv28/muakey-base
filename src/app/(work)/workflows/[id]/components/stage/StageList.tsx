@@ -20,9 +20,10 @@ import clsx from 'clsx'
 import { cloneDeep } from 'lodash'
 import { useRouter } from 'next/navigation'
 import React, { createContext, useCallback, useState } from 'react'
-import { editTaskAction } from '../../../action'
+import { addTaskReportAction, editTaskAction } from '../../../action'
 import StageColumn from './StageColumn'
 import StageModalForm from './StageModalForm'
+import TaskReportsModalForm from './TaskReportsModalForm'
 
 export type StageListProps = {
   dataSource?: any
@@ -39,6 +40,9 @@ const StageList: React.FC<StageListProps> = ({
 }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [stages, setStages] = useState(dataSource || [])
+  const [open, setOpen] = useState(false)
+  const [dragEvent, setDragEvent] = useState<DragEndEvent>()
+
   const router = useRouter()
 
   const failedStageId = stages?.find((stage: any) => stage.index === 0)?.['id']
@@ -48,8 +52,8 @@ const StageList: React.FC<StageListProps> = ({
 
   const sensors = useSensors(mouseSensor, touchSensor)
 
-  const handleDragEnd = useCallback(async (e: DragEndEvent) => {
-    const { active, over } = e
+  const handleDrag = async (event: DragEndEvent) => {
+    const { active, over } = event
 
     if (!over) return
 
@@ -113,11 +117,64 @@ const StageList: React.FC<StageListProps> = ({
         throw new Error(error)
       }
     }
+  }
+
+  const handleDragEnd = useCallback(async (e: DragEndEvent) => {
+    setDragEvent(e)
+
+    const { active, over } = e
+
+    const {
+      data: { current: activeData },
+    } = active
+
+    if (!over) return
+
+    const {
+      data: { current: overData },
+    } = over
+
+    if (!overData || !activeData) return
+
+    const activeIndex = stages?.find(
+      (stage: any) => stage.id === activeData.stage_id,
+    )?.['index']
+    const overIndex = stages?.find(
+      (stage: any) => stage.id === overData.stage_id,
+    )?.['index']
+
+    if (!activeData?.account_id || activeIndex < overIndex) {
+      await handleDrag(e)
+      return
+    }
+
+    setOpen(true)
   }, [])
 
   const handleDragStart = (e: DragStartEvent) => {
     const { active } = e
     setActiveId(active.id)
+  }
+
+  const handleSubmit = async (values: any) => {
+    console.log(values)
+
+    if (!dragEvent) return
+
+    await handleDrag(dragEvent)
+
+    try {
+      const { success, error } = await addTaskReportAction(values)
+
+      if (error) {
+        toast.error(error)
+        return
+      }
+
+      toast.success(success)
+    } catch (error) {
+      throw new Error()
+    }
   }
 
   return (
@@ -152,6 +209,13 @@ const StageList: React.FC<StageListProps> = ({
               <StageColumn key={stage?.id} stage={stage} />
             ))}
           </Row>
+
+          <TaskReportsModalForm
+            open={open}
+            onCancel={() => setOpen(false)}
+            onOk={() => setOpen(false)}
+            onSubmit={handleSubmit}
+          />
         </SortableContext>
       </DndContext>
     </StageContext.Provider>
