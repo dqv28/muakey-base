@@ -9,5 +9,5 @@ export const uploadImageAction = async (data: any) =>
   uploadImage(data)
   .then(({ error, urlImage }) => ({ error, url: urlImage }))
 
-export const editTaskAction = async (id: number, options?: any) => 
-  editTask(id, options)
+export const editTaskAction = async (id: number, data?: any) => 
+  editTask(id, data)

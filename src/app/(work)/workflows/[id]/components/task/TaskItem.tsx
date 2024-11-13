@@ -1,16 +1,18 @@
 import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
-import { Avatar, Button, Dropdown, Input, Modal, toast } from '@/ui'
-import { SearchOutlined } from '@/ui/icons'
+import { Avatar } from '@/ui'
 import { ExclamationCircleFilled } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { Button, Dropdown, Input, Modal, Popconfirm } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useContext, useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { deleteTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../stage/StageList'
 import TaskModalForm from './TaskModalForm'
+
 export type TaskItemProps = {
   className?: string
   task?: any
@@ -26,7 +28,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
   isFailed,
   members,
 }) => {
-  const [open, setOpen] = useState(false)
   const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
   const params = useParams()
   const { failedStageId } = useContext(StageContext)
@@ -56,10 +57,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
       if (error) {
         toast.error(error)
 
-        return false
+        return
       }
 
-      setOpen(false)
       toast.success(success)
       router.refresh()
     } catch (error: any) {
@@ -70,10 +70,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const handleAssign = async (id: number) => {
     try {
       const { error } = await editTaskAction(task?.id, {
-        data: {
-          ...task,
           account_id: id,
-        },
       })
 
       if (error) {
@@ -91,25 +88,29 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
   return (
     <div className="relative">
-      <Link key={task?.id} href={`/job/${task?.id}`}>
-        <div
-          className={clsx(
-            'space-y-[12px] border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !transition-all',
-            isCompleted
-              ? 'bg-[#2bbf3d] text-[#fff]'
-              : 'bg-[#fff] hover:bg-[#f8f8f8]',
-            className,
-          )}
-          ref={setNodeRef}
-          style={style}
-          {...attributes}
-          {...listeners}
+      <div
+        className={clsx(
+          'border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !transition-all',
+          isCompleted
+            ? 'bg-[#2bbf3d] text-[#fff]'
+            : 'bg-[#fff] hover:bg-[#f8f8f8]',
+          className,
+        )}
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+      >
+        <Link
+          className="space-y-[8px]"
+          key={task?.id}
+          href={`/job/${task?.id}?wid=${params?.id}`}
         >
           <div className="line-clamp-2 flex items-center justify-between text-[14px] font-[600] leading-[18px]">
             {task?.name}
           </div>
           <div
-            className="line-clamp-1"
+            className="line-clamp-1 leading-[17px]"
             dangerouslySetInnerHTML={{
               __html: task?.description || 'Không có mô tả',
             }}
@@ -136,15 +137,15 @@ const TaskItem: React.FC<TaskItemProps> = ({
               )}
             </div>
           )}
-        </div>
-      </Link>
+        </Link>
+      </div>
       {!isCompleted && !isFailed && (
         <div>
           {!task?.account_id && (
             <Button
               className="absolute bottom-[12px] right-[16px] !p-[10px] !text-[12px] text-[#fff]"
               size="small"
-              color="primary"
+              type="primary"
               onClick={() => setAssignConfirmOpen(true)}
             >
               Giao
@@ -154,45 +155,49 @@ const TaskItem: React.FC<TaskItemProps> = ({
       )}
       <Modal
         open={assignConfirmOpen}
-        onOpenChange={setAssignConfirmOpen}
+        onCancel={() => setAssignConfirmOpen(false)}
         title="LỰA CHỌN NGƯỜI PHỤ TRÁCH NHIỆM VỤ NÀY"
         footer={<></>}
         width={500}
       >
-        <div className="-m-[20px] text-[#b1b1b1]">
-          <div className="flex items-center border-b border-[#0000001a] px-[12px] py-[10px]">
-            <SearchOutlined className="text-[20px]" />
-            <div className="flex-1">
-              <Input placeholder="Tìm nhanh" borderless />
-            </div>
+        <div className="-mx-[24px] text-[#b1b1b1]">
+          <div className="px-[20px]">
+            <Input.Search placeholder="Tìm nhanh" />
           </div>
           <div className="divide-y divide-[#0000001a]">
             {members &&
               members.map((mem: any) => (
                 <div
-                  className="cursor-pointer px-[20px] py-[16px] leading-[20px] hover:bg-[#f6f6f6]"
+                  className="flex cursor-pointer items-center gap-[12px] px-[20px] py-[16px] leading-[20px] hover:bg-[#f6f6f6]"
                   key={mem.id}
                   onClick={() => handleAssign(mem.id)}
                 >
-                  <div className="text-[14px] text-[#111]">{mem.full_name}</div>
-                  <div className="text-[13px]">
-                    {mem.username} · {mem.position}
+                  <Avatar size={32} shape="circle">
+                    {mem.full_name}
+                  </Avatar>
+                  <div>
+                    <div className="text-[14px] text-[#111]">
+                      {mem.full_name}
+                    </div>
+                    <div className="text-[13px]">
+                      {mem.username} {mem.position ? `· ${mem.position}` : ''}
+                    </div>
                   </div>
                 </div>
               ))}
           </div>
         </div>
       </Modal>
-      {/* {!isCompleted && !isFailed && ( */}
       <div className="absolute right-[16px] top-[12px]">
         <Dropdown
-          trigger="hover"
+          trigger={['click']}
+          rootClassName="!z-auto"
           placement="bottomRight"
-          dropdownRenderer={() => (
+          dropdownRender={() => (
             <div className="mt-[4px] w-[240px] rounded-[4px] bg-[#fff] p-[8px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
               <Link
                 href={`/job/${task?.id}?wid=${params?.id}`}
-                className="inline-block w-full bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]"
+                className="inline-block w-full bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8] hover:text-[#000]"
               >
                 Xem nhiệm vụ
               </Link>
@@ -206,7 +211,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                     }}
                     action="edit"
                   >
-                    <div className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
+                    <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
                       Chỉnh sửa nhiệm vụ
                     </div>
                   </TaskModalForm>
@@ -216,49 +221,32 @@ const TaskItem: React.FC<TaskItemProps> = ({
                       task,
                     }}
                   >
-                    <div className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
+                    <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
                       Đánh dấu thất bại
                     </div>
                   </MarkTaskFailedModalForm>
                 </>
               )}
 
-              <div
-                className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] text-[#cc1111] transition-all hover:bg-[#f8f8f8]"
-                onClick={() => setOpen(true)}
-              >
-                Xóa nhiệm vụ
-              </div>
-
-              <Modal
-                open={open}
-                onOpenChange={setOpen}
-                okButtonProps={{
-                  onClick: handleDelete,
-                  size: 'large',
-                  children: 'Ok',
-                }}
-                cancelButtonProps={{
-                  onClick: () => setOpen(false),
-                  size: 'large',
-                  children: 'Đóng lại',
-                }}
-                headerClassName="bg-[#fff] !pb-0"
-              >
-                <div className="-mt-[20px] flex items-center justify-center gap-[8px] text-[#000]">
-                  <ExclamationCircleFilled className="text-[36px] text-[#c65144]" />
-                  <span>
+              <Popconfirm
+                title={
+                  <div>
                     Xác nhận muốn xóa nhiệm vụ{' '}
                     <span className="font-[600]">{task?.name}</span>?
-                  </span>
+                  </div>
+                }
+                onConfirm={handleDelete}
+              >
+                <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] text-[#cc1111] transition-all hover:bg-[#f8f8f8]">
+                  Xóa nhiệm vụ
                 </div>
-              </Modal>
+              </Popconfirm>
             </div>
           )}
         >
           <div
             className={clsx(
-              'pl-[8px] text-[20px] leading-none',
+              'cursor-pointer pl-[8px] text-[20px] leading-none',
               isCompleted && 'text-[#fff]',
             )}
           >
@@ -266,7 +254,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
           </div>
         </Dropdown>
       </div>
-      {/* )} */}
     </div>
   )
 }

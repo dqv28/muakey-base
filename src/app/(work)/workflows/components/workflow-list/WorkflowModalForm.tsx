@@ -1,7 +1,7 @@
 'use client'
 
-import { Button, Form, FormInstance, Input, Modal, toast } from '@/ui'
-import { PlusOutlined } from '@/ui/icons'
+import { PlusOutlined } from '@ant-design/icons'
+import { Button, Form, FormInstance, Input, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, {
   ChangeEvent,
@@ -10,6 +10,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import toast from 'react-hot-toast'
 import { addWorkflowAction, getAccountAction } from '../../action'
 import SuggestInput from '../SuggestInput'
 
@@ -33,11 +34,14 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
       const { error, success } = await addWorkflowAction(formData)
 
       if (error) {
-        for (const key in error) {
-          formRef.current?.setError(key, {
-            message: error[key],
-          })
-        }
+        const nameList: string[] = Object.keys(error)
+
+        formRef.current?.setFields(
+          nameList.map((name) => ({
+            name,
+            errors: [error?.[name]],
+          })),
+        )
 
         return false
       }
@@ -67,7 +71,6 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
 
   useEffect(() => {
     if (!open) {
-      formRef.current?.reset()
       setValue('')
     }
   }, [open])
@@ -75,10 +78,8 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
   return (
     <>
       <Button
-        className="z-10 !p-[10px] !text-[12px]"
+        type="primary"
         icon={<PlusOutlined className="text-[16px]" />}
-        variant="outline"
-        shape="pill"
         onClick={() => setOpen(true)}
       >
         Tạo mới workflow
@@ -86,79 +87,79 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
       <Modal
         title="Tạo luồng công việc mới"
         open={open}
-        onOpenChange={setOpen}
+        onCancel={() => setOpen(false)}
+        onOk={() => formRef.current?.submit()}
         width={760}
+        okText="Tạo luồng công việc mới"
+        cancelText="Bỏ qua"
         okButtonProps={{
-          children: 'Tạo luồng công việc mới',
-          size: 'large',
-          onClick: () => formRef.current?.submit(),
+          htmlType: 'submit',
         }}
-        cancelButtonProps={{
-          children: 'Bỏ qua',
-          size: 'large',
-          onClick: () => setOpen(false),
-        }}
+        modalRender={(dom) => (
+          <Form
+            initialValues={initialValues}
+            ref={formRef}
+            onFinish={handleSubmit}
+            layout="vertical"
+          >
+            {dom}
+          </Form>
+        )}
       >
-        <Form values={initialValues} formRef={formRef} onSubmit={handleSubmit}>
-          <Form.Item name="workflow_category_id" className="hidden">
-            <Input className="hidden" />
-          </Form.Item>
-          <Form.Item
-            name="name"
-            type="horizontal"
-            label={
-              <span className="inline-block w-[160px]">
-                Tên luồng công việc
-              </span>
-            }
-            rules={{
-              required: {
-                value: true,
-                message: 'Nhập tên luồng công việc',
-              },
+        <Form.Item name="workflow_category_id" className="hidden">
+          <Input className="hidden" />
+        </Form.Item>
+        <Form.Item
+          name="name"
+          label={
+            <span className="inline-block w-[160px]">Tên luồng công việc</span>
+          }
+          rules={[
+            {
+              required: true,
+              message: 'Nhập tên luồng công việc',
+            },
+          ]}
+        >
+          <Input placeholder="Tên luồng công việc" />
+        </Form.Item>
+        <Form.Item
+          name="description"
+          label={<span className="inline-block w-[160px]">Mô tả</span>}
+        >
+          <Input placeholder="Mô tả" />
+        </Form.Item>
+        <Form.Item
+          name="manager"
+          label={
+            <span className="inline-block w-[160px]">Thành viên quản trị</span>
+          }
+          rules={[
+            {
+              required: true,
+              message: 'Nhập thành viên quản trị',
+            },
+          ]}
+        >
+          <SuggestInput
+            value={value}
+            onChange={handleChange}
+            suggestInputRef={suggestInputRef}
+            suggestOpen={tagOpen}
+            suggestItems={accounts}
+            placeholder="Sử dụng @ để tag thành viên quản trị"
+            autoComplete="off"
+            onSuggestClick={(item) => {
+              setValue((prev) => {
+                const values = prev.split(' ')
+                values.pop()
+                values.push(item.username)
+                return values.join(' ') + ' '
+              })
+              setTagOpen(false)
             }}
-          >
-            <Input placeholder="Tên luồng công việc" />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            type="horizontal"
-            label={<span className="inline-block w-[160px]">Mô tả</span>}
-          >
-            <Input placeholder="Mô tả" />
-          </Form.Item>
-          <Form.Item
-            name="manager"
-            type="horizontal"
-            label={
-              <span className="inline-block w-[160px]">
-                Thành viên quản trị
-              </span>
-            }
-            rules={{
-              required: 'Nhập thành viên quản trị',
-            }}
-          >
-            <SuggestInput
-              value={value}
-              onChange={handleChange}
-              suggestInputRef={suggestInputRef}
-              suggestOpen={tagOpen}
-              suggestItems={accounts}
-              placeholder="Sử dụng @ để tag thành viên quản trị"
-              autoComplete="off"
-              onSuggestClick={(item) => {
-                setValue((prev) => {
-                  const values = prev.split(' ')
-                  values.pop()
-                  values.push(item.username)
-                  return values.join(' ') + ' '
-                })
-                setTagOpen(false)
-              }}
-            />
-          </Form.Item>
-        </Form>
+          />
+        </Form.Item>
       </Modal>
     </>
   )

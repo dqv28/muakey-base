@@ -34,7 +34,6 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
           <div className="flex items-center gap-[8px]">
             <TaskModalForm
               initialValues={{
-                workflow_id: workflow?.id,
                 members: workflow?.members,
               }}
             >

@@ -59,16 +59,20 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({ stages, total }) => {
                     </span>
                   </div>
                   {stage?.account && (
-                    <div className="flex items-center gap-[8px] mt-[4px]">
+                    <div className="mt-[4px] flex items-center gap-[8px]">
                       <Avatar
-                        className='!text-[10px]'
+                        className="!text-[10px]"
                         src={stage?.account?.avatar}
                         size={20}
                         shape="circle"
                       >
-                        {String(stage?.account?.full_name).charAt(0).toLocaleUpperCase()}
+                        {String(stage?.account?.full_name)
+                          .charAt(0)
+                          .toLocaleUpperCase()}
                       </Avatar>
-                      <span className='text-[12px]'>{stage?.account?.full_name}</span>
+                      <span className="text-[12px]">
+                        {stage?.account?.full_name}
+                      </span>
                     </div>
                   )}
                 </div>

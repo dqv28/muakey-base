@@ -1,9 +1,10 @@
 'use client'
 
-import { Dropdown, DropdownProps, Modal, toast } from '@/ui'
 import { CaretDownFilled } from '@ant-design/icons'
+import { Dropdown, DropdownProps, Popconfirm } from 'antd'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React from 'react'
+import toast from 'react-hot-toast'
 import { deleteStageByIdAction } from '../../../action'
 import StageModalForm from './StageModalForm'
 
@@ -15,7 +16,6 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
   stage,
   ...rest
 }) => {
-  const [open, setOpen] = useState(false)
   const router = useRouter()
 
   const handleDelete = async () => {
@@ -28,9 +28,8 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
         return false
       }
 
-      setOpen(false)
-      router.refresh()
       toast.success(success)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }
@@ -38,8 +37,10 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
 
   return (
     <Dropdown
+      rootClassName="!z-auto"
       placement="bottomRight"
-      dropdownRenderer={() => (
+      trigger={['click']}
+      dropdownRender={() => (
         <div className="mt-[4px] w-[240px] rounded-[4px] bg-[#fff] p-[8px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
           <StageModalForm
             title={`Chỉnh sửa giai đoạn ${stage?.name}`}
@@ -52,7 +53,7 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
             }}
             action="edit"
           >
-            <div className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
+            <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
               Chỉnh sửa giai đoạn
             </div>
           </StageModalForm>
@@ -62,7 +63,7 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
               index: stage?.index,
             }}
           >
-            <div className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
+            <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
               Thêm 1 giai đoạn bên trái
             </div>
           </StageModalForm>
@@ -72,30 +73,23 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
               index: stage?.index,
             }}
           >
-            <div className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
+            <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
               Thêm 1 giai đoạn bên phải
             </div>
           </StageModalForm>
-          <div
-            className="bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] text-[#cc1111] transition-all hover:bg-[#f8f8f8]"
-            onClick={() => setOpen(true)}
+          <Popconfirm
+            title={
+              <div>
+                Xác nhận xóa giai đoạn{' '}
+                <span className="font-[500]">{stage?.name}</span>
+              </div>
+            }
+            onConfirm={handleDelete}
           >
-            Xóa giai đoạn
-          </div>
-          <Modal
-            open={open}
-            onOpenChange={setOpen}
-            okButtonProps={{
-              onClick: handleDelete,
-              size: 'large',
-            }}
-            cancelButtonProps={{
-              onClick: () => setOpen(false),
-              size: 'large',
-            }}
-          >
-            <div className="text-[#000]">Chắc chắn chưa cu?</div>
-          </Modal>
+            <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] text-[#cc1111] transition-all hover:bg-[#f8f8f8]">
+              Xóa giai đoạn
+            </div>
+          </Popconfirm>
         </div>
       )}
       {...rest}

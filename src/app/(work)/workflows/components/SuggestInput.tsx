@@ -1,4 +1,5 @@
-import { Avatar, Input, InputProps } from '@/ui'
+import { Avatar } from '@/ui'
+import { Input, InputProps } from 'antd'
 import clsx from 'clsx'
 import { uniqueId } from 'lodash'
 import React from 'react'
@@ -25,7 +26,7 @@ const SuggestInput: React.FC<SuggestInputProps> = ({
       <Input value={test || value} {...rest} />
       {suggestOpen && (
         <div
-          className="absolute left-0 right-0 top-[100%] h-max bg-[#fff] p-[6px] shadow-[0_2px_10px_0_rgba(0,0,0,0.2)]"
+          className="absolute left-0 right-0 top-[100%] z-10 h-max bg-[#fff] p-[6px] shadow-[0_2px_10px_0_rgba(0,0,0,0.2)]"
           ref={suggestInputRef}
         >
           {(suggestItems || []).map((sug: any) => {

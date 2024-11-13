@@ -21,6 +21,7 @@ import {
   getWorkflowCategories,
   getWorkflowMembers,
   getWorkflows,
+  moveStage,
   updateReportField,
 } from '@/libs/data'
 
@@ -76,8 +77,11 @@ export const getWorkflowMembersAction = async (id: number) => {
 export const addTaskAction = async (data: any) =>
   addTask(data)
 
-export const editTaskAction = async (id: number, options?: any) => 
-  editTask(id, options)
+export const editTaskAction = async (id: number, data: any) => 
+  editTask(id, data)
+
+export const moveStageAction = async (id: number, stageId: number) => 
+  moveStage(id, stageId)
 
 export const deleteTaskAction = async (id: number) => 
   deleteTask(id)

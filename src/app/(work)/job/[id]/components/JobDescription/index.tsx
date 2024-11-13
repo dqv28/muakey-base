@@ -22,10 +22,8 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
   const handleSubmit = async (formData: any) => {
     try {
       const { success, error } = await editTaskAction(params?.taskId, {
-        data: {
           ...params?.task,
           ...formData,
-        },
       })
 
       if (error) {
@@ -56,6 +54,8 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
 
         try {
           const { url, error } = await uploadImageAction(formData)
+
+          console.log(url)
 
           if (error) {
             toast.error(error)

@@ -20,7 +20,7 @@ import clsx from 'clsx'
 import { cloneDeep } from 'lodash'
 import { useRouter } from 'next/navigation'
 import React, { createContext, useCallback, useState } from 'react'
-import { addTaskReportAction, editTaskAction } from '../../../action'
+import { addTaskReportAction, editTaskAction, moveStageAction } from '../../../action'
 import StageColumn from './StageColumn'
 import StageModalForm from './StageModalForm'
 import TaskReportsModalForm from './TaskReportsModalForm'
@@ -78,9 +78,8 @@ const StageList: React.FC<StageListProps> = ({
         )
 
         if (
-          overColumn.index !== 0 ||
-          activeData.account_id ||
-          overColumn.index !== 1
+          (overColumn.index !== 0 ||
+          overColumn.index !== 1) && activeData.account_id
         ) {
           if (activeColumn) {
             activeColumn.tasks = activeColumn.tasks.filter(
@@ -103,9 +102,7 @@ const StageList: React.FC<StageListProps> = ({
       })
 
       try {
-        const { error } = await editTaskAction(activeTaskId as number, {
-          stageId: overData.stage_id || overData.id,
-        })
+        const { error } = await moveStageAction(activeTaskId as number, overData.stage_id || overData.id)
 
         if (error) {
           toast.error(error)

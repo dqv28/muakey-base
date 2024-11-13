@@ -87,19 +87,17 @@ export const addTask = async (data: any) =>
     data,
   }).then((data) => data)
 
-type Options = {
-  stageId?: number
-  data?: any
+export const editTask = async (id: number, data: any) => {
+  return await request(`tasks/${id}`, {
+    method: 'PUT',
+    data
+  }).then((data) => data)
 }
 
-export const editTask = async (id: number, options?: Options) => {
-  const { stageId, data } = options as Options
-
+export const moveStage = async (id: number, stageId: number) => {
   return await request(`tasks/${id}?stage_id=${stageId}`, {
-    method: 'PUT',
-    data,
+    method: 'PUT'
   })
-    .then((data) => data)
 }
 
 export const getTaskById = async (id: number) =>

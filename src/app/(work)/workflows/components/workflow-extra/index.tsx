@@ -1,15 +1,7 @@
 'use client'
 
-import {
-  Button,
-  Form,
-  FormInstance,
-  Input,
-  Modal,
-  ModalProps,
-  toast,
-} from '@/ui'
 import { PlusOutlined } from '@/ui/icons'
+import { Button, Form, FormInstance, Input, Modal, ModalProps } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, {
   ChangeEvent,
@@ -18,6 +10,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import toast from 'react-hot-toast'
 import { addWorkflowCategoryAction, getAccountAction } from '../../action'
 import SuggestInput from '../SuggestInput'
 
@@ -56,13 +49,16 @@ const WorkflowExtra: React.FC<WorkflowExtraProps> = (props) => {
       })
 
       if (error) {
-        for (const key in error) {
-          formRef.current?.setError(key, {
-            message: error[key],
-          })
-        }
+        const nameList = Object.keys(error)
 
-        return false
+        formRef.current?.setFields(
+          nameList.map((name: string) => ({
+            name,
+            errors: [error?.[name]],
+          })),
+        )
+
+        return
       }
 
       toast.success(success)
@@ -72,11 +68,6 @@ const WorkflowExtra: React.FC<WorkflowExtraProps> = (props) => {
       throw new Error(error)
     }
   }
-
-  useEffect(() => {
-    formRef.current?.reset()
-    setValue('')
-  }, [open])
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -93,12 +84,18 @@ const WorkflowExtra: React.FC<WorkflowExtraProps> = (props) => {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  useEffect(() => {
+    if (!open) {
+      setValue('')
+    }
+  }, [open])
+
   return (
     <>
       <Button
         className="!p-[10px] !text-[12px] text-[#fff]"
         icon={<PlusOutlined className="text-[16px]" />}
-        color="primary"
+        type="primary"
         onClick={(e) => setOpen(true)}
       >
         Tạo mới danh mục
@@ -106,66 +103,69 @@ const WorkflowExtra: React.FC<WorkflowExtraProps> = (props) => {
       <Modal
         title="TẠO DANH MỤC MỚI"
         open={open}
-        onOpenChange={(o) => setOpen(o)}
+        onCancel={() => setOpen(false)}
         width={760}
+        okText="Tạo danh mục mới"
+        cancelText="Bỏ qua"
         okButtonProps={{
-          children: 'Tạo danh mục mới',
-          size: 'large',
-          onClick: () => {
-            formRef.current?.submit()
-          },
+          autoFocus: true,
+          htmlType: 'submit',
         }}
-        cancelButtonProps={{
-          children: 'Bỏ qua',
-          size: 'large',
-          onClick: () => setOpen(false),
-        }}
+        destroyOnClose
+        modalRender={(dom) => (
+          <Form
+            onFinish={handleSubmit}
+            ref={formRef}
+            clearOnDestroy
+            layout="vertical"
+          >
+            {dom}
+          </Form>
+        )}
       >
-        <Form onSubmit={handleSubmit} formRef={formRef}>
-          <Form.Item
-            name="name"
-            label={
-              <span className="inline-block w-[130px]">
-                Tên luồng công việc
-              </span>
-            }
-            type="horizontal"
-            rules={{
-              required: 'Nhập hộ cái tên luồng.',
-            }}
-          >
-            <Input placeholder="Tên luồng công việc" />
-          </Form.Item>
+        <Form.Item
+          name="name"
+          label="Tên luồng công việc"
+          rules={[
+            {
+              required: true,
+              message: 'Nhập tên luồng.',
+            },
+          ]}
+        >
+          <Input placeholder="Tên luồng công việc" />
+        </Form.Item>
 
-          <Form.Item
-            name="members"
-            label={<span className="inline-block w-[130px]">Thành viên</span>}
-            type="horizontal"
-            rules={{
-              required: 'Nhập thành viên.',
+        <Form.Item
+          name="members"
+          label="Thành viên"
+          rules={[
+            {
+              required: true,
+              message: 'Chọn thành viên',
+            },
+          ]}
+        >
+          <SuggestInput
+            value={value}
+            test={value}
+            onChange={handleChange}
+            suggestInputRef={suggestInputRef}
+            suggestOpen={tagOpen}
+            suggestItems={accounts}
+            placeholder="Sử dụng @ để tag thành viên quản trị"
+            autoComplete="off"
+            onSuggestClick={(item) => {
+              setValue((prev) => {
+                const values = prev.split(' ')
+                values.pop()
+                values.push(item.username)
+                return values.join(' ') + ' '
+              })
+              setTagOpen(false)
             }}
-          >
-            <SuggestInput
-              value={value}
-              test={value}
-              onChange={handleChange}
-              suggestInputRef={suggestInputRef}
-              suggestOpen={tagOpen}
-              suggestItems={accounts}
-              placeholder="Sử dụng @ để tag thành viên quản trị"
-              autoComplete="off"
-              onSuggestClick={(item) => {
-                setValue((prev) => {
-                  const values = prev.split(' ')
-                  values.pop()
-                  values.push(item.username)
-                  return values.join(' ') + ' '
-                })
-                setTagOpen(false)
-              }}
-            />
-          </Form.Item>
-        </Form>
+          />
+        </Form.Item>
       </Modal>
     </>
   )
