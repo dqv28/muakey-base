@@ -70,7 +70,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const handleAssign = async (id: number) => {
     try {
       const { error } = await editTaskAction(task?.id, {
-          account_id: id,
+        account_id: id,
       })
 
       if (error) {

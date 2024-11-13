@@ -1,6 +1,14 @@
 'use client'
 
-import { Form, FormInstance, Input, InputNumber, Modal, ModalProps, Select } from 'antd'
+import {
+  Form,
+  FormInstance,
+  Input,
+  InputNumber,
+  Modal,
+  ModalProps,
+  Select,
+} from 'antd'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -48,7 +56,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         var { error, success } = await addTaskAction({
           ...restFormData,
           account_id: member[0]?.id || null,
-          workflow_id: params?.id || null
+          workflow_id: params?.id || null,
         })
       } else {
         var { error, success } = await editTaskAction(initialValues?.id, {
@@ -152,7 +160,10 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           />
         </Form.Item>
         <Form.Item name="expired" label="Thời hạn">
-          <InputNumber className="border-b border-[#eee] w-full" placeholder="Thời hạn" />
+          <InputNumber
+            className="w-full border-b border-[#eee]"
+            placeholder="Thời hạn"
+          />
         </Form.Item>
       </Modal>
     </>
