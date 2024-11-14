@@ -1,4 +1,4 @@
-import { editTaskAction } from '@/app/(work)/workflows/action'
+import { moveStage } from '@/libs/data'
 import { Form, FormInstance, Input, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
@@ -20,7 +20,7 @@ const MarkTaskFailedModalForm: React.FC<MarkTaskFailedModalFormProps> = ({
 
   const handleSubmit = async (formData: any) => {
     try {
-      const { error } = await editTaskAction(taskId, failedStageId)
+      const { error } = await moveStage(taskId, failedStageId)
 
       if (error) {
         toast.error(error)

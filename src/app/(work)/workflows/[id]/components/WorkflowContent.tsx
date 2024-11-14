@@ -19,7 +19,7 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
       )
 
     case 'docs':
-      return <WorkflowDocs />
+      return <WorkflowDocs stages={options?.filteredStages} />
 
     case 'report-field':
       return (

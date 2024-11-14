@@ -1,6 +1,7 @@
 'use client'
 
-import { Avatar, List, Progress } from 'antd'
+import { Avatar } from '@/ui'
+import { List, Progress } from 'antd'
 import clsx from 'clsx'
 import React from 'react'
 
@@ -28,9 +29,9 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({ stages, total }) => {
               <div className="flex w-full items-start gap-[12px]">
                 <Avatar
                   className={clsx('!text-[12px]', {
-                    'bg-[#42b814]': stage?.status === 'completed',
-                    'bg-[#c34343]': stage?.status === 'failed',
-                    'bg-[#45AAF7]': stage?.status === 'pending',
+                    '!bg-[#42b814]': stage?.status === 'completed',
+                    '!bg-[#c34343]': stage?.status === 'failed',
+                    '!bg-[#45AAF7]': stage?.status === 'pending',
                   })}
                   shape="circle"
                   size={24}

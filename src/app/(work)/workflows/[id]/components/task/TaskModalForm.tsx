@@ -1,5 +1,6 @@
 'use client'
 
+import { uploadImageAction } from '@/app/(work)/job/actions'
 import {
   Form,
   FormInstance,
@@ -10,8 +11,9 @@ import {
   Select,
 } from 'antd'
 import { useParams, useRouter } from 'next/navigation'
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import ReactQuill from 'react-quill-new'
 import { addTaskAction, editTaskAction } from '../../../action'
 
 type TaskModalFormProps = ModalProps & {
@@ -29,11 +31,12 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   action = 'create',
   ...rest
 }) => {
-  console.log(initialValues)
   const [open, setOpen] = useState(false)
   const formRef = useRef<FormInstance>(null)
   const router = useRouter()
   const params = useParams()
+  const [value, setValue] = useState(initialValues?.description || '')
+  const quillRef = useRef<ReactQuill>(null)
 
   const { account_id, members, ...restInitialValues } = initialValues
 
@@ -45,11 +48,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         `${`${m.full_name} ·`} ${m.username} ${!!m.position ? `· ${m.position}` : ''}` ===
         memberVal,
     )
-
-    console.log({
-      ...restFormData,
-      account_id: member[0]?.id || null,
-    })
 
     try {
       if (action === 'create') {
@@ -93,6 +91,81 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   }
 
   const mem: any = members?.find((m: any) => m?.id === account_id)
+
+  const uploadImage = useCallback(async () => {
+    const input = document.createElement('input')
+    input.setAttribute('type', 'file')
+    input.setAttribute('accept', 'image/*')
+    input.click()
+    input.onchange = async (e) => {
+      const quill = quillRef.current
+
+      if (input !== null && input.files !== null) {
+        const file = input.files[0]
+        const formData = new FormData()
+
+        formData.append('image', file)
+
+        try {
+          const { url, error } = await uploadImageAction(formData)
+
+          console.log(url)
+
+          if (error) {
+            toast.error(error)
+            return
+          }
+
+          if (!quill) return
+
+          const range = quill.getEditorSelection()
+
+          if (!range) return
+
+          quill.getEditor().insertEmbed(range.index, 'image', url)
+        } catch (error: any) {
+          throw new Error(error)
+        }
+      }
+    }
+  }, [])
+
+  const modules: ReactQuill.ReactQuillProps['modules'] = {
+    toolbar: {
+      container: [
+        [{ header: '1' }, { header: '2' }, { font: [] }],
+        [{ size: [] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [{ list: 'ordered' }, { indent: '-1' }, { indent: '+1' }],
+        ['link', 'image', 'video'],
+        ['code-block'],
+        ['clean'],
+      ],
+      handlers: {
+        image: uploadImage,
+      },
+    },
+    clipboard: {
+      matchVisual: false,
+    },
+  }
+
+  const formats: ReactQuill.ReactQuillProps['formats'] = [
+    'header',
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'indent',
+    'link',
+    'image',
+    'video',
+    'code-block',
+  ]
 
   return (
     <>
@@ -141,8 +214,13 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           />
         </Form.Item>
         <Form.Item name="description" label="Mô tả">
-          <Input
-            className="border-b border-[#eee]"
+          <ReactQuill
+            ref={quillRef}
+            theme="snow"
+            modules={modules}
+            formats={formats}
+            value={value}
+            onChange={setValue}
             placeholder="Mô tả nhiệm vụ"
           />
         </Form.Item>

@@ -20,7 +20,7 @@ import clsx from 'clsx'
 import { cloneDeep } from 'lodash'
 import { useRouter } from 'next/navigation'
 import React, { createContext, useCallback, useState } from 'react'
-import { addTaskReportAction, editTaskAction, moveStageAction } from '../../../action'
+import { addTaskReportAction, moveStageAction } from '../../../action'
 import StageColumn from './StageColumn'
 import StageModalForm from './StageModalForm'
 import TaskReportsModalForm from './TaskReportsModalForm'
@@ -39,6 +39,8 @@ const StageList: React.FC<StageListProps> = ({
   members,
 }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
+  const [stageId, setStageId] = useState<number>(0)
+  const [taskId, setTaskId] = useState<number>(0)
   const [stages, setStages] = useState(dataSource || [])
   const [open, setOpen] = useState(false)
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
@@ -68,8 +70,18 @@ const StageList: React.FC<StageListProps> = ({
 
       if (!overData || !activeData) return
 
+      const overIndex = stages?.find(
+        (stage: any) => stage.id === (overData.stage_id || overData.id),
+      )?.index
+
+      if (!activeData.account_id && [0, 1].includes(overIndex)) {
+        toast.error('Nhiệm vụ chưa được giao.')
+        return
+      }
+
       setStages((prevStages: any) => {
         const newStages = cloneDeep(prevStages)
+
         const activeColumn = newStages.find(
           (s: any) => s.id === activeData.stage_id,
         )
@@ -77,37 +89,30 @@ const StageList: React.FC<StageListProps> = ({
           (s: any) => s.id === (overData.stage_id || overData.id),
         )
 
-        if (
-          (overColumn.index !== 0 ||
-          overColumn.index !== 1) && activeData.account_id
-        ) {
-          if (activeColumn) {
-            activeColumn.tasks = activeColumn.tasks.filter(
-              (t: any) => t.id !== activeTaskId,
-            )
-          }
+        if (activeColumn) {
+          activeColumn.tasks = activeColumn.tasks.filter(
+            (t: any) => t.id !== activeTaskId,
+          )
+        }
 
-          if (overColumn) {
-            overColumn.tasks = [
-              {
-                ...activeData,
-                stage_id: overData.stage_id || overData.id,
-              },
-              ...overColumn.tasks,
-            ]
-          }
+        if (overColumn) {
+          overColumn.tasks = [
+            {
+              ...activeData,
+              stage_id: overData.stage_id || overData.id,
+            },
+            ...overColumn.tasks,
+          ]
         }
 
         return newStages
       })
 
       try {
-        const { error } = await moveStageAction(activeTaskId as number, overData.stage_id || overData.id)
-
-        if (error) {
-          toast.error(error)
-          return
-        }
+        await moveStageAction(
+          activeTaskId as number,
+          overData.stage_id || overData.id,
+        )
 
         router.refresh()
       } catch (error: any) {
@@ -135,40 +140,48 @@ const StageList: React.FC<StageListProps> = ({
 
     const activeIndex = stages?.find(
       (stage: any) => stage.id === activeData.stage_id,
-    )?.['index']
+    )?.index
     const overIndex = stages?.find(
-      (stage: any) => stage.id === overData.stage_id,
-    )?.['index']
+      (stage: any) => stage.id === (overData.stage_id || overData.id),
+    )?.index
 
-    if (!activeData?.account_id || activeIndex < overIndex) {
-      await handleDrag(e)
+    if (activeData.account_id && activeIndex > overIndex) {
+      setOpen(true)
       return
     }
 
-    setOpen(true)
+    await handleDrag(e)
   }, [])
 
   const handleDragStart = (e: DragStartEvent) => {
     const { active } = e
     setActiveId(active.id)
+
+    const {
+      data: { current: activeData },
+    } = active
+
+    setStageId(activeData?.stage_id)
+    setTaskId(activeData?.id)
   }
 
   const handleSubmit = async (values: any) => {
-    console.log(values)
-
     if (!dragEvent) return
 
-    await handleDrag(dragEvent)
-
     try {
-      const { success, error } = await addTaskReportAction(values)
+      const { success, error } = await addTaskReportAction(taskId, {
+        ...values,
+        account_id: 1,
+      })
 
       if (error) {
         toast.error(error)
         return
       }
 
+      await handleDrag(dragEvent)
       toast.success(success)
+      setOpen(false)
     } catch (error) {
       throw new Error()
     }
@@ -203,15 +216,19 @@ const StageList: React.FC<StageListProps> = ({
               </Col>
             )}
             {stages.map((stage: any) => (
-              <StageColumn key={stage?.id} stage={stage} />
+              <>
+                <StageColumn key={stage?.id} stage={stage} />
+              </>
             ))}
           </Row>
-
           <TaskReportsModalForm
             open={open}
             onCancel={() => setOpen(false)}
-            onOk={() => setOpen(false)}
-            onSubmit={handleSubmit}
+            onSubmit={(values) => handleSubmit(values)}
+            query={{
+              stage_id: stageId,
+              task_id: taskId,
+            }}
           />
         </SortableContext>
       </DndContext>

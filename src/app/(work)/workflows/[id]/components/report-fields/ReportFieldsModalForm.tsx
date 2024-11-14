@@ -4,7 +4,7 @@ import { Button, Form, Input, Modal, Select } from 'antd'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
-import { addReportFieldAction, editCustomFieldAction } from '../../../action'
+import { addReportFieldAction, updateReportFieldAction } from '../../../action'
 
 type ReportFieldsModalFormProps = {
   children?: React.ReactNode
@@ -31,7 +31,7 @@ const ReportFieldsModalForm: React.FC<ReportFieldsModalFormProps> = ({
           workflow_id: Number(params?.id),
         })
       } else {
-        var { success, error } = await editCustomFieldAction(fieldId, {
+        var { success, error } = await updateReportFieldAction(fieldId, {
           ...formData,
           workflow_id: Number(params?.id),
         })
