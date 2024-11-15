@@ -32,11 +32,11 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   ...rest
 }) => {
   const [open, setOpen] = useState(false)
+  const [value, setValue] = useState(initialValues?.description || '')
   const formRef = useRef<FormInstance>(null)
+  const quillRef = useRef<ReactQuill>(null)
   const router = useRouter()
   const params = useParams()
-  const [value, setValue] = useState(initialValues?.description || '')
-  const quillRef = useRef<ReactQuill>(null)
 
   const { account_id, members, ...restInitialValues } = initialValues
 
@@ -108,8 +108,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
         try {
           const { url, error } = await uploadImageAction(formData)
-
-          console.log(url)
 
           if (error) {
             toast.error(error)

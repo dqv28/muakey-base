@@ -14,11 +14,11 @@ type TaskListProps = {
 const TaskList: React.FC<TaskListProps> = ({ dataSource, stage }) => {
   const { activeId, members } = useContext(StageContext)
 
+  const sortItems =
+    dataSource?.length > 0 ? dataSource.map((t: any) => t.id) : []
+
   return (
-    <SortableContext
-      items={dataSource.map((t: any) => t.id)}
-      strategy={verticalListSortingStrategy}
-    >
+    <SortableContext items={sortItems} strategy={verticalListSortingStrategy}>
       <div className="h-full">
         {dataSource &&
           dataSource.map((task: any) => (
@@ -37,6 +37,7 @@ const TaskList: React.FC<TaskListProps> = ({ dataSource, stage }) => {
                     isCompleted={stage?.index === 1}
                     isFailed={stage?.index === 0}
                     members={members}
+                    expired={stage?.expired_after_hours}
                   />
                 </DragOverlay>
               )}

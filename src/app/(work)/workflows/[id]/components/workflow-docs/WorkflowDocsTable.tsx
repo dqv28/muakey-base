@@ -10,13 +10,18 @@ type WorkflowDocsTableProps = {
   stageName: string
 }
 
-const WorkflowDocsTable: React.FC<WorkflowDocsTableProps> = ({ stageId, stageName }) => {
+const WorkflowDocsTable: React.FC<WorkflowDocsTableProps> = ({
+  stageId,
+  stageName,
+}) => {
   const [taskReports, setTaskReports] = useState<any[]>([])
 
   useAsyncEffect(async () => {
-    const data = await getTaskReportsAction(stageId)
+    if (stageId) {
+      const data = await getTaskReportsAction(stageId)
 
-    setTaskReports(data)
+      setTaskReports(data)
+    }
   }, [stageId])
 
   const columnKeys = taskReports?.reduce((prev: any, current: any) => {
@@ -26,12 +31,10 @@ const WorkflowDocsTable: React.FC<WorkflowDocsTableProps> = ({ stageId, stageNam
     return prevKeyLength > currentKeyLength ? prev : current
   }, {})
 
-  const columns = Object.keys(columnKeys || {})?.map(
-    (report: string) => ({
-      title: report.toLocaleUpperCase(),
-      dataIndex: report.toLocaleLowerCase(),
-    }),
-  )
+  const columns = Object.keys(columnKeys || {})?.map((report: string) => ({
+    title: report.toLocaleUpperCase(),
+    dataIndex: report.toLocaleLowerCase(),
+  }))
 
   const data: any[] = taskReports?.map((report: any) => {
     const newReport = Object.entries(report).map(([key, value]: any) => [
@@ -42,10 +45,16 @@ const WorkflowDocsTable: React.FC<WorkflowDocsTableProps> = ({ stageId, stageNam
     return Object.fromEntries(newReport)
   })
 
-  return taskReports.length > 0 && <>
-  <div className='font-[500] ml-[24px] my-[16px]'>Giai đoạn: {String(stageName).toLocaleUpperCase()}</div>
-    <Table columns={columns} dataSource={data} />
-  </>
+  return (
+    taskReports.length > 0 && (
+      <>
+        <div className="my-[16px] ml-[24px] font-[500]">
+          Giai đoạn: {String(stageName).toLocaleUpperCase()}
+        </div>
+        <Table columns={columns} dataSource={data} />
+      </>
+    )
+  )
 }
 
 export default WorkflowDocsTable

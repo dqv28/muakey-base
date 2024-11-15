@@ -24,10 +24,6 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
   const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
-    console.log({
-      ...formData,
-      workflow_id: Number(params?.id),
-    })
     try {
       if (action === 'create') {
         var { success, error } = await addTaskFieldsAction({

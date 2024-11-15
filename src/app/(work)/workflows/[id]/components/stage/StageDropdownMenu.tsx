@@ -44,10 +44,7 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
         <div className="mt-[4px] w-[240px] rounded-[4px] bg-[#fff] p-[8px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
           <StageModalForm
             title={`Chỉnh sửa giai đoạn ${stage?.name}`}
-            initialValues={{
-              name: stage?.name,
-              description: stage?.description,
-            }}
+            initialValues={stage}
             query={{
               stage_id: stage?.id,
             }}

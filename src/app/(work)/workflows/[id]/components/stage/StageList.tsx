@@ -47,111 +47,119 @@ const StageList: React.FC<StageListProps> = ({
 
   const router = useRouter()
 
-  const failedStageId = stages?.find((stage: any) => stage.index === 0)?.['id']
-
+  const failedStageId =
+    stages?.length > 0
+      ? stages?.find((stage: any) => stage.index === 0)?.['id']
+      : []
   const mouseSensor = useSensor(MouseSensor)
   const touchSensor = useSensor(TouchSensor)
 
   const sensors = useSensors(mouseSensor, touchSensor)
 
-  const handleDrag = async (event: DragEndEvent) => {
-    const { active, over } = event
+  const handleDrag = useCallback(
+    async (event: DragEndEvent) => {
+      const { active, over } = event
 
-    if (!over) return
+      if (!over) return
 
-    if (active.id !== over.id) {
+      if (active.id !== over.id) {
+        const {
+          data: { current: overData },
+        } = over
+        const {
+          id: activeTaskId,
+          data: { current: activeData },
+        } = active
+
+        if (!overData || !activeData) return
+
+        const overIndex = stages?.find(
+          (stage: any) => stage.id === (overData.stage_id || overData.id),
+        )?.index
+
+        if (!activeData.account_id && [0, 1].includes(overIndex)) {
+          toast.error('Nhiệm vụ chưa được giao.')
+          return
+        }
+
+        setStages((prevStages: any) => {
+          const newStages = cloneDeep(prevStages)
+
+          const activeColumn = newStages.find(
+            (s: any) => s.id === activeData.stage_id,
+          )
+          const overColumn = newStages.find(
+            (s: any) => s.id === (overData.stage_id || overData.id),
+          )
+
+          if (activeColumn) {
+            activeColumn.tasks = activeColumn.tasks.filter(
+              (t: any) => t.id !== activeTaskId,
+            )
+          }
+
+          if (overColumn) {
+            overColumn.tasks = [
+              {
+                ...activeData,
+                stage_id: overData.stage_id || overData.id,
+              },
+              ...overColumn.tasks,
+            ]
+          }
+
+          return newStages
+        })
+
+        try {
+          await moveStageAction(
+            activeTaskId as number,
+            overData.stage_id || overData.id,
+          )
+
+          // router.refresh()
+        } catch (error: any) {
+          throw new Error(error)
+        }
+      }
+    },
+    [stages],
+  )
+
+  const handleDragEnd = useCallback(
+    async (e: DragEndEvent) => {
+      setDragEvent(e)
+
+      const { active, over } = e
+
       const {
-        data: { current: overData },
-      } = over
-      const {
-        id: activeTaskId,
         data: { current: activeData },
       } = active
 
+      if (!over) return
+
+      const {
+        data: { current: overData },
+      } = over
+
       if (!overData || !activeData) return
 
+      const activeIndex = stages?.find(
+        (stage: any) => stage.id === activeData.stage_id,
+      )?.index
       const overIndex = stages?.find(
         (stage: any) => stage.id === (overData.stage_id || overData.id),
       )?.index
 
-      if (!activeData.account_id && [0, 1].includes(overIndex)) {
-        toast.error('Nhiệm vụ chưa được giao.')
+      if (activeData.account_id && activeIndex > overIndex) {
+        setOpen(true)
         return
       }
 
-      setStages((prevStages: any) => {
-        const newStages = cloneDeep(prevStages)
-
-        const activeColumn = newStages.find(
-          (s: any) => s.id === activeData.stage_id,
-        )
-        const overColumn = newStages.find(
-          (s: any) => s.id === (overData.stage_id || overData.id),
-        )
-
-        if (activeColumn) {
-          activeColumn.tasks = activeColumn.tasks.filter(
-            (t: any) => t.id !== activeTaskId,
-          )
-        }
-
-        if (overColumn) {
-          overColumn.tasks = [
-            {
-              ...activeData,
-              stage_id: overData.stage_id || overData.id,
-            },
-            ...overColumn.tasks,
-          ]
-        }
-
-        return newStages
-      })
-
-      try {
-        await moveStageAction(
-          activeTaskId as number,
-          overData.stage_id || overData.id,
-        )
-
-        router.refresh()
-      } catch (error: any) {
-        throw new Error(error)
-      }
-    }
-  }
-
-  const handleDragEnd = useCallback(async (e: DragEndEvent) => {
-    setDragEvent(e)
-
-    const { active, over } = e
-
-    const {
-      data: { current: activeData },
-    } = active
-
-    if (!over) return
-
-    const {
-      data: { current: overData },
-    } = over
-
-    if (!overData || !activeData) return
-
-    const activeIndex = stages?.find(
-      (stage: any) => stage.id === activeData.stage_id,
-    )?.index
-    const overIndex = stages?.find(
-      (stage: any) => stage.id === (overData.stage_id || overData.id),
-    )?.index
-
-    if (activeData.account_id && activeIndex > overIndex) {
-      setOpen(true)
-      return
-    }
-
-    await handleDrag(e)
-  }, [])
+      await handleDrag(e)
+    },
+    [stages, handleDrag],
+  )
 
   const handleDragStart = (e: DragStartEvent) => {
     const { active } = e
@@ -187,6 +195,9 @@ const StageList: React.FC<StageListProps> = ({
     }
   }
 
+  const sortItems =
+    dataSource?.length > 0 ? dataSource?.map((item: any) => item.id) : []
+
   return (
     <StageContext.Provider
       value={{ activeId, setActiveId, members, failedStageId }}
@@ -195,9 +206,10 @@ const StageList: React.FC<StageListProps> = ({
         sensors={sensors}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        onDragOver={(e) => e.activatorEvent.preventDefault()}
       >
         <SortableContext
-          items={dataSource?.map((item: any) => item.id)}
+          items={sortItems}
           strategy={horizontalListSortingStrategy}
         >
           <Row className="h-full w-max" wrap={false}>
@@ -215,11 +227,12 @@ const StageList: React.FC<StageListProps> = ({
                 </StageModalForm>
               </Col>
             )}
-            {stages.map((stage: any) => (
-              <>
-                <StageColumn key={stage?.id} stage={stage} />
-              </>
-            ))}
+            {stages?.length > 0 &&
+              stages.map((stage: any) => (
+                <>
+                  <StageColumn key={stage?.id} stage={stage} />
+                </>
+              ))}
           </Row>
           <TaskReportsModalForm
             open={open}

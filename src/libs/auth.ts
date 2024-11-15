@@ -13,6 +13,8 @@ export const loginWidthCredentials = async (data: any) => {
     data,
   }).then((data) => data)
 
+  console.log({ token: accessToken, error })
+
   const session = await getSession()
 
   session.accessToken = accessToken

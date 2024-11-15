@@ -94,8 +94,7 @@ const page: React.FC<any> = async (props: {
               <PageHeaderAction
                 options={{
                   failedStageId,
-                  taskId: task?.id,
-                  taskName: task?.name,
+                  task,
                 }}
               />
             }

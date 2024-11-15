@@ -1,8 +1,8 @@
-import { moveStage } from '@/libs/data'
 import { Form, FormInstance, Input, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import { moveStageAction } from './action'
 
 type MarkTaskFailedModalFormProps = {
   children?: React.ReactNode
@@ -15,12 +15,12 @@ const MarkTaskFailedModalForm: React.FC<MarkTaskFailedModalFormProps> = ({
 }) => {
   const [markOpen, setMarkOpen] = useState(false)
   const formRef = useRef<FormInstance>(null)
-  const { failedStageId, taskId, taskName } = options
+  const { failedStageId, task } = options
   const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
     try {
-      const { error } = await moveStage(taskId, failedStageId)
+      const { error } = await moveStageAction(task?.id, failedStageId, formData)
 
       if (error) {
         toast.error(error)
@@ -54,12 +54,12 @@ const MarkTaskFailedModalForm: React.FC<MarkTaskFailedModalFormProps> = ({
           onFinish={handleSubmit}
           ref={formRef}
           initialValues={{
-            name: taskName,
+            name: task?.name,
           }}
           layout="vertical"
         >
           <Form.Item name="name" label="Tên luồng công việc">
-            <Input placeholder="Tên luồng công việc" />
+            <Input placeholder="Tên luồng công việc" disabled />
           </Form.Item>
           <Form.Item
             name="reason"

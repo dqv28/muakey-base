@@ -5,6 +5,8 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Button, Dropdown, Input, Modal, Popconfirm } from 'antd'
 import clsx from 'clsx'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useContext, useState } from 'react'
@@ -19,6 +21,7 @@ export type TaskItemProps = {
   isCompleted?: boolean
   isFailed?: boolean
   members?: any
+  expired?: number
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({
@@ -86,6 +89,12 @@ const TaskItem: React.FC<TaskItemProps> = ({
     }
   }
 
+  dayjs.extend(duration)
+
+  const t = new Date(task?.expired).getTime() - new Date().getTime()
+  const timeStatus = t >= 0 ? 'inprogress' : 'overdue'
+  const time = dayjs.duration(Math.abs(t))
+
   return (
     <div className="relative">
       <div
@@ -125,9 +134,21 @@ const TaskItem: React.FC<TaskItemProps> = ({
                     </Avatar>
                     {user?.full_name}
                   </div>
-                  <div className={isCompleted ? 'text-[#fff9]' : 'text-[#999]'}>
-                    Không thời hạn
-                  </div>
+                  {task?.expired ? (
+                    <div
+                      className={clsx({
+                        'text-[#42b814]': timeStatus === 'inprogress',
+                        'text-[#D96C6C]': timeStatus === 'overdue',
+                      })}
+                    >
+                      {timeStatus === 'inprogress'
+                        ? 'Đến hạn trong'
+                        : 'Quá hạn'}{' '}
+                      {Math.round(time.asHours())}h
+                    </div>
+                  ) : (
+                    <div className="text-[#999]">Không thời hạn</div>
+                  )}
                 </div>
               ) : (
                 <span className="flex items-center gap-[4px] leading-[28px] text-[#D96C6C]">

@@ -9,15 +9,16 @@ import User from './User'
 
 export type SideBarProps = SideProps & {
   items?: any[]
+  user?: any
 }
 
-const SideBar: React.FC<SideBarProps> = async (props) => {
+const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const workflows = await getWorkflowCategories()
 
   return (
-    <Layout.Side subSide={<LeftSideBar />} {...props}>
+    <Layout.Side subSide={<LeftSideBar user={user} />} {...props}>
       <div className="flex-1 px-[12px]">
-        <User />
+        <User user={user} />
         <Search />
         <Navigation
           className="mt-[20px]"

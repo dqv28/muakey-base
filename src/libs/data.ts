@@ -94,9 +94,12 @@ export const editTask = async (id: number, data: any) => {
   }).then((data) => data)
 }
 
-export const moveStage = async (id: number, stageId: number) => {
+export const moveStage = async (id: number, stageId: number, data?: any) => {
+  console.log({ id, stageId })
+
   return await requestWithAuthorized(`tasks/${id}?stage_id=${stageId}`, {
-    method: 'PUT'
+    method: 'PUT',
+    data
   })
 }
 
@@ -200,5 +203,10 @@ export const updateTaskReports = async (id: number, data: any) =>
 
 export const getTaskReports = async (stageId: number) => 
   requestWithAuthorized(`task-reports/${stageId}/stage`)
+  .then((data) => data)
+  .catch(() => [])
+
+export const getMe = async () => 
+  requestWithAuthorized(`me`)
   .then((data) => data)
   .catch(() => [])

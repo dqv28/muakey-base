@@ -12,7 +12,7 @@ export const getSession = async () => {
   const options: SessionOptions = {
     cookieName: 't',
     password: 'oeoZmb9NoUBXfNtpNJta9Gom3rY45B4m',
-    ttl: 1209600
+    ttl: 1209600,
   }
 
   return await getIronSession<Session>(await cookies(), options)

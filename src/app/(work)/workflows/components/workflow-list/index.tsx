@@ -33,29 +33,31 @@ const WorkflowList: React.FC<WorkflowListProps> = ({ dataSource, ...rest }) => {
 
       router.refresh()
       toast.success('Xóa thành công.')
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      throw new Error(error)
     }
   }
 
   useAsyncEffect(async () => {
-    const workflowCategories = await getWorkflowCategoriesAction()
-    const workflows = await getWorkflowsAction({
-      type: param === 'all' ? '' : param || 'open',
-      search: search || '',
-    })
+    if (search || param) {
+      const workflowCategories = await getWorkflowCategoriesAction()
+      const workflows = await getWorkflowsAction({
+        type: param === 'all' ? '' : param || 'open',
+        search: search || '',
+      })
 
-    setWorkflows(
-      workflowCategories.map((cate: any) => ({
-        id: cate?.id,
-        label: cate?.name,
-        workflows: workflows.filter(
-          (w: any) => w.workflow_category_id === cate.id,
-        ),
-        members: cate?.members || [],
-      })),
-    )
-  }, [search, param, dataSource])
+      setWorkflows(
+        workflowCategories.map((cate: any) => ({
+          id: cate?.id,
+          label: cate?.name,
+          workflows: workflows.filter(
+            (w: any) => w.workflow_category_id === cate.id,
+          ),
+          members: cate?.members || [],
+        })),
+      )
+    }
+  }, [search, param])
 
   return (
     <List
