@@ -1,5 +1,6 @@
-import { Avatars } from '@/components'
+import { randomColor } from '@/libs/utils'
 import { Card, Progress } from '@/ui'
+import { Avatar } from 'antd'
 import React from 'react'
 
 type WorkflowCardProps = {
@@ -25,7 +26,18 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
         {description || 'Không có mô tả'}
       </p>
       <div className="mt-[16px] space-y-[8px]">
-        <Avatars avatars={members?.map((m) => m.full_name)} />
+        <Avatar.Group>
+          {members &&
+            members?.map((mem: any) => (
+              <Avatar
+                key={mem?.username}
+                src={mem?.avatar}
+                style={{ backgroundColor: randomColor(mem?.full_name) }}
+              >
+                {String(mem?.full_name).charAt(0).toLocaleUpperCase()}
+              </Avatar>
+            ))}
+        </Avatar.Group>
         <Progress
           size={8}
           className="w-full"

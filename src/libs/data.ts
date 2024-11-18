@@ -1,4 +1,5 @@
-import { requestWithAuthorized, requestWithFile } from './request'
+import { RequestOptions, requestWithAuthorized, requestWithFile } from './request'
+import { getSession } from './session'
 
 export const getWorkflows = async (query?: any) => {
   return requestWithAuthorized('workflows?' + new URLSearchParams(query))
@@ -6,8 +7,8 @@ export const getWorkflows = async (query?: any) => {
     .catch(() => [])
 }
 
-export const getWorkflowById = async (id: number) => {
-  return requestWithAuthorized(`workflows/${id}`)
+export const getWorkflowById = async (id: number, options?: RequestOptions) => {
+  return requestWithAuthorized(`workflows/${id}`, { ...options })
     .then((data) => data)
     .catch(() => [])
 }
@@ -18,14 +19,18 @@ export const getWorkflowMembersById = async (id: number) => {
     .catch(() => [])
 }
 
-export const getStagesByWorkflowId = async (id: number) => {
-  return requestWithAuthorized(`stages/${id}/workflow`)
+export const getStagesByWorkflowId = async (id: number, options?: RequestOptions) => {
+  return requestWithAuthorized(`stages/${id}/workflow`, {...options})
     .then((data) => data)
     .catch(() => [])
 }
 
 export const getWorkflowCategories = async () => {
-  return requestWithAuthorized('workflow-categories')
+  return await requestWithAuthorized('workflow-categories', {
+    next: {
+      tags: ['workflow-categories']
+    }
+  })
     .then((data) => data)
     .catch(() => [])
 }
@@ -54,18 +59,18 @@ export const editStage = async (id: number, data: any) =>
     data,
   }).then((data) => data)
 
-export const addWorkflowCategory = (data: any) =>
+export const addWorkflowCategory = async (data: any) =>
   requestWithAuthorized('workflow-categories', {
     method: 'POST',
     data,
   }).then((data) => data)
 
-export const deleteWorkflowCategoryById = (id: number) =>
+export const deleteWorkflowCategoryById = async (id: number) =>
   requestWithAuthorized(`workflow-categories/${id}`, {
     method: 'DELETE',
   }).then((data) => data)
 
-export const deleteStageById = (id: number) =>
+export const deleteStageById = async (id: number) =>
   requestWithAuthorized(`stages/${id}`, {
     method: 'DELETE',
   }).then((data) => data)
@@ -95,12 +100,10 @@ export const editTask = async (id: number, data: any) => {
 }
 
 export const moveStage = async (id: number, stageId: number, data?: any) => {
-  console.log({ id, stageId })
-
   return await requestWithAuthorized(`tasks/${id}?stage_id=${stageId}`, {
     method: 'PUT',
     data
-  })
+  }).then((data) => data).catch((err: any) => console.log('ERROR ->', err))
 }
 
 export const getTaskById = async (id: number) =>
@@ -113,14 +116,14 @@ export const deleteTask = async (id: number) =>
     method: 'DELETE',
   }).then((data) => data)
 
-export const addTaskFields = (data: any) =>
+export const addTaskFields = async (data: any) =>
   requestWithAuthorized('fields', {
     method: 'POST',
     data,
   }).then((data) => data)
 
-export const getCustomFieldsByWorkflowId = async (id: number) => {
-  return requestWithAuthorized(`fields/${id}/workflow`)
+export const getCustomFieldsByWorkflowId = async (id: number, options?: RequestOptions) => {
+  return requestWithAuthorized(`fields/${id}/workflow`, {...options})
     .then((data) => data)
     .catch(() => [])
 }
@@ -167,8 +170,8 @@ export const getTimeStagesByTaskId = async (id: number) =>
   .then((data) => data)
   .catch(() => [])
 
-export const getReportFieldsByWorkflowId = async (wid: number, query?: any) => 
-  requestWithAuthorized(`report-fields/${wid}/workflow?` + new URLSearchParams(query))
+export const getReportFieldsByWorkflowId = async (wid: number, query?: any, options?: RequestOptions) => 
+  requestWithAuthorized(`report-fields/${wid}/workflow?` + new URLSearchParams(query), { ...options })
   .then((data) => data)
   .catch(() => [])
 
@@ -206,7 +209,38 @@ export const getTaskReports = async (stageId: number) =>
   .then((data) => data)
   .catch(() => [])
 
-export const getMe = async () => 
-  requestWithAuthorized(`me`)
+export const getMe = async (options?: RequestOptions) => 
+  requestWithAuthorized(`me`, {...options})
   .then((data) => data)
   .catch(() => [])
+
+export const checkIn = async () => {
+  try {
+    await requestWithAuthorized('check-in', {
+      method: 'POST'
+    })
+    
+    const session = await getSession()
+    session.isCheckedIn = true
+  
+    await session.save()
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+
+export const checkOut = async () => {
+  try {
+    await requestWithAuthorized('check-out', {
+      method: 'POST'
+    })
+  
+    const session = await getSession()
+    session.isCheckedIn = false
+  
+    await session.save()
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}
+  

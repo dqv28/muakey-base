@@ -7,12 +7,14 @@ import { Button, Dropdown, Input, Modal, Popconfirm } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import { cloneDeep } from 'lodash'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useContext, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { deleteTaskAction, editTaskAction } from '../../../action'
+import { editTaskAction } from '../../../action'
 import { StageContext } from '../stage/StageList'
+import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import TaskModalForm from './TaskModalForm'
 
 export type TaskItemProps = {
@@ -22,6 +24,7 @@ export type TaskItemProps = {
   isFailed?: boolean
   members?: any
   expired?: number
+  onDelete?: () => Promise<void>
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({
@@ -30,11 +33,13 @@ const TaskItem: React.FC<TaskItemProps> = ({
   isCompleted,
   isFailed,
   members,
+  onDelete,
 }) => {
   const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
   const params = useParams()
   const { failedStageId } = useContext(StageContext)
   const router = useRouter()
+  const { setStages } = useContext(WorkflowStageContext)
 
   const {
     attributes,
@@ -53,27 +58,34 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
   const user = members?.filter((u: any) => u?.id === task.account_id)?.[0]
 
-  const handleDelete = async () => {
-    try {
-      const { error, success } = await deleteTaskAction(task?.id || 0)
-
-      if (error) {
-        toast.error(error)
-
-        return
-      }
-
-      toast.success(success)
-      router.refresh()
-    } catch (error: any) {
-      throw new Error(error)
-    }
-  }
-
   const handleAssign = async (id: number) => {
     try {
       const { error } = await editTaskAction(task?.id, {
         account_id: id,
+      })
+
+      setStages((prevStages: any[]) => {
+        const newStages = cloneDeep(prevStages)
+
+        return newStages?.map((stage: any) => {
+          if (stage?.id === task?.stage_id) {
+            return {
+              ...stage,
+              tasks: stage?.tasks?.map((t: any) => {
+                if (t?.id === task?.id) {
+                  return {
+                    ...t,
+                    account_id: id,
+                  }
+                }
+
+                return task
+              }),
+            }
+          }
+
+          return stage
+        })
       })
 
       if (error) {
@@ -256,7 +268,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                     <span className="font-[600]">{task?.name}</span>?
                   </div>
                 }
-                onConfirm={handleDelete}
+                onConfirm={onDelete}
               >
                 <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] text-[#cc1111] transition-all hover:bg-[#f8f8f8]">
                   Xóa nhiệm vụ

@@ -1,45 +1,25 @@
-import { useAsyncEffect } from '@/libs/hook'
 import { Form, FormInstance, Input, Modal, ModalProps, Select } from 'antd'
-import { useParams } from 'next/navigation'
-import React, { useRef, useState } from 'react'
-import { getReportFieldsByWorkflowIdAction } from './action'
+import React, { useRef } from 'react'
 
 type TaskReportsModalFormProps = Pick<
   ModalProps,
   'open' | 'onCancel' | 'onOk'
 > & {
   onSubmit?: (values: any) => void
-  query?: any
+  reports?: any
 }
 
 const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
   onSubmit,
   onOk,
-  query,
+  reports,
   ...rest
 }) => {
   const formRef = useRef<FormInstance>(null)
-  const [fields, setFields] = useState([])
-  const params = useParams()
-
-  useAsyncEffect(async () => {
-    if (!query) return
-
-    const { stage_id, task_id } = query
-
-    if (stage_id && task_id) {
-      const data = await getReportFieldsByWorkflowIdAction(
-        Number(params?.id),
-        query,
-      )
-
-      setFields(data)
-    }
-  }, [query])
 
   const initFormData =
-    fields?.length >= 0
-      ? fields?.map((field: any) => [[field?.id], field?.value])
+    reports?.length >= 0
+      ? reports?.map((field: any) => [[field?.id], field?.value])
       : []
 
   return (
@@ -61,8 +41,8 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
       destroyOnClose
       {...rest}
     >
-      {fields?.length >= 0 &&
-        fields?.map((field: any) => {
+      {reports?.length >= 0 &&
+        reports?.map((field: any) => {
           const options = field?.options?.map((f: string) => ({
             label: f,
             value: f,

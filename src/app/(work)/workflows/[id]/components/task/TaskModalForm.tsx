@@ -10,11 +10,13 @@ import {
   ModalProps,
   Select,
 } from 'antd'
-import { useParams, useRouter } from 'next/navigation'
-import React, { useCallback, useRef, useState } from 'react'
+import { cloneDeep } from 'lodash'
+import { useParams } from 'next/navigation'
+import React, { useCallback, useContext, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import ReactQuill from 'react-quill-new'
 import { addTaskAction, editTaskAction } from '../../../action'
+import { StageContext } from '../WorkflowPageLayout'
 
 type TaskModalFormProps = ModalProps & {
   children?: React.ReactNode
@@ -35,8 +37,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const [value, setValue] = useState(initialValues?.description || '')
   const formRef = useRef<FormInstance>(null)
   const quillRef = useRef<ReactQuill>(null)
-  const router = useRouter()
   const params = useParams()
+  const { setStages } = useContext(StageContext)
 
   const { account_id, members, ...restInitialValues } = initialValues
 
@@ -51,15 +53,68 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
     try {
       if (action === 'create') {
-        var { error, success } = await addTaskAction({
+        var { error, id } = await addTaskAction({
           ...restFormData,
           account_id: member[0]?.id || null,
           workflow_id: params?.id || null,
         })
+
+        setStages((prevStages: any[]) => {
+          const newStages = cloneDeep(prevStages)
+
+          return newStages?.map((stage: any) => {
+            if (
+              !restInitialValues?.stage_id &&
+              stage?.id === newStages[0]?.id
+            ) {
+              return {
+                ...stage,
+                tasks: [
+                  {
+                    ...restFormData,
+                    account_id: member[0]?.id || null,
+                    workflow_id: params?.id || null,
+                    stage_id: stage?.id,
+                    id,
+                  },
+                  ...stage?.tasks,
+                ],
+              }
+            }
+
+            return stage
+          })
+        })
       } else {
-        var { error, success } = await editTaskAction(initialValues?.id, {
+        var { error } = await editTaskAction(initialValues?.id, {
           ...restFormData,
           account_id: member[0]?.id || null,
+        })
+
+        setStages((prevStages: any[]) => {
+          const newStages = cloneDeep(prevStages)
+
+          return newStages?.map((stage: any) => {
+            if (stage?.id === newStages[0]?.id) {
+              return {
+                ...stage,
+                tasks: stage?.tasks?.map((task: any) => {
+                  if (task?.id === initialValues?.id) {
+                    return {
+                      ...restFormData,
+                      account_id: member[0]?.id || null,
+                      stage_id: stage?.id,
+                      id: initialValues?.id,
+                    }
+                  }
+
+                  return task
+                }),
+              }
+            }
+
+            return stage
+          })
         })
       }
 
@@ -81,10 +136,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
         return
       }
-
-      toast.success(success)
       setOpen(false)
-      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

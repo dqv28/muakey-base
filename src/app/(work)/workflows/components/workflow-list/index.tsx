@@ -4,7 +4,7 @@ import { useAsyncEffect } from '@/libs/hook'
 import { Avatar, List, ListProps, toast } from '@/ui'
 import { DownOutlined } from '@/ui/icons'
 import clsx from 'clsx'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import React, { useContext, useState } from 'react'
 import {
   deleteWorkflowCategoryByIdAction,
@@ -22,7 +22,6 @@ const WorkflowList: React.FC<WorkflowListProps> = ({ dataSource, ...rest }) => {
   const [expand, setExpand] = useState(true)
   const [workflows, setWorkflows] = useState(dataSource || [])
   const [ids, setIds] = useState(dataSource?.map((w) => w.id) || [])
-  const router = useRouter()
   const searchParams = useSearchParams()
   const param = searchParams.get('type')
   const { search } = useContext(PageContext)
@@ -31,7 +30,7 @@ const WorkflowList: React.FC<WorkflowListProps> = ({ dataSource, ...rest }) => {
     try {
       await deleteWorkflowCategoryByIdAction(id)
 
-      router.refresh()
+      setWorkflows((prev: any) => prev.filter((w: any) => w?.id !== id))
       toast.success('Xóa thành công.')
     } catch (error: any) {
       throw new Error(error)

@@ -63,7 +63,10 @@ const WorkflowExtra: React.FC<WorkflowExtraProps> = (props) => {
 
       toast.success(success)
       setOpen(false)
-      router.refresh()
+
+      if (typeof window !== undefined) {
+        window.location.reload()
+      }
     } catch (error: any) {
       throw new Error(error)
     }

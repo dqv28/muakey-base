@@ -1,4 +1,5 @@
 import { getWorkflowCategories } from '@/libs/data'
+import { getSession } from '@/libs/session'
 import { Navigation } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
 import { FolderOpenFilled, ProjectFilled } from '@ant-design/icons'
@@ -14,9 +15,20 @@ export type SideBarProps = SideProps & {
 
 const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const workflows = await getWorkflowCategories()
+  const session = await getSession()
 
   return (
-    <Layout.Side subSide={<LeftSideBar user={user} />} {...props}>
+    <Layout.Side
+      subSide={
+        <LeftSideBar
+          user={user}
+          options={{
+            isCheckedIn: session.isCheckedIn,
+          }}
+        />
+      }
+      {...props}
+    >
       <div className="flex-1 px-[12px]">
         <User user={user} />
         <Search />

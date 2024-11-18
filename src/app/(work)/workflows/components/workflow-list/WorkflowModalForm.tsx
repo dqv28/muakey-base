@@ -2,7 +2,6 @@
 
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Form, FormInstance, Input, Modal } from 'antd'
-import { useRouter } from 'next/navigation'
 import React, {
   ChangeEvent,
   useCallback,
@@ -27,7 +26,6 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
   const [value, setValue] = useState('')
   const [accounts, setAccounts] = useState([])
   const suggestInputRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
     try {
@@ -48,7 +46,10 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
 
       toast.success(success)
       setOpen(false)
-      router.refresh()
+
+      if (typeof window !== undefined) {
+        window.location.reload()
+      }
     } catch (error: any) {
       throw new Error(error)
     }

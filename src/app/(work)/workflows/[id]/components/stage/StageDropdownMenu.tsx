@@ -3,9 +3,10 @@
 import { CaretDownFilled } from '@ant-design/icons'
 import { Dropdown, DropdownProps, Popconfirm } from 'antd'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useContext } from 'react'
 import toast from 'react-hot-toast'
 import { deleteStageByIdAction } from '../../../action'
+import { StageContext } from '../WorkflowPageLayout'
 import StageModalForm from './StageModalForm'
 
 type StageDropdownMenuProps = DropdownProps & {
@@ -16,6 +17,7 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
   stage,
   ...rest
 }) => {
+  const { setStages } = useContext(StageContext)
   const router = useRouter()
 
   const handleDelete = async () => {
@@ -27,6 +29,8 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
 
         return false
       }
+
+      setStages((prev: any[]) => prev.filter((s: any) => s?.id !== stage?.id))
 
       toast.success(success)
       router.refresh()

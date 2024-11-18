@@ -58,13 +58,7 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
         </span>
       </StageHeader>
 
-      <TaskList
-        dataSource={stage?.tasks}
-        stage={{
-          id: stage?.id,
-          index: stage?.index,
-        }}
-      />
+      <TaskList stageId={stage?.id} />
     </Col>
   )
 }

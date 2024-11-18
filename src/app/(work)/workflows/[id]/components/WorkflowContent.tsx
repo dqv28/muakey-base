@@ -1,3 +1,4 @@
+import { getMe } from '@/libs/data'
 import React from 'react'
 import CustomFields from './custom-fields'
 import ReportFields from './report-fields'
@@ -8,7 +9,9 @@ type WorkflowContentProps = {
   options?: any
 }
 
-const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
+const WorkflowContent: React.FC<WorkflowContentProps> = async ({ options }) => {
+  const user = await getMe()
+
   switch (options?.type) {
     case 'custom-field':
       return (
@@ -36,6 +39,9 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
             dataSource={options?.stages}
             isEmpty={options?.filteredStages.length <= 0}
             members={options?.workflowMembers}
+            options={{
+              accountId: user?.id,
+            }}
           />
         </div>
       )

@@ -1,23 +1,41 @@
 'use client'
 
-import { logoutAction } from '@/components/action'
+import { checkedInAction, checkOutAction, logoutAction } from '@/components/action'
 import { Avatar } from '@/ui'
-import { BellFilled, LogoutOutlined, MenuOutlined } from '@ant-design/icons'
-import { Dropdown, Modal } from 'antd'
+import {
+  BellFilled,
+  CheckCircleFilled,
+  LogoutOutlined,
+  MehFilled,
+  MenuOutlined,
+} from '@ant-design/icons'
+import { Dropdown, Modal, Popconfirm } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import CheckoutButton from './CheckoutButton'
 
 export type SubSideProps = {
   user?: any
+  options?: any
 }
 
-const SubSide: React.FC<SubSideProps> = ({ user }) => {
+const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const [open, setOpen] = useState(false)
   const router = useRouter()
 
   const handleLogout = async () => {
     await logoutAction()
     setOpen(false)
+    router.refresh()
+  }
+
+  const handleCheckedIn = async () => {
+    await checkedInAction()
+    router.refresh()
+  }
+
+  const handleCheckedOut = async () => {
+    await checkOutAction()
     router.refresh()
   }
 
@@ -49,7 +67,7 @@ const SubSide: React.FC<SubSideProps> = ({ user }) => {
         placement="bottomLeft"
         arrow
       >
-        <div className="flex size-[60px] items-center justify-center">
+        <div className="flex size-[60px] items-center justify-center cursor-pointer">
           <MenuOutlined className="text-[16px]" />
         </div>
       </Dropdown>
@@ -61,6 +79,14 @@ const SubSide: React.FC<SubSideProps> = ({ user }) => {
         onClick={() => setOpen(true)}
       >
         <LogoutOutlined className="text-[16px]" />
+      </div>
+
+      <div className="flex size-[60px] cursor-pointer items-center justify-center">
+        {options?.isCheckedIn ? (
+          <CheckoutButton onCheckedOut={handleCheckedOut} />
+        ) : (
+          <MehFilled className="text-[16px]"onClick={handleCheckedIn} />
+        )}
       </div>
 
       <Modal open={open} onOk={handleLogout} onCancel={() => setOpen(false)}>

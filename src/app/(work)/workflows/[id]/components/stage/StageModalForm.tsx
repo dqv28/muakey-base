@@ -2,9 +2,10 @@
 
 import { Form, FormInstance, Input, Modal, ModalProps } from 'antd'
 import { useParams, useRouter } from 'next/navigation'
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { addStageAction, editStageAction } from '../../../action'
+import { StageContext } from '../WorkflowPageLayout'
 
 type StageModalFormProps = ModalProps & {
   children?: React.ReactNode
@@ -25,13 +26,29 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
   const formRef = useRef<FormInstance>(null)
   const params = useParams()
   const router = useRouter()
+  const { setStages } = useContext(StageContext)
 
   const handleSubmit = async (formData: any) => {
     try {
       if (action === 'edit') {
-        var { error, success } = await editStageAction(query?.stage_id, {
+        var { error, success} = await editStageAction(query?.stage_id, {
           ...formData,
           workflow_id: params?.id,
+        })
+
+        setStages((prev: any[]) => {
+          const newStages = [...prev]
+
+          return newStages.map((stage: any) => {
+            if (stage?.id === query?.stage_id) {
+              return {
+                ...formData,
+                workflow_id: params?.id,
+              }
+            }
+
+            return stage
+          })
         })
       } else {
         var { error, success } = await addStageAction(
@@ -41,6 +58,31 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
           },
           query,
         )
+
+        setStages((prev: any[]) => {
+          if (query?.right && query?.index) {
+            const currentIndex = prev?.findIndex(
+              (s: any) => s?.index === query?.index,
+            )
+
+            return [
+              ...prev.slice(0, currentIndex + 1),
+              {
+                ...formData,
+                workflow_id: params?.id,
+              },
+              ...prev.slice(currentIndex + 1),
+            ]
+          }
+
+          return [
+            {
+              ...formData,
+              workflow_id: params?.id,
+            },
+            ...prev,
+          ]
+        })
       }
 
       if (error) {

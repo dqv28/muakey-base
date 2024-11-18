@@ -1,7 +1,4 @@
 import type { NextConfig } from "next";
-import dns from 'dns'
-
-dns.setDefaultResultOrder('ipv4first')
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -9,12 +6,12 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: '26.184.11.81',
+        hostname: '14.225.204.53',
         port: '8000',
         pathname: '/images/**',
       }
     ]
-  }
+  },
 };
 
 export default nextConfig;

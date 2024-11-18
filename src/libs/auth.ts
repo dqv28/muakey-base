@@ -7,18 +7,25 @@ export const isLoggedIn = async () => {
   return session.isLoggedIn
 }
 
+export const isFirstLoggedIn = async () => {
+  const session = await getSession()
+
+  const today = new Date().getDate()
+
+  return session.firstLoginDate !== today
+}
+
 export const loginWidthCredentials = async (data: any) => {
   const { token: accessToken, error } = await request('login', {
     method: 'POST',
     data,
   }).then((data) => data)
 
-  console.log({ token: accessToken, error })
-
   const session = await getSession()
 
   session.accessToken = accessToken
   session.isLoggedIn = true
+  session.firstLoginDate = new Date().getDate()
 
   if (!error) {
     await session.save()

@@ -55,6 +55,7 @@ const Page: React.FC<any> = async (prop: {
           reportFields,
           stages,
           workflowMembers: workflow?.members,
+          workflowId,
         }}
       />
     </WorkflowPageLayout>

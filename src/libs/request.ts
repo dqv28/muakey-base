@@ -38,8 +38,6 @@ export const request = async (path: string, options?: RequestOptions) => {
 
   const response = await fetch(url, init)
 
-  console.log('RES ->', response)
-
   if (response.status < 200 || response.status >= 500) {
     throw new Error('API Response error')
   }

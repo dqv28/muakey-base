@@ -1,3 +1,5 @@
+'use client'
+
 import { Col, Row } from '@/ui'
 import Link from 'next/link'
 import React from 'react'
