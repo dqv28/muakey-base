@@ -1,5 +1,7 @@
 'use client'
 
+import { getTaskHistoriesAction } from '@/components/action'
+import { useAsyncEffect } from '@/libs/hook'
 import { Col, Row, toast } from '@/ui'
 import { PlusOutlined } from '@/ui/icons'
 import {
@@ -23,17 +25,15 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
-  useLayoutEffect,
+  useRef,
   useState,
 } from 'react'
 import { addTaskReportAction, moveStageAction } from '../../../action'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
+import { getReportFieldsByWorkflowIdAction } from './action'
 import StageColumn from './StageColumn'
 import StageModalForm from './StageModalForm'
 import TaskReportsModalForm from './TaskReportsModalForm'
-import { useAsyncEffect } from '@/libs/hook'
-import { getReportFieldsByWorkflowIdAction } from './action'
 
 export type StageListProps = {
   dataSource?: any
@@ -54,14 +54,11 @@ const StageList: React.FC<StageListProps> = ({
   const [open, setOpen] = useState(false)
   const [reports, setReports] = useState([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
+  const reportRef = useRef(null)
 
   const router = useRouter()
   const { stages, setStages } = useContext(WorkflowStageContext)
   const params = useParams()
-
-  useEffect(() => {
-    setStages(dataSource || [])
-  }, [])
 
   const failedStageId =
     stages?.length > 0
@@ -93,6 +90,11 @@ const StageList: React.FC<StageListProps> = ({
         return
       }
 
+      const taskHistory = await getTaskHistoriesAction({
+        task_id: activeData.id,
+        stage_id: overData.stage_id || overData.id,
+      })
+
       setStages((prevStages: any) => {
         const newStages = cloneDeep(prevStages)
 
@@ -114,6 +116,7 @@ const StageList: React.FC<StageListProps> = ({
             {
               ...activeData,
               stage_id: overData.stage_id || overData.id,
+              account_id: taskHistory?.worker || null,
             },
             ...overColumn.tasks,
           ]
@@ -135,7 +138,7 @@ const StageList: React.FC<StageListProps> = ({
     }
   }, [])
 
-  const handleDragStart = (e: DragStartEvent) => {
+  const handleDragStart = async (e: DragStartEvent) => {
     const { active } = e
     setActiveId(active.id)
   }
@@ -151,15 +154,15 @@ const StageList: React.FC<StageListProps> = ({
 
     if (!activeData) return
 
-    const data = await getReportFieldsByWorkflowIdAction(
-      Number(params?.id),
-      {
+    if (reportRef.current !== activeData.id) {
+      const data = await getReportFieldsByWorkflowIdAction(Number(params?.id), {
         stage_id: activeData.stage_id,
         task_id: activeData.id,
-      },
-    )
+      })
 
-    setReports(data)
+      setReports(data)
+      reportRef.current = activeData.id
+    }
   }, [dragEvent])
 
   const handleDragEnd = useCallback(async (e: DragEndEvent) => {
@@ -263,12 +266,14 @@ const StageList: React.FC<StageListProps> = ({
                 </>
               ))}
           </Row>
-          <TaskReportsModalForm
-            open={open}
-            onCancel={() => setOpen(false)}
-            onSubmit={(values) => handleSubmit(values)}
-            reports={reports}
-          />
+          {reports?.length > 0 && reportRef.current === activeId && (
+            <TaskReportsModalForm
+              open={open}
+              onCancel={() => setOpen(false)}
+              onSubmit={(values) => handleSubmit(values)}
+              reports={reports}
+            />
+          )}
         </SortableContext>
       </DndContext>
     </StageContext.Provider>

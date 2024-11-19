@@ -1,17 +1,21 @@
 'use client'
 
-import { checkedInAction, checkOutAction, logoutAction } from '@/components/action'
-import { Avatar } from '@/ui'
+import {
+  changeLoggedInDateAction,
+  checkedInAction,
+  checkOutAction,
+  logoutAction,
+} from '@/components/action'
+import { Avatar, toast } from '@/ui'
 import {
   BellFilled,
-  CheckCircleFilled,
   LogoutOutlined,
   MehFilled,
   MenuOutlined,
 } from '@ant-design/icons'
-import { Dropdown, Modal, Popconfirm } from 'antd'
+import { Drawer, Dropdown, Empty, Modal, Tooltip } from 'antd'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CheckoutButton from './CheckoutButton'
 
 export type SubSideProps = {
@@ -21,6 +25,7 @@ export type SubSideProps = {
 
 const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const [open, setOpen] = useState(false)
+  const [openNotice, setOpenNotice] = useState(false)
   const router = useRouter()
 
   const handleLogout = async () => {
@@ -30,14 +35,46 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   }
 
   const handleCheckedIn = async () => {
-    await checkedInAction()
-    router.refresh()
+    try {
+      const { success, error } = await checkedInAction()
+
+      if (error) {
+        toast.error(error)
+        return
+      }
+
+      toast.success(success)
+      router.refresh()
+    } catch (error: any) {
+      throw new Error(error)
+    }
   }
 
   const handleCheckedOut = async () => {
-    await checkOutAction()
-    router.refresh()
+    try {
+      const { success, error } = await checkOutAction()
+
+      if (error) {
+        toast.error(error)
+        return
+      }
+
+      toast.success(success)
+      router.refresh()
+    } catch (error: any) {
+      throw new Error(error)
+    }
   }
+
+  useEffect(() => {
+    if (options?.isFirstLogin) {
+      var timer = setTimeout(async () => {
+        await changeLoggedInDateAction()
+      }, 5000)
+    }
+
+    return () => clearTimeout(timer)
+  }, [options?.isFirstLogin])
 
   return (
     <div className="w-[60px]">
@@ -67,26 +104,46 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         placement="bottomLeft"
         arrow
       >
-        <div className="flex size-[60px] items-center justify-center cursor-pointer">
+        <div className="flex size-[60px] cursor-pointer items-center justify-center">
           <MenuOutlined className="text-[16px]" />
         </div>
       </Dropdown>
-      <div className="flex size-[60px] items-center justify-center">
+
+      <div
+        className="flex size-[60px] cursor-pointer items-center justify-center"
+        onClick={() => setOpenNotice(true)}
+      >
         <BellFilled className="text-[16px]" />
       </div>
+      <Drawer
+        title="Thông báo"
+        onClose={() => setOpenNotice(false)}
+        open={openNotice}
+        placement="left"
+      >
+        <Empty className="py-[100px]" description="Không có thông báo." />
+      </Drawer>
+
+      <Tooltip
+        title="Check-in tại đây"
+        open={options?.isFirstLogin}
+        placement="right"
+        color="green"
+      >
+        <div className="flex size-[60px] cursor-pointer items-center justify-center">
+          {options?.isCheckedIn ? (
+            <CheckoutButton onCheckedOut={handleCheckedOut} />
+          ) : (
+            <MehFilled className="text-[16px]" onClick={handleCheckedIn} />
+          )}
+        </div>
+      </Tooltip>
+
       <div
         className="flex size-[60px] cursor-pointer items-center justify-center"
         onClick={() => setOpen(true)}
       >
         <LogoutOutlined className="text-[16px]" />
-      </div>
-
-      <div className="flex size-[60px] cursor-pointer items-center justify-center">
-        {options?.isCheckedIn ? (
-          <CheckoutButton onCheckedOut={handleCheckedOut} />
-        ) : (
-          <MehFilled className="text-[16px]"onClick={handleCheckedIn} />
-        )}
       </div>
 
       <Modal open={open} onOk={handleLogout} onCancel={() => setOpen(false)}>

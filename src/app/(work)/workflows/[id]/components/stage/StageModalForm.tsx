@@ -31,7 +31,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
   const handleSubmit = async (formData: any) => {
     try {
       if (action === 'edit') {
-        var { error, success} = await editStageAction(query?.stage_id, {
+        var { error, success } = await editStageAction(query?.stage_id, {
           ...formData,
           workflow_id: params?.id,
         })
@@ -44,6 +44,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
               return {
                 ...formData,
                 workflow_id: params?.id,
+                id: query?.stage_id,
               }
             }
 
@@ -51,7 +52,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
           })
         })
       } else {
-        var { error, success } = await addStageAction(
+        var { error, success, id } = await addStageAction(
           {
             ...formData,
             workflow_id: params?.id,
@@ -70,6 +71,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
               {
                 ...formData,
                 workflow_id: params?.id,
+                id,
               },
               ...prev.slice(currentIndex + 1),
             ]
@@ -79,6 +81,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
             {
               ...formData,
               workflow_id: params?.id,
+              id,
             },
             ...prev,
           ]

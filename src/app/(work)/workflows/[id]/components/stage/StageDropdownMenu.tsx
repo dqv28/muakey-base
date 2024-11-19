@@ -26,7 +26,6 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
 
       if (error) {
         toast.error(error)
-
         return false
       }
 

@@ -45,15 +45,15 @@ const WorkflowDocsTable: React.FC<WorkflowDocsTableProps> = ({
     return Object.fromEntries(newReport)
   })
 
+  console.log(taskReports)
+
   return (
-    taskReports.length > 0 && (
-      <>
-        <div className="my-[16px] ml-[24px] font-[500]">
-          Giai đoạn: {String(stageName).toLocaleUpperCase()}
-        </div>
-        <Table columns={columns} dataSource={data} />
-      </>
-    )
+    <>
+      <div className="my-[16px] ml-[24px] font-[500]">
+        Giai đoạn: {String(stageName).toLocaleUpperCase()}
+      </div>
+      <Table columns={columns} dataSource={data} />
+    </>
   )
 }
 

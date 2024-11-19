@@ -160,8 +160,8 @@ export const uploadImage = async (data: any) => {
   }).then((data) => data)
 }
 
-export const getTaskHistories = async (query?: any) => 
-  requestWithAuthorized('task-histories?' + new URLSearchParams(query))
+export const getTaskHistories = async (query?: any, options?: RequestOptions) => 
+  requestWithAuthorized('task-histories?' + new URLSearchParams(query), { ...options })
   .then((data) => data)
   .catch(() => [])
 
@@ -214,33 +214,39 @@ export const getMe = async (options?: RequestOptions) =>
   .then((data) => data)
   .catch(() => [])
 
-export const checkIn = async () => {
-  try {
-    await requestWithAuthorized('check-in', {
+export const checkIn = async () => 
+  requestWithAuthorized('check-in', {
       method: 'POST'
     })
-    
-    const session = await getSession()
-    session.isCheckedIn = true
-  
-    await session.save()
-  } catch (error: any) {
-    throw new Error(error)
-  }
-}
+    .then( async (data) => {
+      const { success, error } = data
 
-export const checkOut = async () => {
-  try {
-    await requestWithAuthorized('check-out', {
-      method: 'POST'
+      const session = await getSession()
+      session.isCheckedIn = true
+
+      if (error) {
+        return { error }
+      }
+    
+      await session.save()
+      return { success }
     })
-  
+
+export const checkOut = async () => 
+  requestWithAuthorized('check-out', {
+    method: 'POST'
+  })
+  .then(async (data) => {
+    const { success, error } = data
+
     const session = await getSession()
     session.isCheckedIn = false
+
+    if (error) {
+      return { error }
+    }
   
     await session.save()
-  } catch (error: any) {
-    throw new Error(error)
-  }
-}
+    return { success }
+  })
   

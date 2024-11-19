@@ -1,3 +1,4 @@
+import { isFirstLoggedIn } from '@/libs/auth'
 import { getWorkflowCategories } from '@/libs/data'
 import { getSession } from '@/libs/session'
 import { Navigation } from '@/ui'
@@ -16,6 +17,7 @@ export type SideBarProps = SideProps & {
 const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const workflows = await getWorkflowCategories()
   const session = await getSession()
+  const isFirstLogin = await isFirstLoggedIn()
 
   return (
     <Layout.Side
@@ -24,6 +26,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
           user={user}
           options={{
             isCheckedIn: session.isCheckedIn,
+            isFirstLogin,
           }}
         />
       }

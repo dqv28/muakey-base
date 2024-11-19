@@ -9,7 +9,11 @@ const WorkflowDocs: React.FC<WorkflowDocsProps> = ({ stages }) => {
   return (
     <>
       {stages?.map((stage: any) => (
-          <WorkflowDocsTable key={stage?.id} stageId={stage?.id} stageName={stage?.name} />
+        <WorkflowDocsTable
+          key={stage?.id}
+          stageId={stage?.id}
+          stageName={stage?.name}
+        />
       ))}
     </>
   )

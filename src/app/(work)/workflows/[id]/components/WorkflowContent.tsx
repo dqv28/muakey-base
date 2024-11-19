@@ -34,16 +34,14 @@ const WorkflowContent: React.FC<WorkflowContentProps> = async ({ options }) => {
 
     default:
       return (
-        <div className="flex-1 overflow-auto">
-          <StageList
-            dataSource={options?.stages}
-            isEmpty={options?.filteredStages.length <= 0}
-            members={options?.workflowMembers}
-            options={{
-              accountId: user?.id,
-            }}
-          />
-        </div>
+        <StageList
+          dataSource={options?.stages}
+          isEmpty={options?.filteredStages.length <= 0}
+          members={options?.workflowMembers}
+          options={{
+            accountId: user?.id,
+          }}
+        />
       )
   }
 }

@@ -46,6 +46,9 @@ const Page: React.FC<any> = async (prop: {
     <WorkflowPageLayout
       workflow={workflow}
       type={searchParams?.type || 'table'}
+      options={{
+        stages,
+      }}
     >
       <WorkflowContent
         options={{

@@ -3,4 +3,8 @@
 import { getReportFieldsByWorkflowId } from "@/libs/data"
 
 export const getReportFieldsByWorkflowIdAction = async (workflowId: number, query?: any) => 
-  getReportFieldsByWorkflowId(workflowId, query)
+  getReportFieldsByWorkflowId(workflowId, query, {
+    next: {
+      revalidate: 60
+    }
+  })

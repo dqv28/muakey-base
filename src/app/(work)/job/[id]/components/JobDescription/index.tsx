@@ -77,7 +77,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
   const modules: ReactQuill.ReactQuillProps['modules'] = {
     toolbar: {
       container: [
-        [{ header: '1' }, { header: '2' }, { font: [] }],
+        [{ header: '1' }, { header: '2' }],
         [{ size: [] }],
         ['bold', 'italic', 'underline', 'strike', 'blockquote'],
         [{ list: 'ordered' }, { indent: '-1' }, { indent: '+1' }],
@@ -96,7 +96,6 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
 
   const formats: ReactQuill.ReactQuillProps['formats'] = [
     'header',
-    'font',
     'size',
     'bold',
     'italic',
@@ -130,8 +129,9 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
           }}
           onFinish={handleSubmit}
         >
-          <Form.Item name="description">
+          <Form.Item rootClassName="h-[220px]" name="description">
             <ReactQuill
+              className="h-[170px]"
               ref={quillRef}
               theme="snow"
               modules={modules}

@@ -183,7 +183,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const modules: ReactQuill.ReactQuillProps['modules'] = {
     toolbar: {
       container: [
-        [{ header: '1' }, { header: '2' }, { font: [] }],
+        [{ header: '1' }, { header: '2' }],
         [{ size: [] }],
         ['bold', 'italic', 'underline', 'strike', 'blockquote'],
         [{ list: 'ordered' }, { indent: '-1' }, { indent: '+1' }],
@@ -202,7 +202,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
   const formats: ReactQuill.ReactQuillProps['formats'] = [
     'header',
-    'font',
     'size',
     'bold',
     'italic',
@@ -263,8 +262,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             placeholder="Tên nhiệm vụ"
           />
         </Form.Item>
-        <Form.Item name="description" label="Mô tả">
+        <Form.Item rootClassName="h-[240px]" name="description" label="Mô tả">
           <ReactQuill
+            className="h-[170px]"
             ref={quillRef}
             theme="snow"
             modules={modules}
