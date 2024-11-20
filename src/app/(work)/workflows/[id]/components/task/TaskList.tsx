@@ -60,7 +60,7 @@ const TaskList: React.FC<TaskListProps> = ({ stageId }) => {
 
   return (
     <SortableContext items={sortItems} strategy={verticalListSortingStrategy}>
-      <div className="h-full">
+      <div className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]">
         {currentStage?.tasks?.length > 0 &&
           currentStage?.tasks.map((task: any) => (
             <>

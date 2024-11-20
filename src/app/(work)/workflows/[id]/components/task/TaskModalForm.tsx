@@ -136,6 +136,10 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
         return
       }
+
+      toast.success(
+        action === 'create' ? 'Thêm thành công.' : 'Sửa thành công.',
+      )
       setOpen(false)
     } catch (error: any) {
       throw new Error(error)
@@ -262,9 +266,12 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             placeholder="Tên nhiệm vụ"
           />
         </Form.Item>
-        <Form.Item rootClassName="h-[240px]" name="description" label="Mô tả">
+        <Form.Item
+          rootClassName="min-h-[240px]"
+          name="description"
+          label="Mô tả"
+        >
           <ReactQuill
-            className="h-[170px]"
             ref={quillRef}
             theme="snow"
             modules={modules}

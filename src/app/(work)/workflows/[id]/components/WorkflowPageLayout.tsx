@@ -2,7 +2,7 @@
 
 import { randomColor } from '@/libs/utils'
 import { PlusOutlined } from '@ant-design/icons'
-import { Avatar, Button } from 'antd'
+import { Avatar, Button, Tooltip } from 'antd'
 import clsx from 'clsx'
 import React, { createContext, useState } from 'react'
 import PageHeader from '../../components/PageHeader'
@@ -35,16 +35,33 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
           title={
             <div className="flex items-center gap-[8px] text-[24px] font-[600] leading-[28px]">
               <span>{workflow?.name}</span>
-              <Avatar.Group>
+              <Avatar.Group
+                max={{
+                  count: 3,
+                  style: {
+                    backgroundColor: '#fde3cf',
+                    color: '#f56a00',
+                  },
+                }}
+              >
                 {workflow?.members &&
                   workflow?.members?.map((mem: any) => (
-                    <Avatar
-                      key={mem?.username}
-                      src={mem?.avatar}
-                      style={{ backgroundColor: randomColor(mem?.full_name) }}
+                    <Tooltip
+                      className="cursor-pointer"
+                      key={mem?.id}
+                      title={mem?.full_name}
                     >
-                      {String(mem?.full_name).charAt(0).toLocaleUpperCase()}
-                    </Avatar>
+                      <Avatar
+                        key={mem?.username}
+                        src={mem?.avatar}
+                        style={{
+                          backgroundColor: randomColor(mem?.full_name),
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {String(mem?.full_name).charAt(0).toLocaleUpperCase()}
+                      </Avatar>
+                    </Tooltip>
                   ))}
               </Avatar.Group>
             </div>

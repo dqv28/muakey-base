@@ -157,7 +157,7 @@ export const uploadImage = async (data: any) => {
   return await requestWithFile('upload-image', {
     method: 'POST',
     body: data
-  }).then((data) => data)
+  })
 }
 
 export const getTaskHistories = async (query?: any, options?: RequestOptions) => 

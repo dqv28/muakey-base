@@ -52,10 +52,7 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({ stages, total }) => {
                     <span className="text-[12px]">
                       Thực tế:{' '}
                       <span className="font-[500] text-[#000]">
-                        {Number((stage?.hours + stage?.minutes) / 60).toFixed(
-                          2,
-                        )}
-                        h
+                        {Number(stage?.hours + stage?.minutes / 60).toFixed(2)}h
                       </span>
                     </span>
                   </div>

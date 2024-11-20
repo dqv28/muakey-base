@@ -64,6 +64,7 @@ const ReportFieldsModalForm: React.FC<ReportFieldsModalFormProps> = ({
         width={520}
         footer={null}
         onCancel={() => setOpen(false)}
+        destroyOnClose
       >
         <Form
           onFinish={handleSubmit}
@@ -81,10 +82,10 @@ const ReportFieldsModalForm: React.FC<ReportFieldsModalFormProps> = ({
               },
             ]}
             layout="vertical"
+            initialValue="number"
           >
             <Select
               className="w-full"
-              defaultValue="number"
               options={[
                 { value: 'number', label: 'Số nguyên' },
                 { value: 'paragraph', label: 'Văn bản' },
@@ -129,10 +130,14 @@ const ReportFieldsModalForm: React.FC<ReportFieldsModalFormProps> = ({
               <Input placeholder="Một số ký tự đặc biệt không hỗ trợ, ví dụ: < > ;" />
             </Form.Item>
           )}
-          <Form.Item label="Trường bắt buộc" name="require" layout="vertical">
+          <Form.Item
+            label="Trường bắt buộc"
+            name="require"
+            layout="vertical"
+            initialValue={false}
+          >
             <Select
               className="w-full"
-              defaultValue={false}
               options={[
                 { value: false, label: 'Không bắt buộc' },
                 { value: true, label: 'Bắt buộc trả lời' },
@@ -149,10 +154,10 @@ const ReportFieldsModalForm: React.FC<ReportFieldsModalFormProps> = ({
               },
             ]}
             layout="vertical"
+            initialValue={initialValues?.stage_id ?? stages?.[0]?.id}
           >
             <Select
               className="w-full"
-              defaultValue={initialValues?.stage_id ?? stages?.[0]?.id}
               options={stages?.map((stage: any) => ({
                 value: stage?.id,
                 label: stage?.name,

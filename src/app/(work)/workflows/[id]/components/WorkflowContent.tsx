@@ -35,7 +35,6 @@ const WorkflowContent: React.FC<WorkflowContentProps> = async ({ options }) => {
     default:
       return (
         <StageList
-          dataSource={options?.stages}
           isEmpty={options?.filteredStages.length <= 0}
           members={options?.workflowMembers}
           options={{

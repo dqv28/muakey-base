@@ -20,7 +20,7 @@ import {
 } from '@dnd-kit/sortable'
 import clsx from 'clsx'
 import { cloneDeep } from 'lodash'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import React, {
   createContext,
   useCallback,
@@ -36,7 +36,6 @@ import StageModalForm from './StageModalForm'
 import TaskReportsModalForm from './TaskReportsModalForm'
 
 export type StageListProps = {
-  dataSource?: any
   members?: any
   isEmpty?: boolean
   options?: any
@@ -44,19 +43,14 @@ export type StageListProps = {
 
 export const StageContext = createContext<any>({})
 
-const StageList: React.FC<StageListProps> = ({
-  dataSource,
-  isEmpty,
-  members,
-  options,
-}) => {
+const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [open, setOpen] = useState(false)
-  const [reports, setReports] = useState([])
+  const [reports, setReports] = useState<any[]>([])
+  const [history, setHistory] = useState<any>()
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
-  const reportRef = useRef(null)
+  const activeRef = useRef<any>(null)
 
-  const router = useRouter()
   const { stages, setStages } = useContext(WorkflowStageContext)
   const params = useParams()
 
@@ -69,80 +63,6 @@ const StageList: React.FC<StageListProps> = ({
 
   const sensors = useSensors(mouseSensor, touchSensor)
 
-  const handleDrag = useCallback(async (event: DragEndEvent) => {
-    const { active, over } = event
-
-    if (!over) return
-
-    if (active.id !== over.id) {
-      const {
-        data: { current: overData },
-      } = over
-      const {
-        id: activeTaskId,
-        data: { current: activeData },
-      } = active
-
-      if (!overData || !activeData) return
-
-      if (!activeData.account_id && [0, 1].includes(overData?.index)) {
-        toast.error('Nhiệm vụ chưa được giao.')
-        return
-      }
-
-      const taskHistory = await getTaskHistoriesAction({
-        task_id: activeData.id,
-        stage_id: overData.stage_id || overData.id,
-      })
-
-      setStages((prevStages: any) => {
-        const newStages = cloneDeep(prevStages)
-
-        const activeColumn = newStages.find(
-          (s: any) => s.id === activeData.stage_id,
-        )
-        const overColumn = newStages.find(
-          (s: any) => s.id === (overData.stage_id || overData.id),
-        )
-
-        if (activeColumn) {
-          activeColumn.tasks = activeColumn.tasks.filter(
-            (t: any) => t.id !== activeTaskId,
-          )
-        }
-
-        if (overColumn) {
-          overColumn.tasks = [
-            {
-              ...activeData,
-              stage_id: overData.stage_id || overData.id,
-              account_id: taskHistory?.worker || null,
-            },
-            ...overColumn.tasks,
-          ]
-        }
-
-        return newStages
-      })
-
-      try {
-        await moveStageAction(
-          activeTaskId as number,
-          overData.stage_id || overData.id,
-        )
-
-        router.refresh()
-      } catch (error: any) {
-        throw new Error(error)
-      }
-    }
-  }, [])
-
-  const handleDragStart = async (e: DragStartEvent) => {
-    const { active } = e
-    setActiveId(active.id)
-  }
-
   useAsyncEffect(async () => {
     if (!dragEvent) return
 
@@ -154,18 +74,91 @@ const StageList: React.FC<StageListProps> = ({
 
     if (!activeData) return
 
-    if (reportRef.current !== activeData.id) {
-      const data = await getReportFieldsByWorkflowIdAction(Number(params?.id), {
-        stage_id: activeData.stage_id,
-        task_id: activeData.id,
-      })
+    const data = await getReportFieldsByWorkflowIdAction(Number(params?.id), {
+      stage_id: activeData.stage_id,
+      task_id: activeData.id,
+    })
 
-      setReports(data)
-      reportRef.current = activeData.id
-    }
+    setReports(data)
+    activeRef.current = activeId
   }, [dragEvent])
 
-  const handleDragEnd = useCallback(async (e: DragEndEvent) => {
+  const handleDrag = useCallback(
+    async (event: DragEndEvent) => {
+      const { active, over } = event
+
+      if (!over) return
+
+      if (active.id !== over.id) {
+        const {
+          data: { current: overData },
+        } = over
+        const {
+          id: activeTaskId,
+          data: { current: activeData },
+        } = active
+
+        if (!overData || !activeData) return
+
+        if (!activeData.account_id && [0, 1].includes(overData?.index)) {
+          toast.error('Nhiệm vụ chưa được giao.')
+          return
+        }
+
+        const taskHistory = await getTaskHistoriesAction({
+          task_id: activeData.id,
+          stage_id: overData.stage_id || overData.id,
+        })
+
+        setStages((prevStages: any) => {
+          const newStages = cloneDeep(prevStages)
+
+          const activeColumn = newStages.find(
+            (s: any) => s.id === activeData.stage_id,
+          )
+          const overColumn = newStages.find(
+            (s: any) => s.id === (overData.stage_id || overData.id),
+          )
+
+          if (activeColumn) {
+            activeColumn.tasks = activeColumn.tasks.filter(
+              (t: any) => t.id !== activeTaskId,
+            )
+          }
+
+          if (overColumn) {
+            overColumn.tasks = [
+              {
+                ...activeData,
+                stage_id: overData.stage_id || overData.id,
+                account_id: taskHistory?.worker || null,
+              },
+              ...overColumn.tasks,
+            ]
+          }
+
+          return newStages
+        })
+
+        try {
+          await moveStageAction(
+            activeTaskId as number,
+            overData.stage_id || overData.id,
+          )
+        } catch (error: any) {
+          throw new Error(error)
+        }
+      }
+    },
+    [setStages],
+  )
+
+  const handleDragStart = async (e: DragStartEvent) => {
+    const { active } = e
+    setActiveId(active.id)
+  }
+
+  const handleDragEnd = async (e: DragEndEvent) => {
     setDragEvent(e)
 
     const { active, over } = e
@@ -182,20 +175,25 @@ const StageList: React.FC<StageListProps> = ({
 
     if (!overData || !activeData) return
 
-    const activeIndex = dataSource?.find(
+    const activeIndex = stages?.find(
       (stage: any) => stage.id === activeData.stage_id,
     )?.index
-    const overIndex = dataSource?.find(
+    const overIndex = stages?.find(
       (stage: any) => stage.id === (overData.stage_id || overData.id),
     )?.index
 
-    if (activeData.account_id && activeIndex > overIndex) {
+    const data = await getReportFieldsByWorkflowIdAction(Number(params?.id), {
+      stage_id: activeData.stage_id,
+      task_id: activeData.id,
+    })
+
+    if (data?.length > 0 && activeData.account_id && activeIndex > overIndex) {
       setOpen(true)
       return
     }
 
     await handleDrag(e)
-  }, [])
+  }
 
   const handleSubmit = async (values: any) => {
     if (!dragEvent) return
@@ -228,7 +226,7 @@ const StageList: React.FC<StageListProps> = ({
   }
 
   const sortItems =
-    dataSource?.length > 0 ? dataSource?.map((item: any) => item.id) : []
+    stages?.length > 0 ? stages?.map((item: any) => item.id) : []
 
   return (
     <StageContext.Provider
@@ -238,7 +236,6 @@ const StageList: React.FC<StageListProps> = ({
         sensors={sensors}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        onDragOver={(e) => e.activatorEvent.preventDefault()}
       >
         <SortableContext
           items={sortItems}
@@ -266,7 +263,7 @@ const StageList: React.FC<StageListProps> = ({
                 </>
               ))}
           </Row>
-          {reports?.length > 0 && reportRef.current === activeId && (
+          {reports?.length > 0 && activeRef.current === activeId && (
             <TaskReportsModalForm
               open={open}
               onCancel={() => setOpen(false)}

@@ -1,6 +1,6 @@
 import { randomColor } from '@/libs/utils'
 import { Card, Progress } from '@/ui'
-import { Avatar } from 'antd'
+import { Avatar, Tooltip } from 'antd'
 import React from 'react'
 
 type WorkflowCardProps = {
@@ -26,16 +26,29 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
         {description || 'Không có mô tả'}
       </p>
       <div className="mt-[16px] space-y-[8px]">
-        <Avatar.Group>
+        <Avatar.Group
+          max={{
+            count: 3,
+            style: {
+              backgroundColor: '#fde3cf',
+              color: '#f56a00',
+            },
+          }}
+        >
           {members &&
             members?.map((mem: any) => (
-              <Avatar
-                key={mem?.username}
-                src={mem?.avatar}
-                style={{ backgroundColor: randomColor(mem?.full_name) }}
-              >
-                {String(mem?.full_name).charAt(0).toLocaleUpperCase()}
-              </Avatar>
+              <Tooltip key={mem?.id} title={mem?.full_name}>
+                <Avatar
+                  key={mem?.username}
+                  src={mem?.avatar}
+                  style={{
+                    backgroundColor: randomColor(mem?.full_name),
+                    cursor: 'pointer',
+                  }}
+                >
+                  {String(mem?.full_name).charAt(0).toLocaleUpperCase()}
+                </Avatar>
+              </Tooltip>
             ))}
         </Avatar.Group>
         <Progress

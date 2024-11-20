@@ -76,6 +76,8 @@ const page: React.FC<any> = async (props: {
 
   let INDEX: number = 0
 
+  console.log(timeStages)
+
   return (
     <Row>
       <Col className="max-h-[100vh]" span={17}>
@@ -181,13 +183,14 @@ const page: React.FC<any> = async (props: {
                     : generateStatus(stage, INDEX),
               }
             })}
-            total={timeStages.reduce(
-              (total: number, current: any) =>
-                Number(
-                  (total += current?.hours + current?.minutes / 60),
-                ).toFixed(2),
-              0,
-            )}
+            total={timeStages.reduce((total: number, current: any) => {
+              console.log('TOTAL -> ', +total)
+              console.log(current?.hours + current?.minutes / 60)
+
+              return Number(
+                (total += current?.hours + current?.minutes / 60),
+              ).toFixed(2)
+            }, 0)}
           />
           {taskHistories?.length > 0 && (
             <JobHistory dataSource={taskHistories} />

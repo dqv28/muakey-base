@@ -1,6 +1,7 @@
 'use client'
 
 import { Button, Form } from 'antd'
+import clsx from 'clsx'
 import React, { useCallback, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import ReactQuill from 'react-quill-new'
@@ -21,7 +22,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
 
   const handleSubmit = async (formData: any) => {
     try {
-      const { success, error } = await editTaskAction(params?.taskId, {
+      const { success, error } = await editTaskAction(params?.task?.code, {
         ...params?.task,
         ...formData,
       })
@@ -129,9 +130,8 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
           }}
           onFinish={handleSubmit}
         >
-          <Form.Item rootClassName="h-[220px]" name="description">
+          <Form.Item rootClassName="min-h-[220px]" name="description">
             <ReactQuill
-              className="h-[170px]"
               ref={quillRef}
               theme="snow"
               modules={modules}
@@ -155,7 +155,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
         </Form>
       ) : (
         <div
-          className="mt-[8px] text-[#999]"
+          className={clsx('mt-[8px]', value ? 'text-[#333]' : 'text-[#999]')}
           dangerouslySetInnerHTML={{ __html: value || 'Không có mô tả' }}
         />
       )}

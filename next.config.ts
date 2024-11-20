@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: '14.225.204.53',
         port: '8000',
-        pathname: '/images/**',
+        pathname: '/storage/images/**',
       }
     ]
   },

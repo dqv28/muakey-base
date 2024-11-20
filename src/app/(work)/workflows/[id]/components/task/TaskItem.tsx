@@ -79,7 +79,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                   }
                 }
 
-                return task
+                return t
               }),
             }
           }
@@ -127,7 +127,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           key={task?.id}
           href={`/job/${task?.id}?wid=${params?.id}`}
         >
-          <div className="line-clamp-2 flex items-center justify-between text-[14px] font-[600] leading-[18px]">
+          <div className="line-clamp-2 flex items-center justify-between pr-[24px] text-[14px] font-[600] leading-[18px]">
             {task?.name}
           </div>
           <div
