@@ -31,9 +31,6 @@ export { default as Space } from './space'
 export type * from './list'
 export { default as List } from './list'
 
-export type * from './modal'
-export { default as Modal } from './modal'
-
 export type * from './form'
 export { default as Form } from './form'
 
@@ -51,6 +48,3 @@ export { default as Divider } from './divider'
 
 export type * from './progress'
 export { default as Progress } from './progress'
-
-export type * from './select'
-export { default as Select } from './select'

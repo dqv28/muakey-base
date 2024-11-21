@@ -16,7 +16,11 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
   options,
 }) => {
   const { stages } = options as any
-  const stageIds = Array.from(new Set(dataSource?.map((d: any) => d.stage_id)))
+  const stageIds = Array.from(
+    new Set(
+      dataSource?.length > 0 ? dataSource?.map((d: any) => d.stage_id) : [],
+    ),
+  )
 
   return (
     <div>

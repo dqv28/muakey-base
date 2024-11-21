@@ -1,4 +1,4 @@
-import { Avatar } from '@/ui'
+import { Avatar } from 'antd'
 import React from 'react'
 
 const User: React.FC<{
@@ -6,8 +6,8 @@ const User: React.FC<{
 }> = ({ user }) => {
   return (
     <div className="flex w-full items-center gap-[12px] py-[16px]">
-      <Avatar size={32} shape="circle">
-        {user?.full_name}
+      <Avatar className="!text-[16px]" size={32} shape="circle">
+        {String(user?.full_name).charAt(0).toLocaleUpperCase()}
       </Avatar>{' '}
       <div>
         <div className="text-[15px] font-[400] leading-[20px]">

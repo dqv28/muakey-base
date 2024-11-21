@@ -1,9 +1,4 @@
-import {
-  getCustomFieldsByWorkflowId,
-  getReportFieldsByWorkflowId,
-  getStagesByWorkflowId,
-  getWorkflowById,
-} from '@/libs/data'
+import { getStagesByWorkflowId, getWorkflowById } from '@/libs/data'
 import { Metadata } from 'next'
 import React from 'react'
 import WorkflowContent from './components/WorkflowContent'
@@ -30,11 +25,9 @@ const Page: React.FC<any> = async (prop: {
   const searchParams = await prop.searchParams
   const workflowId = params?.id
 
-  const [workflow, stages, customFields, reportFields] = await Promise.all([
+  const [workflow, stages] = await Promise.all([
     getWorkflowById(workflowId),
     getStagesByWorkflowId(workflowId),
-    getCustomFieldsByWorkflowId(workflowId),
-    getReportFieldsByWorkflowId(workflowId),
   ])
 
   const filteredStages =
@@ -54,8 +47,6 @@ const Page: React.FC<any> = async (prop: {
         options={{
           type: searchParams?.type,
           filteredStages,
-          customFields,
-          reportFields,
           stages,
           workflowMembers: workflow?.members,
           workflowId,

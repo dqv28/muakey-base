@@ -1,8 +1,9 @@
 'use client'
 
 import { useAsyncEffect } from '@/libs/hook'
-import { Avatar, List, ListProps, toast } from '@/ui'
+import { List, ListProps, toast } from '@/ui'
 import { DownOutlined } from '@/ui/icons'
+import { Avatar } from 'antd'
 import clsx from 'clsx'
 import { useSearchParams } from 'next/navigation'
 import React, { useContext, useState } from 'react'
@@ -38,24 +39,24 @@ const WorkflowList: React.FC<WorkflowListProps> = ({ dataSource, ...rest }) => {
   }
 
   useAsyncEffect(async () => {
-    if (search || param) {
-      const workflowCategories = await getWorkflowCategoriesAction()
-      const workflows = await getWorkflowsAction({
-        type: param === 'all' ? '' : param || 'open',
-        search: search || '',
-      })
+    if (!search && !param) return
 
-      setWorkflows(
-        workflowCategories.map((cate: any) => ({
-          id: cate?.id,
-          label: cate?.name,
-          workflows: workflows.filter(
-            (w: any) => w.workflow_category_id === cate.id,
-          ),
-          members: cate?.members || [],
-        })),
-      )
-    }
+    const workflowCategories = await getWorkflowCategoriesAction()
+    const workflows = await getWorkflowsAction({
+      type: param === 'all' ? '' : param || 'open',
+      search: search || '',
+    })
+
+    setWorkflows(
+      workflowCategories.map((cate: any) => ({
+        id: cate?.id,
+        label: cate?.name,
+        workflows: workflows.filter(
+          (w: any) => w.workflow_category_id === cate.id,
+        ),
+        members: cate?.members || [],
+      })),
+    )
   }, [search, param])
 
   return (
@@ -85,8 +86,8 @@ const WorkflowList: React.FC<WorkflowListProps> = ({ dataSource, ...rest }) => {
                     !ids.includes(cate.id) && '-rotate-90',
                   )}
                 />
-                <Avatar size={36} shape="circle">
-                  {cate.label}
+                <Avatar className="!text-[16px]" size={36} shape="circle">
+                  {String(cate.label).charAt(0).toLocaleUpperCase()}
                 </Avatar>
                 <span className="text-[18px] font-[400] leading-[42px] text-[#000]">
                   {cate.label} ({cate.workflows.length})

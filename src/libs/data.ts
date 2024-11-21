@@ -26,11 +26,7 @@ export const getStagesByWorkflowId = async (id: number, options?: RequestOptions
 }
 
 export const getWorkflowCategories = async () => {
-  return await requestWithAuthorized('workflow-categories', {
-    next: {
-      tags: ['workflow-categories']
-    }
-  })
+  return await requestWithAuthorized('workflow-categories')
     .then((data) => data)
     .catch(() => [])
 }

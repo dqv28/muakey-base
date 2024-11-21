@@ -76,8 +76,6 @@ const page: React.FC<any> = async (props: {
 
   let INDEX: number = 0
 
-  console.log(timeStages)
-
   return (
     <Row>
       <Col className="max-h-[100vh]" span={17}>

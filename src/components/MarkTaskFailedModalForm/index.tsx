@@ -1,5 +1,4 @@
 import { Form, FormInstance, Input, Modal } from 'antd'
-import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { moveStageAction } from './action'
@@ -16,7 +15,6 @@ const MarkTaskFailedModalForm: React.FC<MarkTaskFailedModalFormProps> = ({
   const [markOpen, setMarkOpen] = useState(false)
   const formRef = useRef<FormInstance>(null)
   const { failedStageId, task } = options
-  const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
     try {
@@ -29,7 +27,6 @@ const MarkTaskFailedModalForm: React.FC<MarkTaskFailedModalFormProps> = ({
       }
 
       setMarkOpen(false)
-      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

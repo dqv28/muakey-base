@@ -1,15 +1,7 @@
 'use client'
 
 import { uploadImageAction } from '@/app/(work)/job/actions'
-import {
-  Form,
-  FormInstance,
-  Input,
-  InputNumber,
-  Modal,
-  ModalProps,
-  Select,
-} from 'antd'
+import { Form, FormInstance, Input, InputNumber, Modal, ModalProps } from 'antd'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
 import React, { useCallback, useContext, useRef, useState } from 'react'
@@ -34,6 +26,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   ...rest
 }) => {
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [value, setValue] = useState(initialValues?.description || '')
   const formRef = useRef<FormInstance>(null)
   const quillRef = useRef<ReactQuill>(null)
@@ -43,6 +36,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const { account_id, members, ...restInitialValues } = initialValues
 
   const handleSubmit = async (formData: any) => {
+    setLoading(true)
+
     const { member: memberVal, ...restFormData } = formData
 
     const member: any = members.filter(
@@ -86,10 +81,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           })
         })
       } else {
-        var { error } = await editTaskAction(initialValues?.id, {
-          ...restFormData,
-          account_id: member[0]?.id || null,
-        })
+        var { error } = await editTaskAction(initialValues?.id, restFormData)
 
         setStages((prevStages: any[]) => {
           const newStages = cloneDeep(prevStages)
@@ -141,7 +133,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         action === 'create' ? 'Thêm thành công.' : 'Sửa thành công.',
       )
       setOpen(false)
+      setLoading(false)
     } catch (error: any) {
+      setLoading(false)
       throw new Error(error)
     }
   }
@@ -232,6 +226,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         okText={action === 'create' ? 'Tạo nhiệm vụ mới' : 'Cập nhật'}
         okButtonProps={{
           htmlType: 'submit',
+          loading,
         }}
         destroyOnClose
         modalRender={(dom) => (
@@ -281,7 +276,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             placeholder="Mô tả nhiệm vụ"
           />
         </Form.Item>
-        <Form.Item name="member" label="Giao cho">
+        {/* <Form.Item name="member" label="Giao cho">
           <Select
             options={members?.map((m: any) => {
               const mem = `${`${m.full_name} ·`} ${m.username} ${!!m.position ? `· ${m.position}` : ''}`
@@ -293,7 +288,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             })}
             placeholder="-- Lựa chọn một người dưới đây --"
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item name="expired" label="Thời hạn">
           <InputNumber
             className="w-full border-b border-[#eee]"

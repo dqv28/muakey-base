@@ -15,9 +15,11 @@ export type SideBarProps = SideProps & {
 }
 
 const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
-  const workflows = await getWorkflowCategories()
-  const session = await getSession()
-  const isFirstLogin = await isFirstLoggedIn()
+  const [workflows, session, isFirstLogin] = await Promise.all([
+    getWorkflowCategories(),
+    getSession(),
+    isFirstLoggedIn(),
+  ])
 
   return (
     <Layout.Side

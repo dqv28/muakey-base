@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
 import { isLoggedIn } from "./libs/auth"
+import { getSession } from "./libs/session";
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isAuthenticated = await isLoggedIn()
+
+  const session = await getSession()
+  const today = new Date().getDate()
+  
+  if (today !== session.firstLoginDate) {
+    session.isCheckedIn = false
+    await session.save()
+  }
 
   if (!isAuthenticated && path !== '/login' && path !== '/login/') {
     return NextResponse.redirect(new URL('/login', request.url))

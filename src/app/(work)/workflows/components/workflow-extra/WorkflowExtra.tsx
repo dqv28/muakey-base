@@ -1,8 +1,9 @@
 'use client'
 
 import { toast } from '@/ui'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined } from '@/ui/icons'
 import { Button, Form, FormInstance, Input, Modal } from 'antd'
+import dynamic from 'next/dynamic'
 import React, {
   ChangeEvent,
   useCallback,
@@ -10,50 +11,21 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { addWorkflowAction, getAccountAction } from '../../action'
-import SuggestInput from '../SuggestInput'
+import { addWorkflowCategoryAction, getAccountAction } from '../../action'
 
-type WorkflowModalFormProps = {
-  initialValues?: any
-}
+const SuggestInput = dynamic(() => import('../SuggestInput'), {
+  ssr: false,
+})
 
-const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
-  initialValues,
-}) => {
+const WorkflowExtra: React.FC = () => {
   const [open, setOpen] = useState(false)
-  const formRef = useRef<FormInstance>(null)
+  const [loading, setLoading] = useState(false)
   const [tagOpen, setTagOpen] = useState(false)
   const [value, setValue] = useState('')
   const [accounts, setAccounts] = useState([])
+
+  const formRef = useRef<FormInstance>(null)
   const suggestInputRef = useRef<HTMLDivElement>(null)
-
-  const handleSubmit = async (formData: any) => {
-    try {
-      const { error, success } = await addWorkflowAction(formData)
-
-      if (error) {
-        const nameList: string[] = Object.keys(error)
-
-        formRef.current?.setFields(
-          nameList.map((name) => ({
-            name,
-            errors: [error?.[name]],
-          })),
-        )
-
-        return false
-      }
-
-      toast.success(success)
-      setOpen(false)
-
-      if (typeof window !== undefined) {
-        window.location.reload()
-      }
-    } catch (error: any) {
-      throw new Error(error)
-    }
-  }
 
   const handleChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
@@ -70,80 +42,110 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
     }
   }, [])
 
-  useEffect(() => {
-    if (!open) {
-      setValue('')
+  const handleSubmit = async (formData: any) => {
+    setLoading(true)
+
+    try {
+      const { error, success } = await addWorkflowCategoryAction({
+        ...formData,
+        members: value,
+      })
+
+      if (error) {
+        const nameList = Object.keys(error)
+
+        formRef.current?.setFields(
+          nameList.map((name: string) => ({
+            name,
+            errors: [error?.[name]],
+          })),
+        )
+
+        return
+      }
+
+      toast.success(success)
+      setOpen(false)
+      setLoading(false)
+
+      if (typeof window !== undefined) {
+        window.location.reload()
+      }
+    } catch (error: any) {
+      setLoading(false)
+      throw new Error(error)
     }
-  }, [open])
+  }
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (
+        suggestInputRef.current &&
+        !suggestInputRef.current.contains(e.target as Node)
+      ) {
+        setTagOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClick)
+
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
 
   return (
     <>
       <Button
-        type="primary"
+        className="!p-[10px] !text-[12px] text-[#fff]"
         icon={<PlusOutlined className="text-[16px]" />}
-        onClick={() => setOpen(true)}
+        type="primary"
+        onClick={(e) => setOpen(true)}
       >
-        Tạo mới workflow
+        Tạo mới danh mục
       </Button>
       <Modal
-        title="Tạo luồng công việc mới"
+        title="TẠO DANH MỤC MỚI"
         open={open}
         onCancel={() => setOpen(false)}
-        onOk={() => formRef.current?.submit()}
         width={760}
-        okText="Tạo luồng công việc mới"
+        okText="Tạo danh mục mới"
         cancelText="Bỏ qua"
         okButtonProps={{
           htmlType: 'submit',
+          loading,
         }}
+        destroyOnClose
         modalRender={(dom) => (
-          <Form
-            initialValues={initialValues}
-            ref={formRef}
-            onFinish={handleSubmit}
-            layout="vertical"
-          >
+          <Form onFinish={handleSubmit} ref={formRef} layout="vertical">
             {dom}
           </Form>
         )}
       >
-        <Form.Item name="workflow_category_id" className="hidden">
-          <Input className="hidden" />
-        </Form.Item>
         <Form.Item
           name="name"
-          label={
-            <span className="inline-block w-[160px]">Tên luồng công việc</span>
-          }
+          label="Tên luồng công việc"
           rules={[
             {
               required: true,
-              message: 'Nhập tên luồng công việc',
+              message: 'Nhập tên luồng.',
             },
           ]}
         >
           <Input placeholder="Tên luồng công việc" />
         </Form.Item>
+
         <Form.Item
-          name="description"
-          label={<span className="inline-block w-[160px]">Mô tả</span>}
-        >
-          <Input placeholder="Mô tả" />
-        </Form.Item>
-        <Form.Item
-          name="manager"
-          label={
-            <span className="inline-block w-[160px]">Thành viên quản trị</span>
-          }
+          name="members"
+          label="Thành viên"
           rules={[
             {
               required: true,
-              message: 'Nhập thành viên quản trị',
+              message: 'Chọn thành viên',
             },
           ]}
         >
           <SuggestInput
             value={value}
+            test={value}
             onChange={handleChange}
             suggestInputRef={suggestInputRef}
             suggestOpen={tagOpen}
@@ -155,6 +157,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
                 const values = prev.split(' ')
                 values.pop()
                 values.push(item.username)
+
                 return values.join(' ') + ' '
               })
               setTagOpen(false)
@@ -166,4 +169,4 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
   )
 }
 
-export default WorkflowModalForm
+export default WorkflowExtra

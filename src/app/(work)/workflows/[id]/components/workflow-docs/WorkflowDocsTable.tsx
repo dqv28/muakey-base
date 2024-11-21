@@ -45,8 +45,6 @@ const WorkflowDocsTable: React.FC<WorkflowDocsTableProps> = ({
     return Object.fromEntries(newReport)
   })
 
-  console.log(taskReports)
-
   return (
     <>
       <div className="my-[16px] ml-[24px] font-[500]">

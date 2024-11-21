@@ -9,7 +9,7 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { cloneDeep } from 'lodash'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import React, { useContext, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { editTaskAction } from '../../../action'
@@ -38,7 +38,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
   const params = useParams()
   const { failedStageId } = useContext(StageContext)
-  const router = useRouter()
   const { setStages } = useContext(WorkflowStageContext)
 
   const {
@@ -95,7 +94,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
       toast.success('Nhiệm vụ đã được giao.')
       setAssignConfirmOpen(false)
-      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

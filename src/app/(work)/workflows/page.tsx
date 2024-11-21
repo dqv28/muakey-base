@@ -11,10 +11,12 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const searchParams = await prop.searchParams
   const type = searchParams?.type
 
-  const workflowCategories = await getWorkflowCategories()
-  const workflows = await getWorkflows({
-    type: type === 'all' ? '' : type || 'open',
-  })
+  const [workflowCategories, workflows] = await Promise.all([
+    getWorkflowCategories(),
+    getWorkflows({
+      type: type === 'all' ? '' : type || 'open',
+    }),
+  ])
 
   return (
     <PageProvider>

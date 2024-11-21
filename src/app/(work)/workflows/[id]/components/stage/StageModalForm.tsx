@@ -1,7 +1,7 @@
 'use client'
 
 import { Form, FormInstance, Input, Modal, ModalProps } from 'antd'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import React, { useContext, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { addStageAction, editStageAction } from '../../../action'
@@ -25,7 +25,6 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
   const [open, setOpen] = useState(false)
   const formRef = useRef<FormInstance>(null)
   const params = useParams()
-  const router = useRouter()
   const { setStages } = useContext(StageContext)
 
   const handleSubmit = async (formData: any) => {
@@ -101,7 +100,6 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
 
       toast.success(success)
       setOpen(false)
-      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

@@ -1,7 +1,8 @@
 'use client'
 
-import { Dropdown, DropdownProps, Space, SpaceProps } from '@/ui'
+import { DropdownProps, Space, SpaceProps } from '@/ui'
 import clsx from 'clsx'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -15,6 +16,10 @@ export type WorkflowTabsProps = SpaceProps & {
   items?: Tab[]
   activeKey?: string
 }
+
+const Dropdown = dynamic(() => import('@/ui').then((ui) => ui.Dropdown), {
+  ssr: false,
+})
 
 const WorkflowWrap: React.FC<
   DropdownProps & {

@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, Form, Input, Modal, Select } from 'antd'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import { addTaskFieldsAction, editCustomFieldAction } from '../../../action'
@@ -21,7 +21,6 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
   const [type, setType] = useState('')
   const { stages, initialValues, fieldId } = options
   const params = useParams()
-  const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
     try {
@@ -45,7 +44,6 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
 
       toast.success(success)
       setOpen(false)
-      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

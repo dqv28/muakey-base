@@ -47,7 +47,6 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [open, setOpen] = useState(false)
   const [reports, setReports] = useState<any[]>([])
-  const [history, setHistory] = useState<any>()
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
   const activeRef = useRef<any>(null)
 
@@ -83,82 +82,79 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
     activeRef.current = activeId
   }, [dragEvent])
 
-  const handleDrag = useCallback(
-    async (event: DragEndEvent) => {
-      const { active, over } = event
+  const handleDrag = useCallback(async (event: DragEndEvent) => {
+    const { active, over } = event
 
-      if (!over) return
+    if (!over) return
 
-      if (active.id !== over.id) {
-        const {
-          data: { current: overData },
-        } = over
-        const {
-          id: activeTaskId,
-          data: { current: activeData },
-        } = active
+    if (active.id !== over.id) {
+      const {
+        data: { current: overData },
+      } = over
+      const {
+        id: activeTaskId,
+        data: { current: activeData },
+      } = active
 
-        if (!overData || !activeData) return
+      if (!overData || !activeData) return
 
-        if (!activeData.account_id && [0, 1].includes(overData?.index)) {
-          toast.error('Nhiệm vụ chưa được giao.')
-          return
-        }
-
-        const taskHistory = await getTaskHistoriesAction({
-          task_id: activeData.id,
-          stage_id: overData.stage_id || overData.id,
-        })
-
-        setStages((prevStages: any) => {
-          const newStages = cloneDeep(prevStages)
-
-          const activeColumn = newStages.find(
-            (s: any) => s.id === activeData.stage_id,
-          )
-          const overColumn = newStages.find(
-            (s: any) => s.id === (overData.stage_id || overData.id),
-          )
-
-          if (activeColumn) {
-            activeColumn.tasks = activeColumn.tasks.filter(
-              (t: any) => t.id !== activeTaskId,
-            )
-          }
-
-          if (overColumn) {
-            overColumn.tasks = [
-              {
-                ...activeData,
-                stage_id: overData.stage_id || overData.id,
-                account_id: taskHistory?.worker || null,
-              },
-              ...overColumn.tasks,
-            ]
-          }
-
-          return newStages
-        })
-
-        try {
-          await moveStageAction(
-            activeTaskId as number,
-            overData.stage_id || overData.id,
-          )
-        } catch (error: any) {
-          throw new Error(error)
-        }
+      if (!activeData.account_id && [0, 1].includes(overData?.index)) {
+        toast.error('Nhiệm vụ chưa được giao.')
+        return
       }
-    },
-    [setStages],
-  )
 
-  const handleDragStart = async (e: DragStartEvent) => {
+      const taskHistory = await getTaskHistoriesAction({
+        task_id: activeData.id,
+        stage_id: overData.stage_id || overData.id,
+      })
+
+      setStages((prevStages: any) => {
+        const newStages = cloneDeep(prevStages)
+
+        const activeColumn = newStages.find(
+          (s: any) => s.id === activeData.stage_id,
+        )
+        const overColumn = newStages.find(
+          (s: any) => s.id === (overData.stage_id || overData.id),
+        )
+
+        if (activeColumn) {
+          activeColumn.tasks = activeColumn.tasks.filter(
+            (t: any) => t.id !== activeTaskId,
+          )
+        }
+
+        if (overColumn) {
+          overColumn.tasks = [
+            {
+              ...activeData,
+              stage_id: overData.stage_id || overData.id,
+              account_id: taskHistory?.worker || null,
+            },
+            ...overColumn.tasks,
+          ]
+        }
+
+        return newStages
+      })
+
+      try {
+        await moveStageAction(
+          activeTaskId as number,
+          overData.stage_id || overData.id,
+        )
+      } catch (error: any) {
+        throw new Error(error)
+      }
+    }
+  }, [])
+
+  const handleDragStart = useCallback((e: DragStartEvent) => {
     const { active } = e
     setActiveId(active.id)
-  }
+  }, [])
 
-  const handleDragEnd = async (e: DragEndEvent) => {
+  const handleDragEnd = useCallback(async (e: DragEndEvent) => {
     setDragEvent(e)
 
     const { active, over } = e
@@ -193,7 +189,7 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
     }
 
     await handleDrag(e)
-  }
+  }, [])
 
   const handleSubmit = async (values: any) => {
     if (!dragEvent) return
@@ -209,7 +205,6 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
     try {
       const { success, error } = await addTaskReportAction(activeData.id, {
         ...values,
-        account_id: options?.accountId,
       })
 
       if (error) {

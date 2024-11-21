@@ -1,9 +1,13 @@
 'use client'
 
 import { Col, Row } from '@/ui'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import React from 'react'
-import WorkflowCard from './WorkflowCard'
+
+const WorkflowCard = dynamic(() => import('./WorkflowCard'), {
+  ssr: false,
+})
 
 type WorkflowCardListProps = {
   items?: any[]

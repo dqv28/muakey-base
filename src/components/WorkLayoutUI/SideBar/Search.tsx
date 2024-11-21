@@ -1,7 +1,7 @@
 import { SearchOutlined } from '@/ui/icons'
 import React from 'react'
 
-const Search: React.FC = (props) => {
+const Search: React.FC = () => {
   return (
     <div className="flex h-[32px] w-full rounded-full bg-[#ffffff1a] px-[12px]">
       <SearchOutlined className="text-[16px]" />

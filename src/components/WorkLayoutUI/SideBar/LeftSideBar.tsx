@@ -6,16 +6,15 @@ import {
   checkOutAction,
   logoutAction,
 } from '@/components/action'
-import { Avatar, toast } from '@/ui'
 import {
   BellFilled,
   LogoutOutlined,
   MehFilled,
   MenuOutlined,
 } from '@ant-design/icons'
-import { Drawer, Dropdown, Empty, Modal, Tooltip } from 'antd'
-import { useRouter } from 'next/navigation'
+import { Avatar, Drawer, Dropdown, Empty, Modal, Tooltip } from 'antd'
 import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import CheckoutButton from './CheckoutButton'
 
 export type SubSideProps = {
@@ -26,12 +25,10 @@ export type SubSideProps = {
 const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const [open, setOpen] = useState(false)
   const [openNotice, setOpenNotice] = useState(false)
-  const router = useRouter()
 
   const handleLogout = async () => {
     await logoutAction()
     setOpen(false)
-    router.refresh()
   }
 
   const handleCheckedIn = async () => {
@@ -44,7 +41,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
       }
 
       toast.success(success)
-      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }
@@ -60,7 +56,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
       }
 
       toast.success(success)
-      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }
@@ -82,8 +77,8 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         dropdownRender={() => (
           <div className="ml-[8px] min-w-[400px] rounded-[4px] bg-[#fff] p-[16px] shadow-[0_2px_4px_0_#0000001a]">
             <div className="flex items-center gap-[16px]">
-              <Avatar shape="circle" size={36}>
-                {user?.full_name}
+              <Avatar className="!text-[16px]" shape="circle" size={36}>
+                {String(user?.full_name).charAt(0).toLocaleUpperCase()}
               </Avatar>
               <div>
                 <div>

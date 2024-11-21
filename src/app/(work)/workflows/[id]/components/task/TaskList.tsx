@@ -3,7 +3,6 @@
 import { DragOverlay } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { cloneDeep } from 'lodash'
-import { useRouter } from 'next/navigation'
 import React, { useContext } from 'react'
 import toast from 'react-hot-toast'
 import { deleteTaskAction } from '../../../action'
@@ -18,7 +17,6 @@ type TaskListProps = {
 const TaskList: React.FC<TaskListProps> = ({ stageId }) => {
   const { activeId, members } = useContext(StageContext)
   const { stages, setStages } = useContext(WorkflowContext)
-  const router = useRouter()
 
   const currentStage = stages?.find((s: any) => s?.id === stageId)
 
@@ -52,7 +50,6 @@ const TaskList: React.FC<TaskListProps> = ({ stageId }) => {
         })
       })
       toast.success(success)
-      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }
