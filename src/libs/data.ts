@@ -99,7 +99,7 @@ export const moveStage = async (id: number, stageId: number, data?: any) => {
   return await requestWithAuthorized(`tasks/${id}?stage_id=${stageId}`, {
     method: 'PUT',
     data
-  }).then((data) => data).catch((err: any) => console.log('ERROR ->', err))
+  }).then((data) => data)
 }
 
 export const getTaskById = async (id: number) =>
@@ -209,6 +209,16 @@ export const getMe = async (options?: RequestOptions) =>
   requestWithAuthorized(`me`, {...options})
   .then((data) => data)
   .catch(() => [])
+
+export const getNotifications = async () => 
+  requestWithAuthorized('notifications')
+  .then((data) => data)
+  .catch(() => [])
+
+export const getMeWithCheckedIn = async () => 
+  requestWithAuthorized('attendances?me=1')
+  .then((data) => data)
+  .catch(() => null)
 
 export const checkIn = async () => 
   requestWithAuthorized('check-in', {

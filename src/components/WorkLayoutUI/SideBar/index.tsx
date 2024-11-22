@@ -1,5 +1,8 @@
-import { isFirstLoggedIn } from '@/libs/auth'
-import { getWorkflowCategories } from '@/libs/data'
+import {
+  getMeWithCheckedIn,
+  getNotifications,
+  getWorkflowCategories,
+} from '@/libs/data'
 import { getSession } from '@/libs/session'
 import { Navigation } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
@@ -15,10 +18,12 @@ export type SideBarProps = SideProps & {
 }
 
 const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
-  const [workflows, session, isFirstLogin] = await Promise.all([
+  const today = new Date().getDate()
+  const [workflows, session, notifications, attendances] = await Promise.all([
     getWorkflowCategories(),
     getSession(),
-    isFirstLoggedIn(),
+    getNotifications(),
+    getMeWithCheckedIn(),
   ])
 
   return (
@@ -27,8 +32,10 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         <LeftSideBar
           user={user}
           options={{
-            isCheckedIn: session.isCheckedIn,
-            isFirstLogin,
+            isCheckedIn:
+              session.isCheckedIn || !!attendances || !!attendances?.checkout,
+            isFirstLogin: session.firstLoginDate !== today,
+            notifications,
           }}
         />
       }

@@ -1,5 +1,6 @@
 'use client'
 
+import { useAsyncEffect } from '@/libs/hook'
 import { Button, Form } from 'antd'
 import clsx from 'clsx'
 import React, { useCallback, useRef, useState } from 'react'
@@ -10,6 +11,18 @@ import { editTaskAction, uploadImageAction } from '../../../actions'
 type JobDescriptionProps = {
   value?: any
   params?: any
+}
+
+const base64ToFile = (base64: string) => {
+  const byteString = atob(base64.split(',')[1])
+  const mimeString = base64.split(',')[0].split(':')[1].split(';')[0]
+
+  const byteArray = new Uint8Array(byteString.length)
+  for (let i = 0; i < byteString.length; i++) {
+    byteArray[i] = byteString.charCodeAt(i)
+  }
+
+  return new File([byteArray], 'upload', { type: mimeString })
 }
 
 const JobDescription: React.FC<JobDescriptionProps> = ({
@@ -44,6 +57,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     input.setAttribute('type', 'file')
     input.setAttribute('accept', 'image/*')
     input.click()
+
     input.onchange = async (e) => {
       const quill = quillRef.current
 
@@ -111,6 +125,51 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     'code-block',
   ]
 
+  const handleChange = (value: string) => {
+    setValue(value)
+  }
+
+  useAsyncEffect(async () => {
+    const editor = quillRef.current?.getEditor()
+    const quill = quillRef.current
+
+    if (!editor) return
+
+    const element = editor.root.getElementsByTagName('img')
+
+    if (!element) return
+
+    const imageSrc = element[0].src
+
+    if (imageSrc.startsWith('data:')) {
+      const file = base64ToFile(imageSrc)
+      console.log('Convert')
+      const formData = new FormData()
+
+      formData.append('image', file)
+
+      try {
+        const { url, error } = await uploadImageAction(formData)
+        console.log('Call Api')
+
+        if (error) {
+          toast.error(error)
+          return
+        }
+
+        if (!quill) return
+
+        const range = quill.getEditorSelection()
+
+        if (!range) return
+
+        quill.getEditor().insertEmbed(range.index, 'image', url)
+      } catch (error: any) {
+        throw new Error(error)
+      }
+    }
+  }, [value])
+
   return (
     <div className="mt-[24px]">
       <div className="flex items-center justify-between gap-[24px]">
@@ -137,7 +196,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
               modules={modules}
               formats={formats}
               value={value}
-              onChange={setValue}
+              onChange={handleChange}
             />
           </Form.Item>
           <Form.Item>

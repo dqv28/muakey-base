@@ -82,7 +82,7 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
     activeRef.current = activeId
   }, [dragEvent])
 
-  const handleDrag = useCallback(async (event: DragEndEvent) => {
+  const handleDrag = async (event: DragEndEvent) => {
     const { active, over } = event
 
     if (!over) return
@@ -98,7 +98,9 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
 
       if (!overData || !activeData) return
 
-      if (!activeData.account_id && [0, 1].includes(overData?.index)) {
+      const overIndex = stages?.find((stage: any) => stage.id === (overData.stage_id || overData.id)).index
+
+      if (!activeData.account_id && [0, 1].includes(overIndex)) {
         toast.error('Nhiệm vụ chưa được giao.')
         return
       }
@@ -147,7 +149,7 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
         throw new Error(error)
       }
     }
-  }, [])
+  }
 
   const handleDragStart = useCallback((e: DragStartEvent) => {
     const { active } = e

@@ -60,7 +60,7 @@ const page: React.FC<any> = async (props: {
   ])
 
   const taskHistories = await getTaskHistories({
-    task_id: task?.id,
+    task_id: params?.id,
   })
   const fields = await getTaskFieldsByTaskId(searchParams?.wid, {
     task_id: task?.id,
@@ -182,9 +182,6 @@ const page: React.FC<any> = async (props: {
               }
             })}
             total={timeStages.reduce((total: number, current: any) => {
-              console.log('TOTAL -> ', +total)
-              console.log(current?.hours + current?.minutes / 60)
-
               return Number(
                 (total += current?.hours + current?.minutes / 60),
               ).toFixed(2)

@@ -11,8 +11,12 @@ import {
   LogoutOutlined,
   MehFilled,
   MenuOutlined,
+  UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Drawer, Dropdown, Empty, Modal, Tooltip } from 'antd'
+import { Avatar, Drawer, Dropdown, Empty, List, Modal, Tooltip } from 'antd'
+import dayjs from 'dayjs'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import CheckoutButton from './CheckoutButton'
@@ -25,10 +29,12 @@ export type SubSideProps = {
 const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const [open, setOpen] = useState(false)
   const [openNotice, setOpenNotice] = useState(false)
+  const router = useRouter()
 
   const handleLogout = async () => {
     await logoutAction()
     setOpen(false)
+    router.refresh()
   }
 
   const handleCheckedIn = async () => {
@@ -41,6 +47,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
       }
 
       toast.success(success)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }
@@ -56,6 +63,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
       }
 
       toast.success(success)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }
@@ -111,12 +119,46 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         <BellFilled className="text-[16px]" />
       </div>
       <Drawer
+        classNames={{
+          body: '!p-0',
+        }}
         title="Thông báo"
         onClose={() => setOpenNotice(false)}
         open={openNotice}
         placement="left"
+        width={600}
       >
-        <Empty className="py-[100px]" description="Không có thông báo." />
+        {options?.notifications?.length > 0 ? (
+          <List
+            dataSource={options?.notifications}
+            renderItem={(item: any) => (
+              <List.Item className="!p-0">
+                <Link
+                  className="flex w-full items-start gap-[24px] p-[16px] hover:bg-[#F5FCFF] hover:text-[#000]"
+                  href={item?.link}
+                >
+                  <Avatar
+                    className="w-[40px]"
+                    icon={<UserOutlined />}
+                    size={40}
+                  />
+                  <div className="flex-1">
+                    <h3 className="text-[16px]">{item?.title}</h3>
+                    <p
+                      className="text-[12px] text-[#555]"
+                      dangerouslySetInnerHTML={{ __html: item?.message }}
+                    />
+                    <div>
+                      {dayjs(item?.created_at).format('HH:mm DD/MM/YYYY')}
+                    </div>
+                  </div>
+                </Link>
+              </List.Item>
+            )}
+          />
+        ) : (
+          <Empty className="py-[100px]" description="Không có thông báo." />
+        )}
       </Drawer>
 
       <Tooltip

@@ -7,14 +7,6 @@ export const isLoggedIn = async () => {
   return session.isLoggedIn
 }
 
-export const isFirstLoggedIn = async () => {
-  const session = await getSession()
-
-  const today = new Date().getDate()
-
-  return session.firstLoginDate !== today
-}
-
 export const changeLoggedInDate = async () => {
   const session = await getSession()
 
