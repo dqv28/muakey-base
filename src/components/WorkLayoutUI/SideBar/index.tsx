@@ -33,7 +33,8 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
           user={user}
           options={{
             isCheckedIn:
-              session.isCheckedIn || !!attendances || !!attendances?.checkout,
+              session.isCheckedIn ||
+              (!!attendances?.checkin && !attendances?.checkout),
             isFirstLogin: session.firstLoginDate !== today,
             notifications,
           }}

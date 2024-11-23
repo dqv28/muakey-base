@@ -8,7 +8,13 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: '14.225.204.53',
         port: '8000',
-        pathname: '/storage/images/**',
+        pathname: '/storage/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'work.1997.pro.vn',
+        port: '',
+        pathname: '/storage/**',
       }
     ]
   },

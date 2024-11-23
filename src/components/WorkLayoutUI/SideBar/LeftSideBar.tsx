@@ -13,7 +13,16 @@ import {
   MenuOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Drawer, Dropdown, Empty, List, Modal, Tooltip } from 'antd'
+import {
+  Avatar,
+  Badge,
+  Drawer,
+  Dropdown,
+  Empty,
+  List,
+  Modal,
+  Tooltip,
+} from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -116,7 +125,16 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         className="flex size-[60px] cursor-pointer items-center justify-center"
         onClick={() => setOpenNotice(true)}
       >
-        <BellFilled className="text-[16px]" />
+        <Badge
+          size="small"
+          overflowCount={99}
+          dot
+          classNames={{
+            indicator: '!shadow-[0_0_0_1px_#1469c9]',
+          }}
+        >
+          <BellFilled className="text-[16px] text-[#fff]" />
+        </Badge>
       </div>
       <Drawer
         classNames={{

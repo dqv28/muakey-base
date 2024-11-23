@@ -79,7 +79,7 @@ const page: React.FC<any> = async (props: {
   return (
     <Row>
       <Col className="max-h-[100vh]" span={17}>
-        <div className="flex h-full flex-col items-start px-[20px] py-[12px]">
+        <div className="flex h-full flex-col items-start px-[20px] pt-[12px]">
           <PageHeader
             className="h-[58px] w-full"
             title={
@@ -154,7 +154,11 @@ const page: React.FC<any> = async (props: {
               }))}
             />
 
-            <JobComments />
+            <JobComments
+              query={{
+                taskId: params?.id,
+              }}
+            />
           </div>
         </div>
       </Col>

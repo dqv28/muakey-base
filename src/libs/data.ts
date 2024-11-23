@@ -220,6 +220,17 @@ export const getMeWithCheckedIn = async () =>
   .then((data) => data)
   .catch(() => null)
 
+export const getCommentsByTaskId = async (taskId: number) => 
+  requestWithAuthorized(`comments/${taskId}/task`)
+  .then((data) => data)
+  .catch((err) => console.log(err))
+
+export const addComment = async (data: any) => 
+  requestWithAuthorized('comments', {
+    method: "POST",
+    data
+  }).then((data) => data)
+
 export const checkIn = async () => 
   requestWithAuthorized('check-in', {
       method: 'POST'

@@ -139,7 +139,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
               {task?.account_id ? (
                 <div className="flex min-h-[28px] items-center justify-between gap-[8px]">
                   <div className="flex items-center gap-[4px]">
-                    <Avatar shape="circle" size={20}>
+                    <Avatar src={user?.avatar} shape="circle" size={20}>
                       {user?.full_name}
                     </Avatar>
                     {user?.full_name}
@@ -203,7 +203,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                   key={mem.id}
                   onClick={() => handleAssign(mem.id)}
                 >
-                  <Avatar size={32} shape="circle">
+                  <Avatar src={mem?.avatar} size={32} shape="circle">
                     {mem.full_name}
                   </Avatar>
                   <div>
