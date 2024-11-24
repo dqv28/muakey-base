@@ -12,16 +12,11 @@ type WorkflowContentProps = {
   options?: any
 }
 
-const WorkflowContent: React.FC<WorkflowContentProps> = async ({ options }) => {
-  const [customFields, reportFields] = await Promise.all([
-    getCustomFieldsByWorkflowId(options?.workflowId),
-    getReportFieldsByWorkflowId(options?.workflowId),
-  ])
-
+const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
   switch (options?.type) {
     case 'custom-field':
       return (
-        <CustomFields stages={options?.filteredStages} fields={customFields} />
+        <CustomFields stages={options?.filteredStages} workflowId={options?.workflowId} />
       )
 
     case 'docs':
@@ -29,7 +24,7 @@ const WorkflowContent: React.FC<WorkflowContentProps> = async ({ options }) => {
 
     case 'report-field':
       return (
-        <ReportFields stages={options?.filteredStages} fields={reportFields} />
+        <ReportFields stages={options?.filteredStages} workflowId={options?.workflowId} />
       )
 
     default:

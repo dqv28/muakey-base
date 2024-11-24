@@ -3,13 +3,20 @@ import { PlusOutlined } from '@/ui/icons'
 import React from 'react'
 import CustomFieldList from './CustomFieldList'
 import CustomFieldsModalForm from './CustomFieldsModalForm'
+import { getCustomFieldsByWorkflowId } from '@/libs/data'
 
 type CustomFieldsProps = {
   stages?: any[]
-  fields?: any[]
+  workflowId: number
 }
 
-const CustomFields: React.FC<CustomFieldsProps> = ({ stages, fields }) => {
+const getCustomFieldsByWorkflowIdRequest = async (workflowId: number) => {
+  return await getCustomFieldsByWorkflowId(workflowId)
+}
+
+const CustomFields: React.FC<CustomFieldsProps> = async ({ stages, workflowId }) => {
+  const fields = await getCustomFieldsByWorkflowIdRequest(workflowId)
+
   return (
     <div className="h-[calc(100vh-82px)] overflow-auto bg-[#eee] p-[20px]">
       <div className="mx-auto w-[860px] bg-[#fff] p-[24px] shadow-[0_2px_6px_0_#0000000f]">

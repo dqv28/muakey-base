@@ -88,45 +88,6 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     }
   }, [])
 
-  const handleUploadWithPaste = async () => {
-    const editor = quillRef.current?.getEditor()
-    const quill = quillRef.current
-
-    if (!editor) return
-
-    const element = editor.root.getElementsByTagName('img')
-
-    if (!element) return
-
-    const imageSrc = element[0].src
-
-    if (imageSrc.startsWith('data:')) {
-      const file = base64ToFile(imageSrc)
-      const formData = new FormData()
-
-      formData.append('image', file)
-
-      try {
-        const { url, error } = await uploadImageAction(formData)
-
-        if (error) {
-          toast.error(error)
-          return
-        }
-
-        if (!quill) return
-
-        const range = quill.getEditorSelection()
-
-        if (!range) return
-
-        quill.getEditor().insertEmbed(range.index, 'image', url)
-      } catch (error: any) {
-        throw new Error(error)
-      }
-    }
-  }
-
   const modules: ReactQuill.ReactQuillProps['modules'] = {
     toolbar: {
       container: [
@@ -144,7 +105,6 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     },
     clipboard: {
       matchVisual: false,
-      // matchers: [[Node.ELEMENT_NODE, handleUploadWithPaste]],
     },
   }
 
@@ -163,47 +123,6 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     'video',
     'code-block',
   ]
-
-  // useAsyncEffect(async () => {
-  //   const editor = quillRef.current?.getEditor()
-  //   const quill = quillRef.current
-
-  //   if (!editor) return
-
-  //   const element = editor.root.getElementsByTagName('img')
-
-  //   if (!element) return
-
-  //   const imageSrc = element[0].src
-
-  //   if (imageSrc.startsWith('data:')) {
-  //     const file = base64ToFile(imageSrc)
-  //     console.log('Convert')
-  //     const formData = new FormData()
-
-  //     formData.append('image', file)
-
-  //     try {
-  //       const { url, error } = await uploadImageAction(formData)
-  //       console.log('Call Api')
-
-  //       if (error) {
-  //         toast.error(error)
-  //         return
-  //       }
-
-  //       if (!quill) return
-
-  //       const range = quill.getEditorSelection()
-
-  //       if (!range) return
-
-  //       quill.getEditor().insertEmbed(range.index, 'image', url)
-  //     } catch (error: any) {
-  //       throw new Error(error)
-  //     }
-  //   }
-  // }, [value])
 
   return (
     <div className="mt-[24px]">

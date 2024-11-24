@@ -34,18 +34,19 @@ import { getReportFieldsByWorkflowIdAction } from './action'
 import StageColumn from './StageColumn'
 import StageModalForm from './StageModalForm'
 import TaskReportsModalForm from './TaskReportsModalForm'
+import TaskDoneModalForm from './TaskDoneModalForm'
 
 export type StageListProps = {
   members?: any
   isEmpty?: boolean
-  options?: any
 }
 
 export const StageContext = createContext<any>({})
 
-const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
+const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [open, setOpen] = useState(false)
+  const [doneOpen, setDoneOpen] = useState(false)
   const [reports, setReports] = useState<any[]>([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
   const activeRef = useRef<any>(null)
@@ -190,6 +191,11 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
       return
     }
 
+    if (overIndex === 1) {
+      setDoneOpen(true)
+      return
+    }
+
     await handleDrag(e)
   }, [])
 
@@ -270,6 +276,8 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members, options }) => {
           )}
         </SortableContext>
       </DndContext>
+
+      <TaskDoneModalForm open={doneOpen} onCancel={() => setDoneOpen(false)} />
     </StageContext.Provider>
   )
 }

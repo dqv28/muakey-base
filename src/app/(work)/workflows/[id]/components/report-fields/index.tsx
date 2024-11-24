@@ -3,13 +3,20 @@ import { PlusOutlined } from '@/ui/icons'
 import React from 'react'
 import ReportFieldList from './ReportFieldList'
 import ReportFieldsModalForm from './ReportFieldsModalForm'
+import { getReportFieldsByWorkflowId } from '@/libs/data'
 
 type ReportFieldsProps = {
   stages?: any[]
-  fields?: any[]
+  workflowId: number
 }
 
-const ReportFields: React.FC<ReportFieldsProps> = ({ stages, fields }) => {
+const getReportFieldsByWorkflowIdRequest = async (workflowId: number) => {
+  return await getReportFieldsByWorkflowId(workflowId)
+}
+
+const ReportFields: React.FC<ReportFieldsProps> = async ({ stages, workflowId }) => {
+  const fields = await getReportFieldsByWorkflowIdRequest(workflowId)
+
   return (
     <div className="h-[calc(100vh-82px)] overflow-auto bg-[#eee] p-[20px]">
       <div className="mx-auto w-[860px] bg-[#fff] p-[24px] shadow-[0_2px_6px_0_#0000000f]">
