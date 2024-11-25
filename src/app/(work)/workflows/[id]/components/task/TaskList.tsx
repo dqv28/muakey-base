@@ -2,6 +2,7 @@
 
 import { DragOverlay } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { ConfigProvider, List, ListProps } from 'antd'
 import { cloneDeep } from 'lodash'
 import React, { useContext } from 'react'
 import toast from 'react-hot-toast'
@@ -10,11 +11,11 @@ import { StageContext } from '../stage/StageList'
 import { StageContext as WorkflowContext } from '../WorkflowPageLayout'
 import TaskItem from './TaskItem'
 
-type TaskListProps = {
+type TaskListProps = ListProps<any> & {
   stageId?: number
 }
 
-const TaskList: React.FC<TaskListProps> = ({ stageId }) => {
+const TaskList: React.FC<TaskListProps> = ({ stageId, ...rest }) => {
   const { activeId, members } = useContext(StageContext)
   const { stages, setStages } = useContext(WorkflowContext)
 
@@ -58,31 +59,47 @@ const TaskList: React.FC<TaskListProps> = ({ stageId }) => {
   return (
     <SortableContext items={sortItems} strategy={verticalListSortingStrategy}>
       <div className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]">
-        {currentStage?.tasks?.length > 0 &&
-          currentStage?.tasks.map((task: any) => (
-            <>
-              <TaskItem
-                task={task}
-                isCompleted={currentStage?.index === 1}
-                isFailed={currentStage?.index === 0}
-                members={members}
-                expired={currentStage?.expired_after_hours}
-                onDelete={() => handleDelete(task?.id)}
-              />
+        <ConfigProvider
+          theme={{
+            components: {
+              List: {
+                emptyTextPadding: 0,
+              },
+            },
+          }}
+        >
+          <List
+            dataSource={currentStage?.tasks}
+            renderItem={(task: any) => (
+              <>
+                <TaskItem
+                  task={task}
+                  isCompleted={currentStage?.index === 1}
+                  isFailed={currentStage?.index === 0}
+                  members={members}
+                  expired={currentStage?.expired_after_hours}
+                  onDelete={() => handleDelete(task?.id)}
+                />
 
-              {activeId === task?.id && (
-                <DragOverlay>
-                  <TaskItem
-                    task={task}
-                    isCompleted={currentStage?.index === 1}
-                    isFailed={currentStage?.index === 0}
-                    members={members}
-                    expired={currentStage?.expired_after_hours}
-                  />
-                </DragOverlay>
-              )}
-            </>
-          ))}
+                {activeId === task?.id && (
+                  <DragOverlay>
+                    <TaskItem
+                      task={task}
+                      isCompleted={currentStage?.index === 1}
+                      isFailed={currentStage?.index === 0}
+                      members={members}
+                      expired={currentStage?.expired_after_hours}
+                    />
+                  </DragOverlay>
+                )}
+              </>
+            )}
+            locale={{
+              emptyText: <></>,
+            }}
+            {...rest}
+          />
+        </ConfigProvider>
       </div>
     </SortableContext>
   )

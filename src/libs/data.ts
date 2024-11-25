@@ -1,4 +1,4 @@
-import { RequestOptions, requestWithAuthorized, requestWithFile } from './request'
+import { request, RequestOptions, requestWithAuthorized, requestWithFile } from './request'
 import { getSession } from './session'
 
 export const getWorkflows = async (query?: any) => {
@@ -266,4 +266,13 @@ export const checkOut = async () =>
     await session.save()
     return { success }
   })
+
+export const refreshData = async () => 
+  requestWithAuthorized('load-youtube', {
+    method: 'PUT'
+  }).then((data) => data)
+
+export const getKpi = async (query?: any) => 
+  requestWithAuthorized('kpi?' + new URLSearchParams(query))
+  .then((data) => data)
   

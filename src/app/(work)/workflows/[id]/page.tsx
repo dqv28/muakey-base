@@ -30,11 +30,6 @@ const Page: React.FC<any> = async (prop: {
     getStagesByWorkflowId(workflowId),
   ])
 
-  const filteredStages =
-    stages?.length >= 0
-      ? stages?.filter((stage: any) => ![0, 1].includes(stage.index))
-      : []
-
   return (
     <WorkflowPageLayout
       workflow={workflow}
@@ -46,10 +41,8 @@ const Page: React.FC<any> = async (prop: {
       <WorkflowContent
         options={{
           type: searchParams?.type,
-          filteredStages,
+          workflow,
           stages,
-          workflowMembers: workflow?.members,
-          workflowId,
         }}
       />
     </WorkflowPageLayout>

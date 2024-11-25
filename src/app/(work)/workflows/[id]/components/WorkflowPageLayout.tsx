@@ -106,6 +106,10 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
                 label: 'Dạng bảng',
               },
               {
+                key: 'statistics',
+                label: 'Thống kê',
+              },
+              {
                 key: 'docs',
                 label: 'Báo cáo',
               },

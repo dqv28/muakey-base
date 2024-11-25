@@ -1,17 +1,22 @@
 import { Col } from '@/ui'
+import { ReloadOutlined } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import clsx from 'clsx'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
 import TaskList from '../task/TaskList'
 import StageDropdownMenu from './StageDropdownMenu'
 import StageHeader from './StageHeader'
+import { refreshDataAction } from './action'
 
 type StageColumnProps = {
   stage?: any
 }
 
 const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
   const { attributes, setNodeRef, transform, transition } = useSortable({
     id: stage?.id,
     data: stage,
@@ -20,6 +25,22 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
   const StageColumnStyle: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
     transition,
+  }
+
+  const handleRefresh = async () => {
+    setLoading(true)
+
+    try {
+      await refreshDataAction()
+      setLoading(false)
+
+      if (typeof window !== undefined) {
+        window.location.reload()
+      }
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
   }
 
   return (
@@ -45,7 +66,17 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
         })}
         title={stage.name}
         extra={
-          ![0, 1].includes(stage?.index) && <StageDropdownMenu stage={stage} />
+          <>
+            {![0, 1].includes(stage?.index) && (
+              <StageDropdownMenu stage={stage} />
+            )}
+            {[1].includes(stage?.index) && (
+              <ReloadOutlined
+                className="cursor-pointer text-[10px]"
+                onClick={handleRefresh}
+              />
+            )}
+          </>
         }
       >
         <span
@@ -58,7 +89,7 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
         </span>
       </StageHeader>
 
-      <TaskList stageId={stage?.id} />
+      <TaskList stageId={stage?.id} loading={loading} />
     </Col>
   )
 }

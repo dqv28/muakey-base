@@ -33,8 +33,8 @@ import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import { getReportFieldsByWorkflowIdAction } from './action'
 import StageColumn from './StageColumn'
 import StageModalForm from './StageModalForm'
-import TaskReportsModalForm from './TaskReportsModalForm'
 import TaskDoneModalForm from './TaskDoneModalForm'
+import TaskReportsModalForm from './TaskReportsModalForm'
 
 export type StageListProps = {
   members?: any
@@ -98,13 +98,6 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
       } = active
 
       if (!overData || !activeData) return
-
-      const overIndex = stages?.find((stage: any) => stage.id === (overData.stage_id || overData.id)).index
-
-      if (!activeData.account_id && [0, 1].includes(overIndex)) {
-        toast.error('Nhiệm vụ chưa được giao.')
-        return
-      }
 
       const taskHistory = await getTaskHistoriesAction({
         task_id: activeData.id,
@@ -186,6 +179,11 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
       task_id: activeData.id,
     })
 
+    if (!activeData.account_id && [0, 1].includes(overIndex)) {
+      toast.error('Nhiệm vụ chưa được giao.')
+      return
+    }
+
     if (data?.length > 0 && activeData.account_id && activeIndex > overIndex) {
       setOpen(true)
       return
@@ -230,6 +228,20 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
 
   const sortItems =
     stages?.length > 0 ? stages?.map((item: any) => item.id) : []
+
+  const generateInitialValues = () => {
+    if (!dragEvent) return {}
+
+    const { active } = dragEvent
+
+    const {
+      data: { current: activeData },
+    } = active
+
+    return {
+      link_youtube: activeData?.link_youtube,
+    }
+  }
 
   return (
     <StageContext.Provider
@@ -277,7 +289,18 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
         </SortableContext>
       </DndContext>
 
-      <TaskDoneModalForm open={doneOpen} onCancel={() => setDoneOpen(false)} />
+      <TaskDoneModalForm
+        open={doneOpen}
+        onCancel={() => setDoneOpen(false)}
+        taskId={Number(activeId)}
+        onSubmit={async () => {
+          if (!dragEvent) return
+
+          await handleDrag(dragEvent)
+        }}
+        onOk={() => setDoneOpen(false)}
+        initialValues={generateInitialValues()}
+      />
     </StageContext.Provider>
   )
 }

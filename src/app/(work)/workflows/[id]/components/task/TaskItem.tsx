@@ -1,6 +1,11 @@
 import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
 import { Avatar } from '@/ui'
-import { ExclamationCircleFilled } from '@ant-design/icons'
+import {
+  ExclamationCircleFilled,
+  EyeOutlined,
+  LikeOutlined,
+  MessageOutlined,
+} from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Button, Dropdown, Input, Modal, Popconfirm } from 'antd'
@@ -121,7 +126,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
         {...listeners}
       >
         <Link
-          className="space-y-[8px]"
+          className={clsx(
+            'space-y-[8px]',
+            isCompleted ? 'hover:text-[#fff]' : 'hover:text-[#000]',
+          )}
           key={task?.id}
           href={`/job/${task?.id}?wid=${params?.id}`}
         >
@@ -134,7 +142,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
               __html: task?.description || 'Không có mô tả',
             }}
           />
-          {!isCompleted && !isFailed && (
+          {!isCompleted && !isFailed ? (
             <div>
               {task?.account_id ? (
                 <div className="flex min-h-[28px] items-center justify-between gap-[8px]">
@@ -166,6 +174,18 @@ const TaskItem: React.FC<TaskItemProps> = ({
                   Chưa được giao
                 </span>
               )}
+            </div>
+          ) : (
+            <div className="!mt-[16px] flex items-center gap-[16px]">
+              <div>
+                <EyeOutlined /> {task?.view_count}
+              </div>
+              <div>
+                <LikeOutlined /> {task?.like_count}
+              </div>
+              <div>
+                <MessageOutlined /> {task?.comment_count}
+              </div>
             </div>
           )}
         </Link>

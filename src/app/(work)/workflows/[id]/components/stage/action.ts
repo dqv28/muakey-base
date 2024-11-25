@@ -1,10 +1,9 @@
 'use server'
 
-import { getReportFieldsByWorkflowId } from "@/libs/data"
+import { getReportFieldsByWorkflowId, refreshData } from "@/libs/data"
 
 export const getReportFieldsByWorkflowIdAction = async (workflowId: number, query?: any) => 
-  getReportFieldsByWorkflowId(workflowId, query, {
-    next: {
-      revalidate: 60
-    }
-  })
+  getReportFieldsByWorkflowId(workflowId, query)
+
+export const refreshDataAction = async () => 
+  refreshData()

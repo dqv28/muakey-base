@@ -2,22 +2,65 @@
 
 import { Form, Input, Modal, ModalProps } from 'antd'
 import React from 'react'
+import toast from 'react-hot-toast'
+import { editTaskAction } from '../../../action'
 
-type TaskDoneModalFormProps = ModalProps & {}
+type TaskDoneModalFormProps = ModalProps & {
+  taskId: number
+  onSubmit?: () => void
+  initialValues?: any
+}
 
-const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = (props) => {
+const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
+  taskId,
+  onSubmit,
+  initialValues,
+  ...rest
+}) => {
+  const handleSubmit = async (formData: any) => {
+    try {
+      const { success, error } = await editTaskAction(taskId, formData)
+
+      if (error) {
+        toast.error(error)
+        return
+      }
+
+      onSubmit?.()
+      toast.success(success)
+    } catch (error) {
+      throw new Error(String(error))
+    }
+  }
+
   return (
     <Modal
       title="Báo cáo sản phẩm"
-      modalRender={(dom) => <Form>{dom}</Form>}
+      modalRender={(dom) => (
+        <Form
+          onFinish={handleSubmit}
+          initialValues={initialValues}
+          layout="vertical"
+        >
+          {dom}
+        </Form>
+      )}
       destroyOnClose
-      {...props}
+      okButtonProps={{
+        htmlType: 'submit',
+      }}
+      {...rest}
     >
       <Form.Item
         className="!mb-[40px]"
-        layout="vertical"
-        name="link-youtube"
+        name="link_youtube"
         label="Link sản phẩm"
+        rules={[
+          {
+            required: true,
+            message: 'Nhập link sản phẩm',
+          },
+        ]}
       >
         <Input />
       </Form.Item>

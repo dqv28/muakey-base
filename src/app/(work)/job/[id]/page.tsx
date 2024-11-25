@@ -19,6 +19,7 @@ import JobHistory from './components/JobHistory'
 import JobOverView from './components/JobOverview'
 import JobProgress from './components/JobProgress'
 import JobProgressTime from './components/JobProgressTime'
+import JobReview from './components/JobReview'
 import PageHeader from './components/PageHeader'
 import PageHeaderAction from './components/PageHeaderAction'
 
@@ -169,6 +170,9 @@ const page: React.FC<any> = async (props: {
             members={workflow?.members}
             currentStage={currentStage?.name}
           />
+
+          <JobReview task={task} />
+
           <JobProgressTime
             stages={timeStages?.map((stage: any) => {
               const failedStage = stages?.find((s: any) => s?.index === 0)

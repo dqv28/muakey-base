@@ -1,37 +1,53 @@
-import {
-  getCustomFieldsByWorkflowId,
-  getReportFieldsByWorkflowId,
-} from '@/libs/data'
 import React from 'react'
 import CustomFields from './custom-fields'
 import ReportFields from './report-fields'
 import StageList from './stage/StageList'
 import WorkflowDocs from './workflow-docs'
+import WorkflowStatistics from './workflow-statistics'
 
 type WorkflowContentProps = {
   options?: any
 }
 
 const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
+  const filteredStages =
+    options?.stages?.length >= 0
+      ? options?.stages?.filter((stage: any) => ![0, 1].includes(stage.index))
+      : []
+
   switch (options?.type) {
     case 'custom-field':
       return (
-        <CustomFields stages={options?.filteredStages} workflowId={options?.workflowId} />
+        <CustomFields
+          stages={filteredStages}
+          workflowId={options?.workflow?.id}
+        />
       )
 
     case 'docs':
-      return <WorkflowDocs stages={options?.filteredStages} />
+      return <WorkflowDocs stages={filteredStages} />
+
+    case 'statistics':
+      return (
+        <WorkflowStatistics
+          title="Thống kê"
+          workflowId={options?.workflow?.id}
+        />
+      )
 
     case 'report-field':
       return (
-        <ReportFields stages={options?.filteredStages} workflowId={options?.workflowId} />
+        <ReportFields
+          stages={filteredStages}
+          workflowId={options?.workflow?.id}
+        />
       )
 
     default:
       return (
         <StageList
-          isEmpty={options?.filteredStages.length <= 0}
-          members={options?.workflowMembers}
+          isEmpty={filteredStages.length <= 0}
+          members={options?.workflow?.members}
         />
       )
   }

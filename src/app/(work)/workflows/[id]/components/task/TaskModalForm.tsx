@@ -1,7 +1,7 @@
 'use client'
 
 import { uploadImageAction } from '@/app/(work)/job/actions'
-import { Form, FormInstance, Input, InputNumber, Modal, ModalProps } from 'antd'
+import { Form, FormInstance, Input, Modal, ModalProps, Select } from 'antd'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
 import React, { useCallback, useContext, useRef, useState } from 'react'
@@ -40,7 +40,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
     const { member: memberVal, ...restFormData } = formData
 
-    const member: any = members.filter(
+    const member: any = members.find(
       (m: any) =>
         `${`${m.full_name} ·`} ${m.username} ${!!m.position ? `· ${m.position}` : ''}` ===
         memberVal,
@@ -50,7 +50,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       if (action === 'create') {
         var { error, id } = await addTaskAction({
           ...restFormData,
-          account_id: member[0]?.id || null,
+          account_id: member?.id || null,
           workflow_id: params?.id || null,
         })
 
@@ -67,7 +67,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                 tasks: [
                   {
                     ...restFormData,
-                    account_id: member[0]?.id || null,
+                    account_id: member?.id || null,
                     workflow_id: params?.id || null,
                     stage_id: stage?.id,
                     id,
@@ -81,20 +81,23 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           })
         })
       } else {
-        var { error } = await editTaskAction(initialValues?.id, restFormData)
+        var { error } = await editTaskAction(initialValues?.id, {
+          ...restFormData,
+          account_id: member?.id || null,
+        })
 
         setStages((prevStages: any[]) => {
           const newStages = cloneDeep(prevStages)
 
           return newStages?.map((stage: any) => {
-            if (stage?.id === newStages[0]?.id) {
+            if (stage?.id === initialValues?.stage_id) {
               return {
                 ...stage,
                 tasks: stage?.tasks?.map((task: any) => {
                   if (task?.id === initialValues?.id) {
                     return {
                       ...restFormData,
-                      account_id: member[0]?.id || null,
+                      account_id: member?.id || null,
                       stage_id: stage?.id,
                       id: initialValues?.id,
                     }
@@ -113,7 +116,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       if (error) {
         if (typeof error === 'string') {
           toast.error(error)
-
+          setLoading(false)
           return
         }
 
@@ -276,7 +279,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             placeholder="Mô tả nhiệm vụ"
           />
         </Form.Item>
-        {/* <Form.Item name="member" label="Giao cho">
+        <Form.Item name="member" label="Giao cho">
           <Select
             options={members?.map((m: any) => {
               const mem = `${`${m.full_name} ·`} ${m.username} ${!!m.position ? `· ${m.position}` : ''}`
@@ -288,13 +291,13 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             })}
             placeholder="-- Lựa chọn một người dưới đây --"
           />
-        </Form.Item> */}
-        <Form.Item name="expired" label="Thời hạn">
+        </Form.Item>
+        {/* <Form.Item name="expired" label="Thời hạn">
           <InputNumber
             className="w-full border-b border-[#eee]"
             placeholder="Thời hạn"
           />
-        </Form.Item>
+        </Form.Item> */}
       </Modal>
     </>
   )
