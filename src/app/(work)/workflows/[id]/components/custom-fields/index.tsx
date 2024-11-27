@@ -1,9 +1,9 @@
+import { getCustomFieldsByWorkflowId } from '@/libs/data'
 import { Button } from '@/ui'
 import { PlusOutlined } from '@/ui/icons'
 import React from 'react'
 import CustomFieldList from './CustomFieldList'
 import CustomFieldsModalForm from './CustomFieldsModalForm'
-import { getCustomFieldsByWorkflowId } from '@/libs/data'
 
 type CustomFieldsProps = {
   stages?: any[]
@@ -11,10 +11,15 @@ type CustomFieldsProps = {
 }
 
 const getCustomFieldsByWorkflowIdRequest = async (workflowId: number) => {
-  return await getCustomFieldsByWorkflowId(workflowId)
+  return await getCustomFieldsByWorkflowId({
+    workflow_id: workflowId,
+  })
 }
 
-const CustomFields: React.FC<CustomFieldsProps> = async ({ stages, workflowId }) => {
+const CustomFields: React.FC<CustomFieldsProps> = async ({
+  stages,
+  workflowId,
+}) => {
   const fields = await getCustomFieldsByWorkflowIdRequest(workflowId)
 
   return (

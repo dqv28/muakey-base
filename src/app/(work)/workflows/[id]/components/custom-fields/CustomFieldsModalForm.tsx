@@ -1,8 +1,8 @@
 'use client'
 
-import { Button, Form, Input, Modal, Select } from 'antd'
-import { useParams } from 'next/navigation'
-import React, { useState } from 'react'
+import { Button, Form, FormInstance, Input, Modal, Select } from 'antd'
+import { useParams, useRouter } from 'next/navigation'
+import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { addTaskFieldsAction, editCustomFieldAction } from '../../../action'
 
@@ -18,33 +18,53 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
   action = 'create',
 }) => {
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [type, setType] = useState('')
   const { stages, initialValues, fieldId } = options
   const params = useParams()
+  const router = useRouter()
+  const formRef = useRef<FormInstance>(null)
 
   const handleSubmit = async (formData: any) => {
+    setLoading(true)
+
     try {
       if (action === 'create') {
-        var { success, error } = await addTaskFieldsAction({
+        var { errors } = await addTaskFieldsAction({
           ...formData,
           workflow_id: Number(params?.id),
         })
       } else {
-        var { success, error } = await editCustomFieldAction(fieldId, {
+        var { errors } = await editCustomFieldAction(fieldId, {
           ...formData,
           workflow_id: Number(params?.id),
         })
       }
 
-      if (error) {
-        toast.error(error)
-        setOpen(false)
+      if (errors) {
+        if (typeof errors === 'string') {
+          toast.error(errors)
+        } else {
+          formRef.current?.setFields(
+            Object.keys(errors).map((k: string) => ({
+              name: k,
+              errors: errors[k],
+            })),
+          )
+        }
+
+        setLoading(false)
         return
       }
 
-      toast.success(success)
+      toast.success(
+        action === 'create' ? 'Thêm thành công' : 'Cập nhật thành công',
+      )
       setOpen(false)
+      setLoading(false)
+      router.refresh()
     } catch (error: any) {
+      setLoading(false)
       throw new Error(error)
     }
   }
@@ -69,6 +89,7 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
           labelCol={{ flex: '24px' }}
           wrapperCol={{ flex: 1 }}
           initialValues={initialValues}
+          ref={formRef}
         >
           <Form.Item
             label="Loại dữ liệu"
@@ -172,6 +193,7 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
                 color="primary"
                 type="primary"
                 htmlType="submit"
+                loading={loading}
               >
                 {action === 'create' ? 'Thêm trường mới' : 'Cập nhật'}
               </Button>

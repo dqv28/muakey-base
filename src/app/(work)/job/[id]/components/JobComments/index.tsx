@@ -8,7 +8,9 @@ type JobCommentsProps = {
 }
 
 const getCommentsByTaskIdRequest = async (taskId: number) => {
-  return await getCommentsByTaskId(taskId)
+  return await getCommentsByTaskId({
+    task_id: taskId,
+  })
 }
 
 const JobComments: React.FC<JobCommentsProps> = async ({ query }) => {

@@ -42,7 +42,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
                   key={mem?.username}
                   src={mem?.avatar}
                   style={{
-                    backgroundColor: randomColor(mem?.full_name),
+                    backgroundColor: randomColor(mem?.full_name || ''),
                     cursor: 'pointer',
                   }}
                 >

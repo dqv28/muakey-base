@@ -23,14 +23,17 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
   ...rest
 }) => {
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const formRef = useRef<FormInstance>(null)
   const params = useParams()
   const { setStages } = useContext(StageContext)
 
   const handleSubmit = async (formData: any) => {
+    setLoading(true)
+
     try {
       if (action === 'edit') {
-        var { error, success } = await editStageAction(query?.stage_id, {
+        var { errors } = await editStageAction(query?.stage_id, {
           ...formData,
           workflow_id: params?.id,
         })
@@ -41,6 +44,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
           return newStages.map((stage: any) => {
             if (stage?.id === query?.stage_id) {
               return {
+                ...stage,
                 ...formData,
                 workflow_id: params?.id,
                 id: query?.stage_id,
@@ -51,7 +55,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
           })
         })
       } else {
-        var { error, success, id } = await addStageAction(
+        var { errors, id } = await addStageAction(
           {
             ...formData,
             workflow_id: params?.id,
@@ -87,20 +91,25 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
         })
       }
 
-      if (error) {
-        formRef.current?.setFields([
-          {
-            name: 'name',
-            errors: [error],
-          },
-        ])
+      if (errors) {
+        formRef.current?.setFields(
+          Object.keys(errors).map((k: any) => ({
+            name: k,
+            errors: errors[k],
+          })),
+        )
 
+        setLoading(false)
         return false
       }
 
-      toast.success(success)
+      toast.success(
+        action === 'edit' ? 'Cập nhật thành công' : 'Thêm thành công',
+      )
       setOpen(false)
+      setLoading(false)
     } catch (error: any) {
+      setLoading(false)
       throw new Error(error)
     }
   }
@@ -117,6 +126,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
         okText={action === 'edit' ? 'Cập nhật' : 'Tạo giai đoạn mới'}
         okButtonProps={{
           htmlType: 'submit',
+          loading,
         }}
         modalRender={(dom) => (
           <Form

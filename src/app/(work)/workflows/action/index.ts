@@ -104,5 +104,5 @@ export const updateReportFieldAction = async (id: number, data: any) =>
 export const deleteReportFieldAction = async (id: number) => 
   deleteReportField(id)
 
-export const addTaskReportAction = async (taskId: number, data: any) => 
-  addTaskReport(taskId, data)
+export const addTaskReportAction = async (data: any, query?: any) => 
+  addTaskReport(data, query)

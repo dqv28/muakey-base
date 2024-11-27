@@ -1,9 +1,9 @@
+import { getReportFieldsByWorkflowId } from '@/libs/data'
 import { Button } from '@/ui'
 import { PlusOutlined } from '@/ui/icons'
 import React from 'react'
 import ReportFieldList from './ReportFieldList'
 import ReportFieldsModalForm from './ReportFieldsModalForm'
-import { getReportFieldsByWorkflowId } from '@/libs/data'
 
 type ReportFieldsProps = {
   stages?: any[]
@@ -11,10 +11,15 @@ type ReportFieldsProps = {
 }
 
 const getReportFieldsByWorkflowIdRequest = async (workflowId: number) => {
-  return await getReportFieldsByWorkflowId(workflowId)
+  return await getReportFieldsByWorkflowId({
+    workflow_id: workflowId,
+  })
 }
 
-const ReportFields: React.FC<ReportFieldsProps> = async ({ stages, workflowId }) => {
+const ReportFields: React.FC<ReportFieldsProps> = async ({
+  stages,
+  workflowId,
+}) => {
   const fields = await getReportFieldsByWorkflowIdRequest(workflowId)
 
   return (

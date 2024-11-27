@@ -1,8 +1,8 @@
 'use client'
 
-import { Button, Form, Input } from 'antd'
+import { Button, Form, FormInstance, Input } from 'antd'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { addCommentAction } from './action'
 
@@ -14,25 +14,25 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
   const [loading, setLoading] = useState(false)
   const [disabled, setDisabled] = useState(true)
   const router = useRouter()
+  const formRef = useRef<FormInstance>(null)
 
   const handleSubmit = async (formData: any) => {
-    console.log({
-      ...formData,
-      task_id: options?.taskId,
-    })
+    setLoading(true)
 
     try {
-      const { success, error } = await addCommentAction({
+      const { message, errors } = await addCommentAction({
         ...formData,
         task_id: options?.taskId,
       })
 
-      if (error) {
-        toast.error(error)
+      if (errors) {
+        toast.error(message)
+
+        setLoading(false)
         return
       }
 
-      toast.success(success)
+      toast.success('Bạn vừa thêm thảo luận mới.')
       setLoading(false)
       router.refresh()
     } catch (error: any) {
@@ -42,7 +42,7 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
   }
 
   return (
-    <Form onFinish={handleSubmit}>
+    <Form onFinish={handleSubmit} ref={formRef}>
       <Form.Item className="!mb-[12px]" name="content">
         <Input.TextArea
           placeholder="Viết thảo luận của bạn"

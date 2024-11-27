@@ -2,6 +2,7 @@
 
 import { CloseOutlined, ExclamationCircleFilled } from '@ant-design/icons'
 import { Modal } from 'antd'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import { deleteReportFieldAction } from '../../../action'
@@ -10,6 +11,7 @@ const ReportFieldDeleteButton: React.FC<{
   fieldId: number
 }> = ({ fieldId }) => {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false)
+  const router = useRouter()
 
   const handleDelete = async () => {
     try {
@@ -22,6 +24,7 @@ const ReportFieldDeleteButton: React.FC<{
 
       toast.success(success)
       setConfirmModalOpen(false)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }

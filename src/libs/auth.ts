@@ -21,15 +21,15 @@ export const loginWidthCredentials = async (data: any) =>
     method: 'POST',
     data,
   }).then(async (data) => {
-    const { token: accessToken, error } = data
+    const { token: accessToken, errors } = data
 
     const session = await getSession()
 
     session.accessToken = accessToken
-    session.isLoggedIn = true
+    session.isLoggedIn = !!accessToken
     await session.save()
 
-    return { token: accessToken, error }
+    return { token: accessToken, errors }
   })
 
 export const logout = async () => {

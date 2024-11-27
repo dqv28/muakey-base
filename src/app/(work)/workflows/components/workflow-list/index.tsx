@@ -17,9 +17,15 @@ import WorkflowCardList from '../workflow-card-list'
 import WorkFlowDeleteButton from './WorkFlowDeleteButton'
 import WorkflowModalForm from './WorkflowModalForm'
 
-export type WorkflowListProps = ListProps
+export type WorkflowListProps = ListProps & {
+  options?: any
+}
 
-const WorkflowList: React.FC<WorkflowListProps> = ({ dataSource, ...rest }) => {
+const WorkflowList: React.FC<WorkflowListProps> = ({
+  dataSource,
+  options,
+  ...rest
+}) => {
   const [expand, setExpand] = useState(true)
   const [workflows, setWorkflows] = useState(dataSource || [])
   const [ids, setIds] = useState(dataSource?.map((w) => w.id) || [])

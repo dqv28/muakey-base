@@ -48,84 +48,88 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
     try {
       if (action === 'create') {
-        var { error, id } = await addTaskAction({
+        var { errors, id } = await addTaskAction({
           ...restFormData,
           account_id: member?.id || null,
           workflow_id: params?.id || null,
         })
 
-        setStages((prevStages: any[]) => {
-          const newStages = cloneDeep(prevStages)
+        if (!errors) {
+          setStages((prevStages: any[]) => {
+            const newStages = cloneDeep(prevStages)
 
-          return newStages?.map((stage: any) => {
-            if (
-              !restInitialValues?.stage_id &&
-              stage?.id === newStages[0]?.id
-            ) {
-              return {
-                ...stage,
-                tasks: [
-                  {
-                    ...restFormData,
-                    account_id: member?.id || null,
-                    workflow_id: params?.id || null,
-                    stage_id: stage?.id,
-                    id,
-                  },
-                  ...stage?.tasks,
-                ],
+            return newStages?.map((stage: any) => {
+              if (
+                !restInitialValues?.stage_id &&
+                stage?.id === newStages[0]?.id
+              ) {
+                return {
+                  ...stage,
+                  tasks: [
+                    {
+                      ...restFormData,
+                      account_id: member?.id || null,
+                      workflow_id: params?.id || null,
+                      stage_id: stage?.id,
+                      id,
+                    },
+                    ...stage?.tasks,
+                  ],
+                }
               }
-            }
 
-            return stage
+              return stage
+            })
           })
-        })
+        }
       } else {
-        var { error } = await editTaskAction(initialValues?.id, {
+        var { errors } = await editTaskAction(initialValues?.id, {
           ...restFormData,
           account_id: member?.id || null,
         })
 
-        setStages((prevStages: any[]) => {
-          const newStages = cloneDeep(prevStages)
+        if (!errors) {
+          setStages((prevStages: any[]) => {
+            const newStages = cloneDeep(prevStages)
 
-          return newStages?.map((stage: any) => {
-            if (stage?.id === initialValues?.stage_id) {
-              return {
-                ...stage,
-                tasks: stage?.tasks?.map((task: any) => {
-                  if (task?.id === initialValues?.id) {
-                    return {
-                      ...restFormData,
-                      account_id: member?.id || null,
-                      stage_id: stage?.id,
-                      id: initialValues?.id,
+            return newStages?.map((stage: any) => {
+              if (stage?.id === initialValues?.stage_id) {
+                return {
+                  ...stage,
+                  tasks: stage?.tasks?.map((task: any) => {
+                    if (task?.id === initialValues?.id) {
+                      return {
+                        ...restFormData,
+                        account_id: member?.id || null,
+                        stage_id: stage?.id,
+                        id: initialValues?.id,
+                      }
                     }
-                  }
 
-                  return task
-                }),
+                    return task
+                  }),
+                }
               }
-            }
 
-            return stage
+              return stage
+            })
           })
-        })
+        }
       }
 
-      if (error) {
-        if (typeof error === 'string') {
-          toast.error(error)
+      if (errors) {
+        if (typeof errors === 'string') {
+          toast.error(errors)
           setLoading(false)
           return
         }
 
-        const nameList: string[] = Object.keys(error)
+        const nameList: string[] = Object.keys(errors)
 
         formRef.current?.setFields(
           nameList.map((name) => ({
             name,
-            errors: [error?.[name]],
+            errors: [errors?.[name]],
           })),
         )
 
@@ -133,7 +137,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       }
 
       toast.success(
-        action === 'create' ? 'Thêm thành công.' : 'Sửa thành công.',
+        action === 'create' ? 'Thêm thành công.' : 'Cập nhật thành công.',
       )
       setOpen(false)
       setLoading(false)

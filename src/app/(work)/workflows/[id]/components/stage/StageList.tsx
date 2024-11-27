@@ -38,12 +38,11 @@ import TaskReportsModalForm from './TaskReportsModalForm'
 
 export type StageListProps = {
   members?: any
-  isEmpty?: boolean
 }
 
 export const StageContext = createContext<any>({})
 
-const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
+const StageList: React.FC<StageListProps> = ({ members }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [open, setOpen] = useState(false)
   const [doneOpen, setDoneOpen] = useState(false)
@@ -74,7 +73,8 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
 
     if (!activeData) return
 
-    const data = await getReportFieldsByWorkflowIdAction(Number(params?.id), {
+    const data = await getReportFieldsByWorkflowIdAction({
+      workflow_id: Number(params?.id),
       stage_id: activeData.stage_id,
       task_id: activeData.id,
     })
@@ -174,7 +174,8 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
       (stage: any) => stage.id === (overData.stage_id || overData.id),
     )?.index
 
-    const data = await getReportFieldsByWorkflowIdAction(Number(params?.id), {
+    const data = await getReportFieldsByWorkflowIdAction({
+      workflow_id: Number(params?.id),
       stage_id: activeData.stage_id,
       task_id: activeData.id,
     })
@@ -209,17 +210,21 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
     if (!activeData) return
 
     try {
-      const { success, error } = await addTaskReportAction(activeData.id, {
-        ...values,
-      })
+      const { message, errors } = await addTaskReportAction(
+        {
+          ...values,
+        },
+        {
+          task_id: activeData.id,
+        },
+      )
 
-      if (error) {
-        toast.error(error)
+      if (errors) {
+        toast.error(message)
         return
       }
 
       await handleDrag(dragEvent)
-      toast.success(success)
       setOpen(false)
     } catch (error) {
       throw new Error()
@@ -243,6 +248,10 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
     }
   }
 
+  const filteredStages = stages?.filter(
+    (stage: any) => ![0, 1].includes(stage?.index),
+  )
+
   return (
     <StageContext.Provider
       value={{ activeId, setActiveId, members, failedStageId }}
@@ -257,7 +266,7 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
           strategy={horizontalListSortingStrategy}
         >
           <Row className="h-full w-max" wrap={false}>
-            {isEmpty && (
+            {filteredStages?.length <= 0 && (
               <Col
                 className={clsx(
                   'group flex w-[272px] cursor-pointer items-center justify-center overflow-hidden border-r border-[#eee] bg-[#fff] transition-all hover:bg-[#f9f9f9]',
@@ -278,17 +287,17 @@ const StageList: React.FC<StageListProps> = ({ isEmpty, members }) => {
                 </>
               ))}
           </Row>
-          {reports?.length > 0 && activeRef.current === activeId && (
-            <TaskReportsModalForm
-              open={open}
-              onCancel={() => setOpen(false)}
-              onSubmit={(values) => handleSubmit(values)}
-              reports={reports}
-            />
-          )}
         </SortableContext>
       </DndContext>
 
+      {reports?.length > 0 && activeRef.current === activeId && (
+        <TaskReportsModalForm
+          open={open}
+          onCancel={() => setOpen(false)}
+          onSubmit={(values) => handleSubmit(values)}
+          reports={reports}
+        />
+      )}
       <TaskDoneModalForm
         open={doneOpen}
         onCancel={() => setDoneOpen(false)}

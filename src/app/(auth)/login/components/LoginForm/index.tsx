@@ -1,24 +1,35 @@
 'use client'
 
-import { loginWidthCredentialsAction } from '@/app/(auth)/action'
-import { Button, Form, Input } from 'antd'
+import { Button, Form, FormInstance, Input } from 'antd'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import { loginWidthCredentialsAction } from './action'
 
 const LoginForm: React.FC = () => {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const formRef = useRef<FormInstance>(null)
 
   const login = async (formData: any) => {
     setLoading(true)
 
     try {
-      const { error } = await loginWidthCredentialsAction(formData)
+      const { errors } = await loginWidthCredentialsAction(formData)
 
-      if (error) {
+      if (errors) {
+        if (typeof errors === 'string') {
+          toast.error(errors)
+        } else {
+          formRef.current?.setFields(
+            Object.keys(errors).map((k: string) => ({
+              name: k,
+              errors: errors[k],
+            })),
+          )
+        }
+
         setLoading(false)
-        toast.error(error)
         return
       }
 
@@ -39,6 +50,7 @@ const LoginForm: React.FC = () => {
       onFinish={login}
       autoComplete="off"
       layout="vertical"
+      ref={formRef}
     >
       <Form.Item
         label="Email"

@@ -27,7 +27,9 @@ const Page: React.FC<any> = async (prop: {
 
   const [workflow, stages] = await Promise.all([
     getWorkflowById(workflowId),
-    getStagesByWorkflowId(workflowId),
+    getStagesByWorkflowId({
+      workflow_id: workflowId,
+    }),
   ])
 
   return (

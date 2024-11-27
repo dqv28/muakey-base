@@ -44,12 +44,7 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
       )
 
     default:
-      return (
-        <StageList
-          isEmpty={filteredStages.length <= 0}
-          members={options?.workflow?.members}
-        />
-      )
+      return <StageList members={options?.workflow?.members} />
   }
 }
 

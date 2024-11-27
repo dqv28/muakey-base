@@ -11,24 +11,13 @@ import {
   LogoutOutlined,
   MehFilled,
   MenuOutlined,
-  UserOutlined,
 } from '@ant-design/icons'
-import {
-  Avatar,
-  Badge,
-  Drawer,
-  Dropdown,
-  Empty,
-  List,
-  Modal,
-  Tooltip,
-} from 'antd'
-import dayjs from 'dayjs'
-import Link from 'next/link'
+import { Avatar, Badge, Drawer, Dropdown, Modal, Tooltip } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import CheckoutButton from './CheckoutButton'
+import NotificationsList from './NotificationsList'
 
 export type SubSideProps = {
   user?: any
@@ -101,13 +90,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
                 <div>
                   {user?.full_name} · {user?.username}
                 </div>
-
-                <div
-                  className="cursor-pointer text-[12px] text-[#267cde]"
-                  onClick={handleLogout}
-                >
-                  Đăng xuất
-                </div>
               </div>
             </div>
           </div>
@@ -146,37 +128,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         placement="left"
         width={600}
       >
-        {options?.notifications?.length > 0 ? (
-          <List
-            dataSource={options?.notifications}
-            renderItem={(item: any) => (
-              <List.Item className="!p-0">
-                <Link
-                  className="flex w-full items-start gap-[24px] p-[16px] hover:bg-[#F5FCFF] hover:text-[#000]"
-                  href={item?.link}
-                >
-                  <Avatar
-                    className="w-[40px]"
-                    icon={<UserOutlined />}
-                    size={40}
-                  />
-                  <div className="flex-1">
-                    <h3 className="text-[16px]">{item?.title}</h3>
-                    <p
-                      className="text-[12px] text-[#555]"
-                      dangerouslySetInnerHTML={{ __html: item?.message }}
-                    />
-                    <div>
-                      {dayjs(item?.created_at).format('HH:mm DD/MM/YYYY')}
-                    </div>
-                  </div>
-                </Link>
-              </List.Item>
-            )}
-          />
-        ) : (
-          <Empty className="py-[100px]" description="Không có thông báo." />
-        )}
+        <NotificationsList />
       </Drawer>
 
       <Tooltip

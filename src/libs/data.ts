@@ -19,8 +19,8 @@ export const getWorkflowMembersById = async (id: number) => {
     .catch(() => [])
 }
 
-export const getStagesByWorkflowId = async (id: number, options?: RequestOptions) => {
-  return requestWithAuthorized(`stages/${id}/workflow`, {...options})
+export const getStagesByWorkflowId = async (query?: any, options?: RequestOptions) => {
+  return requestWithAuthorized('stages?' + new URLSearchParams(query), {...options})
     .then((data) => data)
     .catch(() => [])
 }
@@ -72,7 +72,7 @@ export const deleteStageById = async (id: number) =>
   }).then((data) => data)
 
 export const getAccount = async (query?: any) => {
-  return requestWithAuthorized('accounts-search?' + new URLSearchParams(query))
+  return requestWithAuthorized('accounts?' + new URLSearchParams(query))
     .then((data) => data)
     .catch(() => [])
 }
@@ -118,8 +118,8 @@ export const addTaskFields = async (data: any) =>
     data,
   }).then((data) => data)
 
-export const getCustomFieldsByWorkflowId = async (id: number, options?: RequestOptions) => {
-  return requestWithAuthorized(`fields/${id}/workflow`, {...options})
+export const getCustomFieldsByWorkflowId = async (query?: any, options?: RequestOptions) => {
+  return requestWithAuthorized(`fields?` + new URLSearchParams(query), {...options})
     .then((data) => data)
     .catch(() => [])
 }
@@ -135,9 +135,9 @@ export const editCustomField = async (id: number, data: any) =>
     data,
   }).then((data) => data)
 
-export const getTaskFieldsByTaskId = async (id: number, query?: any) => {
+export const getTaskFieldsByTaskId = async (query?: any) => {
   return requestWithAuthorized(
-    `task-fields/${id}/workflow?` + new URLSearchParams(query),
+    `field-values?` + new URLSearchParams(query),
   )
     .then((data) => data)
     .catch(() => [])
@@ -157,7 +157,7 @@ export const uploadImage = async (data: any) => {
 }
 
 export const getTaskHistories = async (query?: any, options?: RequestOptions) => 
-  requestWithAuthorized('task-histories?' + new URLSearchParams(query), { ...options })
+  requestWithAuthorized('history-move-tasks?' + new URLSearchParams(query), { ...options })
   .then((data) => data)
   .catch(() => [])
 
@@ -166,8 +166,8 @@ export const getTimeStagesByTaskId = async (id: number) =>
   .then((data) => data)
   .catch(() => [])
 
-export const getReportFieldsByWorkflowId = async (wid: number, query?: any, options?: RequestOptions) => 
-  requestWithAuthorized(`report-fields/${wid}/workflow?` + new URLSearchParams(query), { ...options })
+export const getReportFieldsByWorkflowId = async (query?: any, options?: RequestOptions) => 
+  requestWithAuthorized(`report-fields?` + new URLSearchParams(query), { ...options })
   .then((data) => data)
   .catch(() => [])
 
@@ -188,25 +188,25 @@ export const deleteReportField = async (id: number) =>
     method: 'DELETE',
   }).then((data) => data)
 
-export const addTaskReport = async (taskId: number, data: any) => 
-  requestWithAuthorized(`task-reports/${taskId}`, {
+export const addTaskReport = async (data: any, query?: any,) => 
+  requestWithAuthorized(`report-field-values?` + new URLSearchParams(query), {
     method: 'POST',
     data
   }).then((data) => data)
 
 export const updateTaskReports = async (id: number, data: any) => 
-  requestWithAuthorized(`task-reports/${id}`, {
+  requestWithAuthorized(`report-field-values/${id}`, {
     method: 'PUT',
     data
   }).then((data) => data)
 
-export const getTaskReports = async (stageId: number) => 
-  requestWithAuthorized(`task-reports/${stageId}/stage`)
+export const getTaskReports = async (query?: any) => 
+  requestWithAuthorized(`report-field-values?` + new URLSearchParams(query))
   .then((data) => data)
   .catch(() => [])
 
 export const getMe = async (options?: RequestOptions) => 
-  requestWithAuthorized(`me`, {...options})
+  requestWithAuthorized(`my-account`, {...options})
   .then((data) => data)
   .catch(() => [])
 
@@ -220,10 +220,10 @@ export const getMeWithCheckedIn = async () =>
   .then((data) => data)
   .catch(() => null)
 
-export const getCommentsByTaskId = async (taskId: number) => 
-  requestWithAuthorized(`comments/${taskId}/task`)
+export const getCommentsByTaskId = async (query?: any) => 
+  requestWithAuthorized(`comments?` + new URLSearchParams(query))
   .then((data) => data)
-  .catch((err) => console.log(err))
+  .catch(() => [])
 
 export const addComment = async (data: any) => 
   requestWithAuthorized('comments', {
@@ -273,6 +273,6 @@ export const refreshData = async () =>
   }).then((data) => data)
 
 export const getKpi = async (query?: any) => 
-  requestWithAuthorized('kpi?' + new URLSearchParams(query))
+  requestWithAuthorized('kpis?' + new URLSearchParams(query))
   .then((data) => data)
   

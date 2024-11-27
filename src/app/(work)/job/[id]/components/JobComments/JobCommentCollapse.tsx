@@ -19,19 +19,18 @@ const JobCommentCollapse: React.FC<{
   const handleSubmit = async (formData: any, options: any) => {
     setLoading(true)
     try {
-      const { success, error } = await addCommentAction({
+      const { message, errors } = await addCommentAction({
         ...formData,
         task_id: options?.taskId,
         comment_id: options?.commentId,
       })
 
-      if (error) {
-        toast.error(error)
+      if (errors) {
+        toast.error(message)
         return
       }
 
       formRef.current?.resetFields()
-      toast.success(success)
       router.refresh()
       setLoading(false)
     } catch (error: any) {

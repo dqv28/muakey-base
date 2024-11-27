@@ -56,14 +56,17 @@ const page: React.FC<any> = async (props: {
 
   const [task, stages, workflow] = await Promise.all([
     getTaskById(params?.id),
-    getStagesByWorkflowId(searchParams?.wid),
+    getStagesByWorkflowId({
+      workflow_id: searchParams?.wid,
+    }),
     getWorkflowById(searchParams?.wid),
   ])
 
   const taskHistories = await getTaskHistories({
     task_id: params?.id,
   })
-  const fields = await getTaskFieldsByTaskId(searchParams?.wid, {
+  const fields = await getTaskFieldsByTaskId({
+    workflow_id: searchParams?.wid,
     task_id: task?.id,
   })
   const timeStages = await getTimeStagesByTaskId(task?.id)
@@ -174,21 +177,25 @@ const page: React.FC<any> = async (props: {
           <JobReview task={task} />
 
           <JobProgressTime
-            stages={timeStages?.map((stage: any) => {
-              const failedStage = stages?.find((s: any) => s?.index === 0)
+            stages={
+              timeStages?.length > 0
+                ? timeStages?.map((stage: any) => {
+                    const failedStage = stages?.find((s: any) => s?.index === 0)
 
-              if (stage?.id === task?.stage_id) {
-                INDEX = stage?.index
-              }
+                    if (stage?.id === task?.stage_id) {
+                      INDEX = stage?.index
+                    }
 
-              return {
-                ...stage,
-                status:
-                  failedStage?.id === task?.stage_id
-                    ? 'failed'
-                    : generateStatus(stage, INDEX),
-              }
-            })}
+                    return {
+                      ...stage,
+                      status:
+                        failedStage?.id === task?.stage_id
+                          ? 'failed'
+                          : generateStatus(stage, INDEX),
+                    }
+                  })
+                : []
+            }
             total={timeStages.reduce((total: number, current: any) => {
               return Number(
                 (total += current?.hours + current?.minutes / 60),

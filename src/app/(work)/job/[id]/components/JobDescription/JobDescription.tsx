@@ -2,6 +2,7 @@
 
 import { Button, Form } from 'antd'
 import clsx from 'clsx'
+import { useRouter } from 'next/navigation'
 import React, { useCallback, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import ReactQuill from 'react-quill-new'
@@ -30,23 +31,30 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
 }) => {
   const [value, setValue] = useState(defaultValue || '')
   const [isEdit, setIsEdit] = useState(false)
+  const [loading, setLoading] = useState(false)
   const quillRef = useRef<ReactQuill>(null)
+  const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
+    setLoading(true)
+
     try {
-      const { success, error } = await editTaskAction(params?.task?.code, {
-        ...params?.task,
+      const { message, errors } = await editTaskAction(params?.task?.code, {
         ...formData,
       })
 
-      if (error) {
-        toast.error(error)
+      if (errors) {
+        toast.error(message)
+        setLoading(false)
         return
       }
 
-      toast.success(success)
+      toast.success('Cập nhật thành công')
       setIsEdit(false)
+      setLoading(false)
+      router.refresh()
     } catch (error: any) {
+      setLoading(false)
       throw new Error(error)
     }
   }
@@ -154,7 +162,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
             />
           </Form.Item>
           <Form.Item>
-            <Button htmlType="submit" type="primary">
+            <Button htmlType="submit" type="primary" loading={loading}>
               Cập nhật
             </Button>
             <Button

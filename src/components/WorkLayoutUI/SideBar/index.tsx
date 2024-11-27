@@ -1,8 +1,4 @@
-import {
-  getMeWithCheckedIn,
-  getNotifications,
-  getWorkflowCategories,
-} from '@/libs/data'
+import { getMeWithCheckedIn, getWorkflowCategories } from '@/libs/data'
 import { getSession } from '@/libs/session'
 import { Navigation } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
@@ -19,10 +15,9 @@ export type SideBarProps = SideProps & {
 
 const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const today = new Date().getDate()
-  const [workflows, session, notifications, attendances] = await Promise.all([
+  const [workflows, session, attendances] = await Promise.all([
     getWorkflowCategories(),
     getSession(),
-    getNotifications(),
     getMeWithCheckedIn(),
   ])
 
@@ -36,7 +31,6 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
               session.isCheckedIn ||
               (!!attendances?.checkin && !attendances?.checkout),
             isFirstLogin: session.firstLoginDate !== today,
-            notifications,
           }}
         />
       }
