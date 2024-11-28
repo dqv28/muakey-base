@@ -28,12 +28,7 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
       return <WorkflowDocs stages={filteredStages} />
 
     case 'statistics':
-      return (
-        <WorkflowStatistics
-          title="Thống kê"
-          workflowId={options?.workflow?.id}
-        />
-      )
+      return <WorkflowStatistics workflowId={options?.workflow?.id} />
 
     case 'report-field':
       return (

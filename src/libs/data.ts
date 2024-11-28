@@ -215,8 +215,8 @@ export const getNotifications = async () =>
   .then((data) => data)
   .catch(() => [])
 
-export const getMeWithCheckedIn = async () => 
-  requestWithAuthorized('attendances?me=1')
+export const getAttendances = async (query?: any) => 
+  requestWithAuthorized('attendances?' + new URLSearchParams(query))
   .then((data) => data)
   .catch(() => null)
 

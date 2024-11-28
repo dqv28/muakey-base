@@ -19,15 +19,15 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
 }) => {
   const handleSubmit = async (formData: any) => {
     try {
-      const { success, error } = await editTaskAction(taskId, formData)
+      const { errors } = await editTaskAction(taskId, formData)
 
-      if (error) {
-        toast.error(error)
+      if (errors) {
+        toast.error(errors)
         return
       }
 
       onSubmit?.()
-      toast.success(success)
+      toast.success('Đánh dấu hoàn thành.')
     } catch (error) {
       throw new Error(String(error))
     }

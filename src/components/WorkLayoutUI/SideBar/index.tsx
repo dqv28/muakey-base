@@ -1,8 +1,12 @@
-import { getMeWithCheckedIn, getWorkflowCategories } from '@/libs/data'
+import { getAttendances, getWorkflowCategories } from '@/libs/data'
 import { getSession } from '@/libs/session'
 import { Navigation } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
-import { FolderOpenFilled, ProjectFilled } from '@ant-design/icons'
+import {
+  CalendarFilled,
+  FolderOpenFilled,
+  ProjectFilled,
+} from '@ant-design/icons'
 import React from 'react'
 import LeftSideBar from './LeftSideBar'
 import Search from './Search'
@@ -18,7 +22,9 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const [workflows, session, attendances] = await Promise.all([
     getWorkflowCategories(),
     getSession(),
-    getMeWithCheckedIn(),
+    getAttendances({
+      me: 1,
+    }),
   ])
 
   return (
@@ -54,6 +60,15 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                     </div>
                   ),
                   href: '/workflows',
+                },
+                {
+                  label: (
+                    <div className="flex items-center gap-[12px]">
+                      <CalendarFilled className="text-[16px]" />
+                      <span>Chấm công</span>
+                    </div>
+                  ),
+                  href: '/check-in',
                 },
               ],
             },

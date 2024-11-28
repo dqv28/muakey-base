@@ -126,6 +126,15 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
               ...activeData,
               stage_id: overData.stage_id || overData.id,
               account_id: taskHistory?.worker || null,
+              expired: taskHistory?.worker
+                ? taskHistory?.expired_at
+                  ? taskHistory?.expired_at
+                  : overColumn.expired_after_hours
+                    ? new Date().setHours(
+                        new Date().getHours() + overColumn.expired_after_hours,
+                      )
+                    : null
+                : null,
             },
             ...overColumn.tasks,
           ]

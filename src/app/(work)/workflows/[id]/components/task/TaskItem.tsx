@@ -80,6 +80,11 @@ const TaskItem: React.FC<TaskItemProps> = ({
                   return {
                     ...t,
                     account_id: id,
+                    expired: stage.expired_after_hours
+                      ? new Date().setHours(
+                          new Date().getHours() + stage.expired_after_hours,
+                        )
+                      : null,
                   }
                 }
 

@@ -3,7 +3,6 @@ import { ReloadOutlined } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import clsx from 'clsx'
-import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import TaskList from '../task/TaskList'
 import StageDropdownMenu from './StageDropdownMenu'
@@ -16,7 +15,6 @@ type StageColumnProps = {
 
 const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
   const { attributes, setNodeRef, transform, transition } = useSortable({
     id: stage?.id,
     data: stage,
@@ -79,14 +77,24 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
           </>
         }
       >
-        <span
-          className={clsx(
-            'text-[12px] leading-none text-[#aaa]',
-            stage.index === 0 && 'text-[#c3434399]',
+        <div className="flex items-center justify-between">
+          <span
+            className={clsx(
+              'text-[12px] leading-none text-[#aaa]',
+              stage.index === 0 && 'text-[#c3434399]',
+            )}
+          >
+            0 Nhiệm vụ
+          </span>
+
+          {![0, 1].includes(stage.index) && (
+            <span className="text-[12px] leading-none text-[#aaa]">
+              {!!stage?.expired_after_hours
+                ? `Thời hạn: ${stage?.expired_after_hours}h`
+                : 'Không thời hạn'}
+            </span>
           )}
-        >
-          0 Nhiệm vụ
-        </span>
+        </div>
       </StageHeader>
 
       <TaskList stageId={stage?.id} loading={loading} />
