@@ -25,7 +25,10 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
     setLoading(true)
 
     try {
-      const { id: workflowId, errors } = await addWorkflowAction(formData)
+      const { id: workflowId, errors } = await addWorkflowAction({
+        ...formData,
+        manager: (formData?.manager || []).join(' '),
+      })
 
       if (errors) {
         const nameList: string[] = Object.keys(errors)

@@ -1,14 +1,16 @@
 'use client'
 
+import { useAsyncEffect } from '@/libs/hook'
 import { CaretRightOutlined } from '@ant-design/icons'
 import { Collapse, Flex, Image, Tag } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import React from 'react'
+import React, { useState } from 'react'
 import JobCustomFieldModalForm from '../JobCustomFieldModalForm'
+import { getTaskFieldsByTaskIdAction } from './action'
 
 type JobCustomFieldsProps = {
-  fields?: any
+  query?: any
 }
 
 const generateValue = (type: string, value: any) => {
@@ -37,7 +39,20 @@ const generateValue = (type: string, value: any) => {
   }
 }
 
-const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ fields }) => {
+const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ query }) => {
+  const [fields, setFields] = useState<any[]>([])
+
+  useAsyncEffect(async () => {
+    const res = await getTaskFieldsByTaskIdAction(query)
+
+    setFields(
+      res.map((field: any) => ({
+        ...field,
+        task_id: query?.task_id,
+      })),
+    )
+  }, [])
+
   return (
     <div className="mt-[24px]">
       <div className="text-[12px] font-[500] text-[#42b814]">

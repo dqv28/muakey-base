@@ -31,7 +31,7 @@ const useStyle = createStyles(({ css }) => {
 const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
   const { styles } = useStyle()
   const year = new Date().getFullYear()
-  const month = new Date().getMonth() + 1
+  const month = options?.day || new Date().getMonth() + 1
 
   const dateNumber = new Date(year, month, 0).getDate()
 

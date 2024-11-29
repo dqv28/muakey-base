@@ -24,6 +24,7 @@ const Page: React.FC<any> = async (prop: {
   const params = await prop.params
   const searchParams = await prop.searchParams
   const workflowId = params?.id
+  const date = searchParams?.date
 
   const [workflow, stages] = await Promise.all([
     getWorkflowById(workflowId),
@@ -45,6 +46,7 @@ const Page: React.FC<any> = async (prop: {
           type: searchParams?.type,
           workflow,
           stages,
+          date,
         }}
       />
     </WorkflowPageLayout>

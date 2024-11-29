@@ -2,8 +2,6 @@ import { BackButton } from '@/components'
 import {
   getStagesByWorkflowId,
   getTaskById,
-  getTaskFieldsByTaskId,
-  getTaskHistories,
   getTimeStagesByTaskId,
   getWorkflowById,
 } from '@/libs/data'
@@ -62,13 +60,6 @@ const page: React.FC<any> = async (props: {
     getWorkflowById(searchParams?.wid),
   ])
 
-  const taskHistories = await getTaskHistories({
-    task_id: params?.id,
-  })
-  const fields = await getTaskFieldsByTaskId({
-    workflow_id: searchParams?.wid,
-    task_id: task?.id,
-  })
   const timeStages = await getTimeStagesByTaskId(task?.id)
 
   const filteredStages = stages?.filter(
@@ -152,10 +143,10 @@ const page: React.FC<any> = async (props: {
             />
 
             <JobCustomFields
-              fields={fields?.map((field: any) => ({
-                ...field,
+              query={{
+                workflow_id: searchParams?.wid,
                 task_id: task?.id,
-              }))}
+              }}
             />
 
             <JobComments
@@ -202,9 +193,8 @@ const page: React.FC<any> = async (props: {
               ).toFixed(2)
             }, 0)}
           />
-          {taskHistories?.length > 0 && (
-            <JobHistory dataSource={taskHistories} />
-          )}
+
+          <JobHistory taskId={params?.id} />
         </div>
       </Col>
     </Row>

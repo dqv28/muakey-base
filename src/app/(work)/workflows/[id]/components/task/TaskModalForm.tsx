@@ -1,7 +1,22 @@
 'use client'
 
 import { uploadImageAction } from '@/app/(work)/job/actions'
-import { Form, FormInstance, Input, Modal, ModalProps, Select } from 'antd'
+import { useAsyncEffect } from '@/libs/hook'
+import { randomColor } from '@/libs/utils'
+import { PlusOutlined } from '@ant-design/icons'
+import {
+  Button,
+  Divider,
+  Form,
+  FormInstance,
+  Input,
+  InputRef,
+  Modal,
+  ModalProps,
+  Select,
+  SelectProps,
+  Tag,
+} from 'antd'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
 import React, { useCallback, useContext, useRef, useState } from 'react'
@@ -9,6 +24,8 @@ import toast from 'react-hot-toast'
 import ReactQuill from 'react-quill-new'
 import { addTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
+import { addTagAction, getTagsAction } from './action'
+import TagDeleteButton from './TagDeleteButton'
 
 type TaskModalFormProps = ModalProps & {
   children?: React.ReactNode
@@ -25,15 +42,63 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   action = 'create',
   ...rest
 }) => {
-  const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [tagAddLoading, setTagAddLoading] = useState(false)
+
+  const [open, setOpen] = useState(false)
   const [value, setValue] = useState(initialValues?.description || '')
   const formRef = useRef<FormInstance>(null)
   const quillRef = useRef<ReactQuill>(null)
   const params = useParams()
   const { setStages } = useContext(StageContext)
 
+  const [tags, setTags] = useState<any[]>([])
+  const [name, setName] = useState('')
+  const inputRef = useRef<InputRef>(null)
   const { account_id, members, ...restInitialValues } = initialValues
+
+  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value)
+  }
+
+  const handleAdd = async (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>,
+  ) => {
+    setTagAddLoading(true)
+
+    e.preventDefault()
+
+    if (!name) return
+
+    try {
+      const { id, message, errors } = await addTagAction({
+        title: name,
+        workflow_id: params?.id,
+      })
+
+      if (errors) {
+        setTagAddLoading(false)
+        toast.error(message)
+        return
+      }
+
+      setTags([
+        ...tags,
+        {
+          title: name,
+          id,
+        },
+      ])
+      setName('')
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 0)
+      setTagAddLoading(false)
+    } catch (error) {
+      setTagAddLoading(false)
+      throw new Error(String(error))
+    }
+  }
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -221,6 +286,86 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     'code-block',
   ]
 
+  useAsyncEffect(async () => {
+    const res = await getTagsAction({
+      workflow_id: params?.id,
+    })
+
+    setTags(res)
+  }, [])
+
+  const optionRender: SelectProps['optionRender'] = (option) => (
+    <div className="group relative flex min-h-[32px] items-center">
+      <div className="flex items-center gap-[8px]">
+        <div
+          className="size-[24px] rounded-[4px]"
+          style={{
+            backgroundColor: randomColor(String(option?.label || '')),
+          }}
+        />
+        <span>{option?.label}</span>
+      </div>
+      <TagDeleteButton
+        className="visible absolute right-0 z-[10020] opacity-0 transition-all group-hover:opacity-100"
+        tagId={Number(option?.value)}
+        onDelete={() => {
+          setTags((prevTags: any[]) =>
+            prevTags.filter((tag: any) => tag?.id !== Number(option?.value)),
+          )
+        }}
+      />
+    </div>
+  )
+
+  const dropdownRender: SelectProps['dropdownRender'] = (menu) => (
+    <>
+      {menu}
+      <Divider style={{ margin: '8px 0' }} />
+      <div
+        className="flex w-full items-center gap-[8px]"
+        style={{ padding: '0 8px 4px' }}
+      >
+        <div className="flex-1">
+          <Input
+            placeholder="Nhập tên nhãn"
+            ref={inputRef}
+            value={name}
+            onChange={onNameChange}
+            onKeyDown={(e) => e.stopPropagation()}
+          />
+        </div>
+        <Button
+          className="!w-[130px]"
+          icon={<PlusOutlined />}
+          onClick={handleAdd}
+          loading={tagAddLoading}
+          type="primary"
+        >
+          Thêm nhãn
+        </Button>
+      </div>
+    </>
+  )
+
+  const tagRender: SelectProps['tagRender'] = (props) => {
+    const { label, closable, onClose } = props
+    const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    return (
+      <Tag
+        color={randomColor(String(label || ''))}
+        onMouseDown={onPreventMouseDown}
+        closable={closable}
+        onClose={onClose}
+        style={{ marginInlineEnd: 4 }}
+      >
+        {label}
+      </Tag>
+    )
+  }
+
   return (
     <>
       <div onClick={() => setOpen(true)}>{children}</div>
@@ -266,6 +411,19 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           <Input
             className="border-b border-[#eee]"
             placeholder="Tên nhiệm vụ"
+          />
+        </Form.Item>
+        <Form.Item name="tag" label="Thêm nhãn">
+          <Select
+            placeholder="Chọn nhãn"
+            mode="multiple"
+            options={tags.map((item: any) => ({
+              label: item?.title,
+              value: item?.id,
+            }))}
+            optionRender={optionRender}
+            dropdownRender={dropdownRender}
+            tagRender={tagRender}
           />
         </Form.Item>
         <Form.Item

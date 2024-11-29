@@ -3,6 +3,7 @@ import { ReloadOutlined } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import clsx from 'clsx'
+import { useParams } from 'next/navigation'
 import React, { useState } from 'react'
 import TaskList from '../task/TaskList'
 import StageDropdownMenu from './StageDropdownMenu'
@@ -15,6 +16,7 @@ type StageColumnProps = {
 
 const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
   const [loading, setLoading] = useState(false)
+  const params = useParams()
   const { attributes, setNodeRef, transform, transition } = useSortable({
     id: stage?.id,
     data: stage,
@@ -29,7 +31,9 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
     setLoading(true)
 
     try {
-      await refreshDataAction()
+      await refreshDataAction({
+        workflow_id: params?.id,
+      })
       setLoading(false)
 
       if (typeof window !== undefined) {
@@ -84,7 +88,7 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
               stage.index === 0 && 'text-[#c3434399]',
             )}
           >
-            0 Nhiệm vụ
+            {stage?.tasks?.length} Nhiệm vụ
           </span>
 
           {![0, 1].includes(stage.index) && (

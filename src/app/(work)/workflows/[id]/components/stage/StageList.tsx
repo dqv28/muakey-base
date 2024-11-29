@@ -189,7 +189,7 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
       task_id: activeData.id,
     })
 
-    if (!activeData.account_id && [0, 1].includes(overIndex)) {
+    if (!activeData.account_id && [1].includes(overIndex)) {
       toast.error('Nhiệm vụ chưa được giao.')
       return
     }

@@ -4,9 +4,7 @@ import { DatePicker } from 'antd'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
-type CheckInFilteredProps = {}
-
-const CheckInFiltered: React.FC<CheckInFilteredProps> = () => {
+const WorkflowStatisticsDatePicker: React.FC = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -23,15 +21,13 @@ const CheckInFiltered: React.FC<CheckInFilteredProps> = () => {
   }
 
   return (
-    <div>
-      <DatePicker
-        style={{ width: 160 }}
-        picker="month"
-        placeholder="Chọn tháng"
-        onChange={handleChange}
-      />
-    </div>
+    <DatePicker
+      style={{ width: 160 }}
+      picker="month"
+      placeholder="Chọn tháng"
+      onChange={handleChange}
+    />
   )
 }
 
-export default CheckInFiltered
+export default WorkflowStatisticsDatePicker

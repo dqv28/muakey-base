@@ -2,9 +2,18 @@ import { getAccount, getAttendances } from '@/libs/data'
 import CheckInFiltered from './components/CheckInFiltered'
 import CheckInTable from './components/CheckInTable'
 
-const page: React.FC = async () => {
-  const attendances = await getAttendances()
+const page: React.FC<any> = async (prop: {
+  params: any
+  searchParams: any
+}) => {
+  const searchParams = await prop.searchParams
+
+  const attendances = await getAttendances({
+    date: searchParams?.date || '',
+  })
   const members = await getAccount()
+
+  const day = String(searchParams?.date).split('-').pop()
 
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
@@ -17,6 +26,7 @@ const page: React.FC = async () => {
           options={{
             attendances,
             members,
+            day: Number(day || 0),
           }}
           scroll={{
             x: 'max-content',

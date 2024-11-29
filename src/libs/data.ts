@@ -267,8 +267,8 @@ export const checkOut = async () =>
     return { success }
   })
 
-export const refreshData = async () => 
-  requestWithAuthorized('load-youtube', {
+export const refreshData = async (query?: any) => 
+  requestWithAuthorized('load-youtube?' + new URLSearchParams(query), {
     method: 'PUT'
   }).then((data) => data)
 
