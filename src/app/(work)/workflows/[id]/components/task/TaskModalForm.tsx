@@ -7,6 +7,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import {
   Button,
   Divider,
+  Empty,
   Form,
   FormInstance,
   Input,
@@ -24,7 +25,7 @@ import toast from 'react-hot-toast'
 import ReactQuill from 'react-quill-new'
 import { addTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
-import { addTagAction, getTagsAction } from './action'
+import { addTagAction, addTagToTaskAction, getTagsAction, updateTagToTaskAction } from './action'
 import TagDeleteButton from './TagDeleteButton'
 
 type TaskModalFormProps = ModalProps & {
@@ -55,7 +56,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const [tags, setTags] = useState<any[]>([])
   const [name, setName] = useState('')
   const inputRef = useRef<InputRef>(null)
-  const { account_id, members, ...restInitialValues } = initialValues
+  const { account_id, members, sticker, ...restInitialValues } = initialValues
 
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value)
@@ -68,7 +69,10 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
     e.preventDefault()
 
-    if (!name) return
+    if (!name) {
+      setTagAddLoading(false)
+      return
+    }
 
     try {
       const { id, message, errors } = await addTagAction({
@@ -103,7 +107,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const handleSubmit = async (formData: any) => {
     setLoading(true)
 
-    const { member: memberVal, ...restFormData } = formData
+    const { member: memberVal, tag, ...restFormData } = formData
 
     const member: any = members.find(
       (m: any) =>
@@ -118,8 +122,13 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           account_id: member?.id || null,
           workflow_id: params?.id || null,
         })
-
+        
         if (!errors) {
+          await addTagToTaskAction({
+            task_id: id,
+            tag_id: tag
+          })
+
           setStages((prevStages: any[]) => {
             const newStages = cloneDeep(prevStages)
 
@@ -137,6 +146,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                       workflow_id: params?.id || null,
                       stage_id: stage?.id,
                       id,
+                      sticker: tag?.map((t: number) => ({
+                        sticker_id: t
+                      }))
                     },
                     ...stage?.tasks,
                   ],
@@ -154,6 +166,11 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         })
 
         if (!errors) {
+          await updateTagToTaskAction(initialValues?.id, {
+            task_id: initialValues?.id,
+            tag_id: tag
+          })
+
           setStages((prevStages: any[]) => {
             const newStages = cloneDeep(prevStages)
 
@@ -168,6 +185,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                         account_id: member?.id || null,
                         stage_id: stage?.id,
                         id: initialValues?.id,
+                        sticker: tag?.map((t: number) => ({
+                          sticker_id: t
+                        }))
                       }
                     }
 
@@ -389,6 +409,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
               member: account_id
                 ? `${`${mem?.full_name} ·`} ${mem?.username} ${!!mem?.position ? `· ${mem?.position}` : ''}`
                 : undefined,
+              tag: sticker?.map((s: any) => s?.sticker_id)
             }}
             onFinish={handleSubmit}
             layout="vertical"
@@ -424,6 +445,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             optionRender={optionRender}
             dropdownRender={dropdownRender}
             tagRender={tagRender}
+            notFoundContent={<Empty description='Chưa có nhãn' />}
           />
         </Form.Item>
         <Form.Item

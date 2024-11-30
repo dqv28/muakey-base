@@ -1,4 +1,5 @@
 import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
+import abbreviateNumber from '@/libs/utils'
 import { Avatar } from '@/ui'
 import {
   ExclamationCircleFilled,
@@ -11,7 +12,9 @@ import { CSS } from '@dnd-kit/utilities'
 import { Button, Dropdown, Input, Modal, Popconfirm } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import locale from 'dayjs/locale/vi'
 import duration from 'dayjs/plugin/duration'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { cloneDeep } from 'lodash'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -115,6 +118,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const timeStatus = t >= 0 ? 'inprogress' : 'overdue'
   const time = dayjs.duration(Math.abs(t))
 
+  dayjs.extend(relativeTime)
+  dayjs.locale(locale)
+  const datePosted = dayjs(task?.date_posted).fromNow()
+
   return (
     <div className="relative">
       <div
@@ -181,17 +188,23 @@ const TaskItem: React.FC<TaskItemProps> = ({
               )}
             </div>
           ) : (
-            <div className="!mt-[16px] flex items-center gap-[16px]">
-              <div>
-                <EyeOutlined /> {task?.view_count}
+            isCompleted && (
+              <div className="!mt-[16px] flex items-center justify-between gap-[12px] text-nowrap">
+                <div className='flex items-center gap-[12px]'>
+                  <div>
+                    <EyeOutlined /> {abbreviateNumber(task?.view_count)}
+                  </div>
+                  <div>
+                    <LikeOutlined /> {abbreviateNumber(task?.like_count)}
+                  </div>
+                  <div>
+                    <MessageOutlined /> {abbreviateNumber(task?.comment_count)}
+                  </div>
+                </div>
+
+                <span>{datePosted}</span>
               </div>
-              <div>
-                <LikeOutlined /> {task?.like_count}
-              </div>
-              <div>
-                <MessageOutlined /> {task?.comment_count}
-              </div>
-            </div>
+            )
           )}
         </Link>
       </div>

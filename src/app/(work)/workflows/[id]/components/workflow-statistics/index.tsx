@@ -1,7 +1,7 @@
 import { getKpi } from '@/libs/data'
 import { Table, TableProps } from 'antd'
 import React from 'react'
-import WorkflowStatisticsDatePicker from './WorkflowStatisticsDatePicker'
+import WorkflowStatisticsFiltered from './WorkflowStatisticsFiltered'
 
 type WorkflowStatisticsProps = {
   workflowId: number
@@ -28,7 +28,7 @@ const WorkflowStatistics: React.FC<WorkflowStatisticsProps> = async ({
     <div className="px-[16px] pb-[24px] pt-[12px]">
       <div className="mb-[12px] flex items-center justify-between gap-[24px] text-[24px]">
         <span className="font-[500]">Thống kê</span>
-        <WorkflowStatisticsDatePicker />
+        <WorkflowStatisticsFiltered />
       </div>
       <Table columns={stageColumns} dataSource={statistics} />
     </div>

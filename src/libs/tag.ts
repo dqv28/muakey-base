@@ -27,3 +27,9 @@ export const addTagToTask = async (data: any) =>
     method: 'POST',
     data
   }).then((data) => data)
+
+export const updateTagToTask = async (id: number, data: any) => 
+  requestWithAuthorized(`tag-task/${id}`, {
+    method: 'PUT',
+    data
+  }).then((data) => data)
