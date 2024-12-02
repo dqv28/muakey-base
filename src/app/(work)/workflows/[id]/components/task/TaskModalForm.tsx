@@ -146,9 +146,14 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                       workflow_id: params?.id || null,
                       stage_id: stage?.id,
                       id,
-                      sticker: tag?.map((t: number) => ({
-                        sticker_id: t
-                      }))
+                      sticker: tag?.map((t: number) => {
+                        const tagName = tags.find((s: any) => s?.id === t)?.title
+
+                        return ({
+                          name: tagName,
+                          sticker_id: t
+                        })
+                      })
                     },
                     ...stage?.tasks,
                   ],
@@ -185,9 +190,14 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                         account_id: member?.id || null,
                         stage_id: stage?.id,
                         id: initialValues?.id,
-                        sticker: tag?.map((t: number) => ({
-                          sticker_id: t
-                        }))
+                        sticker: tag?.map((t: number) => {
+                          const tagName = sticker.find((s: any) => s?.sticker_id === t)?.name
+
+                          return ({
+                            name: tagName,
+                            sticker_id: t
+                          })
+                        })
                       }
                     }
 

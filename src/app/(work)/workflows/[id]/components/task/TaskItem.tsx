@@ -1,5 +1,5 @@
 import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
-import abbreviateNumber from '@/libs/utils'
+import abbreviateNumber, { randomColor } from '@/libs/utils'
 import { Avatar } from '@/ui'
 import {
   ExclamationCircleFilled,
@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Button, Dropdown, Input, Modal, Popconfirm } from 'antd'
+import { Button, Dropdown, Input, Modal, Popconfirm, Tag } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import locale from 'dayjs/locale/vi'
@@ -122,6 +122,8 @@ const TaskItem: React.FC<TaskItemProps> = ({
   dayjs.locale(locale)
   const datePosted = dayjs(task?.date_posted).fromNow()
 
+  console.log(task)
+
   return (
     <div className="relative">
       <div
@@ -147,6 +149,19 @@ const TaskItem: React.FC<TaskItemProps> = ({
         >
           <div className="line-clamp-2 flex items-center justify-between pr-[24px] text-[14px] font-[600] leading-[18px]">
             {task?.name}
+          </div>
+          <div className='flex items-center'>
+          {
+            task?.sticker?.map((s: any) => (
+              <Tag
+                className='max-w-[100px] w-max line-clamp-1'
+                color={randomColor(String(s?.name || ''))}
+                style={{ marginInlineEnd: 4 }}
+              >
+                {s?.name}
+              </Tag>
+            ))
+          }
           </div>
           <div
             className="line-clamp-1 leading-[17px]"
