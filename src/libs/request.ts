@@ -49,17 +49,17 @@ export const requestWithFile = async (
   path: string,
   options?: RequestOptions,
 ) => {
-  // const { accessToken } = await getSession()
+  const { accessToken } = await getSession()
 
-  // if (!accessToken) {
-  //   throw new Error('Unauthorized.')
-  // }
+  if (!accessToken) {
+    throw new Error('Unauthorized.')
+  }
 
   return request(path, {
     cache: 'no-store',
     ...options,
     headers: {
-      // authorization: `Bearer ${accessToken}`,
+      authorization: `Bearer ${accessToken}`,
       ...options?.headers,
     },
   })

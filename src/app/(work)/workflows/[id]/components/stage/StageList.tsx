@@ -57,8 +57,17 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
     stages?.length > 0
       ? stages?.find((stage: any) => stage.index === 0)?.['id']
       : []
-  const mouseSensor = useSensor(MouseSensor)
-  const touchSensor = useSensor(TouchSensor)
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 5
+    }
+  })
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 250,
+      tolerance: 5,
+    }
+  })
 
   const sensors = useSensors(mouseSensor, touchSensor)
 
@@ -169,6 +178,8 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
     } = active
 
     if (!over) return
+
+    if (active.id === over.id) return
 
     const {
       data: { current: overData },

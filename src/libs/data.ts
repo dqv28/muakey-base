@@ -150,7 +150,7 @@ export const editTaskField = async (id: number, data?: any) =>
   }).then((data) => data)
 
 export const uploadImage = async (data: any) => {
-  return await requestWithFile('upload-image', {
+  return await requestWithFile('images', {
     method: 'POST',
     body: data
   })

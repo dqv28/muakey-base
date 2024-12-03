@@ -6,8 +6,6 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
 import { getTagsAction } from '../task/action'
 import { randomColor } from '@/libs/utils'
-import { getKpiAction } from './action'
-import toast from 'react-hot-toast'
 
 const WorkflowStatisticsFiltered: React.FC = () => {
   const router = useRouter()
@@ -35,18 +33,18 @@ const WorkflowStatisticsFiltered: React.FC = () => {
   }
 
   const handleSelect = useCallback(async (value: any) => {
-    try {
-      const { message, errors } = await getKpiAction({
-        tag_id: value.join(',')
-      })
+    console.log({
+      tag_id: value.join(','),
+      workflow_id: params?.id,
+    })
 
-      if (errors) {
-        toast.error(message)
-        return
-      }
-    } catch (error) {
-      throw new Error(String(error))
+    if (value?.length > 0) {
+      query.set('tag', value.join(','))
+    } else {
+      query.delete('tag')
     }
+
+    router.push(`?${query.toString()}`)
   }, [])
 
   const optionRender: SelectProps['optionRender'] = (option) => (
@@ -57,7 +55,7 @@ const WorkflowStatisticsFiltered: React.FC = () => {
           backgroundColor: randomColor(String(option?.label || '')),
         }}
       />
-      <span>{option?.label}</span>
+      <span className='flex-1 line-clamp-1' title={String(option?.label)}>{option?.label}</span>
     </div>
   )
 
@@ -93,6 +91,7 @@ const WorkflowStatisticsFiltered: React.FC = () => {
         mode='multiple'
         optionRender={optionRender}
         tagRender={tagRender}
+        allowClear
       />
       <DatePicker
         style={{ width: 160 }}

@@ -165,7 +165,7 @@ const page: React.FC<any> = async (props: {
             currentStage={currentStage?.name}
           />
 
-          <JobReview task={task} />
+          {task?.link_youtube && <JobReview task={task} />}
 
           <JobProgressTime
             stages={

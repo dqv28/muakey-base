@@ -1,5 +1,5 @@
 import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
-import abbreviateNumber, { randomColor } from '@/libs/utils'
+import { randomColor, abbreviateNumber, convertRelativeTime } from '@/libs/utils'
 import { Avatar } from '@/ui'
 import {
   ExclamationCircleFilled,
@@ -12,9 +12,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { Button, Dropdown, Input, Modal, Popconfirm, Tag } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import locale from 'dayjs/locale/vi'
 import duration from 'dayjs/plugin/duration'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { cloneDeep } from 'lodash'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -118,12 +116,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const timeStatus = t >= 0 ? 'inprogress' : 'overdue'
   const time = dayjs.duration(Math.abs(t))
 
-  dayjs.extend(relativeTime)
-  dayjs.locale(locale)
-  const datePosted = dayjs(task?.date_posted).fromNow()
-
-  console.log(task)
-
   return (
     <div className="relative">
       <div
@@ -131,7 +123,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           'border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !transition-all',
           isCompleted
             ? 'bg-[#2bbf3d] text-[#fff]'
-            : 'bg-[#fff] hover:bg-[#f8f8f8]',
+            : isFailed ? 'bg-[#c34343] text-[#fff]' : 'bg-[#fff] hover:bg-[#f8f8f8]',
           className,
         )}
         ref={setNodeRef}
@@ -141,11 +133,12 @@ const TaskItem: React.FC<TaskItemProps> = ({
       >
         <Link
           className={clsx(
-            'space-y-[8px]',
-            isCompleted ? 'hover:text-[#fff]' : 'hover:text-[#000]',
+            'space-y-[8px] !pointer-events-auto',
+            isCompleted || isFailed ? 'hover:text-[#fff]' : 'hover:text-[#000]',
           )}
           key={task?.id}
           href={`/job/${task?.id}?wid=${params?.id}`}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="line-clamp-2 flex items-center justify-between pr-[24px] text-[14px] font-[600] leading-[18px]">
             {task?.name}
@@ -154,6 +147,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           {
             task?.sticker?.map((s: any) => (
               <Tag
+                key={s?.id}
                 className='max-w-[100px] w-max line-clamp-1'
                 color={randomColor(String(s?.name || ''))}
                 style={{ marginInlineEnd: 4 }}
@@ -217,7 +211,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                   </div>
                 </div>
 
-                <span>{datePosted}</span>
+                <span>{convertRelativeTime(task?.date_posted)}</span>
               </div>
             )
           )}
@@ -331,7 +325,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           <div
             className={clsx(
               'cursor-pointer pl-[8px] text-[20px] leading-none',
-              isCompleted && 'text-[#fff]',
+              (isCompleted || isFailed) && 'text-[#fff]',
             )}
           >
             ··

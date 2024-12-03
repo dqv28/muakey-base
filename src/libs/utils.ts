@@ -1,3 +1,7 @@
+import dayjs from 'dayjs'
+import locale from 'dayjs/locale/vi'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
 export const randomColor = (s: string) => {
   let hash = 0
   for (var i = 0; i < s.length; i++) {
@@ -27,4 +31,19 @@ export const abbreviateNumber = (number: number) => {
   return scaled + suffix
 }
 
-export default abbreviateNumber
+export const getVideoId = (url: string) => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+
+  return (match && match[2].length === 11)
+    ? match[2]
+    : null;
+}
+
+export const convertRelativeTime = (date: Date) => {
+  dayjs.extend(relativeTime)
+  dayjs.locale(locale)
+  const relativeDate = dayjs(date).fromNow()
+
+  return relativeDate
+}

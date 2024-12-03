@@ -148,7 +148,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                       id,
                       sticker: tag?.map((t: number) => {
                         const tagName = tags.find((s: any) => s?.id === t)?.title
-
                         return ({
                           name: tagName,
                           sticker_id: t
@@ -191,7 +190,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                         stage_id: stage?.id,
                         id: initialValues?.id,
                         sticker: tag?.map((t: number) => {
-                          const tagName = sticker.find((s: any) => s?.sticker_id === t)?.name
+                          const tagName = tags.find((s: any) => s?.id === t)?.title
 
                           return ({
                             name: tagName,
