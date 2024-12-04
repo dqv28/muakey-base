@@ -1,5 +1,11 @@
+'use client'
+
 import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
-import { randomColor, abbreviateNumber, convertRelativeTime } from '@/libs/utils'
+import {
+  abbreviateNumber,
+  convertRelativeTime,
+  randomColor,
+} from '@/libs/utils'
 import { Avatar } from '@/ui'
 import {
   ExclamationCircleFilled,
@@ -22,6 +28,8 @@ import { editTaskAction } from '../../../action'
 import { StageContext } from '../stage/StageList'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import TaskModalForm from './TaskModalForm'
+import { useAsyncEffect } from '@/libs/hook'
+import { getMeAction } from './action'
 
 export type TaskItemProps = {
   className?: string
@@ -42,9 +50,11 @@ const TaskItem: React.FC<TaskItemProps> = ({
   onDelete,
 }) => {
   const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
+  const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
   const params = useParams()
   const { failedStageId } = useContext(StageContext)
   const { setStages } = useContext(WorkflowStageContext)
+  const [userId, setUserId] = useState(null)
 
   const {
     attributes,
@@ -61,11 +71,17 @@ const TaskItem: React.FC<TaskItemProps> = ({
     opacity: isDragging ? 0.5 : undefined,
   }
 
+  useAsyncEffect(async () => {
+    const res = await getMeAction()
+
+    setUserId(res?.id)
+  }, [])
+
   const user = members?.filter((u: any) => u?.id === task.account_id)?.[0]
 
   const handleAssign = async (id: number) => {
     try {
-      const { error } = await editTaskAction(task?.id, {
+      const { message, errors } = await editTaskAction(task?.id, {
         account_id: id,
       })
 
@@ -98,13 +114,62 @@ const TaskItem: React.FC<TaskItemProps> = ({
         })
       })
 
-      if (error) {
-        toast.error(error)
+      if (errors) {
+        toast.error(message)
         return
       }
 
       toast.success('Nhiệm vụ đã được giao.')
       setAssignConfirmOpen(false)
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+
+  const handleRemoveExecutor = async (id: number) => {
+    if (userId !== task.account_id) {
+      toast.error('Không thể gỡ nhiệm vụ của người khác.')
+      return
+    }
+
+    try {
+      const { message, errors } = await editTaskAction(id, {
+        account_id: null,
+        started_at: null
+      })
+
+      setStages((prevStages: any[]) => {
+        const newStages = cloneDeep(prevStages)
+
+        return newStages?.map((stage: any) => {
+          if (stage?.id === task?.stage_id) {
+            return {
+              ...stage,
+              tasks: stage?.tasks?.map((t: any) => {
+                if (t?.id === task?.id) {
+                  return {
+                    ...t,
+                    account_id: null,
+                    expired: null,
+                  }
+                }
+
+                return t
+              }),
+            }
+          }
+
+          return stage
+        })
+      })
+
+      if (errors) {
+        toast.error(message)
+        return
+      }
+
+      toast.success('Đã gỡ người thực thi.')
+      setRemoveConfirmOpen(false)
     } catch (error: any) {
       throw new Error(error)
     }
@@ -123,7 +188,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
           'border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !transition-all',
           isCompleted
             ? 'bg-[#2bbf3d] text-[#fff]'
-            : isFailed ? 'bg-[#c34343] text-[#fff]' : 'bg-[#fff] hover:bg-[#f8f8f8]',
+            : isFailed
+              ? 'bg-[#c34343] text-[#fff]'
+              : 'bg-[#fff] hover:bg-[#f8f8f8]',
           className,
         )}
         ref={setNodeRef}
@@ -133,7 +200,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
       >
         <Link
           className={clsx(
-            'space-y-[8px] !pointer-events-auto',
+            '!pointer-events-auto space-y-[8px]',
             isCompleted || isFailed ? 'hover:text-[#fff]' : 'hover:text-[#000]',
           )}
           key={task?.id}
@@ -143,19 +210,17 @@ const TaskItem: React.FC<TaskItemProps> = ({
           <div className="line-clamp-2 flex items-center justify-between pr-[24px] text-[14px] font-[600] leading-[18px]">
             {task?.name}
           </div>
-          <div className='flex items-center'>
-          {
-            task?.sticker?.map((s: any) => (
+          <div className="flex items-center">
+            {task?.sticker?.map((s: any) => (
               <Tag
                 key={s?.id}
-                className='max-w-[100px] w-max line-clamp-1'
+                className="line-clamp-1 w-max max-w-[100px]"
                 color={randomColor(String(s?.name || ''))}
                 style={{ marginInlineEnd: 4 }}
               >
                 {s?.name}
               </Tag>
-            ))
-          }
+            ))}
           </div>
           <div
             className="line-clamp-1 leading-[17px]"
@@ -199,7 +264,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           ) : (
             isCompleted && (
               <div className="!mt-[16px] flex items-center justify-between gap-[12px] text-nowrap">
-                <div className='flex items-center gap-[12px]'>
+                <div className="flex items-center gap-[12px]">
                   <div>
                     <EyeOutlined /> {abbreviateNumber(task?.view_count)}
                   </div>
@@ -303,6 +368,12 @@ const TaskItem: React.FC<TaskItemProps> = ({
                       Đánh dấu thất bại
                     </div>
                   </MarkTaskFailedModalForm>
+                  <div
+                    className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]"
+                    onClick={() => setRemoveConfirmOpen(true)}
+                  >
+                    Gỡ người thực thi
+                  </div>
                 </>
               )}
 
@@ -332,6 +403,13 @@ const TaskItem: React.FC<TaskItemProps> = ({
           </div>
         </Dropdown>
       </div>
+
+      <Modal
+        title="Xác nhận gỡ người thực thi của nhiệm vụ này?"
+        open={removeConfirmOpen}
+        onCancel={() => setRemoveConfirmOpen(false)}
+        onOk={() => handleRemoveExecutor(task?.id)}
+      ></Modal>
     </div>
   )
 }

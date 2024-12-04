@@ -1,46 +1,36 @@
 'use client'
 
+import InitializedMDXEditor from '@/components/InitializedMDXEditor/InitializedMDXEditor'
+import { MDXEditorMethods } from '@mdxeditor/editor'
 import { Button, Form } from 'antd'
 import clsx from 'clsx'
-import { useRouter } from 'next/navigation'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
-import ReactQuill from 'react-quill-new'
-import { editTaskAction, uploadImageAction } from '../../../actions'
+import { editTaskAction } from '../../../actions'
+import { Converter } from 'showdown'
 
 type JobDescriptionProps = {
   value?: any
   params?: any
 }
 
-const base64ToFile = (base64: string) => {
-  const byteString = atob(base64.split(',')[1])
-  const mimeString = base64.split(',')[0].split(':')[1].split(';')[0]
-
-  const byteArray = new Uint8Array(byteString.length)
-  for (let i = 0; i < byteString.length; i++) {
-    byteArray[i] = byteString.charCodeAt(i)
-  }
-
-  return new File([byteArray], 'upload', { type: mimeString })
-}
-
 const JobDescription: React.FC<JobDescriptionProps> = ({
   value: defaultValue,
   params,
 }) => {
-  const [value, setValue] = useState(defaultValue || '')
+  const [value] = useState(defaultValue || '')
   const [isEdit, setIsEdit] = useState(false)
   const [loading, setLoading] = useState(false)
-  const quillRef = useRef<ReactQuill>(null)
-  const router = useRouter()
+  const editorRef = useRef<MDXEditorMethods>(null)
+  const converter = new Converter()
 
   const handleSubmit = async (formData: any) => {
+    console.log(formData)
     setLoading(true)
 
     try {
       const { message, errors } = await editTaskAction(params?.task?.code, {
-        ...formData,
+        description: converter.makeHtml(formData?.description),
       })
 
       if (errors) {
@@ -52,85 +42,15 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
       toast.success('Cập nhật thành công')
       setIsEdit(false)
       setLoading(false)
-      router.refresh()
+      
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
     } catch (error: any) {
       setLoading(false)
       throw new Error(error)
     }
   }
-
-  const uploadImage = useCallback(async () => {
-    const input = document.createElement('input')
-    input.setAttribute('type', 'file')
-    input.setAttribute('accept', 'image/*')
-    input.click()
-
-    input.onchange = async (e) => {
-      const quill = quillRef.current
-
-      if (input !== null && input.files !== null) {
-        const file = input.files[0]
-        const formData = new FormData()
-
-        formData.append('image', file)
-
-        try {
-          const { url, error } = await uploadImageAction(formData)
-
-          if (error) {
-            toast.error(error)
-            return
-          }
-
-          if (!quill) return
-
-          const range = quill.getEditorSelection()
-
-          if (!range) return
-
-          quill.getEditor().insertEmbed(range.index, 'image', url)
-        } catch (error: any) {
-          throw new Error(error)
-        }
-      }
-    }
-  }, [])
-
-  const modules: ReactQuill.ReactQuillProps['modules'] = {
-    toolbar: {
-      container: [
-        [{ header: '1' }, { header: '2' }],
-        [{ size: [] }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{ list: 'ordered' }, { indent: '-1' }, { indent: '+1' }],
-        ['link', 'image', 'video'],
-        ['code-block'],
-        ['clean'],
-      ],
-      handlers: {
-        image: uploadImage,
-      },
-    },
-    clipboard: {
-      matchVisual: false,
-    },
-  }
-
-  const formats: ReactQuill.ReactQuillProps['formats'] = [
-    'header',
-    'size',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'indent',
-    'link',
-    'image',
-    'video',
-    'code-block',
-  ]
 
   return (
     <div className="mt-[24px]">
@@ -152,13 +72,11 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
           onFinish={handleSubmit}
         >
           <Form.Item rootClassName="min-h-[220px]" name="description">
-            <ReactQuill
-              ref={quillRef}
-              theme="snow"
-              modules={modules}
-              formats={formats}
-              value={value}
-              onChange={setValue}
+            <InitializedMDXEditor
+              contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px]"
+              editorRef={editorRef}
+              markdown={converter.makeMarkdown(value || '')}
+              placeholder='Mô tả nhiệm vụ'
             />
           </Form.Item>
           <Form.Item>

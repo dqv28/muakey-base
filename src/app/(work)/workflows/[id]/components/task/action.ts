@@ -1,5 +1,6 @@
 'use server'
 
+import { getMe } from "@/libs/data"
 import { addTag, addTagToTask, deleteTag, getTags, updateTagToTask } from "@/libs/tag"
 
 export const addTagAction = async (data: any) => {
@@ -20,4 +21,8 @@ export const  addTagToTaskAction = async (data: any) => {
 
 export const  updateTagToTaskAction = async (id: number, data: any) => {
   return await updateTagToTask(id, data)
+}
+
+export const getMeAction = async () => {
+  return await getMe()
 }

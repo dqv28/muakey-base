@@ -47,3 +47,15 @@ export const convertRelativeTime = (date: Date) => {
 
   return relativeDate
 }
+
+export const base64ToFile = (base64: string) => {
+  const byteString = atob(base64.split(',')[1])
+  const mimeString = base64.split(',')[0].split(':')[1].split(';')[0]
+
+  const byteArray = new Uint8Array(byteString.length)
+  for (let i = 0; i < byteString.length; i++) {
+    byteArray[i] = byteString.charCodeAt(i)
+  }
+
+  return new File([byteArray], 'upload', { type: mimeString })
+}

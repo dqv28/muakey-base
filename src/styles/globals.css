@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('react-quill-new/dist/quill.snow.css');
+@import url('@mdxeditor/editor/style.css');
 
 html *::-webkit-scrollbar {
   border-radius: 0;

@@ -212,8 +212,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       }
 
       if (errors) {
-        if (typeof errors === 'string') {
-          toast.error(errors)
+        if (errors.task) {
+          toast.error(errors.task)
           setLoading(false)
           return
         }
