@@ -223,7 +223,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
             ))}
           </div>
           <div
-            className="line-clamp-1 leading-[17px]"
+            className="line-clamp-2 leading-[17px]"
             dangerouslySetInnerHTML={{
               __html: task?.description || 'Không có mô tả',
             }}

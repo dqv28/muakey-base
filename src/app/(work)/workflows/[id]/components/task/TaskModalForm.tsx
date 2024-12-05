@@ -1,9 +1,10 @@
 'use client'
 
-import { uploadImageAction } from '@/app/(work)/job/actions'
+import { InitializedMDXEditor } from '@/components'
 import { useAsyncEffect } from '@/libs/hook'
 import { randomColor } from '@/libs/utils'
 import { PlusOutlined } from '@ant-design/icons'
+import { MDXEditorMethods } from '@mdxeditor/editor'
 import {
   Button,
   Divider,
@@ -20,12 +21,17 @@ import {
 } from 'antd'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
-import React, { useCallback, useContext, useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
-import ReactQuill from 'react-quill-new'
+import { Converter } from 'showdown'
 import { addTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
-import { addTagAction, addTagToTaskAction, getTagsAction, updateTagToTaskAction } from './action'
+import {
+  addTagAction,
+  addTagToTaskAction,
+  getTagsAction,
+  updateTagToTaskAction,
+} from './action'
 import TagDeleteButton from './TagDeleteButton'
 
 type TaskModalFormProps = ModalProps & {
@@ -47,11 +53,16 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const [tagAddLoading, setTagAddLoading] = useState(false)
 
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState(initialValues?.description || '')
   const formRef = useRef<FormInstance>(null)
-  const quillRef = useRef<ReactQuill>(null)
   const params = useParams()
   const { setStages } = useContext(StageContext)
+  const editorRef = useRef<MDXEditorMethods>(null)
+  const converter = new Converter({
+    tables: true,
+    strikethrough: true,
+    tasklists: true,
+    simpleLineBreaks: true,
+  })
 
   const [tags, setTags] = useState<any[]>([])
   const [name, setName] = useState('')
@@ -106,27 +117,29 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
-
+    
     const { member: memberVal, tag, ...restFormData } = formData
-
+    
     const member: any = members.find(
       (m: any) =>
         `${`${m.full_name} ·`} ${m.username} ${!!m.position ? `· ${m.position}` : ''}` ===
-        memberVal,
+      memberVal,
     )
-
+    
     try {
       if (action === 'create') {
         var { errors, id } = await addTaskAction({
           ...restFormData,
+          description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
           workflow_id: params?.id || null,
+          tag_id: restFormData?.tag || []
         })
-        
+
         if (!errors) {
           await addTagToTaskAction({
             task_id: id,
-            tag_id: tag
+            tag_id: tag,
           })
 
           setStages((prevStages: any[]) => {
@@ -142,17 +155,20 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                   tasks: [
                     {
                       ...restFormData,
+                      description: converter.makeHtml(restFormData.description),
                       account_id: member?.id || null,
                       workflow_id: params?.id || null,
                       stage_id: stage?.id,
                       id,
                       sticker: tag?.map((t: number) => {
-                        const tagName = tags.find((s: any) => s?.id === t)?.title
-                        return ({
+                        const tagName = tags.find(
+                          (s: any) => s?.id === t,
+                        )?.title
+                        return {
                           name: tagName,
-                          sticker_id: t
-                        })
-                      })
+                          sticker_id: t,
+                        }
+                      }),
                     },
                     ...stage?.tasks,
                   ],
@@ -166,13 +182,15 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       } else {
         var { errors } = await editTaskAction(initialValues?.id, {
           ...restFormData,
+          description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
+          tag_id: restFormData?.tag || []
         })
 
         if (!errors) {
           await updateTagToTaskAction(initialValues?.id, {
             task_id: initialValues?.id,
-            tag_id: tag
+            tag_id: tag,
           })
 
           setStages((prevStages: any[]) => {
@@ -186,17 +204,22 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                     if (task?.id === initialValues?.id) {
                       return {
                         ...restFormData,
+                        description: converter.makeHtml(
+                          restFormData.description,
+                        ),
                         account_id: member?.id || null,
                         stage_id: stage?.id,
                         id: initialValues?.id,
                         sticker: tag?.map((t: number) => {
-                          const tagName = tags.find((s: any) => s?.id === t)?.title
+                          const tagName = tags.find(
+                            (s: any) => s?.id === t,
+                          )?.title
 
-                          return ({
+                          return {
                             name: tagName,
-                            sticker_id: t
-                          })
-                        })
+                            sticker_id: t,
+                          }
+                        }),
                       }
                     }
 
@@ -242,78 +265,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   }
 
   const mem: any = members?.find((m: any) => m?.id === account_id)
-
-  const uploadImage = useCallback(async () => {
-    const input = document.createElement('input')
-    input.setAttribute('type', 'file')
-    input.setAttribute('accept', 'image/*')
-    input.click()
-    input.onchange = async (e) => {
-      const quill = quillRef.current
-
-      if (input !== null && input.files !== null) {
-        const file = input.files[0]
-        const formData = new FormData()
-
-        formData.append('image', file)
-
-        try {
-          const { url, error } = await uploadImageAction(formData)
-
-          if (error) {
-            toast.error(error)
-            return
-          }
-
-          if (!quill) return
-
-          const range = quill.getEditorSelection()
-
-          if (!range) return
-
-          quill.getEditor().insertEmbed(range.index, 'image', url)
-        } catch (error: any) {
-          throw new Error(error)
-        }
-      }
-    }
-  }, [])
-
-  const modules: ReactQuill.ReactQuillProps['modules'] = {
-    toolbar: {
-      container: [
-        [{ header: '1' }, { header: '2' }],
-        [{ size: [] }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{ list: 'ordered' }, { indent: '-1' }, { indent: '+1' }],
-        ['link', 'image', 'video'],
-        ['code-block'],
-        ['clean'],
-      ],
-      handlers: {
-        image: uploadImage,
-      },
-    },
-    clipboard: {
-      matchVisual: false,
-    },
-  }
-
-  const formats: ReactQuill.ReactQuillProps['formats'] = [
-    'header',
-    'size',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'indent',
-    'link',
-    'image',
-    'video',
-    'code-block',
-  ]
 
   useAsyncEffect(async () => {
     const res = await getTagsAction({
@@ -399,6 +350,10 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     <>
       <div onClick={() => setOpen(true)}>{children}</div>
       <Modal
+        classNames={{
+          mask: '!z-auto',
+          wrapper: '!z-auto',
+        }}
         title={title || 'TẠO NHIỆM VỤ MỚI'}
         open={open}
         onCancel={() => setOpen(false)}
@@ -418,7 +373,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
               member: account_id
                 ? `${`${mem?.full_name} ·`} ${mem?.username} ${!!mem?.position ? `· ${mem?.position}` : ''}`
                 : undefined,
-              tag: sticker?.map((s: any) => s?.sticker_id)
+              tag: sticker?.map((s: any) => s?.sticker_id),
             }}
             onFinish={handleSubmit}
             layout="vertical"
@@ -454,7 +409,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             optionRender={optionRender}
             dropdownRender={dropdownRender}
             tagRender={tagRender}
-            notFoundContent={<Empty description='Chưa có nhãn' />}
+            notFoundContent={<Empty description="Chưa có nhãn" />}
           />
         </Form.Item>
         <Form.Item
@@ -462,13 +417,10 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           name="description"
           label="Mô tả"
         >
-          <ReactQuill
-            ref={quillRef}
-            theme="snow"
-            modules={modules}
-            formats={formats}
-            value={value}
-            onChange={setValue}
+          <InitializedMDXEditor
+            contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
+            ref={editorRef}
+            markdown={converter.makeMarkdown(initialValues?.description || '')}
             placeholder="Mô tả nhiệm vụ"
           />
         </Form.Item>

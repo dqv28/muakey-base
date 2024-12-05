@@ -205,6 +205,11 @@ export const getTaskReports = async (query?: any) =>
   .then((data) => data)
   .catch(() => [])
 
+export const getTaskReportsByTaskId = async (taskId: number) => 
+  requestWithAuthorized(`report-field-values/${taskId}`)
+  .then((data) => data)
+  .catch(() => [])
+
 export const getMe = async (options?: RequestOptions) => 
   requestWithAuthorized(`my-account`, {...options})
   .then((data) => data)

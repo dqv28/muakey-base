@@ -73,7 +73,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
         >
           <Form.Item rootClassName="min-h-[220px]" name="description">
             <InitializedMDXEditor
-              contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px]"
+              contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
               editorRef={editorRef}
               markdown={converter.makeMarkdown(value || '')}
               placeholder='Mô tả nhiệm vụ'
@@ -94,7 +94,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
         </Form>
       ) : (
         <div
-          className={clsx('mt-[8px]', value ? 'text-[#333]' : 'text-[#999]')}
+          className={clsx('mt-[8px] prose !max-w-full', value ? 'text-[#333]' : 'text-[#999]')}
           dangerouslySetInnerHTML={{ __html: value || 'Không có mô tả' }}
         />
       )}

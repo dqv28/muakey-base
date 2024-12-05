@@ -1,30 +1,7 @@
 'use client'
 
 import { uploadImageAction } from '@/app/(work)/job/actions'
-import {
-  CheckListOutlined,
-  CodeOutlined,
-  OpenOutlined,
-  SubScriptOutlined,
-  SuperScriptOutlined,
-} from '@/ui/icons'
-import {
-  BoldOutlined,
-  CaretDownOutlined,
-  CheckOutlined,
-  CopyOutlined,
-  DeleteOutlined,
-  DisconnectOutlined,
-  EditOutlined,
-  ItalicOutlined,
-  LinkOutlined,
-  OrderedListOutlined,
-  PictureOutlined,
-  SettingOutlined,
-  StrikethroughOutlined,
-  UnderlineOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons'
+import { EDITOR_ICON_KEYS } from '@/libs/constant'
 import {
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
@@ -54,70 +31,7 @@ type InitializedMDXEditorProps = MDXEditorProps & {
 }
 
 const renderIconComponentFor = (name: IconKey) => {
-  switch (name) {
-    case 'format_bold':
-      return <BoldOutlined />
-
-    case 'format_italic':
-      return <ItalicOutlined />
-
-    case 'format_underlined':
-      return <UnderlineOutlined />
-
-    case 'code':
-      return <CodeOutlined className="text-[20px]" />
-
-    case 'arrow_drop_down':
-      return <CaretDownOutlined />
-
-    case 'format_list_bulleted':
-      return <UnorderedListOutlined className="text-[18px]" />
-
-    case 'format_list_numbered':
-      return <OrderedListOutlined className="text-[18px]" />
-
-    case 'format_list_checked':
-      return <CheckListOutlined className="text-[20px]" />
-
-    case 'strikeThrough':
-      return <StrikethroughOutlined />
-
-    case 'superscript':
-      return <SuperScriptOutlined className="text-[20px]" />
-
-    case 'subscript':
-      return <SubScriptOutlined className="text-[20px]" />
-
-    case 'link':
-      return <LinkOutlined className="text-[18px]" />
-
-    case 'add_photo':
-      return <PictureOutlined className="text-[16px]" />
-
-    case 'open_in_new':
-      return <OpenOutlined className="text-[20px]" />
-
-    case 'edit':
-      return <EditOutlined /> 
-
-    case 'content_copy':
-      return <CopyOutlined />
-
-    case 'link_off':
-      return <DisconnectOutlined />
-
-    case 'check':
-      return <CheckOutlined className='text-[#42b814]' />
-
-    case 'delete_small':
-      return <DeleteOutlined />
-
-    case 'settings':
-      return <SettingOutlined />
-
-    default:
-      return <>{name}</>
-  }
+  return EDITOR_ICON_KEYS[name] || <>{name}</>
 }
 
 const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
@@ -153,7 +67,7 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
           <StrikeThroughSupSubToggles />
 
           <Divider type="vertical" />
-          <ListsToggle />
+          <ListsToggle options={['bullet', 'number']} />
 
           <Divider type="vertical" />
           <BlockTypeSelect />

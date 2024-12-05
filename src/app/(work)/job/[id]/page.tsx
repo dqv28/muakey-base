@@ -2,6 +2,7 @@ import { BackButton } from '@/components'
 import {
   getStagesByWorkflowId,
   getTaskById,
+  getTaskReportsByTaskId,
   getTimeStagesByTaskId,
   getWorkflowById,
 } from '@/libs/data'
@@ -20,6 +21,7 @@ import JobProgressTime from './components/JobProgressTime'
 import JobReview from './components/JobReview'
 import PageHeader from './components/PageHeader'
 import PageHeaderAction from './components/PageHeaderAction'
+import JobReports from './components/JobReports'
 
 export const generateMetadata = async (props: { params: any }) => {
   const params = await props.params
@@ -52,12 +54,13 @@ const page: React.FC<any> = async (props: {
   const params = await props.params
   const searchParams = await props.searchParams
 
-  const [task, stages, workflow] = await Promise.all([
+  const [task, stages, workflow, reports] = await Promise.all([
     getTaskById(params?.id),
     getStagesByWorkflowId({
       workflow_id: searchParams?.wid,
     }),
     getWorkflowById(searchParams?.wid),
+    getTaskReportsByTaskId(params?.id)
   ])
 
   const timeStages = await getTimeStagesByTaskId(task?.id)
@@ -159,13 +162,15 @@ const page: React.FC<any> = async (props: {
       </Col>
       <Col className="h-[100vh] overflow-auto" span={7}>
         <div className="h-max min-h-[100vh] bg-[#eee] p-[16px]">
+          {task?.link_youtube && <JobReview task={task} />}
+
+          {reports && <JobReports reports={reports} />}
+
           <JobOverView
             task={task}
             members={workflow?.members}
             currentStage={currentStage?.name}
           />
-
-          {task?.link_youtube && <JobReview task={task} />}
 
           <JobProgressTime
             stages={

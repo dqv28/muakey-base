@@ -32,12 +32,10 @@ export const abbreviateNumber = (number: number) => {
 }
 
 export const getVideoId = (url: string) => {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+  const match = url.match(regExp)
 
-  return (match && match[2].length === 11)
-    ? match[2]
-    : null;
+  return match && match[2].length === 11 ? match[2] : null
 }
 
 export const convertRelativeTime = (date: Date) => {
@@ -58,4 +56,13 @@ export const base64ToFile = (base64: string) => {
   }
 
   return new File([byteArray], 'upload', { type: mimeString })
+}
+
+const urlRegex =
+  /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?/
+
+export const generateUrl = (url: string) => {
+  if (!urlRegex.test(url)) return null
+
+  return url.split(' ').filter((s: string) => s.startsWith('http'))
 }
