@@ -58,11 +58,20 @@ export const base64ToFile = (base64: string) => {
   return new File([byteArray], 'upload', { type: mimeString })
 }
 
-const urlRegex =
-  /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?/
 
-export const generateUrl = (url: string) => {
-  if (!urlRegex.test(url)) return null
+export const generateUrl = (str: string) => {
+  const urlRegex = /https?:\/\/[^\s]+/g
+  
+  return str.match(urlRegex)
+}
 
-  return url.split(' ').filter((s: string) => s.startsWith('http'))
+export const convertToSlug = (text: string) => {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
 }

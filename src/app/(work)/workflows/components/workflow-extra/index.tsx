@@ -1,26 +1,47 @@
 'use client'
 
-import { PlusOutlined } from '@/ui/icons'
-import { Button, Form, FormInstance, Modal } from 'antd'
+import { App, Form, FormInstance, Modal } from 'antd'
 import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { addWorkflowCategoryAction } from '../../action'
 import FormFields from './FormFields'
+import { useAsyncEffect } from '@/libs/hook'
+import { getWorkflowCategoryByIdAction } from './action'
+import { withApp } from '@/hoc'
 
-const WorkflowExtra: React.FC = () => {
+const WorkflowExtra: React.FC<{
+  action?: 'create' | 'edit'
+  initialValues?: any
+  children?: React.ReactNode
+}> = ({ action = 'create', initialValues, children }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [category, setCategory] = useState()
 
   const formRef = useRef<FormInstance>(null)
+  const { message } = App.useApp()
+
+  useAsyncEffect(async () => {
+    const res = await getWorkflowCategoryByIdAction(initialValues?.id)
+
+    setCategory(res)
+  }, [])
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
 
     try {
-      const { errors } = await addWorkflowCategoryAction({
-        ...formData,
-        members: (formData?.members || []).join(' '),
-      })
+      if (action === 'edit') {
+        console.log({
+          formData,
+        })
+        return
+      } else {
+        var { errors } = await addWorkflowCategoryAction({
+          ...formData,
+          members: (formData?.members || []).join(' '),
+        })
+      }
 
       if (errors) {
         const nameList = Object.keys(errors)
@@ -36,7 +57,7 @@ const WorkflowExtra: React.FC = () => {
         return
       }
 
-      toast.success('Đã thêm 1 danh mục mới.')
+      message.success('Đã thêm 1 danh mục mới.')
       setOpen(false)
       setLoading(false)
 
@@ -51,19 +72,12 @@ const WorkflowExtra: React.FC = () => {
 
   return (
     <>
-      <Button
-        className="!p-[10px] !text-[12px] text-[#fff]"
-        icon={<PlusOutlined className="text-[16px]" />}
-        type="primary"
-        onClick={() => setOpen(true)}
-      >
-        Tạo mới danh mục
-      </Button>
+      <div onClick={() => setOpen(true)}>{children}</div>
       <Modal
         title="TẠO DANH MỤC MỚI"
         open={open}
         onCancel={() => setOpen(false)}
-        width={760}
+        width={1000}
         okText="Tạo danh mục mới"
         cancelText="Bỏ qua"
         okButtonProps={{
@@ -72,7 +86,12 @@ const WorkflowExtra: React.FC = () => {
         }}
         destroyOnClose
         modalRender={(dom) => (
-          <Form onFinish={handleSubmit} ref={formRef} layout="vertical">
+          <Form
+            onFinish={handleSubmit}
+            ref={formRef}
+            layout="vertical"
+            initialValues={category}
+          >
             {dom}
           </Form>
         )}
@@ -83,4 +102,4 @@ const WorkflowExtra: React.FC = () => {
   )
 }
 
-export default WorkflowExtra
+export default withApp(WorkflowExtra)

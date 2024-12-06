@@ -1,20 +1,59 @@
+'use client'
+
 import { abbreviateNumber, convertRelativeTime, getVideoId } from '@/libs/utils'
 import { OpenOutlined } from '@/ui/icons'
-import { EyeOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons'
+import {
+  EyeOutlined,
+  LikeOutlined,
+  LoadingOutlined,
+  MessageOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons'
 import { Tooltip } from 'antd'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
+import { refreshDataAction } from './action'
 
 type JobReviewProps = {
   task?: any
+  query?: any
 }
 
-const JobReview: React.FC<JobReviewProps> = ({ task }) => {
+const JobReview: React.FC<JobReviewProps> = ({ task, query }) => {
+  const [loading, setLoading] = useState(false)
   const videoId = getVideoId(String(task?.link_youtube))
+
+  const handleRefresh = async () => {
+    setLoading(true)
+
+    try {
+      await refreshDataAction({
+        workflow_id: query?.workflowId,
+      })
+      setLoading(false)
+
+      if (typeof window !== undefined) {
+        window.location.reload()
+      }
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
+  }
 
   return (
     <div className="mb-[16px] space-y-[6px] rounded-[6px] bg-[#fff] px-[20px] py-[16px]">
-      <div className="mb-[12px] font-[600] text-[#888] text-[13px]">SẢN PHẨM</div>
+      <div className="mb-[12px] flex items-center justify-between gap-[24px] text-[13px] text-[#888]">
+        <span className="font-[600]">SẢN PHẨM</span>
+        {loading ? (
+          <LoadingOutlined />
+        ) : (
+          <ReloadOutlined
+            className="text-[#267cde] cursor-pointer text-[12px]"
+            onClick={handleRefresh}
+          />
+        )}
+      </div>
       <iframe
         className="size-full"
         src={`//www.youtube.com/embed/${videoId}`}

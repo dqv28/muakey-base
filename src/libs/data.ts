@@ -1,4 +1,4 @@
-import { request, RequestOptions, requestWithAuthorized, requestWithFile } from './request'
+import { RequestOptions, requestWithAuthorized, requestWithFile } from './request'
 import { getSession } from './session'
 
 export const getWorkflows = async (query?: any) => {
@@ -31,6 +31,12 @@ export const getWorkflowCategories = async () => {
     .catch(() => [])
 }
 
+export const getWorkflowCategoryById = async (id: number) => {
+  return await requestWithAuthorized(`workflow-categories/${id}`)
+    .then((data) => data)
+    .catch(() => [])
+}
+
 export const getWorkflowMembers = async (id: number) => {
   return requestWithAuthorized(`workflows-members/${id}`)
     .then((data) => data)
@@ -41,6 +47,17 @@ export const addWorkflow = async (data: any) =>
   requestWithAuthorized('workflows', {
     method: 'POST',
     data,
+  }).then((data) => data)
+
+export const editWorkflow = async (id: number, data: any) =>
+  requestWithAuthorized(`workflows/${id}`, {
+    method: 'PUT',
+    data,
+  }).then((data) => data)
+
+export const deleteWorkflow = async (id: number) =>
+  requestWithAuthorized(`workflows/${id}`, {
+    method: 'DELETE',
   }).then((data) => data)
 
 export const addStage = async (data: any, query?: any) =>

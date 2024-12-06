@@ -6,6 +6,8 @@ import WorkflowExtra from './components/workflow-extra'
 import WorkflowList from './components/workflow-list'
 import WorkflowSearch from './components/WorkflowSearch'
 import WorkflowTabs from './components/WorkflowTabs'
+import { Button } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 
 const page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const searchParams = await prop.searchParams
@@ -14,7 +16,8 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const [workflowCategories, workflows] = await Promise.all([
     getWorkflowCategories(),
     getWorkflows({
-      type: type === 'all' ? '' : type || 'open',
+      type: !type || type === 'all' ? '' : type || 'open',
+      search: searchParams?.q || ''
     }),
   ])
 
@@ -29,7 +32,15 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
           extra={
             <div className="flex items-center gap-[12px]">
               <WorkflowSearch />
-              <WorkflowExtra />
+              <WorkflowExtra>
+                <Button
+                  className="!p-[10px] !text-[12px] text-[#fff]"
+                  icon={<PlusOutlined className="text-[16px]" />}
+                  type="primary"
+                >
+                  Tạo mới danh mục
+                </Button>
+              </WorkflowExtra>
             </div>
           }
         >

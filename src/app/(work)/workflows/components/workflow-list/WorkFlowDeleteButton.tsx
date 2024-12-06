@@ -1,5 +1,5 @@
-import { DeleteOutlined, ExclamationCircleFilled } from '@ant-design/icons'
-import { Button, Modal } from 'antd'
+import { ExclamationCircleFilled } from '@ant-design/icons'
+import { Modal } from 'antd'
 import React, { useState } from 'react'
 
 type WorkFlowDeleteButtonProps = {
@@ -13,16 +13,11 @@ const WorkFlowDeleteButton: React.FC<WorkFlowDeleteButtonProps> = ({
 
   return (
     <>
-      <Button
-        icon={<DeleteOutlined />}
-        variant="outlined"
-        danger
-        onClick={() => setOpen(true)}
-      />
+      <div onClick={() => setOpen(true)}>Xóa danh mục</div>
       <Modal open={open} onCancel={() => setOpen(false)} onOk={onDelete}>
         <div className="flex items-center gap-[12px] text-[#000]">
           <ExclamationCircleFilled className="text-[36px] text-[#c65144]" />
-          Xác nhận muốn xóa quy trình này?
+          Xác nhận muốn xóa danh mục này?
         </div>
       </Modal>
     </>

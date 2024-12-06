@@ -1,34 +1,46 @@
 'use client'
 
 import { toast } from '@/ui'
-import { PlusOutlined } from '@ant-design/icons'
-import { Button, Form, FormInstance, Modal } from 'antd'
+import { App, Form, FormInstance, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
-import { addWorkflowAction } from '../../action'
+import { addWorkflowAction, editWorkflowAction } from '../../action'
 import FormFields from './FormFields'
+import { withApp } from '@/hoc'
 
 type WorkflowModalFormProps = {
   initialValues?: any
+  action?: 'create' | 'edit'
+  children?: React.ReactNode
 }
 
 const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
   initialValues,
+  action = 'create',
+  children
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const formRef = useRef<FormInstance>(null)
-
   const router = useRouter()
+
+  const { message } = App.useApp()
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
 
     try {
-      const { id: workflowId, errors } = await addWorkflowAction({
-        ...formData,
-        manager: (formData?.manager || []).join(' '),
-      })
+      if (action === 'edit') {
+        var { errors } = await editWorkflowAction(initialValues?.id, {
+          ...formData,
+          manager: (formData?.manager || []).join(' '),
+        })
+      } else {
+        var { id: workflowId, errors } = await addWorkflowAction({
+          ...formData,
+          manager: (formData?.manager || []).join(' '),
+        })
+      }
 
       if (errors) {
         const nameList: string[] = Object.keys(errors)
@@ -44,10 +56,15 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
         return false
       }
 
-      toast.success('Đã thêm 1 quy trình mới.')
-      router.push(`/workflows/${workflowId}`)
+      if (action === 'create') router.push(`/workflows/${workflowId}`)
+
+      message.success(action === 'create' ? 'Đã thêm 1 quy trình mới.' : 'Cập nhật thành công.')
       setOpen(false)
       setLoading(false)
+      
+      if (typeof window !== 'undefined' && action === 'edit') {
+        window.location.reload()
+      }
     } catch (error: any) {
       setLoading(false)
       throw new Error(error)
@@ -56,20 +73,16 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
 
   return (
     <>
-      <Button
-        type="primary"
-        icon={<PlusOutlined className="text-[16px]" />}
-        onClick={() => setOpen(true)}
-      >
-        Tạo mới workflow
-      </Button>
+      <div onClick={() => setOpen(true)}>
+        {children || 'Tạo mới workflow'}
+      </div>
       <Modal
-        title="Tạo luồng công việc mới"
+        title={action === 'create' ? "Tạo luồng công việc mới" : 'Cập nhật luồng công việc'}
         open={open}
         onCancel={() => setOpen(false)}
         onOk={() => formRef.current?.submit()}
         width={760}
-        okText="Tạo luồng công việc mới"
+        okText={action === 'create' ? "Tạo mới" : 'Cập nhật'}
         cancelText="Bỏ qua"
         okButtonProps={{
           htmlType: 'submit',
@@ -95,4 +108,4 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
   )
 }
 
-export default WorkflowModalForm
+export default withApp(WorkflowModalForm)

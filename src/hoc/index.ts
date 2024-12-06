@@ -1,0 +1,1 @@
+export { default as withApp } from './with-app'

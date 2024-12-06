@@ -12,10 +12,12 @@ import {
   deleteReportField,
   deleteStageById,
   deleteTask,
+  deleteWorkflow,
   deleteWorkflowCategoryById,
   editCustomField,
   editStage,
   editTask,
+  editWorkflow,
   getAccount,
   getTasksByStageId,
   getWorkflowCategories,
@@ -52,6 +54,12 @@ export const getAccountAction = async (query?: any) => {
 
 export const addWorkflowAction = async (data: any) => 
   addWorkflow(data)
+
+export const editWorkflowAction = async (id: number, data: any) => 
+  editWorkflow(id, data)
+
+export const deleteWorkflowAction = async (id: number) => 
+  deleteWorkflow(id)
 
 export const deleteWorkflowCategoryByIdAction = async (id: number) => 
   deleteWorkflowCategoryById(id)

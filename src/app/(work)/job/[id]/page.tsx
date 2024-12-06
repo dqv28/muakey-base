@@ -162,7 +162,9 @@ const page: React.FC<any> = async (props: {
       </Col>
       <Col className="h-[100vh] overflow-auto" span={7}>
         <div className="h-max min-h-[100vh] bg-[#eee] p-[16px]">
-          {task?.link_youtube && <JobReview task={task} />}
+          {task?.link_youtube && <JobReview task={task} query={{
+            workflowId: searchParams?.wid
+          }} />}
 
           {reports && <JobReports reports={reports} />}
 

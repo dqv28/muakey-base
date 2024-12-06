@@ -1,24 +1,29 @@
 'use client'
 
-import { useDebounce } from '@/libs/hook'
 import { Input } from '@/ui'
 import { SearchOutlined } from '@/ui/icons'
-import { ChangeEvent, useContext, useEffect, useState } from 'react'
-import { PageContext } from './PageProvider'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { ChangeEvent, useEffect, useState } from 'react'
 
 const WorkflowSearch: React.FC = () => {
-  const { setSearch } = useContext(PageContext)
   const [searchValue, setSearchValue] = useState('')
-
-  const debouncedSearchValue = useDebounce(searchValue, 200)
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const query = new URLSearchParams(searchParams.toString())
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
   }
 
   useEffect(() => {
-    setSearch(debouncedSearchValue)
-  }, [debouncedSearchValue, setSearch, searchValue])
+    if (searchValue) {
+      query.set('q', String(searchValue))
+    } else {
+      query.delete('q')
+    }
+
+    router.push(`?${query.toString()}`)
+  }, [searchValue])
 
   return (
     <div className="flex items-center gap-[8px] overflow-hidden rounded-[4px] border border-[#ddd] pr-[8px]">
