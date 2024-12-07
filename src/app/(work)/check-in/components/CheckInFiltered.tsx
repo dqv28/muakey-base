@@ -1,8 +1,9 @@
 'use client'
 
-import { DatePicker } from 'antd'
+import { ConfigProvider, DatePicker } from 'antd'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
+import locale from 'antd/locale/vi_VN'
 
 type CheckInFilteredProps = {}
 
@@ -23,14 +24,13 @@ const CheckInFiltered: React.FC<CheckInFilteredProps> = () => {
   }
 
   return (
-    <div>
+    <ConfigProvider locale={locale}>
       <DatePicker
         style={{ width: 160 }}
         picker="month"
-        placeholder="Chọn tháng"
         onChange={handleChange}
       />
-    </div>
+    </ConfigProvider>
   )
 }
 

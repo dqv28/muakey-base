@@ -21,7 +21,7 @@ const page: React.FC<any> = async (prop: {
         <span className="font-[500]">Chấm công</span>
         <CheckInFiltered />
       </div>
-      <div className="p-[16px]">
+      <div className="p-[16px] h-[calc(100vh-72px)] overflow-auto">
         <CheckInTable
           options={{
             attendances,

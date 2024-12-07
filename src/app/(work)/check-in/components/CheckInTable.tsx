@@ -61,21 +61,23 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
       dataIndex: `${num + 1}/${month}`,
       width: 80,
       align: 'center',
-      render: (value: any) => (
-        <>
-          {Array.isArray(value) ? (
-            <div className="flex flex-col gap-[4px]">
-              <span>{value[0]}</span>
-              {value[1] && (
-                <>
-                  <Divider className="!m-0 !w-[10px]" />
-                  <span>{value[1]}</span>
-                </>
-              )}
-            </div>
-          ) : null}
-        </>
-      ),
+      render: (value: any) => {
+        return (
+          <>
+            {Array.isArray(value) ? (
+              <div className="flex flex-col gap-[4px]">
+                <span>{value[0]}</span>
+                {value[1] && (
+                  <>
+                    <Divider className="!m-0 !w-[10px]" />
+                    <span>{value[1]}</span>
+                  </>
+                )}
+              </div>
+            ) : null}
+          </>
+        )
+      },
     })),
   ]
 
@@ -97,8 +99,8 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
               : null,
           ]
         : null
-
-      return [`${num + 1}/${new Date().getMonth() + 1}`, checkInValue]
+        
+      return [`${num + 1}/${month}`, checkInValue]
     })
 
     return {

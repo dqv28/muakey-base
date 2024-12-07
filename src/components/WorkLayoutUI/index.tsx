@@ -6,13 +6,13 @@ import SideBar from './SideBar'
 export type WorkLayoutUIProps = LayoutProps
 
 const WorkLayoutUI: React.FC<WorkLayoutUIProps> = async ({ children }) => {
-  const data = await getMe()
+  const user = await getMe()
 
   return (
     <Layout className="overflow-hidden" hasSide>
       <SideBar
         className="h-[100vh] w-[280px] bg-[#1469c9] text-[#fff]"
-        user={data}
+        user={user}
       />
       <Layout.Main className="max-h-[100vh] max-w-[calc(100vw-280px)] flex-1">
         {children}

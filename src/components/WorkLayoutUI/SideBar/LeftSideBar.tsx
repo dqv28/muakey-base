@@ -6,16 +6,18 @@ import {
   checkOutAction,
   logoutAction,
 } from '@/components/action'
+import { withApp } from '@/hoc'
 import {
   BellFilled,
+  ExclamationCircleFilled,
+  LoadingOutlined,
   LogoutOutlined,
   MehFilled,
   MenuOutlined,
 } from '@ant-design/icons'
-import { Avatar, Badge, Drawer, Dropdown, Modal, Tooltip } from 'antd'
+import { App, Avatar, Badge, Drawer, Dropdown, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
 import CheckoutButton from './CheckoutButton'
 import NotificationsList from './NotificationsList'
 
@@ -25,28 +27,36 @@ export type SubSideProps = {
 }
 
 const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
-  const [open, setOpen] = useState(false)
+  const [loginOpen, setLoginOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [openNotice, setOpenNotice] = useState(false)
   const router = useRouter()
 
+  const { message, modal } = App.useApp()
+
   const handleLogout = async () => {
     await logoutAction()
-    setOpen(false)
-    router.refresh()
+    router.push('/login')
   }
 
   const handleCheckedIn = async () => {
+    setLoading(true)
+
     try {
       const { success, error } = await checkedInAction()
 
       if (error) {
-        toast.error(error)
+        message.error(error)
+        setLoading(false)
         return
       }
 
-      toast.success(success)
+      message.success(success)
+      setLoading(false)
+      setLoginOpen(false)
       router.refresh()
     } catch (error: any) {
+      setLoading(false)
       throw new Error(error)
     }
   }
@@ -56,11 +66,11 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
       const { success, error } = await checkOutAction()
 
       if (error) {
-        toast.error(error)
+        message.error(error)
         return
       }
 
-      toast.success(success)
+      message.success(success)
       router.refresh()
     } catch (error: any) {
       throw new Error(error)
@@ -68,17 +78,11 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   }
 
   useEffect(() => {
-    if (options?.isFirstLogin) {
-      var timer = setTimeout(async () => {
-        await changeLoggedInDateAction()
-      }, 5000)
-    }
-
-    return () => clearTimeout(timer)
+    setLoginOpen(!!options?.isFirstLogin)
   }, [options?.isFirstLogin])
 
   return (
-    <div className="w-[60px]">
+    <div className="w-[60px] text-[#fff]">
       <Dropdown
         dropdownRender={() => (
           <div className="ml-[8px] min-w-[400px] rounded-[4px] bg-[#fff] p-[16px] shadow-[0_2px_4px_0_#0000001a]">
@@ -131,33 +135,48 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         <NotificationsList />
       </Drawer>
 
-      <Tooltip
-        title="Check-in tại đây"
-        open={options?.isFirstLogin}
-        placement="right"
-        color="green"
-      >
-        <div className="flex size-[60px] cursor-pointer items-center justify-center">
-          {options?.isCheckedIn ? (
-            <CheckoutButton onCheckedOut={handleCheckedOut} />
-          ) : (
-            <MehFilled className="text-[16px]" onClick={handleCheckedIn} />
-          )}
-        </div>
-      </Tooltip>
+      <div className="flex size-[60px] cursor-pointer items-center justify-center">
+        {loading ? (
+          <LoadingOutlined />
+        ) : options?.isCheckedIn ? (
+          <CheckoutButton onCheckedOut={handleCheckedOut} />
+        ) : (
+          <MehFilled className="text-[16px]" onClick={handleCheckedIn} />
+        )}
+      </div>
+
+      <Modal
+        title="Điểm danh Please!"
+        open={loginOpen}
+        onOk={handleCheckedIn}
+        onCancel={async () => {
+          await changeLoggedInDateAction()
+          setLoginOpen(false)
+        }}
+        okText="Điểm danh"
+        cancelText="Bỏ qua"
+        okButtonProps={{
+          loading,
+        }}
+      />
 
       <div
         className="flex size-[60px] cursor-pointer items-center justify-center"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          modal.confirm({
+            title: 'Bạn có muốn đăng xuất khỏi hệ thống ngay bây giờ?',
+            icon: <ExclamationCircleFilled />,
+            onOk: handleLogout,
+            width: 500,
+            okText: 'Đăng xuất',
+            cancelText: 'Quay lại',
+          })
+        }}
       >
         <LogoutOutlined className="text-[16px]" />
       </div>
-
-      <Modal open={open} onOk={handleLogout} onCancel={() => setOpen(false)}>
-        <div>Bạn có muốn đăng xuất khỏi hệ thống ngay bây giờ?</div>
-      </Modal>
     </div>
   )
 }
 
-export default SubSide
+export default withApp(SubSide)

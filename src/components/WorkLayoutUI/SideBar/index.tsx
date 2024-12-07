@@ -3,9 +3,13 @@ import { getSession } from '@/libs/session'
 import { Navigation } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
 import {
+  AreaChartOutlined,
   CalendarFilled,
+  DashboardFilled,
+  DashOutlined,
   FolderOpenFilled,
   ProjectFilled,
+  SignalFilled,
 } from '@ant-design/icons'
 import React from 'react'
 import LeftSideBar from './LeftSideBar'
@@ -69,6 +73,15 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                     </div>
                   ),
                   href: '/check-in',
+                },
+                {
+                  label: (
+                    <div className="flex items-center gap-[12px]">
+                      <SignalFilled className="text-[16px]" />
+                      <span>Thống kê</span>
+                    </div>
+                  ),
+                  href: '/statistics',
                 },
               ],
             },
