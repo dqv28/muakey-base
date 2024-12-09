@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  changeLoggedInDateAction,
   checkedInAction,
   checkOutAction,
   logoutAction,
@@ -15,7 +14,7 @@ import {
   MehFilled,
   MenuOutlined,
 } from '@ant-design/icons'
-import { App, Avatar, Badge, Drawer, Dropdown, Modal } from 'antd'
+import { App, Avatar, Badge, Drawer, Dropdown } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import CheckoutButton from './CheckoutButton'
@@ -27,7 +26,6 @@ export type SubSideProps = {
 }
 
 const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
-  const [loginOpen, setLoginOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [openNotice, setOpenNotice] = useState(false)
   const router = useRouter()
@@ -53,7 +51,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
 
       message.success(success)
       setLoading(false)
-      setLoginOpen(false)
       router.refresh()
     } catch (error: any) {
       setLoading(false)
@@ -78,8 +75,22 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   }
 
   useEffect(() => {
-    setLoginOpen(!!options?.isFirstLogin)
-  }, [options?.isFirstLogin])
+    if (!options?.isCheckedIn) {
+      modal.info({
+        title: `Điểm danh`,
+        content: (
+          <div>
+            <p>Điểm danh please!</p>
+          </div>
+        ),
+        okText: 'Điểm danh',
+        okButtonProps: {
+          loading,
+        },
+        onOk: handleCheckedIn,
+      })
+    }
+  }, [])
 
   return (
     <div className="w-[60px] text-[#fff]">
@@ -144,21 +155,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
           <MehFilled className="text-[16px]" onClick={handleCheckedIn} />
         )}
       </div>
-
-      <Modal
-        title="Điểm danh Please!"
-        open={loginOpen}
-        onOk={handleCheckedIn}
-        onCancel={async () => {
-          await changeLoggedInDateAction()
-          setLoginOpen(false)
-        }}
-        okText="Điểm danh"
-        cancelText="Bỏ qua"
-        okButtonProps={{
-          loading,
-        }}
-      />
 
       <div
         className="flex size-[60px] cursor-pointer items-center justify-center"

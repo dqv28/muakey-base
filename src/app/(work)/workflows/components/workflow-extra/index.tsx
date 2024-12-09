@@ -1,13 +1,15 @@
 'use client'
 
+import { withApp } from '@/hoc'
+import { useAsyncEffect } from '@/libs/hook'
 import { App, Form, FormInstance, Modal } from 'antd'
 import React, { useRef, useState } from 'react'
-import toast from 'react-hot-toast'
-import { addWorkflowCategoryAction } from '../../action'
-import FormFields from './FormFields'
-import { useAsyncEffect } from '@/libs/hook'
+import {
+  addWorkflowCategoryAction,
+  updateWorkflowCategoryAction,
+} from '../../action'
 import { getWorkflowCategoryByIdAction } from './action'
-import { withApp } from '@/hoc'
+import FormFields from './FormFields'
 
 const WorkflowExtra: React.FC<{
   action?: 'create' | 'edit'
@@ -24,18 +26,21 @@ const WorkflowExtra: React.FC<{
   useAsyncEffect(async () => {
     const res = await getWorkflowCategoryByIdAction(initialValues?.id)
 
-    setCategory(res)
-  }, [])
+    setCategory({
+      ...res,
+      members: res?.members?.map((m: any) => m?.username),
+    })
+  }, [initialValues?.id])
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
 
     try {
       if (action === 'edit') {
-        console.log({
-          formData,
+        var { errors } = await updateWorkflowCategoryAction(initialValues?.id, {
+          ...formData,
+          members: (formData?.members || []).join(' '),
         })
-        return
       } else {
         var { errors } = await addWorkflowCategoryAction({
           ...formData,

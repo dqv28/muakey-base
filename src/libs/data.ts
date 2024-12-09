@@ -78,6 +78,12 @@ export const addWorkflowCategory = async (data: any) =>
     data,
   }).then((data) => data)
 
+export const updateWorkflowCategory = async (id: number, data: any) => 
+  requestWithAuthorized(`workflow-categories/${id}`, {
+    method: 'PUT',
+    data,
+  }).then((data) => data)
+
 export const deleteWorkflowCategoryById = async (id: number) =>
   requestWithAuthorized(`workflow-categories/${id}`, {
     method: 'DELETE',

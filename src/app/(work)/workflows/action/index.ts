@@ -25,6 +25,7 @@ import {
   getWorkflows,
   moveStage,
   updateReportField,
+  updateWorkflowCategory,
 } from '@/libs/data'
 
 export const addStageAction = async (data: any, query?: any) => 
@@ -45,6 +46,9 @@ export const getWorkflowsAction = async (query?: any) => {
 
 export const addWorkflowCategoryAction = async (data: any) => 
   addWorkflowCategory(data)
+
+export const updateWorkflowCategoryAction = async (id: number, data: any) => 
+  updateWorkflowCategory(id, data)
 
 export const getAccountAction = async (query?: any) => {
   return await getAccount(query)

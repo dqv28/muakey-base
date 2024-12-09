@@ -3,10 +3,7 @@ import { getSession } from '@/libs/session'
 import { Navigation } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
 import {
-  AreaChartOutlined,
   CalendarFilled,
-  DashboardFilled,
-  DashOutlined,
   FolderOpenFilled,
   ProjectFilled,
   SignalFilled,
@@ -37,9 +34,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         <LeftSideBar
           user={user}
           options={{
-            isCheckedIn:
-              session.isCheckedIn ||
-              (!!attendances?.checkin && !attendances?.checkout),
+            isCheckedIn: !!attendances?.checkin && !attendances?.checkout,
             isFirstLogin: session.firstLoginDate !== today,
           }}
         />

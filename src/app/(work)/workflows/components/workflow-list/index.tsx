@@ -1,25 +1,16 @@
 'use client'
 
-import { useAsyncEffect } from '@/libs/hook'
+import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
-import { List, ListProps, toast } from '@/ui'
+import { List, ListProps } from '@/ui'
 import { DownOutlined } from '@/ui/icons'
-import { CaretDownOutlined, EllipsisOutlined, MoreOutlined } from '@ant-design/icons'
 import { App, Avatar, Button, Dropdown } from 'antd'
 import clsx from 'clsx'
-import { useSearchParams } from 'next/navigation'
-import React, { useContext, useEffect, useState } from 'react'
-import {
-  deleteWorkflowCategoryByIdAction,
-  getWorkflowCategoriesAction,
-  getWorkflowsAction,
-} from '../../action'
-import { PageContext } from '../PageProvider'
+import React, { useEffect, useState } from 'react'
+import { deleteWorkflowCategoryByIdAction } from '../../action'
 import WorkflowCardList from '../workflow-card-list'
-import WorkflowExtra from '../workflow-extra'
 import WorkFlowDeleteButton from './WorkFlowDeleteButton'
 import WorkflowModalForm from './WorkflowModalForm'
-import { withApp } from '@/hoc'
 
 export type WorkflowListProps = ListProps & {
   options?: any
@@ -90,7 +81,7 @@ const WorkflowList: React.FC<WorkflowListProps> = ({
                 </span>
               </div>
               <Dropdown
-                rootClassName='!z-50'
+                rootClassName="!z-50"
                 trigger={['click']}
                 dropdownRender={() => (
                   <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">

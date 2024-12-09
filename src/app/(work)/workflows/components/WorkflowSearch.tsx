@@ -22,7 +22,7 @@ const WorkflowSearch: React.FC = () => {
       query.delete('q')
     }
 
-    router.push(`?${query.toString()}`)
+    router.push(`?${String(query)}`)
   }, [searchValue])
 
   return (

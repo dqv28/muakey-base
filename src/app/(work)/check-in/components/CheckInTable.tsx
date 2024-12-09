@@ -61,16 +61,29 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
       dataIndex: `${num + 1}/${month}`,
       width: 80,
       align: 'center',
+      onCell: (data: any) => {
+        const cellValue = data?.[`${num + 1}/${month}`]
+
+        return {
+          className: !!cellValue?.checkInValue
+            ? cellValue?.onTime
+              ? 'bg-[#deffdb]'
+              : 'bg-[#ffe8e8]'
+            : '',
+        }
+      },
       render: (value: any) => {
+        const checkIn = value.checkInValue
+
         return (
           <>
-            {Array.isArray(value) ? (
+            {Array.isArray(checkIn) ? (
               <div className="flex flex-col gap-[4px]">
-                <span>{value[0]}</span>
-                {value[1] && (
+                <span>{checkIn[0]}</span>
+                {checkIn[1] && (
                   <>
                     <Divider className="!m-0 !w-[10px]" />
-                    <span>{value[1]}</span>
+                    <span>{checkIn[1]}</span>
                   </>
                 )}
               </div>
@@ -87,20 +100,18 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
     )
 
     const fields = times(dateNumber, (num): any => {
-      const checkInDate = checkInHistories?.find(
+      const checkIn = checkInHistories?.find(
         (c: any) => new Date(c?.checkin).getDate() == num + 1,
       )
 
-      const checkInValue = checkInDate
+      const checkInValue = checkIn
         ? [
-            dayjs(checkInDate?.checkin).format('HH:mm'),
-            checkInDate?.checkout
-              ? dayjs(checkInDate?.checkout).format('HH:mm')
-              : null,
+            dayjs(checkIn?.checkin).format('HH:mm'),
+            checkIn?.checkout ? dayjs(checkIn?.checkout).format('HH:mm') : null,
           ]
         : null
-        
-      return [`${num + 1}/${month}`, checkInValue]
+
+      return [`${num + 1}/${month}`, { checkInValue, onTime: checkIn?.onTime }]
     })
 
     return {
@@ -117,6 +128,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
       className={styles.customTable}
       columns={checkInColumns}
       dataSource={checkInDataSource}
+      rowHoverable={false}
       {...props}
     />
   )
