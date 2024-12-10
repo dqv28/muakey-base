@@ -8,13 +8,13 @@ import {
 } from '@ant-design/icons'
 import { Button, Form, Input, Select } from 'antd'
 import { useState } from 'react'
-import { getAccountsAction } from './action'
+import { getAccountssAction } from './action'
 
 const FormFields: React.FC = () => {
   const [accounts, setAccounts] = useState<any[]>([])
 
   useAsyncEffect(async () => {
-    const res = await getAccountsAction()
+    const res = await getAccountssAction()
     setAccounts(res)
   }, [])
 

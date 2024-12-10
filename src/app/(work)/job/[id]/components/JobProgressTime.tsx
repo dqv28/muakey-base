@@ -8,9 +8,14 @@ import React from 'react'
 type JobProgressTimeProps = {
   stages?: any
   total?: number
+  timestamp?: string
 }
 
-const JobProgressTime: React.FC<JobProgressTimeProps> = ({ stages, total }) => {
+const JobProgressTime: React.FC<JobProgressTimeProps> = ({
+  stages,
+  total,
+  timestamp,
+}) => {
   return (
     <div className="mt-[16px] space-y-[6px] rounded-[6px] bg-[#fff] px-[20px] py-[16px]">
       <div className="flex items-center justify-between gap-[24px] text-[12px] text-[#888]">
@@ -41,9 +46,7 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({ stages, total }) => {
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-[24px]">
                     <span className="font-[500]">{stage?.name}</span>
-                    <span className="text-[12px] text-[#aaa]">
-                      11:04 11/11/2024
-                    </span>
+                    <span className="text-[12px] text-[#aaa]">{timestamp}</span>
                   </div>
                   <div className="flex items-center justify-between gap-[24px] text-[#aaa]">
                     <span className="text-[12px]">

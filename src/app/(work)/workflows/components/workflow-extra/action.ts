@@ -1,9 +1,9 @@
 'use server'
 
-import { getAccount, getWorkflowCategoryById } from "@/libs/data"
+import { getAccounts, getWorkflowCategoryById } from '@/libs/data'
 
-export const getAccountsAction = async () => {
-  return await getAccount()
+export const getAccountssAction = async () => {
+  return await getAccounts()
 }
 
 export const getWorkflowCategoryByIdAction = async (id: number) => {

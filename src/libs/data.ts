@@ -1,4 +1,8 @@
-import { RequestOptions, requestWithAuthorized, requestWithFile } from './request'
+import {
+  RequestOptions,
+  requestWithAuthorized,
+  requestWithFile,
+} from './request'
 import { getSession } from './session'
 
 export const getWorkflows = async (query?: any) => {
@@ -19,8 +23,13 @@ export const getWorkflowMembersById = async (id: number) => {
     .catch(() => [])
 }
 
-export const getStagesByWorkflowId = async (query?: any, options?: RequestOptions) => {
-  return requestWithAuthorized('stages?' + new URLSearchParams(query), {...options})
+export const getStagesByWorkflowId = async (
+  query?: any,
+  options?: RequestOptions,
+) => {
+  return requestWithAuthorized('stages?' + new URLSearchParams(query), {
+    ...options,
+  })
     .then((data) => data)
     .catch(() => [])
 }
@@ -78,7 +87,7 @@ export const addWorkflowCategory = async (data: any) =>
     data,
   }).then((data) => data)
 
-export const updateWorkflowCategory = async (id: number, data: any) => 
+export const updateWorkflowCategory = async (id: number, data: any) =>
   requestWithAuthorized(`workflow-categories/${id}`, {
     method: 'PUT',
     data,
@@ -94,7 +103,7 @@ export const deleteStageById = async (id: number) =>
     method: 'DELETE',
   }).then((data) => data)
 
-export const getAccount = async (query?: any) => {
+export const getAccounts = async (query?: any) => {
   return requestWithAuthorized('accounts?' + new URLSearchParams(query))
     .then((data) => data)
     .catch(() => [])
@@ -114,14 +123,14 @@ export const addTask = async (data: any) =>
 export const editTask = async (id: number, data: any) => {
   return await requestWithAuthorized(`tasks/${id}`, {
     method: 'PUT',
-    data
+    data,
   }).then((data) => data)
 }
 
 export const moveStage = async (id: number, stageId: number, data?: any) => {
   return await requestWithAuthorized(`tasks/${id}?stage_id=${stageId}`, {
     method: 'PUT',
-    data
+    data,
   }).then((data) => data)
 }
 
@@ -141,8 +150,13 @@ export const addTaskFields = async (data: any) =>
     data,
   }).then((data) => data)
 
-export const getCustomFieldsByWorkflowId = async (query?: any, options?: RequestOptions) => {
-  return requestWithAuthorized(`fields?` + new URLSearchParams(query), {...options})
+export const getCustomFieldsByWorkflowId = async (
+  query?: any,
+  options?: RequestOptions,
+) => {
+  return requestWithAuthorized(`fields?` + new URLSearchParams(query), {
+    ...options,
+  })
     .then((data) => data)
     .catch(() => [])
 }
@@ -159,9 +173,7 @@ export const editCustomField = async (id: number, data: any) =>
   }).then((data) => data)
 
 export const getTaskFieldsByTaskId = async (query?: any) => {
-  return requestWithAuthorized(
-    `field-values?` + new URLSearchParams(query),
-  )
+  return requestWithAuthorized(`field-values?` + new URLSearchParams(query))
     .then((data) => data)
     .catch(() => [])
 }
@@ -175,113 +187,118 @@ export const editTaskField = async (id: number, data?: any) =>
 export const uploadImage = async (data: any) => {
   return await requestWithFile('images', {
     method: 'POST',
-    body: data
+    body: data,
   })
 }
 
-export const getTaskHistories = async (query?: any, options?: RequestOptions) => 
-  requestWithAuthorized('history-move-tasks?' + new URLSearchParams(query), { ...options })
-  .then((data) => data)
-  .catch(() => [])
+export const getTaskHistories = async (query?: any, options?: RequestOptions) =>
+  requestWithAuthorized('history-move-tasks?' + new URLSearchParams(query), {
+    ...options,
+  })
+    .then((data) => data)
+    .catch(() => [])
 
-export const getTimeStagesByTaskId = async (id: number) => 
+export const getTimeStagesByTaskId = async (id: number) =>
   requestWithAuthorized(`time-stage/${id}`)
-  .then((data) => data)
-  .catch(() => [])
+    .then((data) => data)
+    .catch(() => [])
 
-export const getReportFieldsByWorkflowId = async (query?: any, options?: RequestOptions) => 
-  requestWithAuthorized(`report-fields?` + new URLSearchParams(query), { ...options })
-  .then((data) => data)
-  .catch(() => [])
+export const getReportFieldsByWorkflowId = async (
+  query?: any,
+  options?: RequestOptions,
+) =>
+  requestWithAuthorized(`report-fields?` + new URLSearchParams(query), {
+    ...options,
+  })
+    .then((data) => data)
+    .catch(() => [])
 
-export const addReportField = async (data: any) => 
+export const addReportField = async (data: any) =>
   requestWithAuthorized('report-fields', {
     method: 'POST',
-    data
+    data,
   }).then((data) => data)
 
-export const updateReportField = async (id: number, data: any) => 
+export const updateReportField = async (id: number, data: any) =>
   requestWithAuthorized(`report-fields/${id}`, {
     method: 'PUT',
-    data
+    data,
   }).then((data) => data)
 
-export const deleteReportField = async (id: number) => 
+export const deleteReportField = async (id: number) =>
   requestWithAuthorized(`report-fields/${id}`, {
     method: 'DELETE',
   }).then((data) => data)
 
-export const addTaskReport = async (data: any, query?: any,) => 
+export const addTaskReport = async (data: any, query?: any) =>
   requestWithAuthorized(`report-field-values?` + new URLSearchParams(query), {
     method: 'POST',
-    data
+    data,
   }).then((data) => data)
 
-export const updateTaskReports = async (id: number, data: any) => 
+export const updateTaskReports = async (id: number, data: any) =>
   requestWithAuthorized(`report-field-values/${id}`, {
     method: 'PUT',
-    data
+    data,
   }).then((data) => data)
 
-export const getTaskReports = async (query?: any) => 
+export const getTaskReports = async (query?: any) =>
   requestWithAuthorized(`report-field-values?` + new URLSearchParams(query))
-  .then((data) => data)
-  .catch(() => [])
+    .then((data) => data)
+    .catch(() => [])
 
-export const getTaskReportsByTaskId = async (taskId: number) => 
+export const getTaskReportsByTaskId = async (taskId: number) =>
   requestWithAuthorized(`report-field-values/${taskId}`)
-  .then((data) => data)
-  .catch(() => [])
+    .then((data) => data)
+    .catch(() => [])
 
-export const getMe = async (options?: RequestOptions) => 
-  requestWithAuthorized(`my-account`, {...options})
-  .then((data) => data)
-  .catch(() => [])
+export const getMe = async (options?: RequestOptions) =>
+  requestWithAuthorized(`my-account`, { ...options })
+    .then((data) => data)
+    .catch(() => [])
 
-export const getNotifications = async () => 
+export const getNotifications = async () =>
   requestWithAuthorized('notifications')
-  .then((data) => data)
-  .catch(() => [])
+    .then((data) => data)
+    .catch(() => [])
 
-export const getAttendances = async (query?: any) => 
+export const getAttendances = async (query?: any) =>
   requestWithAuthorized('attendances?' + new URLSearchParams(query))
-  .then((data) => data)
-  .catch(() => null)
+    .then((data) => data)
+    .catch(() => null)
 
-export const getCommentsByTaskId = async (query?: any) => 
+export const getCommentsByTaskId = async (query?: any) =>
   requestWithAuthorized(`comments?` + new URLSearchParams(query))
-  .then((data) => data)
-  .catch(() => [])
+    .then((data) => data)
+    .catch(() => [])
 
-export const addComment = async (data: any) => 
+export const addComment = async (data: any) =>
   requestWithAuthorized('comments', {
-    method: "POST",
-    data
+    method: 'POST',
+    data,
   }).then((data) => data)
 
-export const checkIn = async () => 
+export const checkIn = async () =>
   requestWithAuthorized('check-in', {
-      method: 'POST'
-    })
-    .then( async (data) => {
-      const { success, error } = data
+    method: 'POST',
+  }).then(async (data) => {
+    const { success, error } = data
 
-      const session = await getSession()
-      session.isCheckedIn = true
+    const session = await getSession()
+    session.isCheckedIn = true
 
-      if (error) {
-        return { error }
-      }
-    
-      await session.save()
-      return { success }
-    })
+    if (error) {
+      return { error }
+    }
 
-export const checkOut = async () => 
-  requestWithAuthorized('check-out', {
-    method: 'POST'
+    await session.save()
+    return { success }
   })
-  .then(async (data) => {
+
+export const checkOut = async () =>
+  requestWithAuthorized('check-out', {
+    method: 'POST',
+  }).then(async (data) => {
     const { success, error } = data
 
     const session = await getSession()
@@ -290,17 +307,17 @@ export const checkOut = async () =>
     if (error) {
       return { error }
     }
-  
+
     await session.save()
     return { success }
   })
 
-export const refreshData = async (query?: any) => 
+export const refreshData = async (query?: any) =>
   requestWithAuthorized('load-youtube?' + new URLSearchParams(query), {
-    method: 'PUT'
+    method: 'PUT',
   }).then((data) => data)
 
-export const getKpi = async (query?: any) => 
-  requestWithAuthorized('kpis?' + new URLSearchParams(query))
-  .then((data) => data)
-  
+export const getKpi = async (query?: any) =>
+  requestWithAuthorized('kpis?' + new URLSearchParams(query)).then(
+    (data) => data,
+  )

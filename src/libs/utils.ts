@@ -58,20 +58,39 @@ export const base64ToFile = (base64: string) => {
   return new File([byteArray], 'upload', { type: mimeString })
 }
 
-
 export const generateUrl = (str: string) => {
   const urlRegex = /https?:\/\/[^\s]+/g
-  
+
   return str.match(urlRegex)
 }
 
 export const convertToSlug = (text: string) => {
   return text
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/[^a-z0-9\s-]/g, "")
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/[^a-z0-9\s-]/g, '')
     .trim()
-    .replace(/\s+/g, "-");
+    .replace(/\s+/g, '-')
+}
+
+export const daysOfWeek = ['TH 2', 'TH 3', 'TH 4', 'TH 5', 'TH 6', 'TH 7', 'CN']
+
+export const getWeek = (date: Date, numberOfWeek?: number) => {
+  const startOfWeek = new Date(date)
+
+  startOfWeek.setDate(
+    date.getDate() - date.getDay() + 1 + (numberOfWeek || 0) * 7,
+  )
+
+  return daysOfWeek.map((day: string, index: number) => {
+    const currentDate = new Date(startOfWeek)
+    currentDate.setDate(startOfWeek.getDate() + index)
+
+    return {
+      day,
+      date: dayjs(currentDate).format('YYYY-MM-DD'),
+    }
+  })
 }

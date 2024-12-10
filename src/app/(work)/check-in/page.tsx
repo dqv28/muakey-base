@@ -1,4 +1,4 @@
-import { getAccount, getAttendances } from '@/libs/data'
+import { getAccounts, getAttendances } from '@/libs/data'
 import CheckInFiltered from './components/CheckInFiltered'
 import CheckInTable from './components/CheckInTable'
 
@@ -11,7 +11,7 @@ const page: React.FC<any> = async (prop: {
   const attendances = await getAttendances({
     date: searchParams?.date || '',
   })
-  const members = await getAccount()
+  const members = await getAccounts()
 
   const day = String(searchParams?.date).split('-').pop()
 
@@ -21,7 +21,7 @@ const page: React.FC<any> = async (prop: {
         <span className="font-[500]">Chấm công</span>
         <CheckInFiltered />
       </div>
-      <div className="p-[16px] h-[calc(100vh-72px)] overflow-auto">
+      <div className="h-[calc(100vh-72px)] overflow-auto p-[16px]">
         <CheckInTable
           options={{
             attendances,

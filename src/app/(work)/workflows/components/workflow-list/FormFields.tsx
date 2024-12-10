@@ -3,13 +3,13 @@
 import { useAsyncEffect } from '@/libs/hook'
 import { Form, Input, Select } from 'antd'
 import React, { useState } from 'react'
-import { getAccountsAction } from '../workflow-extra/action'
+import { getAccountssAction } from '../workflow-extra/action'
 
 const FormFields: React.FC = () => {
   const [accounts, setAccounts] = useState<any[]>([])
 
   useAsyncEffect(async () => {
-    const res = await getAccountsAction()
+    const res = await getAccountssAction()
 
     setAccounts(res)
   }, [])

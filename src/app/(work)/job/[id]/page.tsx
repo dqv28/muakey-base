@@ -18,10 +18,10 @@ import JobHistory from './components/JobHistory'
 import JobOverView from './components/JobOverview'
 import JobProgress from './components/JobProgress'
 import JobProgressTime from './components/JobProgressTime'
+import JobReports from './components/JobReports'
 import JobReview from './components/JobReview'
 import PageHeader from './components/PageHeader'
 import PageHeaderAction from './components/PageHeaderAction'
-import JobReports from './components/JobReports'
 
 export const generateMetadata = async (props: { params: any }) => {
   const params = await props.params
@@ -60,7 +60,7 @@ const page: React.FC<any> = async (props: {
       workflow_id: searchParams?.wid,
     }),
     getWorkflowById(searchParams?.wid),
-    getTaskReportsByTaskId(params?.id)
+    getTaskReportsByTaskId(params?.id),
   ])
 
   const timeStages = await getTimeStagesByTaskId(task?.id)
@@ -162,9 +162,14 @@ const page: React.FC<any> = async (props: {
       </Col>
       <Col className="h-[100vh] overflow-auto" span={7}>
         <div className="h-max min-h-[100vh] bg-[#eee] p-[16px]">
-          {task?.link_youtube && <JobReview task={task} query={{
-            workflowId: searchParams?.wid
-          }} />}
+          {task?.link_youtube && (
+            <JobReview
+              task={task}
+              query={{
+                workflowId: searchParams?.wid,
+              }}
+            />
+          )}
 
           {reports && <JobReports reports={reports} />}
 
@@ -175,6 +180,9 @@ const page: React.FC<any> = async (props: {
           />
 
           <JobProgressTime
+            timestamp={String(
+              dayjs(new Date(task?.created_at)).format('HH:mm DD/MM/YYYY'),
+            )}
             stages={
               timeStages?.length > 0
                 ? timeStages?.map((stage: any) => {
