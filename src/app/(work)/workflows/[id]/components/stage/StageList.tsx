@@ -21,14 +21,9 @@ import {
 import clsx from 'clsx'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from 'react'
+import React, { createContext, useContext, useRef, useState } from 'react'
 import { addTaskReportAction, moveStageAction } from '../../../action'
+import { getMeAction } from '../task/action'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import { getReportFieldsByWorkflowIdAction } from './action'
 import StageColumn from './StageColumn'
@@ -49,6 +44,7 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
   const [reports, setReports] = useState<any[]>([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
   const activeRef = useRef<any>(null)
+  const [userId, setUserId] = useState()
 
   const { stages, setStages } = useContext(WorkflowStageContext)
   const params = useParams()
@@ -59,14 +55,14 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
       : []
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
-      distance: 5
-    }
+      distance: 5,
+    },
   })
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
       delay: 250,
       tolerance: 5,
-    }
+    },
   })
 
   const sensors = useSensors(mouseSensor, touchSensor)
@@ -88,7 +84,7 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
       task_id: activeData.id,
     })
 
-    setReports(data)
+    setReports((prev) => [...prev, ...data])
     activeRef.current = activeId
   }, [dragEvent])
 
@@ -163,12 +159,12 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
     }
   }
 
-  const handleDragStart = useCallback((e: DragStartEvent) => {
+  const handleDragStart = (e: DragStartEvent) => {
     const { active } = e
     setActiveId(active.id)
-  }, [])
+  }
 
-  const handleDragEnd = useCallback(async (e: DragEndEvent) => {
+  const handleDragEnd = async (e: DragEndEvent) => {
     setDragEvent(e)
 
     const { active, over } = e
@@ -216,7 +212,7 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
     }
 
     await handleDrag(e)
-  }, [])
+  }
 
   const handleSubmit = async (values: any) => {
     if (!dragEvent) return
@@ -272,6 +268,12 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
     (stage: any) => ![0, 1].includes(stage?.index),
   )
 
+  useAsyncEffect(async () => {
+    const res = await getMeAction()
+
+    setUserId(res?.id)
+  }, [])
+
   return (
     <StageContext.Provider
       value={{ activeId, setActiveId, members, failedStageId }}
@@ -302,9 +304,7 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
             )}
             {stages?.length > 0 &&
               stages.map((stage: any) => (
-                <>
-                  <StageColumn key={stage?.id} stage={stage} />
-                </>
+                <StageColumn key={stage?.id} stage={stage} userId={userId} />
               ))}
           </Row>
         </SortableContext>

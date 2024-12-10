@@ -12,10 +12,12 @@ import { refreshDataAction } from './action'
 
 type StageColumnProps = {
   stage?: any
+  userId?: number
 }
 
-const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
+const StageColumn: React.FC<StageColumnProps> = ({ stage, userId }) => {
   const [loading, setLoading] = useState(false)
+
   const params = useParams()
   const { attributes, setNodeRef, transform, transition } = useSortable({
     id: stage?.id,
@@ -46,13 +48,7 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
   }
 
   return (
-    <Col
-      className={clsx('w-[272px] overflow-hidden border-r border-[#eee]', {
-        'bg-[#fff3f3]': stage.index === 0,
-        'bg-[#fff]': stage.index === 1,
-        'bg-[#f6f6f6]': ![0, 1].includes(stage.index),
-      })}
-      key={stage.id}
+    <div
       ref={setNodeRef}
       style={StageColumnStyle}
       {...{
@@ -60,49 +56,58 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage }) => {
         role: 'article',
       }}
     >
-      <StageHeader
-        className={clsx({
-          'bg-[#ffe8e8] text-[#c34343]': stage.index === 0,
-          'bg-[#deffdb]': stage.index === 1,
+      <Col
+        className={clsx('w-[272px] overflow-hidden border-r border-[#eee]', {
+          'bg-[#fff3f3]': stage.index === 0,
+          'bg-[#fff]': stage.index === 1,
           'bg-[#f6f6f6]': ![0, 1].includes(stage.index),
         })}
-        title={stage.name}
-        extra={
-          <>
-            {![0, 1].includes(stage?.index) && (
-              <StageDropdownMenu stage={stage} />
-            )}
-            {[1].includes(stage?.index) && (
-              <ReloadOutlined
-                className="cursor-pointer text-[10px]"
-                onClick={handleRefresh}
-              />
-            )}
-          </>
-        }
+        key={stage.id}
       >
-        <div className="flex items-center justify-between">
-          <span
-            className={clsx(
-              'text-[12px] leading-none text-[#aaa]',
-              stage.index === 0 && 'text-[#c3434399]',
-            )}
-          >
-            {stage?.tasks?.length} Nhiệm vụ
-          </span>
-
-          {![0, 1].includes(stage.index) && (
-            <span className="text-[12px] leading-none text-[#aaa]">
-              {!!stage?.expired_after_hours
-                ? `Thời hạn: ${stage?.expired_after_hours}h`
-                : 'Không thời hạn'}
+        <StageHeader
+          className={clsx({
+            'bg-[#ffe8e8] text-[#c34343]': stage.index === 0,
+            'bg-[#deffdb]': stage.index === 1,
+            'bg-[#f6f6f6]': ![0, 1].includes(stage.index),
+          })}
+          title={stage.name}
+          extra={
+            <>
+              {![0, 1].includes(stage?.index) && (
+                <StageDropdownMenu stage={stage} />
+              )}
+              {[1].includes(stage?.index) && (
+                <ReloadOutlined
+                  className="cursor-pointer text-[10px]"
+                  onClick={handleRefresh}
+                />
+              )}
+            </>
+          }
+        >
+          <div className="flex items-center justify-between">
+            <span
+              className={clsx(
+                'text-[12px] leading-none text-[#aaa]',
+                stage.index === 0 && 'text-[#c3434399]',
+              )}
+            >
+              {stage?.tasks?.length} Nhiệm vụ
             </span>
-          )}
-        </div>
-      </StageHeader>
 
-      <TaskList stageId={stage?.id} loading={loading} />
-    </Col>
+            {![0, 1].includes(stage.index) && (
+              <span className="text-[12px] leading-none text-[#aaa]">
+                {!!stage?.expired_after_hours
+                  ? `Thời hạn: ${stage?.expired_after_hours}h`
+                  : 'Không thời hạn'}
+              </span>
+            )}
+          </div>
+        </StageHeader>
+
+        <TaskList stageId={stage?.id} loading={loading} userId={userId} />
+      </Col>
+    </div>
   )
 }
 

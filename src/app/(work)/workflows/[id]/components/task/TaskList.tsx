@@ -1,7 +1,10 @@
 'use client'
 
 import { DragOverlay } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import {
+  horizontalListSortingStrategy,
+  SortableContext,
+} from '@dnd-kit/sortable'
 import { ConfigProvider, List, ListProps } from 'antd'
 import { cloneDeep } from 'lodash'
 import React, { useContext } from 'react'
@@ -13,9 +16,10 @@ import TaskItem from './TaskItem'
 
 type TaskListProps = ListProps<any> & {
   stageId?: number
+  userId?: number
 }
 
-const TaskList: React.FC<TaskListProps> = ({ stageId, ...rest }) => {
+const TaskList: React.FC<TaskListProps> = ({ stageId, userId, ...rest }) => {
   const { activeId, members } = useContext(StageContext)
   const { stages, setStages } = useContext(WorkflowContext)
 
@@ -57,7 +61,7 @@ const TaskList: React.FC<TaskListProps> = ({ stageId, ...rest }) => {
   }
 
   return (
-    <SortableContext items={sortItems} strategy={verticalListSortingStrategy}>
+    <SortableContext items={sortItems} strategy={horizontalListSortingStrategy}>
       <div className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]">
         <ConfigProvider
           theme={{
@@ -79,6 +83,7 @@ const TaskList: React.FC<TaskListProps> = ({ stageId, ...rest }) => {
                   members={members}
                   expired={currentStage?.expired_after_hours}
                   onDelete={() => handleDelete(task?.id)}
+                  userId={userId}
                 />
 
                 {activeId === task?.id && (

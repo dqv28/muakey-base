@@ -28,8 +28,6 @@ import { editTaskAction } from '../../../action'
 import { StageContext } from '../stage/StageList'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import TaskModalForm from './TaskModalForm'
-import { useAsyncEffect } from '@/libs/hook'
-import { getMeAction } from './action'
 
 export type TaskItemProps = {
   className?: string
@@ -39,6 +37,7 @@ export type TaskItemProps = {
   members?: any
   expired?: number
   onDelete?: () => Promise<void>
+  userId?: number
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({
@@ -48,13 +47,13 @@ const TaskItem: React.FC<TaskItemProps> = ({
   isFailed,
   members,
   onDelete,
+  userId,
 }) => {
   const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
   const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
   const params = useParams()
   const { failedStageId } = useContext(StageContext)
   const { setStages } = useContext(WorkflowStageContext)
-  const [userId, setUserId] = useState(null)
 
   const {
     attributes,
@@ -70,12 +69,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
     transition,
     opacity: isDragging ? 0.5 : undefined,
   }
-
-  useAsyncEffect(async () => {
-    const res = await getMeAction()
-
-    setUserId(res?.id)
-  }, [])
 
   const user = members?.filter((u: any) => u?.id === task.account_id)?.[0]
 
@@ -135,7 +128,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
     try {
       const { message, errors } = await editTaskAction(id, {
         account_id: null,
-        started_at: null
+        started_at: null,
       })
 
       setStages((prevStages: any[]) => {

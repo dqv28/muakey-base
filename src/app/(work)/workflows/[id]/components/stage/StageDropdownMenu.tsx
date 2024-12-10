@@ -56,16 +56,6 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
           </StageModalForm>
           <StageModalForm
             query={{
-              left: 1,
-              index: stage?.index,
-            }}
-          >
-            <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
-              Thêm 1 giai đoạn bên trái
-            </div>
-          </StageModalForm>
-          <StageModalForm
-            query={{
               right: 1,
               index: stage?.index,
             }}

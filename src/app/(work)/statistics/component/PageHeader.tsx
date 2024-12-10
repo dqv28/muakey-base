@@ -2,7 +2,6 @@ import { getWorkflowCategories } from '@/libs/data'
 import { TabsProps } from 'antd'
 import React from 'react'
 import StatisticsFiltered from './StatisticsFiltered'
-import StatisticsTabs from './StatisticsTabs'
 
 const PageHeader: React.FC<{
   params?: any
@@ -17,7 +16,7 @@ const PageHeader: React.FC<{
   const category = categories?.find((c: any) => c?.id === +params?.categoryId)
 
   return (
-    <div className="bg-[#fff] px-[16px] pt-[16px]">
+    <div className="border-b bg-[#fff] p-[16px]">
       <div className="flex items-center justify-between text-[24px]">
         <span className="font-[500]">Thống kê</span>
         <StatisticsFiltered
@@ -25,13 +24,6 @@ const PageHeader: React.FC<{
           workflows={category?.workflows}
         />
       </div>
-      <StatisticsTabs
-        className="leading-none"
-        tabBarStyle={{
-          marginBottom: 0,
-        }}
-        items={items}
-      />
     </div>
   )
 }
