@@ -94,3 +94,33 @@ export const getWeek = (date: Date, numberOfWeek?: number) => {
     }
   })
 }
+
+export const convertTime = (seconds: number) => {
+  const durationObj = dayjs.duration(seconds, 'seconds')
+
+  const year = durationObj.years()
+  const days = durationObj.days()
+  const hours = durationObj.hours()
+  const minutes = durationObj.minutes()
+  const secs = durationObj.seconds()
+
+  switch (true) {
+    case !!year:
+      return `${year} năm`
+
+    case !!days:
+      return `${days} ngày`
+
+    case !!hours:
+      return `${hours} giờ`
+
+    case !!minutes:
+      return `${minutes} phút`
+
+    case !!secs:
+      return `${secs} giây`
+
+    default:
+      return null
+  }
+}

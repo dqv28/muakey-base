@@ -72,6 +72,15 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                 {
                   label: (
                     <div className="flex items-center gap-[12px]">
+                      <CalendarFilled className="text-[16px]" />
+                      <span>Công việc của tôi</span>
+                    </div>
+                  ),
+                  href: '/todos',
+                },
+                {
+                  label: (
+                    <div className="flex items-center gap-[12px]">
                       <SignalFilled className="text-[16px]" />
                       <span>Thống kê</span>
                     </div>

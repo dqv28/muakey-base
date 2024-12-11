@@ -4,6 +4,7 @@ import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
 import {
   abbreviateNumber,
   convertRelativeTime,
+  convertTime,
   randomColor,
 } from '@/libs/utils'
 import { Avatar } from '@/ui'
@@ -241,7 +242,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                       {timeStatus === 'inprogress'
                         ? 'Đến hạn trong'
                         : 'Quá hạn'}{' '}
-                      {Math.round(time.asHours())}h
+                      {convertTime(time.asSeconds())}
                     </div>
                   ) : (
                     <div className="text-[#999]">Không thời hạn</div>

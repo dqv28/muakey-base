@@ -1,12 +1,22 @@
 'use client'
 
+import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
-import { Avatar, ConfigProvider, Form, FormInstance, Input, List } from 'antd'
+import { DeleteOutlined } from '@ant-design/icons'
+import {
+  App,
+  Avatar,
+  ConfigProvider,
+  Form,
+  FormInstance,
+  Input,
+  List,
+} from 'antd'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
-import { addCommentAction } from './action'
+import { addCommentAction, deleteCommentAction } from './action'
 
 const JobCommentCollapse: React.FC<{
   comment?: any
@@ -15,6 +25,20 @@ const JobCommentCollapse: React.FC<{
   const [expand, setExpand] = useState(false)
   const router = useRouter()
   const formRef = useRef<FormInstance>(null)
+  const { message, modal } = App.useApp()
+  const [open, setOpen] = useState(false)
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteCommentAction(id)
+
+      message.success('Xóa thành công.')
+      setOpen(false)
+      router.refresh()
+    } catch (error) {
+      throw new Error(String(error))
+    }
+  }
 
   const handleSubmit = async (formData: any, options: any) => {
     setLoading(true)
@@ -68,7 +92,7 @@ const JobCommentCollapse: React.FC<{
               dataSource={comment?.children}
               renderItem={(item: any) => (
                 <div
-                  className="mb-[8px] flex items-start gap-[12px]"
+                  className="group mb-[8px] flex items-start gap-[12px]"
                   key={item?.id}
                 >
                   <Avatar
@@ -81,11 +105,28 @@ const JobCommentCollapse: React.FC<{
                     {String(item?.full_name).charAt(0).toLocaleUpperCase()}
                   </Avatar>
                   <div className="flex-1">
-                    <div className="space-x-[8px]">
-                      <span className="text-[13px] font-[700] text-[#267cde]">
-                        {item?.full_name}
-                      </span>
-                      <span>{item?.content}</span>
+                    <div className="flex items-start justify-between">
+                      <div className="space-x-[8px]">
+                        <span className="text-[13px] font-[700] text-[#267cde]">
+                          {item?.full_name}
+                        </span>
+                        <span>{item?.content}</span>
+                      </div>
+
+                      <DeleteOutlined
+                        className="visible cursor-pointer text-[#c34343] opacity-0 transition-all group-hover:opacity-100"
+                        onClick={() => {
+                          setOpen(true)
+                          modal.confirm({
+                            title: 'Xác nhận xóa bình luận này?',
+                            content: 'Xóa bình luận',
+                            destroyOnClose: true,
+                            open,
+                            onOk: () => handleDelete(item?.id),
+                            onCancel: () => setOpen(false),
+                          })
+                        }}
+                      />
                     </div>
 
                     <div className="text-[12px] text-[#888]">
@@ -119,4 +160,4 @@ const JobCommentCollapse: React.FC<{
   )
 }
 
-export default JobCommentCollapse
+export default withApp(JobCommentCollapse)

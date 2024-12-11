@@ -34,6 +34,7 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
 
       toast.success('Bạn vừa thêm thảo luận mới.')
       setLoading(false)
+      formRef.current?.resetFields()
       router.refresh()
     } catch (error: any) {
       setLoading(false)

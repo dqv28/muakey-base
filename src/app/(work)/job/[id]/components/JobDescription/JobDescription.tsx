@@ -6,8 +6,8 @@ import { Button, Form } from 'antd'
 import clsx from 'clsx'
 import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
-import { editTaskAction } from '../../../actions'
 import { Converter } from 'showdown'
+import { editTaskAction } from '../../../actions'
 
 type JobDescriptionProps = {
   value?: any
@@ -18,14 +18,13 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
   value: defaultValue,
   params,
 }) => {
-  const [value] = useState(defaultValue || '')
+  const [value, setValue] = useState(defaultValue || '')
   const [isEdit, setIsEdit] = useState(false)
   const [loading, setLoading] = useState(false)
   const editorRef = useRef<MDXEditorMethods>(null)
   const converter = new Converter()
 
   const handleSubmit = async (formData: any) => {
-    console.log(formData)
     setLoading(true)
 
     try {
@@ -42,15 +41,14 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
       toast.success('Cập nhật thành công')
       setIsEdit(false)
       setLoading(false)
-      
-      if (typeof window !== 'undefined') {
-        window.location.reload()
-      }
+      setValue(converter.makeHtml(formData?.description))
     } catch (error: any) {
       setLoading(false)
       throw new Error(error)
     }
   }
+
+  console.log(converter.makeMarkdown(value || ''))
 
   return (
     <div className="mt-[24px]">
@@ -67,7 +65,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
         <Form
           className="mt-[16px]"
           initialValues={{
-            description: value,
+            description: converter.makeMarkdown(value || ''),
           }}
           onFinish={handleSubmit}
         >
@@ -76,7 +74,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
               contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
               editorRef={editorRef}
               markdown={converter.makeMarkdown(value || '')}
-              placeholder='Mô tả nhiệm vụ'
+              placeholder="Mô tả nhiệm vụ"
             />
           </Form.Item>
           <Form.Item>
@@ -94,7 +92,10 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
         </Form>
       ) : (
         <div
-          className={clsx('mt-[8px] prose !max-w-full', value ? 'text-[#333]' : 'text-[#999]')}
+          className={clsx(
+            'prose mt-[8px] !max-w-full',
+            value ? 'text-[#333]' : 'text-[#999]',
+          )}
           dangerouslySetInnerHTML={{ __html: value || 'Không có mô tả' }}
         />
       )}

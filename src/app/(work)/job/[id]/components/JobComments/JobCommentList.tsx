@@ -1,14 +1,34 @@
 'use client'
 
+import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
-import { Avatar, ConfigProvider, List, ListProps } from 'antd'
+import { DeleteOutlined } from '@ant-design/icons'
+import { App, Avatar, ConfigProvider, List, ListProps } from 'antd'
 import dayjs from 'dayjs'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
 import JobCommentCollapse from './JobCommentCollapse'
+import { deleteCommentAction } from './action'
 
 type JobCommentListProps = ListProps<any> & {}
 
 const JobCommentList: React.FC<JobCommentListProps> = (props) => {
+  const { message, modal } = App.useApp()
+  const router = useRouter()
+  const [open, setOpen] = useState(false)
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteCommentAction(id)
+
+      message.success('Xóa thành công.')
+      setOpen(false)
+      router.refresh()
+    } catch (error) {
+      throw new Error(String(error))
+    }
+  }
+
   return (
     <ConfigProvider
       theme={{
@@ -21,7 +41,7 @@ const JobCommentList: React.FC<JobCommentListProps> = (props) => {
     >
       <List
         renderItem={(item: any) => (
-          <div className="mb-[8px] rounded-[4px] border border-[#eee] bg-[#fafafa] py-[20px] pl-[16px]">
+          <div className="group mb-[8px] rounded-[4px] border border-[#eee] bg-[#fafafa] py-[20px] pl-[16px]">
             <div className="flex items-start gap-[20px]">
               <Avatar
                 src={item?.avatar}
@@ -31,8 +51,22 @@ const JobCommentList: React.FC<JobCommentListProps> = (props) => {
                 {String(item?.full_name).charAt(0).toLocaleUpperCase()}
               </Avatar>
               <div className="flex-1">
-                <div className="text-[16px] font-[500] text-[#267cde]">
-                  {item?.full_name}
+                <div className="flex items-start justify-between pr-[8px] text-[16px] font-[500] text-[#267cde]">
+                  <span>{item?.full_name}</span>
+                  <DeleteOutlined
+                    className="visible cursor-pointer text-[#c34343] opacity-0 transition-all group-hover:opacity-100"
+                    onClick={() => {
+                      setOpen(true)
+                      modal.confirm({
+                        title: 'Xác nhận xóa bình luận này?',
+                        content: 'Xóa bình luận',
+                        destroyOnClose: true,
+                        open,
+                        onOk: () => handleDelete(item?.id),
+                        onCancel: () => setOpen(false),
+                      })
+                    }}
+                  />
                 </div>
                 <div className="text-[13px] text-[#999]">
                   {dayjs(item?.created_at).format('HH:mm MMM DD, YYYY')}
@@ -57,4 +91,4 @@ const JobCommentList: React.FC<JobCommentListProps> = (props) => {
   )
 }
 
-export default JobCommentList
+export default withApp(JobCommentList)

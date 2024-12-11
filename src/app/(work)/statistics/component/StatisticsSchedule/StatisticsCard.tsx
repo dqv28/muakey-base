@@ -1,5 +1,5 @@
 import { randomColor } from '@/libs/utils'
-import { Avatar } from 'antd'
+import { Avatar, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import React from 'react'
@@ -20,14 +20,16 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
   return (
     <div
       className={clsx(
-        'flex flex-col gap-[12px] rounded-[4px] border p-[12px] text-[14px] leading-none',
+        'flex flex-col gap-[12px] rounded-[4px] border p-[12px] text-[13px] leading-none',
         status === 'in_progress' || {
           'border-[#009c37] bg-[#d9f8e5]': status === 'completed',
           'border-[#c34343] bg-[#ffeded]': status === 'failed',
         },
       )}
     >
-      <div className="font-[500]">{title}</div>
+      <Tooltip title={title}>
+        <div className="line-clamp-2 font-[500] leading-[16px]">{title}</div>
+      </Tooltip>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[8px]">
           <Avatar

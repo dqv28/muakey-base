@@ -278,6 +278,11 @@ export const addComment = async (data: any) =>
     data,
   }).then((data) => data)
 
+export const deleteComment = async (id: number) =>
+  requestWithAuthorized(`comments/${id}`, {
+    method: 'DELETE',
+  }).then((data) => data)
+
 export const checkIn = async () =>
   requestWithAuthorized('check-in', {
     method: 'POST',
