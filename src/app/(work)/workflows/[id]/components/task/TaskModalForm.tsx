@@ -117,15 +117,15 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
-    
+
     const { member: memberVal, tag, ...restFormData } = formData
-    
+
     const member: any = members.find(
       (m: any) =>
         `${`${m.full_name} ·`} ${m.username} ${!!m.position ? `· ${m.position}` : ''}` ===
-      memberVal,
+        memberVal,
     )
-    
+
     try {
       if (action === 'create') {
         var { errors, id } = await addTaskAction({
@@ -133,7 +133,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
           workflow_id: params?.id || null,
-          tag_id: restFormData?.tag || []
+          tag_id: restFormData?.tag || [],
         })
 
         if (!errors) {
@@ -184,7 +184,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           ...restFormData,
           description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
-          tag_id: restFormData?.tag || []
+          tag_id: restFormData?.tag || [],
         })
 
         if (!errors) {

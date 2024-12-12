@@ -90,8 +90,8 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
     <MDXEditor
       plugins={plugins}
       iconComponentFor={renderIconComponentFor}
-      {...props}
       ref={editorRef}
+      {...props}
     />
   )
 }

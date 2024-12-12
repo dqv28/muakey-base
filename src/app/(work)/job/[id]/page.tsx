@@ -81,11 +81,13 @@ const page: React.FC<any> = async (props: {
           <PageHeader
             className="h-[58px] w-full"
             title={
-              <div className="flex items-center gap-[8px] font-[500]">
+              <div className="flex items-start gap-[8px] font-[500]">
                 <BackButton>
                   <ArrowLeftOutlined className="cursor-pointer text-[20px] text-[#aaa]" />
                 </BackButton>
-                <span className="text-[20px] leading-none">{task?.name}</span>
+                <span className="line-clamp-2 text-[20px] leading-[24px]">
+                  {task?.name}
+                </span>
               </div>
             }
             extra={

@@ -1,6 +1,9 @@
 'use client'
 
-import { abbreviateNumber, convertRelativeTime, getVideoId } from '@/libs/utils'
+import getYoutubeVideoId, {
+  abbreviateNumber,
+  convertRelativeTime,
+} from '@/libs/utils'
 import { OpenOutlined } from '@/ui/icons'
 import {
   EyeOutlined,
@@ -9,6 +12,7 @@ import {
   MessageOutlined,
   ReloadOutlined,
 } from '@ant-design/icons'
+import { YouTubeEmbed } from '@next/third-parties/google'
 import { Tooltip } from 'antd'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -21,7 +25,7 @@ type JobReviewProps = {
 
 const JobReview: React.FC<JobReviewProps> = ({ task, query }) => {
   const [loading, setLoading] = useState(false)
-  const videoId = getVideoId(String(task?.link_youtube))
+  const videoId = getYoutubeVideoId(String(task?.link_youtube))
 
   const handleRefresh = async () => {
     setLoading(true)
@@ -49,15 +53,12 @@ const JobReview: React.FC<JobReviewProps> = ({ task, query }) => {
           <LoadingOutlined />
         ) : (
           <ReloadOutlined
-            className="text-[#267cde] cursor-pointer text-[12px]"
+            className="cursor-pointer text-[12px] text-[#267cde]"
             onClick={handleRefresh}
           />
         )}
       </div>
-      <iframe
-        className="size-full"
-        src={`//www.youtube.com/embed/${videoId}`}
-      />
+      <YouTubeEmbed videoid={videoId || ''} />
       <div className="!mt-[16px] flex items-center justify-between gap-[12px] text-nowrap">
         <div className="flex items-center gap-[12px]">
           <div>

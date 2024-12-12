@@ -48,7 +48,7 @@ const Page: React.FC<any> = async (prop: {
           workflow,
           stages,
           date,
-          tag
+          tag,
         }}
       />
     </WorkflowPageLayout>

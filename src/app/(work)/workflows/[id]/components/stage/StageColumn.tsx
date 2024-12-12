@@ -4,7 +4,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import clsx from 'clsx'
 import { useParams } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import TaskList from '../task/TaskList'
 import StageDropdownMenu from './StageDropdownMenu'
 import StageHeader from './StageHeader'
@@ -15,7 +15,7 @@ type StageColumnProps = {
   userId?: number
 }
 
-const StageColumn: React.FC<StageColumnProps> = ({ stage, userId }) => {
+const StageColumn: React.FC<StageColumnProps> = memo(({ stage, userId }) => {
   const [loading, setLoading] = useState(false)
 
   const params = useParams()
@@ -109,6 +109,8 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage, userId }) => {
       </Col>
     </div>
   )
-}
+})
+
+StageColumn.displayName = 'Stage column'
 
 export default StageColumn

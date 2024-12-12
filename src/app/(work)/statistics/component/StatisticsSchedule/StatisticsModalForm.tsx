@@ -2,46 +2,51 @@
 
 import { InitializedMDXEditor } from '@/components'
 import { withApp } from '@/hoc'
-import { useAsyncEffect } from '@/libs/hook'
 import { PlusOutlined } from '@ant-design/icons'
 import { MDXEditorMethods } from '@mdxeditor/editor'
 import { App, Button, DatePicker, Form, Input, Modal, Select } from 'antd'
+import vn from 'antd/es/date-picker/locale/vi_VN'
+import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
-import { addTodoAction, getAccountsAction } from './action'
 
-type StatisticsModalFormProps = {}
+type StatisticsModalFormProps = {
+  options?: any
+}
 
-const StatisticsModalForm: React.FC<StatisticsModalFormProps> = (props) => {
+const StatisticsModalForm: React.FC<StatisticsModalFormProps> = ({
+  options,
+}) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [accounts, setAccounts] = useState<any[]>([])
   const editorRef = useRef<MDXEditorMethods>(null)
   const { message } = App.useApp()
+  const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
-    setLoading(true)
+    console.log({
+      ...formData,
+      expired_at: dayjs(formData.expired_at).format('YYYY-MM-DD HH:mm:ss'),
+    })
+    // setLoading(true)
 
-    try {
-      const { message: msg, errors } = await addTodoAction(formData)
+    // try {
+    //   const { message: msg, errors } = await addTodoAction(formData)
 
-      if (errors) {
-        message.error(msg)
-        return
-      }
+    //   if (errors) {
+    //     message.error(msg)
+    //     return
+    //   }
 
-      setOpen(false)
-      setLoading(false)
-    } catch (error) {
-      setLoading(false)
-      throw new Error(String(error))
-    }
+    //   setOpen(false)
+    //   setLoading(false)
+    //   message.success('Thêm thành công.')
+    //   router.refresh()
+    // } catch (error) {
+    //   setLoading(false)
+    //   throw new Error(String(error))
+    // }
   }
-
-  useAsyncEffect(async () => {
-    const res = await getAccountsAction()
-
-    setAccounts([...res])
-  }, [])
 
   return (
     <>
@@ -70,7 +75,16 @@ const StatisticsModalForm: React.FC<StatisticsModalFormProps> = (props) => {
           loading,
         }}
       >
-        <Form.Item name="name" label="Tên công việc">
+        <Form.Item
+          name="name"
+          label="Tên công việc"
+          rules={[
+            {
+              required: true,
+              message: 'Tên công việc không được để trống',
+            },
+          ]}
+        >
           <Input placeholder="Tên công việc" />
         </Form.Item>
         <Form.Item
@@ -85,19 +99,43 @@ const StatisticsModalForm: React.FC<StatisticsModalFormProps> = (props) => {
             placeholder="Mô tả nhiệm vụ"
           />
         </Form.Item>
-        <Form.Item name="account_id" label="Giao cho">
+        <Form.Item
+          name="account_id"
+          label="Giao cho"
+          rules={[
+            {
+              required: true,
+              message: 'Lựa chọn 1 người thực thi',
+            },
+          ]}
+        >
           <Select
             placeholder="-- Lựa chọn một người dưới đây --"
             options={[
-              ...accounts?.map((acc: any) => ({
+              ...options?.accounts?.map((acc: any) => ({
                 label: acc?.full_name,
                 value: acc?.id,
               })),
             ]}
+            allowClear
           />
         </Form.Item>
-        <Form.Item name="expired" label="Thời hạn">
-          <DatePicker className="w-full" placeholder="Thời hạn" />
+        <Form.Item
+          name="expired_at"
+          label="Thời hạn"
+          rules={[
+            {
+              required: true,
+              message: 'Thời hạn không được để trống',
+            },
+          ]}
+        >
+          <DatePicker
+            className="w-full"
+            placeholder="Thời hạn"
+            locale={vn}
+            showTime
+          />
         </Form.Item>
       </Modal>
     </>

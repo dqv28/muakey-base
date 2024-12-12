@@ -48,8 +48,6 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     }
   }
 
-  console.log(converter.makeMarkdown(value || ''))
-
   return (
     <div className="mt-[24px]">
       <div className="flex items-center justify-between gap-[24px]">

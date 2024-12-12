@@ -41,7 +41,7 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
           </Avatar>
           <span>{user?.fullName}</span>
         </div>
-        <div>{dayjs(new Date(expire || '')).format('HH:mm')}</div>
+        <div>{expire && dayjs(new Date(expire)).format('HH:mm')}</div>
       </div>
     </div>
   )

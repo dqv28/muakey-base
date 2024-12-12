@@ -1,6 +1,7 @@
 'use client'
 
 import { getTaskHistoriesAction } from '@/components/action'
+import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { Col, Row, toast } from '@/ui'
 import { PlusOutlined } from '@/ui/icons'
@@ -18,6 +19,7 @@ import {
   horizontalListSortingStrategy,
   SortableContext,
 } from '@dnd-kit/sortable'
+import { App } from 'antd'
 import clsx from 'clsx'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
@@ -45,6 +47,7 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
   const activeRef = useRef<any>(null)
   const [userId, setUserId] = useState()
+  const { message } = App.useApp()
 
   const { stages, setStages } = useContext(WorkflowStageContext)
   const params = useParams()
@@ -149,10 +152,15 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
       })
 
       try {
-        await moveStageAction(
+        const { message: msg, errors } = await moveStageAction(
           activeTaskId as number,
           overData.stage_id || overData.id,
         )
+
+        if (errors) {
+          message.error(msg)
+          return
+        }
       } catch (error: any) {
         throw new Error(error)
       }
@@ -160,11 +168,13 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
   }
 
   const handleDragStart = (e: DragStartEvent) => {
+    console.log('START')
     const { active } = e
     setActiveId(active.id)
   }
 
   const handleDragEnd = async (e: DragEndEvent) => {
+    console.log('END')
     setDragEvent(e)
 
     const { active, over } = e
@@ -198,6 +208,13 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
 
     if (!activeData.account_id && [1].includes(overIndex)) {
       toast.error('Nhiệm vụ chưa được giao.')
+      return
+    }
+
+    if (activeData.account_id !== userId) {
+      message.error(
+        'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',
+      )
       return
     }
 
@@ -334,4 +351,4 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
   )
 }
 
-export default StageList
+export default withApp(StageList)

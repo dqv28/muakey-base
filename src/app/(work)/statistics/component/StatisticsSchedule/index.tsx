@@ -5,6 +5,7 @@ import { Avatar, Col, Row } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { times } from 'lodash'
+import Link from 'next/link'
 import React from 'react'
 import StatisticsCard from './StatisticsCard'
 import StatisticsColHeader from './StatisticsColHeader'
@@ -16,8 +17,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async (props) => {
   const today = new Date()
   const week = getWeek(today)
 
-  const schedule = await getSchedule()
-  const accounts = await getAccounts()
+  const [schedule, accounts] = await Promise.all([getSchedule(), getAccounts()])
 
   const days = week?.map((w: any) => w?.date)
   const todos = accounts?.map((acc: any) => {
@@ -36,7 +36,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async (props) => {
 
     return {
       name: acc?.full_name,
-      todos: Object.fromEntries(days),
+      tasks: Object.fromEntries(days),
     }
   })
 
@@ -66,7 +66,11 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async (props) => {
         {times(8, (num) => (
           <Col key={num} className="border-r" span={3}>
             <div className="flex items-center justify-center">
-              <StatisticsModalForm />
+              <StatisticsModalForm
+                options={{
+                  accounts,
+                }}
+              />
             </div>
           </Col>
         ))}
@@ -85,7 +89,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async (props) => {
               </div>
             </Col>
             {days?.map((day: string) => {
-              const tasksOfDay = t?.todos?.[day]
+              const tasksOfDay = t?.tasks?.[day]
 
               return (
                 <Col
@@ -94,16 +98,21 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async (props) => {
                   span={3}
                 >
                   {tasksOfDay?.map((task: any) => (
-                    <StatisticsCard
+                    <Link
+                      className="block hover:text-[#000]"
                       key={task?.name_task}
-                      title={`${task?.stage_name ? `${task?.stage_name}: ` : ''} ${task?.name_task}`}
-                      user={{
-                        fullName: task?.account_name,
-                        avatar: task?.avatar,
-                      }}
-                      expire={task?.expired || task?.started_at}
-                      status={task?.status}
-                    />
+                      href={`/job/${task?.code}`}
+                    >
+                      <StatisticsCard
+                        title={`${task?.stage_name ? `${task?.stage_name}: ` : ''} ${task?.name_task}`}
+                        user={{
+                          fullName: task?.account_name,
+                          avatar: task?.avatar,
+                        }}
+                        expire={task?.expired_at}
+                        status={task?.status}
+                      />
+                    </Link>
                   ))}
                 </Col>
               )

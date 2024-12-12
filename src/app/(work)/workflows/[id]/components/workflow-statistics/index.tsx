@@ -1,5 +1,4 @@
 import { getKpi } from '@/libs/data'
-import { Table, TableProps } from 'antd'
 import React from 'react'
 import WorkflowStatisticsFiltered from './WorkflowStatisticsFiltered'
 import WorkflowStatisticsTable from './WorkflowStatisticsTable'
