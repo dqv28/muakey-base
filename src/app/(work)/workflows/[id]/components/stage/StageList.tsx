@@ -46,7 +46,7 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
   const [reports, setReports] = useState<any[]>([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
   const activeRef = useRef<any>(null)
-  const [userId, setUserId] = useState()
+  const [user, setUser] = useState<any>({})
   const { message } = App.useApp()
 
   const { stages, setStages } = useContext(WorkflowStageContext)
@@ -69,27 +69,6 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
   })
 
   const sensors = useSensors(mouseSensor, touchSensor)
-
-  useAsyncEffect(async () => {
-    if (!dragEvent) return
-
-    const { active } = dragEvent
-
-    const {
-      data: { current: activeData },
-    } = active
-
-    if (!activeData) return
-
-    const data = await getReportFieldsByWorkflowIdAction({
-      workflow_id: Number(params?.id),
-      stage_id: activeData.stage_id,
-      task_id: activeData.id,
-    })
-
-    setReports((prev) => [...prev, ...data])
-    activeRef.current = activeId
-  }, [dragEvent])
 
   const handleDrag = async (event: DragEndEvent) => {
     const { active, over } = event
@@ -168,13 +147,11 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
   }
 
   const handleDragStart = (e: DragStartEvent) => {
-    console.log('START')
     const { active } = e
     setActiveId(active.id)
   }
 
   const handleDragEnd = async (e: DragEndEvent) => {
-    console.log('END')
     setDragEvent(e)
 
     const { active, over } = e
@@ -210,12 +187,13 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
       toast.error('Nhiệm vụ chưa được giao.')
       return
     }
-
-    if (activeData.account_id !== userId) {
-      message.error(
-        'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',
-      )
-      return
+    if (!String(user?.role).toLocaleLowerCase().includes('admin')) {
+      if (activeData.account_id !== user?.id) {
+        message.error(
+          'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',
+        )
+        return
+      }
     }
 
     if (data?.length > 0 && activeData.account_id && activeIndex > overIndex) {
@@ -286,9 +264,30 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
   )
 
   useAsyncEffect(async () => {
+    if (!dragEvent) return
+
+    const { active } = dragEvent
+
+    const {
+      data: { current: activeData },
+    } = active
+
+    if (!activeData) return
+
+    const data = await getReportFieldsByWorkflowIdAction({
+      workflow_id: Number(params?.id),
+      stage_id: activeData.stage_id,
+      task_id: activeData.id,
+    })
+
+    setReports([...data])
+    activeRef.current = activeId
+  }, [dragEvent])
+
+  useAsyncEffect(async () => {
     const res = await getMeAction()
 
-    setUserId(res?.id)
+    setUser(res)
   }, [])
 
   return (
@@ -321,7 +320,7 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
             )}
             {stages?.length > 0 &&
               stages.map((stage: any) => (
-                <StageColumn key={stage?.id} stage={stage} userId={userId} />
+                <StageColumn key={stage?.id} stage={stage} userId={user?.id} />
               ))}
           </Row>
         </SortableContext>

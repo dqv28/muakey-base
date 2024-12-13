@@ -1,4 +1,4 @@
-import { getWorkflowCategories } from '@/libs/data'
+import { getAccounts, getWorkflowCategories } from '@/libs/data'
 import React from 'react'
 import StatisticsFiltered from './StatisticsFiltered'
 
@@ -6,6 +6,7 @@ const PageHeader: React.FC<{
   params?: any
 }> = async ({ params }) => {
   const categories = await getWorkflowCategories()
+  const accounts = await getAccounts()
 
   const category = categories?.find((c: any) => c?.id === +params?.categoryId)
 
@@ -14,7 +15,7 @@ const PageHeader: React.FC<{
       <div className="flex items-center justify-between text-[24px]">
         <span className="font-[500]">Thống kê</span>
         <StatisticsFiltered
-          members={category?.members}
+          members={accounts}
           workflows={category?.workflows}
         />
       </div>

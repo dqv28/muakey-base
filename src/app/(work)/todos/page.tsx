@@ -15,10 +15,12 @@ const page: React.FC = async () => {
       <PageHeader />
       <TodosTable
         dataSource={todos?.map((todo: any) => ({
+          id: todo?.id,
           name: todo?.name,
           expired: todo?.expired,
           stage: todo?.stage_name || 'Không có',
           workflow: todo?.workflow_name || 'Không có',
+          status: todo?.status,
         }))}
       />
     </div>

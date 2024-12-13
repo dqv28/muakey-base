@@ -191,7 +191,7 @@ export const getWeek = (date: Date, numberOfWeek?: number) => {
   const startOfWeek = new Date(date)
 
   startOfWeek.setDate(
-    date.getDate() - date.getDay() + 1 + (numberOfWeek || 0) * 7,
+    date.getDate() - date.getDay() + 1 + +(numberOfWeek || 0) * 7,
   )
 
   return daysOfWeek.map((day: string, index: number) => {

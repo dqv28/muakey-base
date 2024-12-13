@@ -1,9 +1,9 @@
 'use client'
 
 import { ConfigProvider, DatePicker } from 'antd'
+import locale from 'antd/locale/vi_VN'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
-import locale from 'antd/locale/vi_VN'
 
 type CheckInFilteredProps = {}
 

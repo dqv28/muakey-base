@@ -1,16 +1,47 @@
 'use client'
 
+import { withApp } from '@/hoc'
 import { convertTime } from '@/libs/utils'
-import { Table, TableProps, Tag } from 'antd'
+import { CheckOutlined } from '@ant-design/icons'
+import { App, Button, Table, TableProps, Tag } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { markTodoCompletedAction } from './action'
 
 type TodosTableProps = TableProps & {}
 
 dayjs.extend(duration)
 
 const TodosTable: React.FC<TodosTableProps> = (props) => {
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const { message, modal } = App.useApp()
+  const router = useRouter()
+
+  const handleMarkTodoCompleted = async (id: number) => {
+    setLoading(true)
+
+    try {
+      const { message: msg, errors } = await markTodoCompletedAction(id)
+
+      if (errors) {
+        message.error(msg)
+        setLoading(false)
+        setOpen(false)
+        return
+      }
+
+      message.success('Đã hoàn thành.')
+      setLoading(false)
+      setOpen(false)
+      router.refresh()
+    } catch (error) {
+      throw new Error(String(error))
+    }
+  }
+
   const columns: TableProps['columns'] = [
     {
       title: 'Công việc',
@@ -49,9 +80,47 @@ const TodosTable: React.FC<TodosTableProps> = (props) => {
       title: 'Quy trình',
       dataIndex: 'workflow',
     },
+    {
+      title: 'Hành động',
+      dataIndex: 'action',
+      render: (_, record) => {
+        return (
+          record?.stage === 'Không có' &&
+          (record?.status ? (
+            <Tag color="green">
+              Đã hoàn thành <CheckOutlined />
+            </Tag>
+          ) : (
+            <Button
+              type="primary"
+              onClick={() => {
+                modal.confirm({
+                  title: 'Xác nhận',
+                  content: 'Đánh dấu hoàn thành nhiệm vụ này?',
+                  open,
+                  okButtonProps: {
+                    loading,
+                  },
+                  onCancel: () => setOpen(false),
+                  onOk: () => handleMarkTodoCompleted(record?.id),
+                })
+              }}
+            >
+              Đánh dấu hoàn thành
+            </Button>
+          ))
+        )
+      },
+    },
   ]
 
-  return <Table columns={columns} {...props} />
+  return (
+    <Table
+      columns={columns}
+      rowClassName={(todo) => (todo?.status ? 'bg-[#deffdb]' : '')}
+      {...props}
+    />
+  )
 }
 
-export default TodosTable
+export default withApp(TodosTable)

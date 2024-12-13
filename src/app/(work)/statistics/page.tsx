@@ -14,7 +14,12 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
       />
 
       <div className="h-[calc(100vh-68px)] overflow-auto">
-        <StatisticsSchedule />
+        <StatisticsSchedule
+          options={{
+            account_id: searchParams?.mid || '',
+            dw: searchParams?.dw || '',
+          }}
+        />
       </div>
     </div>
   )

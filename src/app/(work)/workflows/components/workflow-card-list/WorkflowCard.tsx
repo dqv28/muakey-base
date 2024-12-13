@@ -1,14 +1,14 @@
 'use client'
 
+import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
 import { Card, Progress } from '@/ui'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { App, Avatar, Dropdown, Tooltip } from 'antd'
 import Link from 'next/link'
 import React from 'react'
-import WorkflowModalForm from '../workflow-list/WorkflowModalForm'
 import { deleteWorkflowAction } from '../../action'
-import { withApp } from '@/hoc'
-import { ExclamationCircleOutlined } from '@ant-design/icons'
+import WorkflowModalForm from '../workflow-list/WorkflowModalForm'
 
 type WorkflowCardProps = {
   workflow?: any
@@ -37,7 +37,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, total }) => {
         } catch (error) {
           throw new Error(String(error))
         }
-      }
+      },
     })
   }
 
@@ -121,7 +121,10 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, total }) => {
                   Chỉnh sửa quy trình
                 </div>
               </WorkflowModalForm>
-              <div className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none transition-all hover:bg-[#f8f8f8]" onClick={handleDelete}>
+              <div
+                className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none transition-all hover:bg-[#f8f8f8]"
+                onClick={handleDelete}
+              >
                 Xóa quy trình
               </div>
             </div>

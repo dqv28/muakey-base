@@ -9,6 +9,7 @@ import vn from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
+import { addTodoAction } from './action'
 
 type StatisticsModalFormProps = {
   options?: any
@@ -24,28 +25,27 @@ const StatisticsModalForm: React.FC<StatisticsModalFormProps> = ({
   const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
-    console.log({
-      ...formData,
-      expired_at: dayjs(formData.expired_at).format('YYYY-MM-DD HH:mm:ss'),
-    })
-    // setLoading(true)
+    setLoading(true)
 
-    // try {
-    //   const { message: msg, errors } = await addTodoAction(formData)
+    try {
+      const { message: msg, errors } = await addTodoAction({
+        ...formData,
+        expired_at: dayjs(formData.expired_at).format('YYYY-MM-DD HH:mm:ss'),
+      })
 
-    //   if (errors) {
-    //     message.error(msg)
-    //     return
-    //   }
+      if (errors) {
+        message.error(msg)
+        return
+      }
 
-    //   setOpen(false)
-    //   setLoading(false)
-    //   message.success('Thêm thành công.')
-    //   router.refresh()
-    // } catch (error) {
-    //   setLoading(false)
-    //   throw new Error(String(error))
-    // }
+      setOpen(false)
+      setLoading(false)
+      message.success('Thêm thành công.')
+      router.refresh()
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
   }
 
   return (
@@ -74,6 +74,7 @@ const StatisticsModalForm: React.FC<StatisticsModalFormProps> = ({
           htmlType: 'submit',
           loading,
         }}
+        destroyOnClose
       >
         <Form.Item
           name="name"

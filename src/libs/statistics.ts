@@ -5,7 +5,7 @@ export const getReportStatistics = async (query?: any) =>
     .then((data) => data)
     .catch(() => [])
 
-export const getSchedule = async () => 
-  requestWithAuthorized('schedule')
-  .then((data) => data)
-  .catch(() => [])
+export const getSchedule = async (query?: any) =>
+  requestWithAuthorized('schedule?' + new URLSearchParams(query))
+    .then((data) => data)
+    .catch(() => [])

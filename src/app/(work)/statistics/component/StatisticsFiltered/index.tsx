@@ -1,6 +1,8 @@
 'use client'
 
-import { Select } from 'antd'
+import { ConfigProvider, DatePicker, Select } from 'antd'
+import locale from 'antd/locale/vi_VN'
+import dayjs from 'dayjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
@@ -15,41 +17,47 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = ({
 }) => {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const query = new URLSearchParams(searchParams)
 
   const handleChange = (value: any) => {
-    const query = new URLSearchParams(searchParams)
-
-    if (value) {
-      query.set('m', value)
+    if (value?.length > 0) {
+      query.set('mid', value.join(','))
     } else {
-      query.delete('m')
+      query.delete('mid')
     }
 
     router.push(`?${String(query)}`)
   }
 
   const memberOptions = members?.map((m: any) => ({
-    label: m?.full_name || m?.username,
-    value: m?.full_name || m?.username,
-  }))
-
-  const workflowOptions = workflows?.map((w: any) => ({
-    label: w?.name,
-    value: w?.name,
+    label: m?.full_name,
+    value: m?.id,
   }))
 
   return (
     <div className="flex items-center gap-[8px]">
+      <ConfigProvider locale={locale}>
+        <DatePicker
+          className="w-full"
+          picker="week"
+          style={{ width: 300 }}
+          onChange={(date) => {
+            if (date) {
+              query.set('dw', String(dayjs(date).format('YYYY-MM-DD')))
+            } else {
+              query.delete('dw')
+            }
+
+            router.push(`?${String(query)}`)
+          }}
+          format={'YYYY-MM-DD'}
+        />
+      </ConfigProvider>
       <Select
-        placeholder="Quy trình"
-        allowClear
-        style={{ width: 200 }}
-        options={workflowOptions}
-      />
-      <Select
+        mode="multiple"
         placeholder="Thành viên"
         allowClear
-        style={{ width: 160 }}
+        style={{ width: 300 }}
         options={memberOptions}
         onChange={handleChange}
       />

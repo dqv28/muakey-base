@@ -10,3 +10,8 @@ export const addTodo = async (data: any) =>
     method: 'POST',
     data,
   }).then((data) => data)
+
+export const markTodoCompleted = async (id: number) =>
+  requestWithAuthorized(`my-tasks/${id}?success=1`, {
+    method: 'PUT',
+  })
