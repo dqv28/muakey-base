@@ -1,12 +1,11 @@
 'use client'
 
-import { toast } from '@/ui'
+import { withApp } from '@/hoc'
 import { App, Form, FormInstance, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 import { addWorkflowAction, editWorkflowAction } from '../../action'
 import FormFields from './FormFields'
-import { withApp } from '@/hoc'
 
 type WorkflowModalFormProps = {
   initialValues?: any
@@ -17,7 +16,7 @@ type WorkflowModalFormProps = {
 const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
   initialValues,
   action = 'create',
-  children
+  children,
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -58,10 +57,14 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
 
       if (action === 'create') router.push(`/workflows/${workflowId}`)
 
-      message.success(action === 'create' ? 'Đã thêm 1 quy trình mới.' : 'Cập nhật thành công.')
+      message.success(
+        action === 'create'
+          ? 'Đã thêm 1 quy trình mới.'
+          : 'Cập nhật thành công.',
+      )
       setOpen(false)
       setLoading(false)
-      
+
       if (typeof window !== 'undefined' && action === 'edit') {
         window.location.reload()
       }
@@ -73,16 +76,18 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
 
   return (
     <>
-      <div onClick={() => setOpen(true)}>
-        {children || 'Tạo mới workflow'}
-      </div>
+      <div onClick={() => setOpen(true)}>{children || 'Tạo mới workflow'}</div>
       <Modal
-        title={action === 'create' ? "Tạo luồng công việc mới" : 'Cập nhật luồng công việc'}
+        title={
+          action === 'create'
+            ? 'Tạo luồng công việc mới'
+            : 'Cập nhật luồng công việc'
+        }
         open={open}
         onCancel={() => setOpen(false)}
         onOk={() => formRef.current?.submit()}
         width={760}
-        okText={action === 'create' ? "Tạo mới" : 'Cập nhật'}
+        okText={action === 'create' ? 'Tạo mới' : 'Cập nhật'}
         cancelText="Bỏ qua"
         okButtonProps={{
           htmlType: 'submit',
@@ -92,7 +97,11 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
           <Form
             initialValues={{
               ...initialValues,
-              manager: String(initialValues?.manager).split(' '),
+              manager: String(
+                initialValues?.members
+                  ?.map((mem: any) => mem?.username)
+                  .join(' '),
+              ).split(' '),
             }}
             ref={formRef}
             onFinish={handleSubmit}
@@ -102,7 +111,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
           </Form>
         )}
       >
-        <FormFields />
+        <FormFields members={initialValues?.members} />
       </Modal>
     </>
   )
