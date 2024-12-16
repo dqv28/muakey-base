@@ -89,9 +89,7 @@ const WorkflowList: React.FC<WorkflowListProps> = ({
                       <WorkflowModalForm
                         initialValues={{
                           workflow_category_id: cate.id,
-                          manager: cate.members
-                            ?.map((m: any) => m?.username)
-                            .join(' '),
+                          members: cate.members,
                         }}
                       />
                     </div>

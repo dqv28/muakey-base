@@ -1,19 +1,11 @@
 'use client'
 
-import { useAsyncEffect } from '@/libs/hook'
 import { Form, Input, Select } from 'antd'
-import React, { useState } from 'react'
-import { getAccountssAction } from '../workflow-extra/action'
+import React from 'react'
 
-const FormFields: React.FC = () => {
-  const [accounts, setAccounts] = useState<any[]>([])
-
-  useAsyncEffect(async () => {
-    const res = await getAccountssAction()
-
-    setAccounts(res)
-  }, [])
-
+const FormFields: React.FC<{
+  members?: any[]
+}> = ({ members }) => {
   return (
     <>
       <Form.Item name="workflow_category_id" className="hidden">
@@ -56,7 +48,7 @@ const FormFields: React.FC = () => {
           allowClear
           style={{ width: '100%' }}
           placeholder="Chọn thành viên"
-          options={accounts?.map((a: any) => ({
+          options={members?.map((a: any) => ({
             label: a?.full_name,
             value: a?.username,
           }))}

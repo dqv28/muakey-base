@@ -2,7 +2,7 @@
 
 import { getAccounts, getWorkflowCategoryById } from '@/libs/data'
 
-export const getAccountssAction = async () => {
+export const getAccountsAction = async () => {
   return await getAccounts()
 }
 
