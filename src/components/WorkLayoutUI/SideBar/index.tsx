@@ -1,11 +1,14 @@
 import { getAttendances, getWorkflowCategories } from '@/libs/data'
 import { getSession } from '@/libs/session'
+import { getTodos } from '@/libs/todos'
 import { Navigation } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
 import {
   CalendarFilled,
   FolderOpenFilled,
+  HddFilled,
   ProjectFilled,
+  ShoppingFilled,
   SignalFilled,
 } from '@ant-design/icons'
 import React from 'react'
@@ -20,11 +23,14 @@ export type SideBarProps = SideProps & {
 
 const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const today = new Date().getDate()
-  const [workflows, session, attendances] = await Promise.all([
+  const [workflows, session, attendances, todos] = await Promise.all([
     getWorkflowCategories(),
     getSession(),
     getAttendances({
       me: 1,
+    }),
+    getTodos({
+      account_id: user?.id,
     }),
   ])
 
@@ -63,6 +69,15 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                 {
                   label: (
                     <div className="flex items-center gap-[12px]">
+                      <HddFilled className="text-[16px]" />
+                      <span>Quản lý phòng ban</span>
+                    </div>
+                  ),
+                  href: '/department',
+                },
+                {
+                  label: (
+                    <div className="flex items-center gap-[12px]">
                       <CalendarFilled className="text-[16px]" />
                       <span>Chấm công</span>
                     </div>
@@ -71,9 +86,18 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                 },
                 {
                   label: (
-                    <div className="flex items-center gap-[12px]">
-                      <CalendarFilled className="text-[16px]" />
-                      <span>Công việc của tôi</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-[12px]">
+                        <ShoppingFilled className="text-[16px]" />
+                        <span>Công việc của tôi</span>
+                      </div>
+                      {todos?.length > 0 && (
+                        <div className="rounded-[4px] bg-[#ff5555] px-[6px] pb-[4px] pt-[2px] text-[12px] font-[500]">
+                          <span className="leading-[12px]">
+                            {todos?.length}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   ),
                   href: '/todos',

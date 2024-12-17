@@ -33,10 +33,11 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async ({
   const todos = accounts
     ?.filter(
       (acc: any) =>
-        !options?.account_id ||
-        String(options?.account_id || '')
-          .split(',')
-          .includes(String(acc?.id)),
+        (!options?.account_id ||
+          String(options?.account_id || '')
+            .split(',')
+            .includes(String(acc?.id))) &&
+        acc?.type !== 'department',
     )
     ?.map((acc: any) => {
       const days = week?.map((w: any) => {
@@ -123,7 +124,16 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async ({
                         href={`/job/${task?.code}`}
                       >
                         <StatisticsCard
-                          title={`${task?.stage_name ? `${task?.stage_name}: ` : ''} ${task?.name_task}`}
+                          title={
+                            <>
+                              <span className="font-[500]">
+                                {task?.stage_name
+                                  ? `${String(task?.stage_name).toUpperCase()}: `
+                                  : ''}
+                              </span>
+                              <span>{task?.name_task}</span>
+                            </>
+                          }
                           user={{
                             fullName: task?.account_name,
                             avatar: task?.avatar,

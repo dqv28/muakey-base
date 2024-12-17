@@ -9,7 +9,7 @@ const Error: React.FC<any> = ({ error }: { error: Error }) => {
 
   return (
     <div className="flex size-full flex-col items-center justify-center gap-[12px]">
-      <h2 className="text-[24px] text-red-500">Đã xảy ra lỗi!</h2>
+      <h2 className="text-[20px] text-red-500">Đã xảy ra lỗi!</h2>
       <Link href="/workflows">
         <Button type="primary">Quay lại</Button>
       </Link>

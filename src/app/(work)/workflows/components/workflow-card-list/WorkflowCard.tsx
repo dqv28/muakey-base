@@ -122,7 +122,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, total }) => {
                 </div>
               </WorkflowModalForm>
               <div
-                className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none transition-all hover:bg-[#f8f8f8]"
+                className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none text-[#cc1111] transition-all hover:bg-[#f8f8f8]"
                 onClick={handleDelete}
               >
                 Xóa quy trình

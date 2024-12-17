@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import React from 'react'
 
 type StatisticsCardProps = {
-  title?: string
+  title?: React.ReactNode
   user?: any
   expire?: Date
   status?: 'in_progress' | 'completed' | 'failed'

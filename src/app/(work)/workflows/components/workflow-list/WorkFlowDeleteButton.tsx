@@ -13,7 +13,9 @@ const WorkFlowDeleteButton: React.FC<WorkFlowDeleteButtonProps> = ({
 
   return (
     <>
-      <div onClick={() => setOpen(true)}>Xóa danh mục</div>
+      <div className="text-[#cc1111]" onClick={() => setOpen(true)}>
+        Xóa danh mục
+      </div>
       <Modal open={open} onCancel={() => setOpen(false)} onOk={onDelete}>
         <div className="flex items-center gap-[12px] text-[#000]">
           <ExclamationCircleFilled className="text-[36px] text-[#c65144]" />

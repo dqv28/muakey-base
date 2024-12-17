@@ -173,7 +173,7 @@ const page: React.FC<any> = async (props: {
             />
           )}
 
-          {reports && <JobReports reports={reports} />}
+          {reports?.length > 0 && <JobReports reports={reports} />}
 
           <JobOverView
             task={task}

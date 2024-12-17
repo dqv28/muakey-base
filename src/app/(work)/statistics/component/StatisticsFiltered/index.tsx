@@ -8,13 +8,9 @@ import React from 'react'
 
 type StatisticsFilteredProps = {
   members?: any[]
-  workflows?: any[]
 }
 
-const StatisticsFiltered: React.FC<StatisticsFilteredProps> = ({
-  members,
-  workflows,
-}) => {
+const StatisticsFiltered: React.FC<StatisticsFilteredProps> = ({ members }) => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const query = new URLSearchParams(searchParams)
@@ -29,10 +25,12 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = ({
     router.push(`?${String(query)}`)
   }
 
-  const memberOptions = members?.map((m: any) => ({
-    label: m?.full_name,
-    value: m?.id,
-  }))
+  const memberOptions = members
+    ?.filter((mem: any) => mem?.type !== 'department')
+    ?.map((m: any) => ({
+      label: m?.full_name,
+      value: m?.id,
+    }))
 
   return (
     <div className="flex items-center gap-[8px]">

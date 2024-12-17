@@ -29,7 +29,7 @@ const JobReports: React.FC<JobReportsProps> = ({ reports }) => {
 
       <List
         dataSource={reports}
-        loading={reports?.length <= 0}
+        loading={!reports}
         renderItem={(item: any) =>
           item?.fields?.length > 0 && (
             <>
