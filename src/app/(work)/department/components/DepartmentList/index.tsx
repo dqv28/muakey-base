@@ -2,7 +2,7 @@
 
 import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
-import { App, Avatar, Col, Dropdown, Row } from 'antd'
+import { App, Avatar, Col, Dropdown, Row, Tooltip } from 'antd'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import DepartmentModalForm from '../DepartmentModalForm'
@@ -89,15 +89,16 @@ const DepartmentList: React.FC<{
             </div>
             <Avatar.Group>
               {depart?.members?.map((member: any) => (
-                <Avatar
-                  key={member?.username}
-                  src={member?.avatar}
-                  style={{
-                    backgroundColor: randomColor(String(member?.full_name)),
-                  }}
-                >
-                  {String(member?.full_name).charAt(0).toUpperCase()}
-                </Avatar>
+                <Tooltip key={member?.id} title={member?.full_name}>
+                  <Avatar
+                    src={member?.avatar}
+                    style={{
+                      backgroundColor: randomColor(String(member?.full_name)),
+                    }}
+                  >
+                    {String(member?.full_name).charAt(0).toUpperCase()}
+                  </Avatar>
+                </Tooltip>
               ))}
             </Avatar.Group>
           </div>

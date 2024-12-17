@@ -21,6 +21,7 @@ const page: React.FC = async () => {
           stage: todo?.stage_name || 'Không có',
           workflow: todo?.workflow_name || 'Không có',
           status: todo?.status,
+          started_at: todo?.started_at,
         }))}
       />
     </div>

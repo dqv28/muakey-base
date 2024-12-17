@@ -25,7 +25,7 @@ const page: React.FC<any> = async (prop: {
         <CheckInTable
           options={{
             attendances,
-            members,
+            members: members?.filter((mem: any) => mem?.type !== 'department'),
             day: Number(day || 0),
           }}
           scroll={{

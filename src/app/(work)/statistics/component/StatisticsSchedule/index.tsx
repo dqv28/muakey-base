@@ -82,17 +82,21 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async ({
         ))}
       </Row>
       <Row>
-        {times(8, (num) => (
-          <Col key={num} className="border-r" span={3}>
-            <div className="flex items-center justify-center">
-              <StatisticsModalForm
-                options={{
-                  accounts,
-                }}
-              />
-            </div>
-          </Col>
-        ))}
+        {times(8, (num) =>
+          num <= 0 ? (
+            <Col key={num} className="border-r" span={3}></Col>
+          ) : (
+            <Col key={num} className="border-r" span={3}>
+              <div className="flex items-center justify-center">
+                <StatisticsModalForm
+                  options={{
+                    accounts,
+                  }}
+                />
+              </div>
+            </Col>
+          ),
+        )}
       </Row>
       <div className="no-scroll h-[calc(100vh-199px)] w-full overflow-auto">
         {todos &&

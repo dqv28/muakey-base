@@ -46,7 +46,7 @@ const TodosTable: React.FC<TodosTableProps> = (props) => {
     {
       title: 'Công việc',
       dataIndex: 'name',
-      width: 700,
+      width: 500,
       render: (name, record) => {
         const t = new Date(record?.expired).getTime() - new Date().getTime()
         const timeStatus = t >= 0 ? 'inprogress' : 'overdue'
@@ -66,10 +66,21 @@ const TodosTable: React.FC<TodosTableProps> = (props) => {
       },
     },
     {
+      title: 'Ngày giao',
+      dataIndex: 'started_at',
+      render: (timestamp) => (
+        <div>{dayjs(new Date(timestamp)).format('HH:mm DD/MM/YYYY')}</div>
+      ),
+    },
+    {
       title: 'Thời hạn',
       dataIndex: 'expired',
       render: (expired) => (
-        <div>{dayjs(new Date(expired)).format('HH:mm DD/MM/YYYY')}</div>
+        <div>
+          {expired
+            ? dayjs(new Date(expired)).format('HH:mm DD/MM/YYYY')
+            : 'Không thời hạn'}
+        </div>
       ),
     },
     {

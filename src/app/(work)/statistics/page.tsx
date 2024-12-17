@@ -7,11 +7,7 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
 
   return (
     <div className="h-[100vh]">
-      <PageHeader
-        params={{
-          categoryId: searchParams?.cate || 2,
-        }}
-      />
+      <PageHeader />
 
       <div className="h-[calc(100vh-68px)] overflow-auto">
         <StatisticsSchedule
