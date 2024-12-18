@@ -7,6 +7,7 @@ import {
   CalendarFilled,
   FolderOpenFilled,
   HddFilled,
+  ProfileFilled,
   ProjectFilled,
   ShoppingFilled,
   SignalFilled,
@@ -110,6 +111,15 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                     </div>
                   ),
                   href: '/statistics',
+                },
+                {
+                  label: (
+                    <div className="flex items-center gap-[12px]">
+                      <ProfileFilled className="text-[16px]" />
+                      <span>Đề xuất</span>
+                    </div>
+                  ),
+                  href: '/request',
                 },
               ],
             },

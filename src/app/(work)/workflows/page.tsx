@@ -1,4 +1,7 @@
 import { getWorkflowCategories, getWorkflows } from '@/libs/data'
+import { getDepartments } from '@/libs/department'
+import { PlusOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
 import React from 'react'
 import PageHeader from './components/PageHeader'
 import PageProvider from './components/PageProvider'
@@ -6,19 +9,18 @@ import WorkflowExtra from './components/workflow-extra'
 import WorkflowList from './components/workflow-list'
 import WorkflowSearch from './components/WorkflowSearch'
 import WorkflowTabs from './components/WorkflowTabs'
-import { Button } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
 
 const page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const searchParams = await prop.searchParams
   const type = searchParams?.type
 
-  const [workflowCategories, workflows] = await Promise.all([
+  const [workflowCategories, workflows, departments] = await Promise.all([
     getWorkflowCategories(),
     getWorkflows({
       type: !type || type === 'all' ? '' : type || 'open',
-      search: searchParams?.q || ''
+      search: searchParams?.q || '',
     }),
+    getDepartments(),
   ])
 
   return (
@@ -77,6 +79,9 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
                   }))
                 : []
             }
+            options={{
+              departments,
+            }}
           />
         </div>
       </div>

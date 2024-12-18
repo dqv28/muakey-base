@@ -7,6 +7,11 @@ export const getDepartments = async () =>
     .then((data) => data)
     .catch(() => [])
 
+export const getDepartmentById = async (id: number) =>
+  requestWithAuthorized(`departments/${id}`)
+    .then((data) => data)
+    .catch(() => [])
+
 export const addDepartment = async (data: any) =>
   requestWithAuthorized('departments', {
     method: 'POST',

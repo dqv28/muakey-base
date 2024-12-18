@@ -90,6 +90,7 @@ const WorkflowList: React.FC<WorkflowListProps> = ({
                         initialValues={{
                           workflow_category_id: cate.id,
                           members: cate.members,
+                          departments: options?.departments,
                         }}
                       />
                     </div>

@@ -3,7 +3,7 @@
 import { withApp } from '@/hoc'
 import { App, Form, FormInstance, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { addWorkflowAction, editWorkflowAction } from '../../action'
 import FormFields from './FormFields'
 
@@ -20,10 +20,53 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [manager, setManager] = useState<any[]>()
   const formRef = useRef<FormInstance>(null)
   const router = useRouter()
 
   const { message } = App.useApp()
+  const {
+    members: initMembers,
+    departments: initDepartments,
+    ...restInitialValues
+  } = initialValues
+
+  useEffect(() => {
+    const memberWithType = initMembers?.filter(
+      (mem: any) => mem?.type === 'department',
+    )
+
+    const membersWithoutType = initMembers?.filter(
+      (mem: any) => mem?.type !== 'department' || !mem?.type,
+    )
+
+    var departs =
+      memberWithType?.length > 0
+        ? memberWithType?.map((mem: any) => {
+            const memberOptions = initDepartments?.find(
+              (d: any) => d?.id === Number(mem?.username),
+            )
+
+            return [...memberOptions?.members, ...membersWithoutType]?.map(
+              (o: any) => ({
+                label: o?.full_name,
+                value: o?.username,
+              }),
+            )
+          })
+        : initMembers?.map((o: any) => ({
+            label: o?.full_name,
+            value: o?.username,
+          }))
+
+    const options = [...(departs?.flat() || [])]
+
+    setManager(
+      [...new Set(options.map((op: any) => JSON.stringify(op)))].map(
+        (str: string) => JSON.parse(str),
+      ),
+    )
+  }, [initDepartments, initMembers])
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -96,11 +139,9 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
         modalRender={(dom) => (
           <Form
             initialValues={{
-              ...initialValues,
+              ...restInitialValues,
               manager: String(
-                initialValues?.members
-                  ?.map((mem: any) => mem?.username)
-                  .join(' '),
+                manager?.map((mem: any) => mem?.value).join(' '),
               ).split(' '),
             }}
             ref={formRef}
@@ -111,7 +152,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
           </Form>
         )}
       >
-        <FormFields members={initialValues?.members} />
+        <FormFields manager={manager} />
       </Modal>
     </>
   )

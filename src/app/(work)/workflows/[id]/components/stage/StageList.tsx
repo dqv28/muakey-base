@@ -320,7 +320,14 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
             )}
             {stages?.length > 0 &&
               stages.map((stage: any) => (
-                <StageColumn key={stage?.id} stage={stage} userId={user?.id} />
+                <StageColumn
+                  key={stage?.id}
+                  stage={stage}
+                  userId={user?.id}
+                  options={{
+                    role: user?.role,
+                  }}
+                />
               ))}
           </Row>
         </SortableContext>

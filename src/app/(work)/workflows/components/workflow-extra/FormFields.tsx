@@ -8,14 +8,15 @@ import {
 } from '@ant-design/icons'
 import { Button, Form, Input, Select } from 'antd'
 import { useState } from 'react'
-import { getAccountsAction } from './action'
+import { getAccountsAction, getDepartmentsAction } from './action'
 
 const FormFields: React.FC = () => {
   const [accounts, setAccounts] = useState<any[]>([])
 
   useAsyncEffect(async () => {
-    const res = await getAccountsAction()
-    setAccounts(res)
+    const accountList = await getAccountsAction()
+    const departments = await getDepartmentsAction()
+    setAccounts([...departments, ...accountList])
   }, [])
 
   return (
@@ -49,8 +50,8 @@ const FormFields: React.FC = () => {
           style={{ width: '100%' }}
           placeholder="Chọn thành viên"
           options={accounts?.map((a: any) => ({
-            label: a?.full_name,
-            value: a?.username,
+            label: a?.full_name || a?.name,
+            value: a?.username || a?.id,
           }))}
         />
       </Form.Item>

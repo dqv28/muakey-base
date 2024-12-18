@@ -39,10 +39,20 @@ export type TaskItemProps = {
   expired?: number
   onDelete?: () => Promise<void>
   userId?: number
+  options?: any
 }
 
 const TaskItem: React.FC<TaskItemProps> = memo(
-  ({ className, task, isCompleted, isFailed, members, onDelete, userId }) => {
+  ({
+    className,
+    task,
+    isCompleted,
+    isFailed,
+    members,
+    onDelete,
+    userId,
+    options,
+  }) => {
     const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
     const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
     const params = useParams()
@@ -114,9 +124,11 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     }
 
     const handleRemoveExecutor = async (id: number) => {
-      if (userId !== task.account_id) {
-        toast.error('Không thể gỡ nhiệm vụ của người khác.')
-        return
+      if (!String(options?.role).toLowerCase().includes('admin')) {
+        if (userId !== task.account_id) {
+          toast.error('Không thể gỡ nhiệm vụ của người khác.')
+          return
+        }
       }
 
       try {

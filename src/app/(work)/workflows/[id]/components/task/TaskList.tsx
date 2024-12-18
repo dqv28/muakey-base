@@ -17,9 +17,15 @@ import TaskItem from './TaskItem'
 type TaskListProps = ListProps<any> & {
   stageId?: number
   userId?: number
+  options?: any
 }
 
-const TaskList: React.FC<TaskListProps> = ({ stageId, userId, ...rest }) => {
+const TaskList: React.FC<TaskListProps> = ({
+  stageId,
+  userId,
+  options,
+  ...rest
+}) => {
   const { activeId, members } = useContext(StageContext)
   const { stages, setStages } = useContext(WorkflowContext)
 
@@ -84,6 +90,7 @@ const TaskList: React.FC<TaskListProps> = ({ stageId, userId, ...rest }) => {
                   expired={currentStage?.expired_after_hours}
                   onDelete={() => handleDelete(task?.id)}
                   userId={userId}
+                  options={options}
                 />
 
                 {activeId === task?.id && (
