@@ -1,27 +1,85 @@
 'use client'
 
 import { InitializedMDXEditor } from '@/components'
+import { withApp } from '@/hoc'
 import { MDXEditorMethods } from '@mdxeditor/editor'
-import { Form, Input, Modal, Select } from 'antd'
-import React, { useRef, useState } from 'react'
+import { App, Form, Input, Modal, Select } from 'antd'
+import { useRouter } from 'next/navigation'
+import React, { useEffect, useRef, useState } from 'react'
+import RequestSelectModal from './RequestSelectModal'
+import { addProposeAction } from './action'
 
 type RequestModalFormProps = {
   children?: React.ReactNode
+  groups?: any[]
 }
 
-const RequestModalForm: React.FC<RequestModalFormProps> = ({ children }) => {
+const RequestModalForm: React.FC<RequestModalFormProps> = ({
+  children,
+  groups,
+}) => {
+  const [loading, setLoading] = useState(false)
+
   const [open, setOpen] = useState(false)
+  const [formOpen, setFormOpen] = useState(false)
+  const [groupId, setGroupId] = useState<number>()
   const editorRef = useRef<MDXEditorMethods>(null)
+  const { message, modal } = App.useApp()
+  const router = useRouter()
+
+  const handleSubmit = async (formData: any) => {
+    setLoading(true)
+
+    try {
+      const { message: msg, errors } = await addProposeAction(formData)
+
+      if (errors) {
+        message.success(msg)
+        setLoading(false)
+        return
+      }
+
+      message.success('Gửi thành công')
+      setLoading(false)
+      setFormOpen(false)
+      router.refresh()
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
+  }
+
+  useEffect(() => {
+    setFormOpen(!!groupId)
+  }, [groupId])
 
   return (
     <>
       <div onClick={() => setOpen(true)}>{children}</div>
       <Modal
-        // open={open}
-        onCancel={() => setOpen(false)}
+        open={formOpen}
+        onCancel={() => {
+          setFormOpen(false)
+          setGroupId(undefined)
+          // setOpen(true)
+        }}
         title="TẠO ĐỀ XUẤT MỚI"
         destroyOnClose
-        modalRender={(dom) => <Form layout="vertical">{dom}</Form>}
+        modalRender={(dom) => (
+          <Form
+            layout="vertical"
+            initialValues={{
+              propose_category_id: groupId ? +groupId : 0,
+            }}
+            onFinish={handleSubmit}
+          >
+            {dom}
+          </Form>
+        )}
+        okButtonProps={{
+          htmlType: 'submit',
+          loading,
+        }}
         okText="Gửi đề xuất"
         cancelText="Quay lại"
         width={760}
@@ -41,7 +99,7 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({ children }) => {
 
         <Form.Item
           label="Nhóm đề xuất"
-          name="group"
+          name="propose_category_id"
           rules={[
             {
               required: true,
@@ -51,20 +109,10 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({ children }) => {
         >
           <Select
             placeholder="-- Lựa chọn nhóm đề xuất --"
-            options={[
-              {
-                label: 'Đề xuất tăng lương',
-                value: 'request-1',
-              },
-              {
-                label: 'Đề xuất nghỉ phép',
-                value: 'request-2',
-              },
-              {
-                label: 'Đề xuất tạm ứng',
-                value: 'request-3',
-              },
-            ]}
+            options={groups?.map((g: any) => ({
+              label: g?.name,
+              value: +g?.id,
+            }))}
           />
         </Form.Item>
 
@@ -77,18 +125,15 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({ children }) => {
           />
         </Form.Item>
       </Modal>
-      <Modal
+
+      <RequestSelectModal
+        dataSource={groups}
+        onItemClick={setGroupId}
         open={open}
         onCancel={() => setOpen(false)}
-        title="LỰA CHỌN NHÓM ĐỀ XUẤT"
-        destroyOnClose
-        modalRender={(dom) => <Form layout="vertical">{dom}</Form>}
-        footer={<></>}
-      >
-        Chọn đê
-      </Modal>
+      />
     </>
   )
 }
 
-export default RequestModalForm
+export default withApp(RequestModalForm)

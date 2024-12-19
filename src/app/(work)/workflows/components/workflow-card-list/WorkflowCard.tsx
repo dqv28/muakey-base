@@ -13,9 +13,15 @@ import WorkflowModalForm from '../workflow-list/WorkflowModalForm'
 type WorkflowCardProps = {
   workflow?: any
   total?: any
+  members?: any[]
+  options?: any
 }
 
-const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, total }) => {
+const WorkflowCard: React.FC<WorkflowCardProps> = ({
+  workflow,
+  total,
+  options,
+}) => {
   const completedPercent = (total?.successTask / total?.task) * 100
   const failedPercent = (total?.failedTask / total?.task) * 100
   const { message, modal } = App.useApp()
@@ -115,6 +121,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, total }) => {
                   manager: workflow?.members
                     ?.map((m: any) => m?.username)
                     .join(' '),
+                  ...options,
                 }}
               >
                 <div className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none transition-all hover:bg-[#f8f8f8]">

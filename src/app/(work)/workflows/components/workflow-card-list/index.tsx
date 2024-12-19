@@ -10,9 +10,13 @@ const WorkflowCard = dynamic(() => import('./WorkflowCard'), {
 
 type WorkflowCardListProps = {
   items?: any[]
+  options?: any
 }
 
-const WorkflowCardList: React.FC<WorkflowCardListProps> = ({ items }) => {
+const WorkflowCardList: React.FC<WorkflowCardListProps> = ({
+  items,
+  options,
+}) => {
   return (
     <Row gutter={[24, 24]} className="pb-[24px]">
       {(items || []).map((workflow: any, index: number) => (
@@ -24,6 +28,7 @@ const WorkflowCardList: React.FC<WorkflowCardListProps> = ({ items }) => {
               successTask: workflow.totalSuccessTask,
               failedTask: workflow.totalFailedTask,
             }}
+            options={options}
           />
         </Col>
       ))}

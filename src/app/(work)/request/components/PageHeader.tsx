@@ -12,7 +12,7 @@ const PageHeader: React.FC<{
       <div className="flex items-center justify-between text-[24px]">
         <span className="font-[500]">Danh sách đề xuất</span>
 
-        <RequestModalForm>
+        <RequestModalForm groups={options?.groups}>
           <Button type="primary">Tạo đề xuất</Button>
         </RequestModalForm>
       </div>

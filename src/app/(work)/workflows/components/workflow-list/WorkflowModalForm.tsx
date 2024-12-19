@@ -47,12 +47,13 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
               (d: any) => d?.id === Number(mem?.username),
             )
 
-            return [...memberOptions?.members, ...membersWithoutType]?.map(
-              (o: any) => ({
-                label: o?.full_name,
-                value: o?.username,
-              }),
-            )
+            return [
+              ...(memberOptions?.members || []),
+              ...(membersWithoutType || []),
+            ]?.map((o: any) => ({
+              label: o?.full_name,
+              value: o?.username,
+            }))
           })
         : initMembers?.map((o: any) => ({
             label: o?.full_name,
@@ -140,9 +141,9 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
           <Form
             initialValues={{
               ...restInitialValues,
-              manager: String(
-                manager?.map((mem: any) => mem?.value).join(' '),
-              ).split(' '),
+              manager: restInitialValues?.manager
+                ? String(restInitialValues?.manager)?.split(' ')
+                : manager?.map((m: any) => m?.value),
             }}
             ref={formRef}
             onFinish={handleSubmit}

@@ -116,7 +116,13 @@ const WorkflowList: React.FC<WorkflowListProps> = ({
               </Dropdown>
             </div>
             {ids.includes(cate.id) && (
-              <WorkflowCardList items={cate?.workflows} />
+              <WorkflowCardList
+                items={cate?.workflows}
+                options={{
+                  members: cate.members,
+                  departments: options?.departments,
+                }}
+              />
             )}
           </>
         )
