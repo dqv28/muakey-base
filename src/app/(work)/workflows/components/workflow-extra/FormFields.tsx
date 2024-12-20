@@ -1,12 +1,7 @@
 'use client'
 
 import { useAsyncEffect } from '@/libs/hook'
-import {
-  CloseOutlined,
-  MinusCircleOutlined,
-  PlusOutlined,
-} from '@ant-design/icons'
-import { Button, Form, Input, Select } from 'antd'
+import { Form, Input, Select } from 'antd'
 import { useState } from 'react'
 import { getAccountsAction, getDepartmentsAction } from './action'
 
@@ -56,7 +51,7 @@ const FormFields: React.FC = () => {
         />
       </Form.Item>
 
-      <Form.Item label="Giai đoạn">
+      {/* <Form.Item label="Giai đoạn">
         <Form.List name="rules">
           {(fields, { add, remove }) => (
             <>
@@ -146,7 +141,7 @@ const FormFields: React.FC = () => {
             </>
           )}
         </Form.List>
-      </Form.Item>
+      </Form.Item> */}
     </>
   )
 }

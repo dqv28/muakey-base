@@ -62,7 +62,9 @@ const WorkflowExtra: React.FC<{
         return
       }
 
-      message.success('Đã thêm 1 danh mục mới.')
+      message.success(
+        action === 'create' ? 'Đã thêm 1 danh mục mới' : 'Cập nhật thành công',
+      )
       setOpen(false)
       setLoading(false)
 
@@ -75,15 +77,34 @@ const WorkflowExtra: React.FC<{
     }
   }
 
+  const isAuth =
+    initialValues?.user?.role === 'Admin lv2' ||
+    initialValues?.members
+      ?.map((mem: any) => mem?.id)
+      .includes(initialValues?.user?.id)
+
   return (
     <>
-      <div onClick={() => setOpen(true)}>{children}</div>
+      <div
+        onClick={() => {
+          if (action === 'edit') {
+            if (!isAuth) {
+              message.error('Bạn không có quyền sửa danh mục')
+              return
+            }
+          }
+
+          setOpen(true)
+        }}
+      >
+        {children}
+      </div>
       <Modal
-        title="TẠO DANH MỤC MỚI"
+        title={action === 'create' ? 'TẠO DANH MỤC MỚI' : 'CẬP NHẬT DANH MỤC'}
         open={open}
         onCancel={() => setOpen(false)}
         width={1000}
-        okText="Tạo danh mục mới"
+        okText={action === 'create' ? 'Tạo danh mục mới' : 'Cập nhật'}
         cancelText="Bỏ qua"
         okButtonProps={{
           htmlType: 'submit',

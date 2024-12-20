@@ -1,7 +1,7 @@
 import { requestWithAuthorized } from './request'
 
-export const getProposes = async () =>
-  requestWithAuthorized('proposes')
+export const getProposes = async (query?: any) =>
+  requestWithAuthorized('proposes?' + new URLSearchParams(query))
     .then((data) => data)
     .catch(() => [])
 

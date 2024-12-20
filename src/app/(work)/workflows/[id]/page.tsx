@@ -1,4 +1,4 @@
-import { getStagesByWorkflowId, getWorkflowById } from '@/libs/data'
+import { getMe, getStagesByWorkflowId, getWorkflowById } from '@/libs/data'
 import { Metadata } from 'next'
 import React from 'react'
 import WorkflowContent from './components/WorkflowContent'
@@ -27,11 +27,12 @@ const Page: React.FC<any> = async (prop: {
   const date = searchParams?.date
   const tag = searchParams?.tag
 
-  const [workflow, stages] = await Promise.all([
+  const [workflow, stages, user] = await Promise.all([
     getWorkflowById(workflowId),
     getStagesByWorkflowId({
       workflow_id: workflowId,
     }),
+    getMe(),
   ])
 
   return (
@@ -40,6 +41,7 @@ const Page: React.FC<any> = async (prop: {
       type={searchParams?.type || 'table'}
       options={{
         stages,
+        user,
       }}
     >
       <WorkflowContent

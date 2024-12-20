@@ -7,7 +7,7 @@ import {
 } from '@dnd-kit/sortable'
 import { ConfigProvider, List, ListProps } from 'antd'
 import { cloneDeep } from 'lodash'
-import React, { useContext } from 'react'
+import React, { useCallback, useContext, useMemo } from 'react'
 import toast from 'react-hot-toast'
 import { deleteTaskAction } from '../../../action'
 import { StageContext } from '../stage/StageList'
@@ -29,42 +29,51 @@ const TaskList: React.FC<TaskListProps> = ({
   const { activeId, members } = useContext(StageContext)
   const { stages, setStages } = useContext(WorkflowContext)
 
-  const currentStage = stages?.find((s: any) => s?.id === stageId)
+  const currentStage = useMemo(
+    () => stages?.find((s: any) => s?.id === stageId),
+    [stageId, stages],
+  )
 
-  const sortItems =
-    currentStage?.tasks?.length > 0
-      ? currentStage?.tasks.map((t: any) => t.id)
-      : []
+  const sortItems = useMemo(
+    () =>
+      currentStage?.tasks?.length > 0
+        ? currentStage?.tasks.map((t: any) => t.id)
+        : [],
+    [currentStage?.tasks],
+  )
 
-  const handleDelete = async (id: number) => {
-    try {
-      const { error, success } = await deleteTaskAction(id || 0)
+  const handleDelete = useCallback(
+    async (id: number) => {
+      try {
+        const { error, success } = await deleteTaskAction(id || 0)
 
-      if (error) {
-        toast.error(error)
+        if (error) {
+          toast.error(error)
 
-        return
-      }
+          return
+        }
 
-      setStages((prevStages: any[]) => {
-        const newStages = cloneDeep(prevStages)
+        setStages((prevStages: any[]) => {
+          const newStages = cloneDeep(prevStages)
 
-        return newStages?.map((s: any) => {
-          if (s?.id === stageId) {
-            return {
-              ...s,
-              tasks: s?.tasks?.filter((task: any) => task?.id !== id),
+          return newStages?.map((s: any) => {
+            if (s?.id === stageId) {
+              return {
+                ...s,
+                tasks: s?.tasks?.filter((task: any) => task?.id !== id),
+              }
             }
-          }
 
-          return s
+            return s
+          })
         })
-      })
-      toast.success(success)
-    } catch (error: any) {
-      throw new Error(error)
-    }
-  }
+        toast.success(success)
+      } catch (error: any) {
+        throw new Error(error)
+      }
+    },
+    [setStages, stageId],
+  )
 
   return (
     <SortableContext items={sortItems} strategy={horizontalListSortingStrategy}>

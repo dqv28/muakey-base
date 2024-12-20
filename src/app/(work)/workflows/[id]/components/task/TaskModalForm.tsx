@@ -1,11 +1,13 @@
 'use client'
 
 import { InitializedMDXEditor } from '@/components'
+import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { randomColor } from '@/libs/utils'
 import { PlusOutlined } from '@ant-design/icons'
 import { MDXEditorMethods } from '@mdxeditor/editor'
 import {
+  App,
   Button,
   Divider,
   Empty,
@@ -18,6 +20,7 @@ import {
   Select,
   SelectProps,
   Tag,
+  Tooltip,
 } from 'antd'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
@@ -55,7 +58,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const [open, setOpen] = useState(false)
   const formRef = useRef<FormInstance>(null)
   const params = useParams()
-  const { setStages } = useContext(StageContext)
+  const { setStages, isAuth } = useContext(StageContext)
   const editorRef = useRef<MDXEditorMethods>(null)
   const converter = new Converter({
     tables: true,
@@ -68,6 +71,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const [name, setName] = useState('')
   const inputRef = useRef<InputRef>(null)
   const { account_id, members, sticker, ...restInitialValues } = initialValues
+  const { message } = App.useApp()
 
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value)
@@ -180,6 +184,11 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           })
         }
       } else {
+        if (!isAuth) {
+          message.error('Bạn không có quyền sửa nhiệm vụ')
+          return
+        }
+
         var { errors } = await editTaskAction(initialValues?.id, {
           ...restFormData,
           description: converter.makeHtml(restFormData.description),
@@ -275,18 +284,20 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   }, [])
 
   const optionRender: SelectProps['optionRender'] = (option) => (
-    <div className="group relative flex min-h-[32px] items-center">
-      <div className="flex items-center gap-[8px]">
+    <div className="group relative flex min-h-[32px] items-center gap-[16px]">
+      <div className="flex w-full flex-1 items-center gap-[8px]">
         <div
           className="size-[24px] rounded-[4px]"
           style={{
             backgroundColor: randomColor(String(option?.label || '')),
           }}
         />
-        <span>{option?.label}</span>
+        <span className="line-clamp-1 inline-block w-[calc(100%-68px)]">
+          {option?.label}
+        </span>
       </div>
       <TagDeleteButton
-        className="visible absolute right-0 z-[10020] opacity-0 transition-all group-hover:opacity-100"
+        className="visible absolute right-[8px] z-[10020] !size-[16px] opacity-0 transition-all group-hover:opacity-100"
         tagId={Number(option?.value)}
         onDelete={() => {
           setTags((prevTags: any[]) =>
@@ -334,21 +345,34 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       event.stopPropagation()
     }
     return (
-      <Tag
-        color={randomColor(String(label || ''))}
-        onMouseDown={onPreventMouseDown}
-        closable={closable}
-        onClose={onClose}
-        style={{ marginInlineEnd: 4 }}
-      >
-        {label}
-      </Tag>
+      <Tooltip title={label}>
+        <Tag
+          className="flex items-center"
+          color={randomColor(String(label || ''))}
+          onMouseDown={onPreventMouseDown}
+          closable={closable}
+          onClose={onClose}
+          style={{ marginInlineEnd: 4, maxWidth: 150 }}
+        >
+          <span className="line-clamp-1">{label}</span>
+        </Tag>
+      </Tooltip>
     )
   }
 
   return (
     <>
-      <div onClick={() => setOpen(true)}>{children}</div>
+      <div
+        onClick={() => {
+          if (!isAuth) {
+            message.error('Bạn không có quyền tạo nhiệm vụ')
+            return
+          }
+          setOpen(true)
+        }}
+      >
+        {children}
+      </div>
       <Modal
         classNames={{
           mask: '!z-auto',
@@ -448,4 +472,4 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   )
 }
 
-export default TaskModalForm
+export default withApp(TaskModalForm)

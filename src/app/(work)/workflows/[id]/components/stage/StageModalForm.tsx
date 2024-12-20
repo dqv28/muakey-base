@@ -1,6 +1,7 @@
 'use client'
 
-import { Form, FormInstance, Input, Modal, ModalProps } from 'antd'
+import { withApp } from '@/hoc'
+import { App, Form, FormInstance, Input, Modal, ModalProps } from 'antd'
 import { useParams } from 'next/navigation'
 import React, { useContext, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -26,7 +27,8 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
   const [loading, setLoading] = useState(false)
   const formRef = useRef<FormInstance>(null)
   const params = useParams()
-  const { setStages } = useContext(StageContext)
+  const { setStages, isAuth } = useContext(StageContext)
+  const { message } = App.useApp()
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -116,7 +118,18 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
 
   return (
     <>
-      <div onClick={() => setOpen(true)}>{children}</div>
+      <div
+        onClick={() => {
+          if (!isAuth) {
+            message.error('Bạn không có quyền tạo giai đoạn')
+            return
+          }
+
+          setOpen(true)
+        }}
+      >
+        {children}
+      </div>
       <Modal
         title={title || 'THÊM 1 GIAI ĐOẠN MỚI VÀO LUỒNG CÔNG VIỆC'}
         open={open}
@@ -176,4 +189,4 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
   )
 }
 
-export default StageModalForm
+export default withApp(StageModalForm)

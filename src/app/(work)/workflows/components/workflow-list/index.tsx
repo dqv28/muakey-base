@@ -9,6 +9,7 @@ import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
 import { deleteWorkflowCategoryByIdAction } from '../../action'
 import WorkflowCardList from '../workflow-card-list'
+import WorkflowExtra from '../workflow-extra'
 import WorkFlowDeleteButton from './WorkFlowDeleteButton'
 import WorkflowModalForm from './WorkflowModalForm'
 
@@ -94,16 +95,18 @@ const WorkflowList: React.FC<WorkflowListProps> = ({
                         }}
                       />
                     </div>
-                    {/* <WorkflowExtra
+                    <WorkflowExtra
                       action="edit"
                       initialValues={{
                         id: cate?.id,
+                        members: cate.members,
+                        user: options?.user,
                       }}
                     >
                       <div className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]">
                         Sửa danh mục
                       </div>
-                    </WorkflowExtra> */}
+                    </WorkflowExtra>
                     <div className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]">
                       <WorkFlowDeleteButton
                         onDelete={() => handleDelete(cate.id)}

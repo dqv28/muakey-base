@@ -12,6 +12,7 @@ import {
   ShoppingFilled,
   SignalFilled,
 } from '@ant-design/icons'
+import { Tooltip } from 'antd'
 import React from 'react'
 import LeftSideBar from './LeftSideBar'
 import Search from './Search'
@@ -49,10 +50,12 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       {...props}
     >
       <div className="flex-1 px-[12px]">
-        <User user={user} />
-        <Search />
+        <div>
+          <User user={user} />
+          <Search />
+        </div>
         <Navigation
-          className="mt-[20px]"
+          className="no-scroll mt-[20px] h-[calc(100vh-96px)] overflow-auto pb-[40px]"
           items={[
             {
               label: 'QUAN TRỌNG',
@@ -129,10 +132,12 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                   children:
                     w?.workflows.map((i: any) => ({
                       label: (
-                        <div className="flex items-center gap-[12px]">
-                          <ProjectFilled className="text-[16px]" />
-                          <span>{i?.name}</span>
-                        </div>
+                        <Tooltip title={i?.name}>
+                          <div className="flex items-center gap-[12px]">
+                            <ProjectFilled className="text-[16px]" />
+                            <span className="line-clamp-1">{i?.name}</span>
+                          </div>
+                        </Tooltip>
                       ),
                       href: `/workflows/${i?.id}`,
                     })) || [],

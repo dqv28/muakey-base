@@ -27,8 +27,12 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
 }) => {
   const [stages, setStages] = useState<any>(options?.stages || [])
 
+  const isAuth =
+    options?.user?.role === 'Admin lv2' ||
+    workflow?.members?.map((mem: any) => mem?.id).includes(options?.user.id)
+
   return (
-    <StageContext.Provider value={{ stages, setStages }}>
+    <StageContext.Provider value={{ stages, setStages, isAuth }}>
       <div className="flex h-full flex-col">
         <PageHeader
           className="h-[82px] bg-[#fff]"

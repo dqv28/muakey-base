@@ -1,9 +1,14 @@
 'use client'
 
+import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
-import { Avatar, Table, TableProps, Tag } from 'antd'
+import { DownOutlined } from '@ant-design/icons'
+import { App, Avatar, Dropdown, Table, TableProps, Tag } from 'antd'
 import dayjs from 'dayjs'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { deleteProposeAction } from './action'
+import RequestApprovedModalForm from './RequestApprovedModalForm'
 
 type RequestTableProps = TableProps & {}
 
@@ -12,7 +17,7 @@ const generateStatus = (status: string) => {
     case 'pending':
       return <Tag color="blue">Đang chờ duyệt</Tag>
 
-    case 'access':
+    case 'approved':
       return <Tag color="green">Đã duyệt</Tag>
 
     case 'canceled':
@@ -24,6 +29,26 @@ const generateStatus = (status: string) => {
 }
 
 const RequestTable: React.FC<RequestTableProps> = (props) => {
+  const { message, modal } = App.useApp()
+  const [open, setOpen] = useState(false)
+  const router = useRouter()
+
+  const handleDeletePropose = async (id: number) => {
+    try {
+      const { message: msg, errors } = await deleteProposeAction(id)
+
+      if (errors) {
+        message.error(msg)
+        return
+      }
+
+      message.success('Xóa đề xuất thành công')
+      router.refresh()
+    } catch (error) {
+      throw new Error(String(error))
+    }
+  }
+
   const columns: TableProps['columns'] = [
     {
       title: 'Tên',
@@ -64,9 +89,56 @@ const RequestTable: React.FC<RequestTableProps> = (props) => {
         <div>{date ? dayjs(date).format('DD/MM/YYYY') : ''}</div>
       ),
     },
+    {
+      title: 'Hành động',
+      dataIndex: 'action',
+      render: (_, record) =>
+        record?.status === 'pending' && (
+          <Dropdown
+            rootClassName="!z-50"
+            trigger={['click']}
+            dropdownRender={() => (
+              <div className="rounded-[8px] bg-[#fff] p-[2px] shadow-md">
+                <RequestApprovedModalForm
+                  initialValues={{
+                    id: record.id,
+                  }}
+                >
+                  <div className="cursor-pointer rounded-[4px] bg-transparent px-[12px] py-[4px] transition-all hover:bg-[#0000000a]">
+                    Duyệt
+                  </div>
+                </RequestApprovedModalForm>
+                <div className="cursor-pointer rounded-[4px] bg-transparent px-[12px] py-[4px] transition-all hover:bg-[#0000000a]">
+                  Từ chối
+                </div>
+                <div
+                  className="cursor-pointer rounded-[4px] bg-transparent px-[12px] py-[4px] transition-all hover:bg-[#0000000a]"
+                  onClick={() => {
+                    modal.confirm({
+                      title: 'Xác nhận xóa',
+                      content: 'Bạn có chắc chắn muốn xóa đề xuất này không?',
+                      open,
+                      onOk: () => handleDeletePropose(record.id),
+                      onCancel: () => setOpen(false),
+                      okText: 'Xóa',
+                      cancelText: 'Hủy',
+                    })
+                  }}
+                >
+                  Xóa
+                </div>
+              </div>
+            )}
+          >
+            <span className="cursor-pointer text-[#1677ff]">
+              More <DownOutlined />
+            </span>
+          </Dropdown>
+        ),
+    },
   ]
 
   return <Table columns={columns} {...props} />
 }
 
-export default RequestTable
+export default withApp(RequestTable)

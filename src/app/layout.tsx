@@ -1,3 +1,4 @@
+import ProgressProviders from '@/components/ProgressProviders'
 import { leagueSpartan } from '@/fonts/fonts'
 import { GoogleTagManager } from '@next/third-parties/google'
 import type { Metadata } from 'next'
@@ -22,7 +23,7 @@ export default function RootLayout({
         <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER_ID} />
       )}
       <body className={`${leagueSpartan.variable}`}>
-        {children}
+        <ProgressProviders>{children}</ProgressProviders>
         <ToastHolder />
       </body>
     </html>

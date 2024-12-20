@@ -16,7 +16,7 @@ import {
 } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Button, Dropdown, Input, Modal, Popconfirm, Tag } from 'antd'
+import { Button, Dropdown, Input, Modal, Popconfirm, Tag, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
@@ -212,14 +212,15 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             </div>
             <div className="flex items-center">
               {task?.sticker?.map((s: any) => (
-                <Tag
-                  key={s?.id}
-                  className="line-clamp-1 w-max max-w-[100px]"
-                  color={randomColor(String(s?.name || ''))}
-                  style={{ marginInlineEnd: 4 }}
-                >
-                  {s?.name}
-                </Tag>
+                <Tooltip key={s?.id} title={s?.name}>
+                  <Tag
+                    className="w-max max-w-[100px]"
+                    color={randomColor(String(s?.name || ''))}
+                    style={{ marginInlineEnd: 4 }}
+                  >
+                    <span className="line-clamp-1">{s?.name}</span>
+                  </Tag>
+                </Tooltip>
               ))}
             </div>
             <div
@@ -230,7 +231,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             />
             {!isCompleted && !isFailed ? (
               <div>
-                {task?.account_id ? (
+                {task?.account_id && user ? (
                   <div className="flex min-h-[28px] items-center justify-between gap-[8px]">
                     <div className="flex items-center gap-[4px]">
                       <Avatar src={user?.avatar} shape="circle" size={20}>
@@ -285,7 +286,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
         </div>
         {!isCompleted && !isFailed && (
           <div>
-            {!task?.account_id && (
+            {(!task?.account_id || !user) && (
               <Button
                 className="absolute bottom-[12px] right-[16px] !p-[10px] !text-[12px] text-[#fff]"
                 size="small"

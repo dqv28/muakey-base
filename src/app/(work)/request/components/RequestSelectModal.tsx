@@ -1,19 +1,14 @@
 import { withApp } from '@/hoc'
-import { CloseOutlined, PlusOutlined } from '@ant-design/icons'
-import {
-  App,
-  Button,
-  Form,
-  Input,
-  List,
-  Modal,
-  ModalProps,
-  Popconfirm,
-  Typography,
-} from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+import { App, Button, Form, Input, List, Modal, ModalProps } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import { addProposeCategoryAction, deleteProposeCategoryAction } from './action'
+import {
+  addProposeCategoryAction,
+  deleteProposeCategoryAction,
+  updateProposeCategoryAction,
+} from './action'
+import RequestItem from './RequestItem'
 
 type RequestSelectModalProps = Omit<ModalProps, 'onCancel'> & {
   dataSource?: any[]
@@ -28,7 +23,7 @@ const RequestSelectModal: React.FC<RequestSelectModalProps> = ({
   ...rest
 }) => {
   const [loading, setLoading] = useState(false)
-  const [editText, setEditText] = useState('')
+
   const [group, setGroup] = useState<{
     name: string
     description: string
@@ -64,6 +59,22 @@ const RequestSelectModal: React.FC<RequestSelectModalProps> = ({
       router.refresh()
     } catch (error) {
       setLoading(false)
+      throw new Error(String(error))
+    }
+  }
+
+  const handleUpdateGroup = async (id: number, values: any) => {
+    try {
+      const { messagem: msg, errors } = await updateProposeCategoryAction(
+        id,
+        values,
+      )
+
+      if (errors) {
+        message.error(msg)
+        return
+      }
+    } catch (error) {
       throw new Error(String(error))
     }
   }
@@ -104,48 +115,10 @@ const RequestSelectModal: React.FC<RequestSelectModalProps> = ({
               onItemClick?.(item?.id)
             }}
           >
-            <List.Item.Meta
-              className="px-[24px]"
-              title={
-                <div className="flex items-start justify-between">
-                  <Typography.Text
-                    className="flex-1"
-                    editable={{ onChange: setEditText }}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      console.log('Click')
-                    }}
-                  >
-                    {item?.name}
-                  </Typography.Text>
-                  <div className="flex items-center gap-[4px]">
-                    {/* <EditOutlined
-                      onClick={(e) => {
-                        e.stopPropagation()
-                      }}
-                    /> */}
-                    <Popconfirm
-                      title="Xóa nhóm đề xuất?"
-                      description="Xác nhận xóa nhóm đề xuất này?"
-                      onConfirm={(e) => {
-                        e?.stopPropagation()
-                        handleDeleteGroup(item?.id)
-                      }}
-                      onCancel={(e) => e?.stopPropagation()}
-                      okText="Xác nhận"
-                      cancelText="Hủy bỏ"
-                    >
-                      <CloseOutlined
-                        className="visible p-[6px] opacity-0 transition-all group-hover:opacity-100"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                        }}
-                      />
-                    </Popconfirm>
-                  </div>
-                </div>
-              }
-              description={item.description}
+            <RequestItem
+              item={item}
+              onDelete={() => handleDeleteGroup(item?.id)}
+              onEdit={(values) => handleUpdateGroup(item?.id, values)}
             />
           </List.Item>
         )}

@@ -1,4 +1,4 @@
-import { getWorkflowCategories, getWorkflows } from '@/libs/data'
+import { getMe, getWorkflowCategories, getWorkflows } from '@/libs/data'
 import { getDepartments } from '@/libs/department'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
@@ -14,13 +14,14 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const searchParams = await prop.searchParams
   const type = searchParams?.type
 
-  const [workflowCategories, workflows, departments] = await Promise.all([
+  const [workflowCategories, workflows, departments, user] = await Promise.all([
     getWorkflowCategories(),
     getWorkflows({
       type: !type || type === 'all' ? '' : type || 'open',
       search: searchParams?.q || '',
     }),
     getDepartments(),
+    getMe(),
   ])
 
   return (
@@ -81,6 +82,7 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
             }
             options={{
               departments,
+              user,
             }}
           />
         </div>

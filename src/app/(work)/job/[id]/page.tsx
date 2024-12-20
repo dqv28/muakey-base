@@ -181,35 +181,39 @@ const page: React.FC<any> = async (props: {
             currentStage={currentStage?.name}
           />
 
-          <JobProgressTime
-            timestamp={String(
-              dayjs(new Date(task?.created_at)).format('HH:mm DD/MM/YYYY'),
-            )}
-            stages={
-              timeStages?.length > 0
-                ? timeStages?.map((stage: any) => {
-                    const failedStage = stages?.find((s: any) => s?.index === 0)
+          {timeStages?.length > 0 && (
+            <JobProgressTime
+              timestamp={String(
+                dayjs(new Date(task?.created_at)).format('HH:mm DD/MM/YYYY'),
+              )}
+              stages={
+                timeStages?.length > 0
+                  ? timeStages?.map((stage: any) => {
+                      const failedStage = stages?.find(
+                        (s: any) => s?.index === 0,
+                      )
 
-                    if (stage?.id === task?.stage_id) {
-                      INDEX = stage?.index
-                    }
+                      if (stage?.id === task?.stage_id) {
+                        INDEX = stage?.index
+                      }
 
-                    return {
-                      ...stage,
-                      status:
-                        failedStage?.id === task?.stage_id
-                          ? 'failed'
-                          : generateStatus(stage, INDEX),
-                    }
-                  })
-                : []
-            }
-            total={timeStages.reduce((total: number, current: any) => {
-              return Number(
-                (total += current?.hours + current?.minutes / 60),
-              ).toFixed(2)
-            }, 0)}
-          />
+                      return {
+                        ...stage,
+                        status:
+                          failedStage?.id === task?.stage_id
+                            ? 'failed'
+                            : generateStatus(stage, INDEX),
+                      }
+                    })
+                  : []
+              }
+              total={timeStages.reduce((total: number, current: any) => {
+                return Number(
+                  (total += current?.hours + current?.minutes / 60),
+                ).toFixed(2)
+              }, 0)}
+            />
+          )}
 
           <JobHistory taskId={params?.id} />
         </div>

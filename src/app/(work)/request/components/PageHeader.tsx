@@ -1,21 +1,46 @@
-'use client'
-
-import { Button } from 'antd'
+import clsx from 'clsx'
 import React from 'react'
-import RequestModalForm from './RequestModalForm'
 
-const PageHeader: React.FC<{
-  options?: any
-}> = ({ options }) => {
+export type PageHeaderProps = Omit<
+  React.ComponentPropsWithoutRef<'div'>,
+  'title'
+> & {
+  title?: React.ReactNode
+  extra?: React.ReactNode
+  headerClassName?: string
+}
+
+const PageHeader: React.ForwardRefRenderFunction<
+  HTMLDivElement,
+  PageHeaderProps
+> = (
+  {
+    title,
+    extra,
+    headerClassName,
+    className: customClassName,
+    children,
+    ...rest
+  },
+  ref,
+) => {
+  const className = clsx(
+    'border-b border-[#eee] px-[16px] py-[12px]',
+    customClassName,
+  )
+
   return (
-    <div className="border-b bg-[#fff] p-[16px]">
-      <div className="flex items-center justify-between text-[24px]">
-        <span className="font-[500]">Danh sách đề xuất</span>
-
-        <RequestModalForm groups={options?.groups}>
-          <Button type="primary">Tạo đề xuất</Button>
-        </RequestModalForm>
+    <div className={className} ref={ref} {...rest}>
+      <div
+        className={clsx(
+          'flex items-center justify-between gap-[24px]',
+          headerClassName,
+        )}
+      >
+        {title}
+        {extra}
       </div>
+      {children}
     </div>
   )
 }

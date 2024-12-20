@@ -3,8 +3,8 @@ import { ReloadOutlined } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import clsx from 'clsx'
-import { useParams } from 'next/navigation'
-import React, { memo, useState } from 'react'
+import React, { memo, useCallback, useMemo, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import TaskList from '../task/TaskList'
 import StageDropdownMenu from './StageDropdownMenu'
 import StageHeader from './StageHeader'
@@ -18,6 +18,7 @@ type StageColumnProps = {
 
 const StageColumn: React.FC<StageColumnProps> = memo(
   ({ stage, userId, options }) => {
+    console.log('render')
     const [loading, setLoading] = useState(false)
 
     const params = useParams()
@@ -26,12 +27,15 @@ const StageColumn: React.FC<StageColumnProps> = memo(
       data: stage,
     })
 
-    const StageColumnStyle: React.CSSProperties = {
-      transform: CSS.Translate.toString(transform),
-      transition,
-    }
+    const StageColumnStyle: React.CSSProperties = useMemo(
+      () => ({
+        transform: CSS.Translate.toString(transform),
+        transition,
+      }),
+      [transform, transition],
+    )
 
-    const handleRefresh = async () => {
+    const handleRefresh = useCallback(async () => {
       setLoading(true)
 
       try {
@@ -47,7 +51,13 @@ const StageColumn: React.FC<StageColumnProps> = memo(
         setLoading(false)
         throw new Error(String(error))
       }
-    }
+    }, [params?.id])
+
+    const stageTasksLength = useMemo(() => stage?.tasks?.length, [stage?.tasks])
+    const stageExpiredAfterHours = useMemo(
+      () => stage?.expired_after_hours,
+      [stage?.expired_after_hours],
+    )
 
     return (
       <div
@@ -94,13 +104,13 @@ const StageColumn: React.FC<StageColumnProps> = memo(
                   stage.index === 0 && 'text-[#c3434399]',
                 )}
               >
-                {stage?.tasks?.length} Nhiệm vụ
+                {stageTasksLength} Nhiệm vụ
               </span>
 
               {![0, 1].includes(stage.index) && (
                 <span className="text-[12px] leading-none text-[#aaa]">
-                  {!!stage?.expired_after_hours
-                    ? `Thời hạn: ${stage?.expired_after_hours}h`
+                  {!!stageExpiredAfterHours
+                    ? `Thời hạn: ${stageExpiredAfterHours}h`
                     : 'Không thời hạn'}
                 </span>
               )}

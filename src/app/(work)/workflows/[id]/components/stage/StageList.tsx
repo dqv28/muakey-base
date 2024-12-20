@@ -23,7 +23,15 @@ import { App } from 'antd'
 import clsx from 'clsx'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
-import React, { createContext, useContext, useRef, useState } from 'react'
+import React, {
+  createContext,
+  memo,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { addTaskReportAction, moveStageAction } from '../../../action'
 import { getMeAction } from '../task/action'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
@@ -56,6 +64,7 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
     stages?.length > 0
       ? stages?.find((stage: any) => stage.index === 0)?.['id']
       : []
+
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
       distance: 5,
@@ -242,10 +251,12 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
     }
   }
 
-  const sortItems =
-    stages?.length > 0 ? stages?.map((item: any) => item.id) : []
+  const sortItems = useMemo(
+    () => (stages?.length > 0 ? stages?.map((item: any) => item.id) : []),
+    [stages],
+  )
 
-  const generateInitialValues = () => {
+  const generateInitialValues = useCallback(() => {
     if (!dragEvent) return {}
 
     const { active } = dragEvent
@@ -257,10 +268,11 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
     return {
       link_youtube: activeData?.link_youtube,
     }
-  }
+  }, [dragEvent])
 
-  const filteredStages = stages?.filter(
-    (stage: any) => ![0, 1].includes(stage?.index),
+  const filteredStages = useMemo(
+    () => stages?.filter((stage: any) => ![0, 1].includes(stage?.index)),
+    [stages],
   )
 
   useAsyncEffect(async () => {
@@ -282,13 +294,26 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
 
     setReports([...data])
     activeRef.current = activeId
-  }, [dragEvent])
+  }, [dragEvent, params?.id, activeId])
 
   useAsyncEffect(async () => {
     const res = await getMeAction()
 
     setUser(res)
   }, [])
+
+  const renderStageColumn = useMemo(() => {
+    return stages?.map((stage: any) => (
+      <StageColumn
+        key={stage?.id}
+        stage={stage}
+        userId={user?.id}
+        options={{
+          role: user?.role,
+        }}
+      />
+    ))
+  }, [stages, user])
 
   return (
     <StageContext.Provider
@@ -318,17 +343,7 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
                 </StageModalForm>
               </Col>
             )}
-            {stages?.length > 0 &&
-              stages.map((stage: any) => (
-                <StageColumn
-                  key={stage?.id}
-                  stage={stage}
-                  userId={user?.id}
-                  options={{
-                    role: user?.role,
-                  }}
-                />
-              ))}
+            {stages?.length > 0 && renderStageColumn}
           </Row>
         </SortableContext>
       </DndContext>
@@ -357,4 +372,4 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
   )
 }
 
-export default withApp(StageList)
+export default memo(withApp(StageList))
