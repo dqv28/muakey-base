@@ -25,7 +25,7 @@ export type SideBarProps = SideProps & {
 
 const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const today = new Date().getDate()
-  const [workflows, session, attendances, todos] = await Promise.all([
+  const [workflowCategories, session, attendances, todos] = await Promise.all([
     getWorkflowCategories(),
     getSession(),
     getAttendances({
@@ -126,8 +126,8 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                 },
               ],
             },
-            ...(workflows && workflows.length > 0
-              ? workflows?.map((w: any) => ({
+            ...(workflowCategories && workflowCategories.length > 0
+              ? workflowCategories?.map((w: any) => ({
                   label: w?.name,
                   children:
                     w?.workflows.map((i: any) => ({

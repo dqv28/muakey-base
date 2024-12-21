@@ -98,8 +98,10 @@ const WorkflowList: React.FC<WorkflowListProps> = ({
                     <WorkflowExtra
                       action="edit"
                       initialValues={{
-                        id: cate?.id,
-                        members: cate.members,
+                        cate: {
+                          ...cate,
+                          name: cate.label,
+                        },
                         user: options?.user,
                       }}
                     >

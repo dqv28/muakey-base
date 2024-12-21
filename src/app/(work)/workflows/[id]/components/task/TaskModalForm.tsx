@@ -276,6 +276,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const mem: any = members?.find((m: any) => m?.id === account_id)
 
   useAsyncEffect(async () => {
+    if (!open) return
+
     const res = await getTagsAction({
       workflow_id: params?.id,
     })

@@ -66,7 +66,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
 
         return {
           className: !!cellValue?.checkInValue
-            ? cellValue?.onTime
+            ? cellValue?.on_time
               ? 'bg-[#deffdb]'
               : 'bg-[#ffe8e8]'
             : '',
@@ -111,7 +111,10 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
           ]
         : null
 
-      return [`${num + 1}/${month}`, { checkInValue, onTime: checkIn?.onTime }]
+      return [
+        `${num + 1}/${month}`,
+        { checkInValue, on_time: checkIn?.on_time },
+      ]
     })
 
     return {

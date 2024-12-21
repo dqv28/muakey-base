@@ -47,7 +47,12 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
       )
 
     default:
-      return <StageList members={options?.workflow?.members} />
+      return (
+        <StageList
+          members={options?.workflow?.members}
+          options={{ user: options?.user }}
+        />
+      )
   }
 }
 

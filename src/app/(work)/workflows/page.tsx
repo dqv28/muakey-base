@@ -35,7 +35,11 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
           extra={
             <div className="flex items-center gap-[12px]">
               <WorkflowSearch />
-              <WorkflowExtra>
+              <WorkflowExtra
+                initialValues={{
+                  workflowCategories,
+                }}
+              >
                 <Button
                   className="!p-[10px] !text-[12px] text-[#fff]"
                   icon={<PlusOutlined className="text-[16px]" />}

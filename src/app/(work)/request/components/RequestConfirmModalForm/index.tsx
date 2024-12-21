@@ -6,14 +6,16 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { updateProposeAction } from '../action'
 
-type RequestApprovedModalFormProps = ModalProps & {
+type RequestConfirmModalFormProps = ModalProps & {
   children?: React.ReactNode
   initialValues?: FormProps['initialValues']
+  status?: 'approved' | 'canceled'
 }
 
-const RequestApprovedModalForm: React.FC<RequestApprovedModalFormProps> = ({
+const RequestConfirmModalForm: React.FC<RequestConfirmModalFormProps> = ({
   children,
   initialValues,
+  status = 'approved',
   ...rest
 }) => {
   const [open, setOpen] = useState(false)
@@ -25,11 +27,11 @@ const RequestApprovedModalForm: React.FC<RequestApprovedModalFormProps> = ({
     setLoading(true)
 
     try {
-      const { message: msg, errors } = await updateProposeAction(
+      var { message: msg, errors } = await updateProposeAction(
         initialValues?.id,
         {
           ...formData,
-          status: 'approved',
+          status,
         },
       )
 
@@ -42,7 +44,11 @@ const RequestApprovedModalForm: React.FC<RequestApprovedModalFormProps> = ({
       setLoading(false)
       setOpen(false)
       router.refresh()
-      message.success('Duyệt đề xuất thành công')
+      message.success(
+        status === 'approved'
+          ? 'Duyệt đề xuất thành công'
+          : 'Đã từ chối đề xuất',
+      )
     } catch (error) {
       setLoading(false)
       throw new Error(String(error))
@@ -53,10 +59,14 @@ const RequestApprovedModalForm: React.FC<RequestApprovedModalFormProps> = ({
     <>
       <div onClick={() => setOpen(true)}>{children}</div>
       <Modal
-        title="Ý kiến phê duyệt"
+        title={status === 'approved' ? 'Ý kiến phê duyệt' : 'Lý do từ chối'}
         open={open}
         onCancel={() => setOpen(false)}
-        okText="Chấp nhận đề xuất này"
+        okText={
+          status === 'approved'
+            ? 'Chấp nhận đề xuất này'
+            : 'Từ chối đề xuất này'
+        }
         cancelText="Hủy bỏ"
         okButtonProps={{
           htmlType: 'submit',
@@ -70,11 +80,13 @@ const RequestApprovedModalForm: React.FC<RequestApprovedModalFormProps> = ({
         {...rest}
       >
         <Form.Item name="reason">
-          <Input.TextArea placeholder="Gửi ý kiến" />
+          <Input.TextArea
+            placeholder={status === 'approved' ? 'Gửi ý kiến' : 'Gửi lý do'}
+          />
         </Form.Item>
       </Modal>
     </>
   )
 }
 
-export default withApp(RequestApprovedModalForm)
+export default withApp(RequestConfirmModalForm)

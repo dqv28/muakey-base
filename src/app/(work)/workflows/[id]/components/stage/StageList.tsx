@@ -33,7 +33,6 @@ import React, {
   useState,
 } from 'react'
 import { addTaskReportAction, moveStageAction } from '../../../action'
-import { getMeAction } from '../task/action'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import { getReportFieldsByWorkflowIdAction } from './action'
 import StageColumn from './StageColumn'
@@ -43,19 +42,21 @@ import TaskReportsModalForm from './TaskReportsModalForm'
 
 export type StageListProps = {
   members?: any
+  options?: any
 }
 
 export const StageContext = createContext<any>({})
 
-const StageList: React.FC<StageListProps> = ({ members }) => {
+const StageList: React.FC<StageListProps> = ({ members, options }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [open, setOpen] = useState(false)
   const [doneOpen, setDoneOpen] = useState(false)
   const [reports, setReports] = useState<any[]>([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
   const activeRef = useRef<any>(null)
-  const [user, setUser] = useState<any>({})
+
   const { message } = App.useApp()
+  const { user } = options
 
   const { stages, setStages } = useContext(WorkflowStageContext)
   const params = useParams()
@@ -295,12 +296,6 @@ const StageList: React.FC<StageListProps> = ({ members }) => {
     setReports([...data])
     activeRef.current = activeId
   }, [dragEvent, params?.id, activeId])
-
-  useAsyncEffect(async () => {
-    const res = await getMeAction()
-
-    setUser(res)
-  }, [])
 
   const renderStageColumn = useMemo(() => {
     return stages?.map((stage: any) => (

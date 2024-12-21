@@ -1,14 +1,12 @@
 'use client'
 
 import { withApp } from '@/hoc'
-import { useAsyncEffect } from '@/libs/hook'
 import { App, Form, FormInstance, Modal } from 'antd'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   addWorkflowCategoryAction,
   updateWorkflowCategoryAction,
 } from '../../action'
-import { getWorkflowCategoryByIdAction } from './action'
 import FormFields from './FormFields'
 
 const WorkflowExtra: React.FC<{
@@ -23,21 +21,27 @@ const WorkflowExtra: React.FC<{
   const formRef = useRef<FormInstance>(null)
   const { message } = App.useApp()
 
-  useAsyncEffect(async () => {
-    const res = await getWorkflowCategoryByIdAction(initialValues?.id)
+  const { workflowCategories, cate, id } = initialValues
+
+  useEffect(() => {
+    const workflowCategory = workflowCategories?.find(
+      (category: any) => category.id === id,
+    )
 
     setCategory({
-      ...res,
-      members: res?.members?.map((m: any) => m?.username),
+      ...(workflowCategory || cate),
+      members: (workflowCategory || cate)?.members?.map(
+        (m: any) => m?.username,
+      ),
     })
-  }, [initialValues?.id])
+  }, [id, workflowCategories, cate])
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
 
     try {
       if (action === 'edit') {
-        var { errors } = await updateWorkflowCategoryAction(initialValues?.id, {
+        var { errors } = await updateWorkflowCategoryAction(id || cate?.id, {
           ...formData,
           members: (formData?.members || []).join(' '),
         })

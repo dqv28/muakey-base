@@ -9,9 +9,7 @@ import RequestTable from './components/RequestTable'
 const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const searchParams = await prop.searchParams
 
-  const proposes = await getProposes({
-    status: searchParams?.status !== 'all' ? searchParams?.status || '' : '',
-  })
+  const proposes = await getProposes()
   const proposeCategories = await getProposeCategories()
 
   return (
@@ -54,7 +52,13 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
       </PageHeader>
 
       <div className="h-[calc(100vh-82px)] overflow-auto p-[16px]">
-        <RequestTable dataSource={proposes} />
+        <RequestTable
+          dataSource={proposes}
+          query={{
+            status:
+              searchParams?.status !== 'all' ? searchParams?.status || '' : '',
+          }}
+        />
       </div>
     </div>
   )
