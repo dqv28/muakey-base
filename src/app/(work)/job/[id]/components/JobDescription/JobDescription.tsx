@@ -4,7 +4,7 @@ import InitializedMDXEditor from '@/components/InitializedMDXEditor/InitializedM
 import { MDXEditorMethods } from '@mdxeditor/editor'
 import { Button, Form } from 'antd'
 import clsx from 'clsx'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Converter } from 'showdown'
 import { editTaskAction } from '../../../actions'
@@ -48,6 +48,10 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     }
   }
 
+  useEffect(() => {
+    editorRef.current?.setMarkdown(value)
+  }, [isEdit, value])
+
   return (
     <div className="mt-[24px]">
       <div className="flex items-center justify-between gap-[24px]">
@@ -62,16 +66,16 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
       {isEdit ? (
         <Form
           className="mt-[16px]"
-          initialValues={{
-            description: converter.makeMarkdown(value || ''),
-          }}
+          // initialValues={{
+          //   description: value || '',
+          // }}
           onFinish={handleSubmit}
         >
           <Form.Item rootClassName="min-h-[220px]" name="description">
             <InitializedMDXEditor
               contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
               editorRef={editorRef}
-              markdown={converter.makeMarkdown(value || '')}
+              markdown=""
               placeholder="Mô tả nhiệm vụ"
             />
           </Form.Item>

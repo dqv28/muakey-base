@@ -28,6 +28,8 @@ export const generateMetadata = async (props: { params: any }) => {
 
   const task = await getTaskById(params?.id)
 
+  console.log('CALL METADATA')
+
   const metadata: Metadata = {
     title: `Job: ${task?.name}`,
   }

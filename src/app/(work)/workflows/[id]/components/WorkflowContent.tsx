@@ -33,7 +33,10 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
           workflowId={options?.workflow?.id}
           params={{
             date: options?.date || '',
-            tag_id: options?.tag || '',
+            tag_id:
+              !!options.tag && options.tag !== ''
+                ? String(options.tag).split(',')
+                : [],
           }}
         />
       )

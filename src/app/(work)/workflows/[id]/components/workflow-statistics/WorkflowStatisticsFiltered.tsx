@@ -1,11 +1,11 @@
 'use client'
 
 import { useAsyncEffect } from '@/libs/hook'
+import { randomColor } from '@/libs/utils'
 import { DatePicker, Select, SelectProps, Tag } from 'antd'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
 import { getTagsAction } from '../task/action'
-import { randomColor } from '@/libs/utils'
 
 const WorkflowStatisticsFiltered: React.FC = () => {
   const router = useRouter()
@@ -20,7 +20,7 @@ const WorkflowStatisticsFiltered: React.FC = () => {
 
     setTags(res)
   }, [])
-  
+
   const query = new URLSearchParams(searchParams.toString())
   const handleMonthChange = (_: any, date: string | string[]) => {
     if (date) {
@@ -33,11 +33,6 @@ const WorkflowStatisticsFiltered: React.FC = () => {
   }
 
   const handleSelect = useCallback(async (value: any) => {
-    console.log({
-      tag_id: value.join(','),
-      workflow_id: params?.id,
-    })
-
     if (value?.length > 0) {
       query.set('tag', value.join(','))
     } else {
@@ -55,7 +50,9 @@ const WorkflowStatisticsFiltered: React.FC = () => {
           backgroundColor: randomColor(String(option?.label || '')),
         }}
       />
-      <span className='flex-1 line-clamp-1' title={String(option?.label)}>{option?.label}</span>
+      <span className="line-clamp-1 flex-1" title={String(option?.label)}>
+        {option?.label}
+      </span>
     </div>
   )
 
@@ -79,16 +76,16 @@ const WorkflowStatisticsFiltered: React.FC = () => {
   }
 
   return (
-    <div className='flex items-center gap-[12px]'>
-      <Select 
+    <div className="flex items-center gap-[12px]">
+      <Select
         style={{ minWidth: 160 }}
-        placeholder='Lọc theo nhãn'
+        placeholder="Lọc theo nhãn"
         options={tags?.map((t: any) => ({
           label: t?.title,
-          value: t?.id
+          value: t?.id,
         }))}
         onChange={handleSelect}
-        mode='multiple'
+        mode="multiple"
         optionRender={optionRender}
         tagRender={tagRender}
         allowClear

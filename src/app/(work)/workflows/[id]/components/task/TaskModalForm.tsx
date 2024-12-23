@@ -70,7 +70,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const [tags, setTags] = useState<any[]>([])
   const [name, setName] = useState('')
   const inputRef = useRef<InputRef>(null)
-  const { account_id, members, sticker, ...restInitialValues } = initialValues
+  const { account_id, members, sticker, description, ...restInitialValues } =
+    initialValues
   const { message } = App.useApp()
 
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -282,8 +283,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       workflow_id: params?.id,
     })
 
+    editorRef.current?.setMarkdown(description || '')
     setTags(res)
-  }, [])
+  }, [open])
 
   const optionRender: SelectProps['optionRender'] = (option) => (
     <div className="group relative flex min-h-[32px] items-center gap-[16px]">
@@ -366,10 +368,11 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     <>
       <div
         onClick={() => {
-          if (!isAuth) {
-            message.error('Bạn không có quyền tạo nhiệm vụ')
+          if (action === 'create' && !isAuth) {
+            message.error('Bạn không có quyền sửa nhiệm vụ')
             return
           }
+
           setOpen(true)
         }}
       >
@@ -446,7 +449,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           <InitializedMDXEditor
             contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
             ref={editorRef}
-            markdown={converter.makeMarkdown(initialValues?.description || '')}
+            markdown=""
             placeholder="Mô tả nhiệm vụ"
           />
         </Form.Item>

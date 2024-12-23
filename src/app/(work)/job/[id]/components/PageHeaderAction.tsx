@@ -2,8 +2,6 @@
 
 import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
 import { Button } from '@/ui'
-import { DownOutlined } from '@ant-design/icons'
-import { Dropdown } from 'antd'
 import React from 'react'
 
 type PageHeaderActionProps = {
@@ -18,7 +16,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
           Đánh dấu thất bại
         </Button>
       </MarkTaskFailedModalForm>
-      <Dropdown
+      {/* <Dropdown
         trigger={['click']}
         rootClassName="!z-auto"
         placement="bottomRight"
@@ -44,7 +42,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
           className="!size-[32px]"
           icon={<DownOutlined className="text-[16px]" />}
         />
-      </Dropdown>
+      </Dropdown> */}
     </div>
   )
 }
