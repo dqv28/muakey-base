@@ -1,6 +1,7 @@
 'use client'
 
 import { uploadImageAction } from '@/app/(work)/job/actions'
+import { withApp } from '@/hoc'
 import { EDITOR_ICON_KEYS } from '@/libs/constant'
 import {
   BlockTypeSelect,
@@ -8,6 +9,7 @@ import {
   codeBlockPlugin,
   CodeToggle,
   CreateLink,
+  DirectiveDescriptor,
   headingsPlugin,
   IconKey,
   imagePlugin,
@@ -22,6 +24,7 @@ import {
   StrikeThroughSupSubToggles,
   toolbarPlugin,
 } from '@mdxeditor/editor'
+import { YouTubeEmbed } from '@next/third-parties/google'
 import { Divider } from 'antd'
 import type { ForwardedRef } from 'react'
 import toast from 'react-hot-toast'
@@ -32,6 +35,19 @@ type InitializedMDXEditorProps = MDXEditorProps & {
 
 const renderIconComponentFor = (name: IconKey) => {
   return EDITOR_ICON_KEYS[name] || <>{name}</>
+}
+
+const YoutubeDirectiveDescriptor: DirectiveDescriptor = {
+  name: 'youtube',
+  type: 'leafDirective',
+  testNode: (node) => node.type === 'leafDirective' && node.name === 'youtube',
+  attributes: [],
+  hasChildren: true,
+  Editor: ({ mdastNode }: any) => {
+    const { id } = mdastNode.attributes
+
+    return <YouTubeEmbed videoid={id} />
+  },
 }
 
 const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
@@ -73,6 +89,7 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
           <BlockTypeSelect />
           <CreateLink />
           <InsertImage />
+          {/* <YouTubeButton /> */}
         </>
       ),
     }),
@@ -84,6 +101,9 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
       imageUploadHandler,
     }),
     codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
+    // directivesPlugin({
+    //   directiveDescriptors: [YoutubeDirectiveDescriptor],
+    // }),
   ]
 
   return (
@@ -96,4 +116,4 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
   )
 }
 
-export default InitializedMDXEditor
+export default withApp(InitializedMDXEditor)

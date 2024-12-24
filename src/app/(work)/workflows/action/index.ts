@@ -19,7 +19,6 @@ import {
   editTask,
   editWorkflow,
   getAccounts,
-  getTasksByStageId,
   getWorkflowCategories,
   getWorkflowMembers,
   getWorkflows,
@@ -70,11 +69,11 @@ export const getWorkflowCategoriesAction = async () => {
     .catch(() => [])
 }
 
-export const getTasksByStageIdAction = async (id: number) => {
-  return await getTasksByStageId(id)
-    .then((data) => data)
-    .catch(() => [])
-}
+// export const getTasksByStageIdAction = async (id: number) => {
+//   return await getTasksByStageId(id)
+//     .then((data) => data)
+//     .catch(() => [])
+// }
 
 export const getWorkflowMembersAction = async (id: number) => {
   return await getWorkflowMembers(id)

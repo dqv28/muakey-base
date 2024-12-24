@@ -49,7 +49,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
   }
 
   useEffect(() => {
-    editorRef.current?.setMarkdown(value)
+    editorRef.current?.setMarkdown(value || '')
   }, [isEdit, value])
 
   return (

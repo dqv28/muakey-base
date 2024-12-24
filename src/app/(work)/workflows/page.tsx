@@ -38,6 +38,7 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
               <WorkflowExtra
                 initialValues={{
                   workflowCategories,
+                  departments,
                 }}
               >
                 <Button

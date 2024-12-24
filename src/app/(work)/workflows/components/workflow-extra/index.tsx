@@ -21,7 +21,7 @@ const WorkflowExtra: React.FC<{
   const formRef = useRef<FormInstance>(null)
   const { message } = App.useApp()
 
-  const { workflowCategories, cate, id } = initialValues
+  const { workflowCategories, cate, id, departments } = initialValues
 
   useEffect(() => {
     const workflowCategory = workflowCategories?.find(
@@ -126,7 +126,7 @@ const WorkflowExtra: React.FC<{
           </Form>
         )}
       >
-        <FormFields />
+        <FormFields options={{ departments }} />
       </Modal>
     </>
   )

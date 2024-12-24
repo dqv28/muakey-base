@@ -1,9 +1,11 @@
 'use client'
 
+import { InitializedMDXEditor } from '@/components'
 import { withApp } from '@/hoc'
+import { MDXEditorMethods } from '@mdxeditor/editor'
 import { App, Form, FormInstance, Input, Modal, ModalProps } from 'antd'
 import { useParams } from 'next/navigation'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { addStageAction, editStageAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
@@ -29,6 +31,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
   const params = useParams()
   const { setStages, isAuth } = useContext(StageContext)
   const { message } = App.useApp()
+  const editorRef = useRef<MDXEditorMethods>(null)
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -116,6 +119,14 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
     }
   }
 
+  console.log(initialValues?.description)
+
+  useEffect(() => {
+    if (!open) return
+
+    editorRef.current?.setMarkdown(initialValues?.description || '')
+  }, [open, initialValues?.description])
+
   return (
     <>
       <div
@@ -134,7 +145,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
         title={title || 'THÊM 1 GIAI ĐOẠN MỚI VÀO LUỒNG CÔNG VIỆC'}
         open={open}
         onCancel={() => setOpen(false)}
-        width={520}
+        width={700}
         cancelText="Bỏ qua"
         okText={action === 'edit' ? 'Cập nhật' : 'Tạo giai đoạn mới'}
         okButtonProps={{
@@ -170,7 +181,12 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
           <Input placeholder="Tên giai đoạn" />
         </Form.Item>
         <Form.Item name="description" label="Mô tả">
-          <Input placeholder="Mô tả giai đoạn" />
+          <InitializedMDXEditor
+            contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
+            ref={editorRef}
+            markdown=""
+            placeholder="Mô tả giai đoạn"
+          />
         </Form.Item>
         <Form.Item
           name="expired_after_hours"

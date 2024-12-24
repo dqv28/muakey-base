@@ -1,3 +1,5 @@
+import { InitializedMDXEditor } from '@/components'
+import { MDXEditorMethods } from '@mdxeditor/editor'
 import { Form, FormInstance, Input, Modal, ModalProps, Select } from 'antd'
 import React, { useRef } from 'react'
 
@@ -16,11 +18,36 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
   ...rest
 }) => {
   const formRef = useRef<FormInstance>(null)
+  const editorRef = useRef<MDXEditorMethods>(null)
 
   const initFormData =
     reports?.length >= 0
       ? reports?.map((field: any) => [[field?.id], field?.value])
       : []
+
+  // useEffect(() => {
+  //   editorRef.current?.setMarkdown()
+  // }, [])
+
+  const renderFieldInput = (type: string, fieldName: string, options: any) => {
+    switch (type) {
+      case 'list':
+        return <Select placeholder={`Báo cáo ${fieldName}`} options={options} />
+
+      case 'paragraph':
+        return (
+          <InitializedMDXEditor
+            contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
+            ref={editorRef}
+            markdown=""
+            placeholder={`Báo cáo ${fieldName}`}
+          />
+        )
+
+      default:
+        return <Input placeholder={`Báo cáo ${fieldName}`} />
+    }
+  }
 
   return (
     <Modal
@@ -39,6 +66,7 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
         </Form>
       )}
       destroyOnClose
+      width={700}
       {...rest}
     >
       {reports?.length >= 0 &&
@@ -60,14 +88,7 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
                 },
               ]}
             >
-              {field?.type === 'list' ? (
-                <Select
-                  placeholder={`Báo cáo ${field?.name}`}
-                  options={options}
-                />
-              ) : (
-                <Input placeholder={`Báo cáo ${field?.name}`} />
-              )}
+              {renderFieldInput(field?.type, field?.name, options)}
             </Form.Item>
           )
         })}

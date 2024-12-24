@@ -3,14 +3,17 @@
 import { useAsyncEffect } from '@/libs/hook'
 import { Form, Input, Select } from 'antd'
 import { useState } from 'react'
-import { getAccountsAction, getDepartmentsAction } from './action'
+import { getAccountsAction } from './action'
 
-const FormFields: React.FC = () => {
+const FormFields: React.FC<{
+  options?: any
+}> = ({ options }) => {
   const [accounts, setAccounts] = useState<any[]>([])
+  const { departments } = options
 
   useAsyncEffect(async () => {
     const accountList = await getAccountsAction()
-    const departments = await getDepartmentsAction()
+
     setAccounts([...departments, ...accountList])
   }, [])
 

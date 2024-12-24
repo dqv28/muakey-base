@@ -2,6 +2,7 @@ import { Col } from '@/ui'
 import { ReloadOutlined } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { Typography } from 'antd'
 import clsx from 'clsx'
 import React, { memo, useCallback, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -18,8 +19,8 @@ type StageColumnProps = {
 
 const StageColumn: React.FC<StageColumnProps> = memo(
   ({ stage, userId, options }) => {
-    console.log('render')
     const [loading, setLoading] = useState(false)
+    const [expanded, setExpanded] = useState(false)
 
     const params = useParams()
     const { attributes, setNodeRef, transform, transition } = useSortable({
@@ -116,6 +117,21 @@ const StageColumn: React.FC<StageColumnProps> = memo(
               )}
             </div>
           </StageHeader>
+
+          {![0, 1].includes(stage.index) && stage?.description && (
+            <Typography.Paragraph
+              className="!mb-0 px-[16px] py-[12px]"
+              ellipsis={{
+                rows: 2,
+                expandable: 'collapsible',
+                expanded,
+                onExpand: (_, info) => setExpanded(info.expanded),
+                symbol: expanded ? 'Thu gọn' : 'Xem thêm',
+              }}
+            >
+              {`Mô tả: ${stage?.description}`}
+            </Typography.Paragraph>
+          )}
 
           <TaskList
             stageId={stage?.id}
