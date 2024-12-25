@@ -1,8 +1,12 @@
 import { Col } from '@/ui'
-import { ReloadOutlined } from '@ant-design/icons'
+import {
+  CaretRightOutlined,
+  ExclamationCircleOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Typography } from 'antd'
+import { Collapse, Tooltip } from 'antd'
 import clsx from 'clsx'
 import React, { memo, useCallback, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -83,7 +87,21 @@ const StageColumn: React.FC<StageColumnProps> = memo(
               'bg-[#deffdb]': stage.index === 1,
               'bg-[#f6f6f6]': ![0, 1].includes(stage.index),
             })}
-            title={stage.name}
+            title={
+              <span>
+                {stage.name}{' '}
+                {![0, 1].includes(stage.index) && stage?.description && (
+                  <Tooltip
+                    overlayInnerStyle={{ color: '#000' }}
+                    color="#fff"
+                    title={stage?.description}
+                    destroyTooltipOnHide
+                  >
+                    <ExclamationCircleOutlined className="text-[14px]" />
+                  </Tooltip>
+                )}
+              </span>
+            }
             extra={
               <>
                 {![0, 1].includes(stage?.index) && (
@@ -119,18 +137,24 @@ const StageColumn: React.FC<StageColumnProps> = memo(
           </StageHeader>
 
           {![0, 1].includes(stage.index) && stage?.description && (
-            <Typography.Paragraph
-              className="!mb-0 px-[16px] py-[12px]"
-              ellipsis={{
-                rows: 2,
-                expandable: 'collapsible',
-                expanded,
-                onExpand: (_, info) => setExpanded(info.expanded),
-                symbol: expanded ? 'Thu gọn' : 'Xem thêm',
-              }}
-            >
-              {`Mô tả: ${stage?.description}`}
-            </Typography.Paragraph>
+            <Collapse
+              rootClassName="rounded-none border-l-0 border-r-0 border-t-0 border-b border-[#eee]"
+              className="rounded-none bg-[#fff]"
+              expandIcon={({ isActive }) => (
+                <CaretRightOutlined rotate={isActive ? 90 : 0} />
+              )}
+              items={[
+                {
+                  key: '1',
+                  label: (
+                    <div className="cursor-pointer leading-[22px]">
+                      Mô tả giai đoạn
+                    </div>
+                  ),
+                  children: stage?.description,
+                },
+              ]}
+            />
           )}
 
           <TaskList
