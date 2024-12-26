@@ -19,14 +19,14 @@ import {
   listsPlugin,
   ListsToggle,
   MDXEditor,
-  type MDXEditorMethods,
-  type MDXEditorProps,
   StrikeThroughSupSubToggles,
   toolbarPlugin,
+  type MDXEditorMethods,
+  type MDXEditorProps,
 } from '@mdxeditor/editor'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { Divider } from 'antd'
-import type { ForwardedRef } from 'react'
+import { useMemo, type ForwardedRef } from 'react'
 import toast from 'react-hot-toast'
 
 type InitializedMDXEditorProps = MDXEditorProps & {
@@ -72,39 +72,42 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
     }
   }
 
-  const plugins = [
-    toolbarPlugin({
-      toolbarContents: () => (
-        <>
-          <BoldItalicUnderlineToggles />
-          <CodeToggle />
+  const plugins = useMemo(
+    () => [
+      toolbarPlugin({
+        toolbarContents: () => (
+          <>
+            <BoldItalicUnderlineToggles />
+            <CodeToggle />
 
-          <Divider type="vertical" />
-          <StrikeThroughSupSubToggles />
+            <Divider type="vertical" />
+            <StrikeThroughSupSubToggles />
 
-          <Divider type="vertical" />
-          <ListsToggle options={['bullet', 'number']} />
+            <Divider type="vertical" />
+            <ListsToggle options={['bullet', 'number']} />
 
-          <Divider type="vertical" />
-          <BlockTypeSelect />
-          <CreateLink />
-          <InsertImage />
-          {/* <YouTubeButton /> */}
-        </>
-      ),
-    }),
-    listsPlugin(),
-    headingsPlugin(),
-    linkPlugin(),
-    linkDialogPlugin(),
-    imagePlugin({
-      imageUploadHandler,
-    }),
-    codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
-    // directivesPlugin({
-    //   directiveDescriptors: [YoutubeDirectiveDescriptor],
-    // }),
-  ]
+            <Divider type="vertical" />
+            <BlockTypeSelect />
+            <CreateLink />
+            <InsertImage />
+            {/* <YouTubeButton /> */}
+          </>
+        ),
+      }),
+      listsPlugin(),
+      headingsPlugin(),
+      linkPlugin(),
+      linkDialogPlugin(),
+      imagePlugin({
+        imageUploadHandler,
+      }),
+      codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
+      // directivesPlugin({
+      //   directiveDescriptors: [YoutubeDirectiveDescriptor],
+      // }),
+    ],
+    [],
+  )
 
   return (
     <MDXEditor

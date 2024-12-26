@@ -1,5 +1,3 @@
-import { getAccounts } from '@/libs/data'
-import { getSchedule } from '@/libs/statistics'
 import { getWeek, randomColor } from '@/libs/utils'
 import { Avatar, Col, Row } from 'antd'
 import clsx from 'clsx'
@@ -21,20 +19,14 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async ({
   const today = new Date()
   const week = getWeek(options?.dw ? new Date(options?.dw) : today)
 
-  const [schedule, accounts] = await Promise.all([
-    getSchedule({
-      start: week[0].date,
-      end: week[6].date,
-    }),
-    getAccounts(),
-  ])
+  const { schedule, accounts, account_id } = options
 
   const days = week?.map((w: any) => w?.date)
   const todos = accounts
     ?.filter(
       (acc: any) =>
-        (!options?.account_id ||
-          String(options?.account_id || '')
+        (!account_id ||
+          String(account_id || '')
             .split(',')
             .includes(String(acc?.id))) &&
         acc?.type !== 'department',
@@ -121,11 +113,11 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async ({
                     key={day}
                     span={3}
                   >
-                    {tasksOfDay?.map((task: any) => (
+                    {tasksOfDay?.map((task: any, index: number) => (
                       <Link
                         className="block hover:text-[#000]"
-                        key={task?.name_task}
-                        href={`/job/${task?.code}`}
+                        key={`${task?.name_task}_${index}`}
+                        href={`/job/${task?.task_id}`}
                       >
                         <StatisticsCard
                           title={

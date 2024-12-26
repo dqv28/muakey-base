@@ -61,10 +61,14 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
   const { stages, setStages } = useContext(WorkflowStageContext)
   const params = useParams()
 
-  const failedStageId =
+  const failedStageId = Number(
     stages?.length > 0
-      ? stages?.find((stage: any) => stage.index === 0)?.['id']
-      : []
+      ? stages
+          ?.find((stage: any) => stage.index === 0)
+          ?.['id'].split('_')
+          .pop()
+      : 0,
+  )
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -96,19 +100,25 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
 
       if (!overData || !activeData) return
 
+      const stageId = Number(
+        String(overData.stage_id || overData.id)
+          .split('_')
+          .pop(),
+      )
+
       const taskHistory = await getTaskHistoriesAction({
         task_id: activeData.id,
-        stage_id: overData.stage_id || overData.id,
+        stage_id: stageId,
       })
 
       setStages((prevStages: any) => {
         const newStages = cloneDeep(prevStages)
 
         const activeColumn = newStages.find(
-          (s: any) => s.id === activeData.stage_id,
+          (s: any) => s.id === `stage_${activeData.stage_id}`,
         )
         const overColumn = newStages.find(
-          (s: any) => s.id === (overData.stage_id || overData.id),
+          (s: any) => s.id === `stage_${stageId}`,
         )
 
         if (activeColumn) {
@@ -121,7 +131,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
           overColumn.tasks = [
             {
               ...activeData,
-              stage_id: overData.stage_id || overData.id,
+              stage_id: stageId,
               account_id: taskHistory?.worker || null,
               expired: taskHistory?.worker
                 ? taskHistory?.expired_at
@@ -143,7 +153,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
       try {
         const { message: msg, errors } = await moveStageAction(
           activeTaskId as number,
-          overData.stage_id || overData.id,
+          stageId,
         )
 
         if (errors) {
@@ -181,10 +191,12 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
     if (!overData || !activeData) return
 
     const activeIndex = stages?.find(
-      (stage: any) => stage.id === activeData.stage_id,
+      (stage: any) => stage.id === `stage_${activeData.stage_id}`,
     )?.index
     const overIndex = stages?.find(
-      (stage: any) => stage.id === (overData.stage_id || overData.id),
+      (stage: any) =>
+        stage.id ===
+        (overData.stage_id ? `stage_${overData.stage_id}` : overData.id),
     )?.index
 
     const data = await getReportFieldsByWorkflowIdAction({
@@ -206,13 +218,13 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
       }
     }
 
-    if (data?.length > 0 && activeData.account_id && activeIndex > overIndex) {
-      setOpen(true)
+    if (overIndex === 1) {
+      setDoneOpen(true)
       return
     }
 
-    if (overIndex === 1) {
-      setDoneOpen(true)
+    if (data?.length > 0 && activeData.account_id && activeIndex > overIndex) {
+      setOpen(true)
       return
     }
 
@@ -252,10 +264,8 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
     }
   }
 
-  const sortItems = useMemo(
-    () => (stages?.length > 0 ? stages?.map((item: any) => item.id) : []),
-    [stages],
-  )
+  const sortItems =
+    stages?.length > 0 ? stages?.map((item: any) => item.id) : []
 
   const generateInitialValues = useCallback(() => {
     if (!dragEvent) return {}
@@ -271,9 +281,8 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
     }
   }, [dragEvent])
 
-  const filteredStages = useMemo(
-    () => stages?.filter((stage: any) => ![0, 1].includes(stage?.index)),
-    [stages],
+  const filteredStages = stages?.filter(
+    (stage: any) => ![0, 1].includes(stage?.index),
   )
 
   useAsyncEffect(async () => {

@@ -29,12 +29,7 @@ import toast from 'react-hot-toast'
 import { Converter } from 'showdown'
 import { addTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
-import {
-  addTagAction,
-  addTagToTaskAction,
-  getTagsAction,
-  updateTagToTaskAction,
-} from './action'
+import { addTagAction, addTagToTaskAction, getTagsAction } from './action'
 import TagDeleteButton from './TagDeleteButton'
 
 type TaskModalFormProps = ModalProps & {
@@ -138,7 +133,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
           workflow_id: params?.id || null,
-          tag_id: restFormData?.tag || [],
+          tag_id: tag || [],
         })
 
         if (!errors) {
@@ -163,7 +158,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                       description: converter.makeHtml(restFormData.description),
                       account_id: member?.id || null,
                       workflow_id: params?.id || null,
-                      stage_id: stage?.id,
+                      stage_id: Number(String(stage?.id).split('_').pop()),
                       id,
                       sticker: tag?.map((t: number) => {
                         const tagName = tags.find(
@@ -194,20 +189,15 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           ...restFormData,
           description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
-          tag_id: restFormData?.tag || [],
+          tag_id: tag || [],
         })
 
         if (!errors) {
-          await updateTagToTaskAction(initialValues?.id, {
-            task_id: initialValues?.id,
-            tag_id: tag,
-          })
-
           setStages((prevStages: any[]) => {
             const newStages = cloneDeep(prevStages)
 
             return newStages?.map((stage: any) => {
-              if (stage?.id === initialValues?.stage_id) {
+              if (stage?.id === `stage_${initialValues?.stage_id}`) {
                 return {
                   ...stage,
                   tasks: stage?.tasks?.map((task: any) => {
@@ -283,8 +273,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       workflow_id: params?.id,
     })
 
-    editorRef.current?.setMarkdown(description || '')
     setTags(res)
+
+    editorRef.current?.setMarkdown(description || '')
   }, [open])
 
   const optionRender: SelectProps['optionRender'] = (option) => (
@@ -449,7 +440,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           <InitializedMDXEditor
             contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
             ref={editorRef}
-            markdown=""
+            markdown={converter.makeMarkdown(description || '')}
             placeholder="Mô tả nhiệm vụ"
           />
         </Form.Item>

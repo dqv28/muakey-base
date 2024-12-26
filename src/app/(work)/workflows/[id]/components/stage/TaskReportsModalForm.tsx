@@ -1,7 +1,8 @@
 import { InitializedMDXEditor } from '@/components'
 import { MDXEditorMethods } from '@mdxeditor/editor'
 import { Form, FormInstance, Input, Modal, ModalProps, Select } from 'antd'
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
+import { Converter } from 'showdown'
 
 type TaskReportsModalFormProps = Pick<
   ModalProps,
@@ -19,17 +20,30 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
 }) => {
   const formRef = useRef<FormInstance>(null)
   const editorRef = useRef<MDXEditorMethods>(null)
+  const converter = new Converter()
 
-  const initFormData =
+  const reportsAsParagraph = reports?.filter(
+    (field: any) => field?.type === 'paragraph',
+  )
+
+  const initFormData = Object.fromEntries(
     reports?.length >= 0
-      ? reports?.map((field: any) => [[field?.id], field?.value])
-      : []
+      ? reports?.map((field: any) => [field?.id, field?.value || ''])
+      : [],
+  )
 
-  // useEffect(() => {
-  //   editorRef.current?.setMarkdown()
-  // }, [])
+  useEffect(() => {
+    for (const report of reportsAsParagraph) {
+      editorRef.current?.setMarkdown(report.value || '')
+    }
+  }, [reportsAsParagraph])
 
-  const renderFieldInput = (type: string, fieldName: string, options: any) => {
+  const renderFieldInput = (
+    type: string,
+    fieldName: string,
+    fieldId: number,
+    options: any,
+  ) => {
     switch (type) {
       case 'list':
         return <Select placeholder={`Báo cáo ${fieldName}`} options={options} />
@@ -39,7 +53,7 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
           <InitializedMDXEditor
             contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
             ref={editorRef}
-            markdown=""
+            markdown={converter.makeMarkdown(initFormData[fieldId] || '')}
             placeholder={`Báo cáo ${fieldName}`}
           />
         )
@@ -60,7 +74,7 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
           ref={formRef}
           onFinish={onSubmit}
           layout="vertical"
-          initialValues={Object.fromEntries(initFormData)}
+          initialValues={initFormData}
         >
           {dom}
         </Form>
@@ -88,7 +102,7 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
                 },
               ]}
             >
-              {renderFieldInput(field?.type, field?.name, options)}
+              {renderFieldInput(field?.type, field?.name, field?.id, options)}
             </Form.Item>
           )
         })}

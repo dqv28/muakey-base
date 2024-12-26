@@ -25,7 +25,14 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
   children,
   options,
 }) => {
-  const [stages, setStages] = useState<any>(options?.stages || [])
+  const [stages, setStages] = useState<any>(
+    options?.stages
+      ? options?.stages?.map((stage: any) => ({
+          ...stage,
+          id: `stage_${stage.id}`,
+        }))
+      : [],
+  )
 
   const isAuth =
     options?.user?.role === 'Admin lv2' ||

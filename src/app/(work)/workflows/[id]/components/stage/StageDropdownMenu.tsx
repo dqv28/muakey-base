@@ -19,8 +19,12 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
   const { setStages } = useContext(StageContext)
 
   const handleDelete = async () => {
+    const stageId = Number(String(stage?.id).split('_').pop())
+
     try {
-      const { error, success } = await deleteStageByIdAction(stage?.id || 0)
+      const { error, success } = await deleteStageByIdAction(
+        stage?.id ? stageId : 0,
+      )
 
       if (error) {
         toast.error(error)
@@ -46,7 +50,7 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
             title={`Chỉnh sửa giai đoạn ${stage?.name}`}
             initialValues={stage}
             query={{
-              stage_id: stage?.id,
+              stage_id: Number(String(stage?.id).split('_').pop()),
             }}
             action="edit"
           >

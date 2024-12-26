@@ -7,7 +7,7 @@ import {
 } from '@dnd-kit/sortable'
 import { ConfigProvider, List, ListProps } from 'antd'
 import { cloneDeep } from 'lodash'
-import React, { useCallback, useContext, useMemo } from 'react'
+import React, { useCallback, useContext } from 'react'
 import toast from 'react-hot-toast'
 import { deleteTaskAction } from '../../../action'
 import { StageContext } from '../stage/StageList'
@@ -24,23 +24,18 @@ const TaskList: React.FC<TaskListProps> = ({
   stageId,
   userId,
   options,
+  dataSource,
   ...rest
 }) => {
   const { activeId, members } = useContext(StageContext)
   const { stages, setStages } = useContext(WorkflowContext)
 
-  const currentStage = useMemo(
-    () => stages?.find((s: any) => s?.id === stageId),
-    [stageId, stages],
-  )
+  const currentStage = stages?.find((s: any) => s?.id === stageId)
 
-  const sortItems = useMemo(
-    () =>
-      currentStage?.tasks?.length > 0
-        ? currentStage?.tasks.map((t: any) => t.id)
-        : [],
-    [currentStage?.tasks],
-  )
+  const sortItems =
+    currentStage?.tasks?.length > 0
+      ? currentStage?.tasks.map((t: any) => t.id)
+      : []
 
   const handleDelete = useCallback(
     async (id: number) => {
@@ -57,7 +52,7 @@ const TaskList: React.FC<TaskListProps> = ({
           const newStages = cloneDeep(prevStages)
 
           return newStages?.map((s: any) => {
-            if (s?.id === stageId) {
+            if (String(s?.id).includes(String(stageId))) {
               return {
                 ...s,
                 tasks: s?.tasks?.filter((task: any) => task?.id !== id),

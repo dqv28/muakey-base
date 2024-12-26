@@ -28,7 +28,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     setLoading(true)
 
     try {
-      const { message, errors } = await editTaskAction(params?.task?.code, {
+      const { message, errors } = await editTaskAction(params?.task?.id, {
         description: converter.makeHtml(formData?.description),
       })
 
@@ -64,13 +64,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
         </span>
       </div>
       {isEdit ? (
-        <Form
-          className="mt-[16px]"
-          // initialValues={{
-          //   description: value || '',
-          // }}
-          onFinish={handleSubmit}
-        >
+        <Form className="mt-[16px]" onFinish={handleSubmit}>
           <Form.Item rootClassName="min-h-[220px]" name="description">
             <InitializedMDXEditor
               contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"

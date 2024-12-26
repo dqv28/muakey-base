@@ -86,7 +86,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           const newStages = cloneDeep(prevStages)
 
           return newStages?.map((stage: any) => {
-            if (stage?.id === task?.stage_id) {
+            if (stage?.id === `stage_${task?.stage_id}`) {
               return {
                 ...stage,
                 tasks: stage?.tasks?.map((t: any) => {
@@ -141,7 +141,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           const newStages = cloneDeep(prevStages)
 
           return newStages?.map((stage: any) => {
-            if (stage?.id === task?.stage_id) {
+            if (stage?.id === `stage_${task?.stage_id}`) {
               return {
                 ...stage,
                 tasks: stage?.tasks?.map((t: any) => {

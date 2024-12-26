@@ -24,7 +24,6 @@ type StageColumnProps = {
 const StageColumn: React.FC<StageColumnProps> = memo(
   ({ stage, userId, options }) => {
     const [loading, setLoading] = useState(false)
-    const [expanded, setExpanded] = useState(false)
 
     const params = useParams()
     const { attributes, setNodeRef, transform, transition } = useSortable({
@@ -94,7 +93,11 @@ const StageColumn: React.FC<StageColumnProps> = memo(
                   <Tooltip
                     overlayInnerStyle={{ color: '#000' }}
                     color="#fff"
-                    title={stage?.description}
+                    title={
+                      <div
+                        dangerouslySetInnerHTML={{ __html: stage?.description }}
+                      />
+                    }
                     destroyTooltipOnHide
                   >
                     <ExclamationCircleOutlined className="text-[14px]" />
@@ -151,7 +154,11 @@ const StageColumn: React.FC<StageColumnProps> = memo(
                       Mô tả giai đoạn
                     </div>
                   ),
-                  children: stage?.description,
+                  children: (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: stage?.description }}
+                    />
+                  ),
                 },
               ]}
             />

@@ -129,18 +129,19 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
             ...(workflowCategories && workflowCategories.length > 0
               ? workflowCategories?.map((w: any) => ({
                   label: w?.name,
-                  children:
-                    w?.workflows.map((i: any) => ({
-                      label: (
-                        <Tooltip title={i?.name}>
-                          <div className="flex items-center gap-[12px]">
-                            <ProjectFilled className="text-[16px]" />
-                            <span className="line-clamp-1">{i?.name}</span>
-                          </div>
-                        </Tooltip>
-                      ),
-                      href: `/workflows/${i?.id}`,
-                    })) || [],
+                  children: w?.workflows
+                    ? w?.workflows.map((i: any) => ({
+                        label: (
+                          <Tooltip title={i?.name}>
+                            <div className="flex items-center gap-[12px]">
+                              <ProjectFilled className="text-[16px]" />
+                              <span className="line-clamp-1">{i?.name}</span>
+                            </div>
+                          </Tooltip>
+                        ),
+                        href: `/workflows/${i?.id}`,
+                      }))
+                    : [],
                   expand: true,
                 }))
               : []),

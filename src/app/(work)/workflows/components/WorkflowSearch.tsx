@@ -3,13 +3,16 @@
 import { Input } from '@/ui'
 import { SearchOutlined } from '@/ui/icons'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 
 const WorkflowSearch: React.FC = () => {
   const [searchValue, setSearchValue] = useState('')
   const searchParams = useSearchParams()
   const router = useRouter()
-  const query = new URLSearchParams(searchParams.toString())
+  const query = useMemo(
+    () => new URLSearchParams(searchParams.toString()),
+    [searchParams],
+  )
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
@@ -23,7 +26,7 @@ const WorkflowSearch: React.FC = () => {
     }
 
     router.push(`?${String(query)}`)
-  }, [searchValue])
+  }, [searchValue, query, router])
 
   return (
     <div className="flex items-center gap-[8px] overflow-hidden rounded-[4px] border border-[#ddd] pr-[8px]">

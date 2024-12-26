@@ -5,8 +5,9 @@ import { withApp } from '@/hoc'
 import { MDXEditorMethods } from '@mdxeditor/editor'
 import { App, Form, FormInstance, Input, Modal, ModalProps } from 'antd'
 import { useParams } from 'next/navigation'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useLayoutEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import { Converter } from 'showdown'
 import { addStageAction, editStageAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
 
@@ -32,6 +33,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
   const { setStages, isAuth } = useContext(StageContext)
   const { message } = App.useApp()
   const editorRef = useRef<MDXEditorMethods>(null)
+  const converter = new Converter()
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -40,6 +42,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
       if (action === 'edit') {
         var { errors } = await editStageAction(query?.stage_id, {
           ...formData,
+          description: converter.makeHtml(formData?.description),
           workflow_id: params?.id,
         })
 
@@ -47,7 +50,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
           const newStages = [...prev]
 
           return newStages.map((stage: any) => {
-            if (stage?.id === query?.stage_id) {
+            if (stage?.id === `stage_${query?.stage_id}`) {
               return {
                 ...stage,
                 ...formData,
@@ -63,6 +66,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
         var { errors, id } = await addStageAction(
           {
             ...formData,
+            description: converter.makeHtml(formData?.description),
             workflow_id: params?.id,
           },
           query,
@@ -119,13 +123,13 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
     }
   }
 
-  console.log(initialValues?.description)
+  const { description, ...restInitialValues } = initialValues || {}
 
-  useEffect(() => {
-    if (!open) return
-
-    editorRef.current?.setMarkdown(initialValues?.description || '')
-  }, [open, initialValues?.description])
+  useLayoutEffect(() => {
+    setTimeout(() => {
+      editorRef.current?.setMarkdown(description || '')
+    }, 100)
+  }, [open, description])
 
   return (
     <>
@@ -155,7 +159,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
         modalRender={(dom) => (
           <Form
             ref={formRef}
-            initialValues={initialValues}
+            initialValues={restInitialValues}
             onFinish={handleSubmit}
             layout="vertical"
           >
@@ -184,7 +188,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
           <InitializedMDXEditor
             contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
             ref={editorRef}
-            markdown=""
+            markdown={converter.makeMarkdown(description || '')}
             placeholder="Mô tả giai đoạn"
           />
         </Form.Item>
