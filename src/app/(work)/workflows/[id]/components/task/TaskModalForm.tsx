@@ -442,6 +442,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             ref={editorRef}
             markdown={converter.makeMarkdown(description || '')}
             placeholder="Mô tả nhiệm vụ"
+            onError={(payload) => console.log(payload)}
           />
         </Form.Item>
         <Form.Item name="member" label="Giao cho">

@@ -6,7 +6,6 @@ import { EDITOR_ICON_KEYS } from '@/libs/constant'
 import {
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
-  codeBlockPlugin,
   CodeToggle,
   CreateLink,
   DirectiveDescriptor,
@@ -18,6 +17,7 @@ import {
   linkPlugin,
   listsPlugin,
   ListsToggle,
+  markdownShortcutPlugin,
   MDXEditor,
   StrikeThroughSupSubToggles,
   toolbarPlugin,
@@ -26,7 +26,7 @@ import {
 } from '@mdxeditor/editor'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { Divider } from 'antd'
-import { useMemo, type ForwardedRef } from 'react'
+import { type ForwardedRef } from 'react'
 import toast from 'react-hot-toast'
 
 type InitializedMDXEditorProps = MDXEditorProps & {
@@ -72,42 +72,42 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
     }
   }
 
-  const plugins = useMemo(
-    () => [
-      toolbarPlugin({
-        toolbarContents: () => (
-          <>
-            <BoldItalicUnderlineToggles />
-            <CodeToggle />
+  const plugins = [
+    toolbarPlugin({
+      toolbarContents: () => (
+        <>
+          <BoldItalicUnderlineToggles />
+          <CodeToggle />
 
-            <Divider type="vertical" />
-            <StrikeThroughSupSubToggles />
+          <Divider type="vertical" />
+          <StrikeThroughSupSubToggles />
 
-            <Divider type="vertical" />
-            <ListsToggle options={['bullet', 'number']} />
+          <Divider type="vertical" />
+          <ListsToggle options={['bullet', 'number']} />
 
-            <Divider type="vertical" />
-            <BlockTypeSelect />
-            <CreateLink />
-            <InsertImage />
-            {/* <YouTubeButton /> */}
-          </>
-        ),
-      }),
-      listsPlugin(),
-      headingsPlugin(),
-      linkPlugin(),
-      linkDialogPlugin(),
-      imagePlugin({
-        imageUploadHandler,
-      }),
-      codeBlockPlugin({ defaultCodeBlockLanguage: 'txt' }),
-      // directivesPlugin({
-      //   directiveDescriptors: [YoutubeDirectiveDescriptor],
-      // }),
-    ],
-    [],
-  )
+          <Divider type="vertical" />
+          <BlockTypeSelect />
+          <CreateLink />
+          <InsertImage />
+          {/* <YouTubeButton /> */}
+        </>
+      ),
+    }),
+    listsPlugin(),
+    headingsPlugin(),
+    linkPlugin(),
+    linkDialogPlugin(),
+    imagePlugin({
+      imageUploadHandler,
+    }),
+    markdownShortcutPlugin(),
+    // directivesPlugin({
+    //   directiveDescriptors: [
+    //     YoutubeDirectiveDescriptor,
+    //     AdmonitionDirectiveDescriptor,
+    //   ],
+    // }),
+  ]
 
   return (
     <MDXEditor

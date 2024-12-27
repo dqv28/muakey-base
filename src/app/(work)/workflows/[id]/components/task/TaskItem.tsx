@@ -211,14 +211,14 @@ const TaskItem: React.FC<TaskItemProps> = memo(
               {task?.name}
             </div>
             <div className="flex items-center">
-              {task?.sticker?.map((s: any) => (
-                <Tooltip key={s?.id} title={s?.name}>
+              {task?.tags?.map((s: any) => (
+                <Tooltip key={s?.id} title={s?.title}>
                   <Tag
                     className="w-max max-w-[100px]"
-                    color={randomColor(String(s?.name || ''))}
+                    color={randomColor(String(s?.title || ''))}
                     style={{ marginInlineEnd: 4 }}
                   >
-                    <span className="line-clamp-1">{s?.name}</span>
+                    <span className="line-clamp-1">{s?.title}</span>
                   </Tag>
                 </Tooltip>
               ))}
