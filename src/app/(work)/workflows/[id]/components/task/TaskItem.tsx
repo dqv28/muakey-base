@@ -53,6 +53,8 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     userId,
     options,
   }) => {
+    console.log('RE-RENDER CARD')
+
     const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
     const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
     const params = useParams()

@@ -3,10 +3,8 @@
 import { getTaskHistoriesAction } from '@/components/action'
 import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
-import { Col, Row, toast } from '@/ui'
-import { PlusOutlined } from '@/ui/icons'
+import { toast } from '@/ui'
 import {
-  closestCenter,
   DndContext,
   DragEndEvent,
   DragStartEvent,
@@ -16,12 +14,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import {
-  horizontalListSortingStrategy,
-  SortableContext,
-} from '@dnd-kit/sortable'
 import { App } from 'antd'
-import clsx from 'clsx'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
 import React, {
@@ -29,15 +22,14 @@ import React, {
   memo,
   useCallback,
   useContext,
-  useMemo,
   useRef,
   useState,
 } from 'react'
+import { Converter } from 'showdown'
 import { addTaskReportAction, moveStageAction } from '../../../action'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import { getReportFieldsByWorkflowIdAction } from './action'
-import StageColumn from './StageColumn'
-import StageModalForm from './StageModalForm'
+import StageColumnList from './StageColumnList'
 import TaskDoneModalForm from './TaskDoneModalForm'
 import TaskReportsModalForm from './TaskReportsModalForm'
 
@@ -55,6 +47,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
   const [reports, setReports] = useState<any[]>([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
   const activeRef = useRef<any>(null)
+  const converter = new Converter()
 
   const { message } = App.useApp()
   const { user } = options
@@ -191,6 +184,8 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
 
     if (!overData || !activeData) return
 
+    console.log(overData)
+
     const activeIndex = stages?.find(
       (stage: any) => stage.id === `stage_${activeData.stage_id}`,
     )?.index
@@ -243,10 +238,17 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
 
     if (!activeData) return
 
+    const formData = Object.fromEntries(
+      Object.keys(values).map((key: string) => [
+        key,
+        converter.makeHtml(values[key]),
+      ]),
+    )
+
     try {
       const { message, errors } = await addTaskReportAction(
         {
-          ...values,
+          ...formData,
         },
         {
           task_id: activeData.id,
@@ -265,9 +267,6 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
     }
   }
 
-  const sortItems =
-    stages?.length > 0 ? stages?.map((item: any) => item.id) : []
-
   const generateInitialValues = useCallback(() => {
     if (!dragEvent) return {}
 
@@ -281,10 +280,6 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
       link_youtube: activeData?.link_youtube,
     }
   }, [dragEvent])
-
-  const filteredStages = stages?.filter(
-    (stage: any) => ![0, 1].includes(stage?.index),
-  )
 
   useAsyncEffect(async () => {
     if (!dragEvent) return
@@ -307,51 +302,22 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
     activeRef.current = activeId
   }, [dragEvent, params?.id, activeId])
 
-  const renderStageColumn = useMemo(() => {
-    return stages?.map((stage: any) => (
-      <StageColumn
-        key={stage?.id}
-        stage={stage}
-        userId={user?.id}
-        options={{
-          role: user?.role,
-        }}
-      />
-    ))
-  }, [stages, user])
-
   return (
     <StageContext.Provider
       value={{ activeId, setActiveId, members, failedStageId }}
     >
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        // collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <SortableContext
-          items={sortItems}
-          strategy={horizontalListSortingStrategy}
-        >
-          <Row className="h-full w-max" wrap={false}>
-            {filteredStages?.length <= 0 && (
-              <Col
-                className={clsx(
-                  'group flex w-[272px] cursor-pointer items-center justify-center overflow-hidden border-r border-[#eee] bg-[#fff] transition-all hover:bg-[#f9f9f9]',
-                )}
-              >
-                <StageModalForm>
-                  <div className="flex flex-col items-center gap-[8px] text-[#aaa] transition-all group-hover:text-[#267cde]">
-                    <PlusOutlined className="text-[40px] font-[500]" />
-                    THÊM GIAI ĐOẠN
-                  </div>
-                </StageModalForm>
-              </Col>
-            )}
-            {stages?.length > 0 && renderStageColumn}
-          </Row>
-        </SortableContext>
+        <StageColumnList
+          items={stages}
+          options={{
+            user,
+          }}
+        />
       </DndContext>
 
       {reports?.length > 0 && activeRef.current === activeId && (

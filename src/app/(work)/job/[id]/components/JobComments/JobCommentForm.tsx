@@ -1,9 +1,12 @@
 'use client'
 
-import { Button, Form, FormInstance, Input } from 'antd'
+import { InitializedMDXEditor } from '@/components'
+import { linkPlugin } from '@mdxeditor/editor'
+import { Button, Form, FormInstance } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import { Converter } from 'showdown'
 import { addCommentAction } from './action'
 
 type JobCommentFormProps = {
@@ -15,6 +18,7 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
   const [disabled, setDisabled] = useState(true)
   const router = useRouter()
   const formRef = useRef<FormInstance>(null)
+  const converter = new Converter()
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -23,6 +27,7 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
       const { message, errors } = await addCommentAction({
         ...formData,
         task_id: options?.taskId,
+        content: converter.makeHtml(formData?.content),
       })
 
       if (errors) {
@@ -45,10 +50,12 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
   return (
     <Form onFinish={handleSubmit} ref={formRef}>
       <Form.Item className="!mb-[12px]" name="content">
-        <Input.TextArea
-          placeholder="Viết thảo luận của bạn"
-          autoSize={{ minRows: 3 }}
-          onChange={(e) => setDisabled(!e.target.value)}
+        <InitializedMDXEditor
+          contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
+          markdown=""
+          placeholder="Mô tả nhiệm vụ"
+          plugins={[linkPlugin()]}
+          onChange={(markdown) => setDisabled(!markdown)}
         />
       </Form.Item>
 

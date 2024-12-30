@@ -1,8 +1,9 @@
 'use client'
 
 import { useAsyncEffect } from '@/libs/hook'
-import { Table } from 'antd'
+import { Table, TableProps } from 'antd'
 import React, { useState } from 'react'
+import { Converter } from 'showdown'
 import { getTaskReportsAction } from './action'
 
 type WorkflowDocsTableProps = {
@@ -15,6 +16,7 @@ const WorkflowDocsTable: React.FC<WorkflowDocsTableProps> = ({
   stageName,
 }) => {
   const [taskReports, setTaskReports] = useState<any[]>([])
+  const converter = new Converter()
 
   useAsyncEffect(async () => {
     if (stageId) {
@@ -31,10 +33,15 @@ const WorkflowDocsTable: React.FC<WorkflowDocsTableProps> = ({
     return prevKeyLength > currentKeyLength ? prev : current
   }, {})
 
-  const columns = Object.keys(columnKeys || {})?.map((report: string) => ({
-    title: report.toLocaleUpperCase(),
-    dataIndex: report.toLocaleLowerCase(),
-  }))
+  const columns: TableProps['columns'] = Object.keys(columnKeys || {})?.map(
+    (report: string) => ({
+      title: report.toLocaleUpperCase(),
+      dataIndex: report.toLocaleLowerCase(),
+      render: (value) => (
+        <div dangerouslySetInnerHTML={{ __html: converter.makeHtml(value) }} />
+      ),
+    }),
+  )
 
   const data: any[] = taskReports?.map((report: any) => {
     const newReport = Object.entries(report).map(([key, value]: any) => [

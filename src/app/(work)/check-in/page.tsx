@@ -1,4 +1,5 @@
 import { getAccounts, getAttendances, getMe } from '@/libs/data'
+import { getWorkSchedule } from '@/libs/schedule'
 import CheckInContent from './components/CheckInContent'
 import CheckInFiltered from './components/CheckInFiltered'
 
@@ -8,12 +9,13 @@ const page: React.FC<any> = async (prop: {
 }) => {
   const searchParams = await prop.searchParams
 
-  const [attendances, members, user] = await Promise.all([
+  const [attendances, members, user, workSchedule] = await Promise.all([
     getAttendances({
       date: searchParams?.date || '',
     }),
     getAccounts(),
     getMe(),
+    getWorkSchedule(),
   ])
 
   const day = String(searchParams?.date).split('-').pop()
@@ -32,6 +34,7 @@ const page: React.FC<any> = async (prop: {
             members,
             day,
             user,
+            workSchedule,
           }}
         />
       </div>

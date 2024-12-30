@@ -168,8 +168,15 @@ export const base64ToFile = (base64: string) => {
   return new File([byteArray], 'upload', { type: mimeString })
 }
 
+export const extractLinks = (htmlString: string) => {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(htmlString, 'text/html')
+  const links = Array.from(doc.querySelectorAll('a')).map((a) => a.href)
+  return links
+}
+
 export const generateUrl = (str: string) => {
-  const urlRegex = /https?:\/\/[^\s]+/g
+  const urlRegex = /(https?:\/\/[^\s]+)/g
 
   return str.match(urlRegex)
 }

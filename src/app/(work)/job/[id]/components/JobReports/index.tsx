@@ -1,11 +1,12 @@
 'use client'
 
 import { withApp } from '@/hoc'
-import { generateUrl } from '@/libs/utils'
+import { extractLinks } from '@/libs/utils'
 import { CheckOutlined, CopyOutlined } from '@ant-design/icons'
 import { App, Card, List, Tooltip } from 'antd'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import { Converter } from 'showdown'
 
 type JobReportsProps = {
   reports?: any
@@ -14,6 +15,7 @@ type JobReportsProps = {
 const JobReports: React.FC<JobReportsProps> = ({ reports }) => {
   const { message } = App.useApp()
   const [uri, setUri] = useState('')
+  const converter = new Converter()
 
   useEffect(() => {
     if (uri) {
@@ -34,7 +36,7 @@ const JobReports: React.FC<JobReportsProps> = ({ reports }) => {
           item?.fields?.length > 0 && (
             <>
               {item?.fields?.map((i: any) => {
-                const urlSeparates = generateUrl(i?.value)
+                const urlSeparates = extractLinks(converter.makeHtml(i?.value))
 
                 if (!urlSeparates) return <></>
 
@@ -48,30 +50,35 @@ const JobReports: React.FC<JobReportsProps> = ({ reports }) => {
                       title={item?.name}
                       type="inner"
                     >
-                      {urlSeparates.map((url) => (
-                        <div key={url} className="flex items-center gap-[8px]">
-                          <Tooltip title={url}>
-                            <Link
-                              className="line-clamp-1 break-all"
-                              href={url}
-                              target="_blank"
-                            >
-                              {url}
-                            </Link>
-                          </Tooltip>
-                          {uri === url ? (
-                            <CheckOutlined className="text-[#42b814]" />
-                          ) : (
-                            <CopyOutlined
-                              onClick={() => {
-                                navigator.clipboard.writeText(url)
-                                setUri(url)
-                                message.success('Đã sao chép.')
-                              }}
-                            />
-                          )}
-                        </div>
-                      ))}
+                      {urlSeparates.map((url) => {
+                        return (
+                          <div
+                            key={url}
+                            className="flex items-center gap-[8px]"
+                          >
+                            <Tooltip title={url}>
+                              <Link
+                                className="line-clamp-1 break-all"
+                                href={url}
+                                target="_blank"
+                              >
+                                {url}
+                              </Link>
+                            </Tooltip>
+                            {uri === url ? (
+                              <CheckOutlined className="text-[#42b814]" />
+                            ) : (
+                              <CopyOutlined
+                                onClick={() => {
+                                  navigator.clipboard.writeText(url)
+                                  setUri(url)
+                                  message.success('Đã sao chép.')
+                                }}
+                              />
+                            )}
+                          </div>
+                        )
+                      })}
                     </Card>
                   )
                 )

@@ -1,6 +1,7 @@
 'use client'
 
 import { randomColor } from '@/libs/utils'
+import { SettingOutlined } from '@ant-design/icons'
 import {
   Avatar,
   Calendar,
@@ -9,6 +10,7 @@ import {
   Dropdown,
   Table,
   TableProps,
+  Tabs,
 } from 'antd'
 import { createStyles } from 'antd-style'
 import locale from 'antd/locale/vi_VN'
@@ -17,6 +19,8 @@ import dayjs from 'dayjs'
 import { times } from 'lodash'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
+import CheckInSchedule from './CheckInSchedule'
+import CheckInScheduleModalForm from './CheckInScheduleModalForm'
 import CheckInStatistics from './CheckInStatistics'
 
 type CheckInTableProps = TableProps & {
@@ -45,6 +49,7 @@ const GLOBAL_BAN = ['Admin', 'cinren16', 'Mạnh', 'Nghĩa IT', 'Nhật']
 const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const [mode, setMode] = useState('dashboard')
 
   const today = useMemo(() => new Date(), [])
   const [date, setDate] = useState<any>(dayjs(today))
@@ -113,11 +118,15 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
     })),
   ]
 
-  const { user } = options
+  const { user, workSchedule } = options
 
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
-    ?.filter((m: any) => user?.role !== 'Admin lv2' && user?.id === m?.id)
+    ?.filter(
+      (m: any) =>
+        user?.role === 'Admin lv2' ||
+        (user?.role !== 'Admin lv2' && user?.id === m?.id),
+    )
     ?.map((m: any) => {
       const checkInHistories = options?.attendances?.filter(
         (a: any) => a?.account_id === m?.id,
@@ -169,17 +178,26 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
       <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
         <div
           className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('form=register')}
+          onClick={() => query('register-time-off')}
         >
           Đăng Ký Nghỉ
         </div>
-        <div className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]">
+        <div
+          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]"
+          onClick={() => query('change-shift')}
+        >
           Thay Đổi Phân Ca
         </div>
-        <div className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]">
+        <div
+          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]"
+          onClick={() => query('change-check-in')}
+        >
           Sửa Giờ Vào Ra
         </div>
-        <div className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]">
+        <div
+          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]"
+          onClick={() => query('register-ot')}
+        >
           Đăng Ký OT
         </div>
       </div>
@@ -189,13 +207,42 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
   return (
     <div>
       {user?.role === 'Admin lv2' ? (
-        <Table
-          className={clsx('w-full overflow-auto', styles.customTable)}
-          columns={checkInColumns}
-          dataSource={checkInDataSource}
-          rowHoverable={false}
-          {...props}
-        />
+        <div className="rounded bg-[#fff] p-[16px]">
+          <Tabs
+            tabBarExtraContent={
+              mode === 'schedule' && (
+                <CheckInScheduleModalForm
+                  initialValues={{
+                    workSchedule,
+                  }}
+                >
+                  <SettingOutlined className="cursor-pointer text-[18px]" />
+                </CheckInScheduleModalForm>
+              )
+            }
+            items={[
+              {
+                key: 'dashboard',
+                label: 'Tổng quan',
+                children: (
+                  <Table
+                    className={clsx('w-full overflow-auto', styles.customTable)}
+                    columns={checkInColumns}
+                    dataSource={checkInDataSource}
+                    rowHoverable={false}
+                    {...props}
+                  />
+                ),
+              },
+              {
+                key: 'schedule',
+                label: 'Lịch làm việc',
+                children: <CheckInSchedule schedule={workSchedule} />,
+              },
+            ]}
+            onChange={(key) => setMode(key)}
+          />
+        </div>
       ) : (
         <ConfigProvider locale={locale}>
           <div className="space-y-[16px]">

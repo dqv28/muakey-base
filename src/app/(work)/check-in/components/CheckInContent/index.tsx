@@ -11,7 +11,7 @@ const CheckInContent: React.FC<CheckInContentProps> = ({
   hasForm,
   options,
 }) => {
-  const { attendances, members, day, user } = options
+  const { attendances, members, day, user, workSchedule } = options
 
   switch (String(hasForm)) {
     case 'true':
@@ -25,6 +25,7 @@ const CheckInContent: React.FC<CheckInContentProps> = ({
             members: members?.filter((mem: any) => mem?.type !== 'department'),
             day: Number(day || 0),
             user,
+            workSchedule,
           }}
           scroll={{
             x: 'max-content',

@@ -7,6 +7,7 @@ import { App, Avatar, ConfigProvider, List, ListProps } from 'antd'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import { Converter } from 'showdown'
 import JobCommentCollapse from './JobCommentCollapse'
 import { deleteCommentAction } from './action'
 
@@ -16,6 +17,7 @@ const JobCommentList: React.FC<JobCommentListProps> = (props) => {
   const { message, modal } = App.useApp()
   const router = useRouter()
   const [open, setOpen] = useState(false)
+  const convert = new Converter()
 
   const handleDelete = async (id: number) => {
     try {
@@ -45,7 +47,9 @@ const JobCommentList: React.FC<JobCommentListProps> = (props) => {
             <div className="flex items-start gap-[20px]">
               <Avatar
                 src={item?.avatar}
-                style={{ backgroundColor: randomColor(item?.full_name || '') }}
+                style={{
+                  backgroundColor: randomColor(item?.full_name || ''),
+                }}
                 size={40}
               >
                 {String(item?.full_name).charAt(0).toLocaleUpperCase()}
@@ -74,7 +78,9 @@ const JobCommentList: React.FC<JobCommentListProps> = (props) => {
 
                 <div
                   className="mt-[8px]"
-                  dangerouslySetInnerHTML={{ __html: item?.content }}
+                  dangerouslySetInnerHTML={{
+                    __html: convert.makeHtml(item?.content),
+                  }}
                 />
 
                 <JobCommentCollapse comment={item} />
