@@ -1,5 +1,6 @@
 'use client'
 
+import { randomColor } from '@/libs/utils'
 import { Avatar } from '@/ui'
 import { List, Progress } from 'antd'
 import clsx from 'clsx'
@@ -66,6 +67,11 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({
                         src={stage?.account?.avatar}
                         size={20}
                         shape="circle"
+                        style={{
+                          backgroundColor: randomColor(
+                            String(stage?.account?.full_name),
+                          ),
+                        }}
                       >
                         {String(stage?.account?.full_name)
                           .charAt(0)

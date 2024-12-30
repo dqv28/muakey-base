@@ -6,6 +6,7 @@ import { useAsyncEffect } from '@/libs/hook'
 import { Col, Row, toast } from '@/ui'
 import { PlusOutlined } from '@/ui/icons'
 import {
+  closestCenter,
   DndContext,
   DragEndEvent,
   DragStartEvent,
@@ -325,6 +326,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
     >
       <DndContext
         sensors={sensors}
+        collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >

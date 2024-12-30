@@ -46,7 +46,7 @@ const DepartmentList: React.FC<{
                 rootClassName="!z-50"
                 trigger={['click']}
                 dropdownRender={() => (
-                  <div className="mt-[4px] rounded-[4px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
+                  <div className="-[0_2px_6px_0_rgba(0,0,0,0.1)] mt-[4px] rounded-[4px] bg-[#fff] p-[2px]">
                     <DepartmentModalForm
                       action="edit"
                       options={{

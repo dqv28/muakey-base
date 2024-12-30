@@ -1,11 +1,23 @@
 'use client'
 
 import { randomColor } from '@/libs/utils'
-import { Avatar, Divider, Table, TableProps } from 'antd'
+import {
+  Avatar,
+  Calendar,
+  ConfigProvider,
+  Divider,
+  Dropdown,
+  Table,
+  TableProps,
+} from 'antd'
 import { createStyles } from 'antd-style'
+import locale from 'antd/locale/vi_VN'
+import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { times } from 'lodash'
-import React from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useEffect, useMemo, useState } from 'react'
+import CheckInStatistics from './CheckInStatistics'
 
 type CheckInTableProps = TableProps & {
   options?: any
@@ -28,7 +40,14 @@ const useStyle = createStyles(({ css }) => {
   }
 })
 
+const GLOBAL_BAN = ['Admin', 'cinren16', 'Mạnh', 'Nghĩa IT', 'Nhật']
+
 const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  const today = useMemo(() => new Date(), [])
+  const [date, setDate] = useState<any>(dayjs(today))
   const { styles } = useStyle()
   const year = new Date().getFullYear()
   const month = options?.day || new Date().getMonth() + 1
@@ -94,46 +113,139 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
     })),
   ]
 
-  const checkInDataSource = options?.members?.map((m: any) => {
-    const checkInHistories = options?.attendances?.filter(
-      (a: any) => a?.account_id === m?.id,
-    )
+  const { user } = options
 
-    const fields = times(dateNumber, (num): any => {
-      const checkIn = checkInHistories?.find(
-        (c: any) => new Date(c?.checkin).getDate() == num + 1,
+  const checkInDataSource = options?.members
+    ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
+    ?.filter((m: any) => user?.role !== 'Admin lv2' && user?.id === m?.id)
+    ?.map((m: any) => {
+      const checkInHistories = options?.attendances?.filter(
+        (a: any) => a?.account_id === m?.id,
       )
 
-      const checkInValue = checkIn
-        ? [
-            dayjs(checkIn?.checkin).format('HH:mm'),
-            checkIn?.checkout ? dayjs(checkIn?.checkout).format('HH:mm') : null,
-          ]
-        : null
+      const fields = times(dateNumber, (num): any => {
+        const checkIn = checkInHistories?.find(
+          (c: any) => new Date(c?.checkin).getDate() == num + 1,
+        )
 
-      return [
-        `${num + 1}/${month}`,
-        { checkInValue, on_time: checkIn?.on_time },
-      ]
+        const checkInValue = checkIn
+          ? [
+              dayjs(checkIn?.checkin).format('HH:mm'),
+              checkIn?.checkout
+                ? dayjs(checkIn?.checkout).format('HH:mm')
+                : null,
+            ]
+          : null
+
+        return [
+          `${num + 1}/${month}`,
+          { checkInValue, on_time: checkIn?.on_time },
+        ]
+      })
+
+      return {
+        member: {
+          fullName: m?.full_name,
+          avatar: m?.avatar,
+        },
+        ...Object.fromEntries(fields),
+      }
     })
 
-    return {
-      member: {
-        fullName: m?.full_name,
-        avatar: m?.avatar,
-      },
-      ...Object.fromEntries(fields),
-    }
-  })
+  useEffect(() => {
+    setDate(dayjs(searchParams?.get('date') || today))
+  }, [today, searchParams])
+
+  const query = (p: string) => {
+    const url = new URLSearchParams(searchParams.toString())
+
+    url.set('form', String(p))
+
+    router.push(`?${url.toString()}`)
+  }
+
+  const dropdownRender = () => {
+    return (
+      <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
+        <div
+          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]"
+          onClick={() => query('form=register')}
+        >
+          Đăng Ký Nghỉ
+        </div>
+        <div className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]">
+          Thay Đổi Phân Ca
+        </div>
+        <div className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]">
+          Sửa Giờ Vào Ra
+        </div>
+        <div className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]">
+          Đăng Ký OT
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <Table
-      className={styles.customTable}
-      columns={checkInColumns}
-      dataSource={checkInDataSource}
-      rowHoverable={false}
-      {...props}
-    />
+    <div>
+      {user?.role === 'Admin lv2' ? (
+        <Table
+          className={clsx('w-full overflow-auto', styles.customTable)}
+          columns={checkInColumns}
+          dataSource={checkInDataSource}
+          rowHoverable={false}
+          {...props}
+        />
+      ) : (
+        <ConfigProvider locale={locale}>
+          <div className="space-y-[16px]">
+            {user?.role !== 'Admin lv2' && <CheckInStatistics />}
+            <div className="bg-[#fff] p-[16px]">
+              <div className="text-center text-[14px] font-[500]">
+                CHI TIẾT NGÀY CÔNG
+              </div>
+              <Divider className="!my-[12px]" />
+              <Calendar
+                headerRender={() => <></>}
+                fullCellRender={(current) => {
+                  const timestamp = dayjs(current).format('D/M')
+                  const info = checkInDataSource[0][String(timestamp)] || []
+
+                  return (
+                    <Dropdown
+                      trigger={['click']}
+                      dropdownRender={dropdownRender}
+                    >
+                      <div
+                        className={clsx(
+                          'mx-[2px] mt-[4px] flex aspect-[220/160] size-full flex-col justify-between border-x border-x-[#fff] px-[8px] pb-[8px] pt-[6px]',
+                          info?.checkInValue?.[0]
+                            ? info?.on_time
+                              ? 'border-t border-t-[#deffdb] bg-[#deffdb]'
+                              : 'border-t border-t-[#ffe8e8] bg-[#ffe8e8]'
+                            : 'border-t border-t-[#eee]',
+                        )}
+                      >
+                        <span>{String(dayjs(current).format('DD/MM'))}</span>
+                        <div className="flex items-center justify-between gap-[8px]">
+                          {info.checkInValue?.[0] && (
+                            <span>Vào: {info.checkInValue?.[0]}</span>
+                          )}
+                          {info.checkInValue?.[1] && (
+                            <span>Ra: {info.checkInValue?.[1]}</span>
+                          )}
+                        </div>
+                      </div>
+                    </Dropdown>
+                  )
+                }}
+                value={date}
+              />
+            </div>
+          </div>
+        </ConfigProvider>
+      )}
+    </div>
   )
 }
 

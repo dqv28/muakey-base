@@ -1,6 +1,6 @@
-import { getAccounts, getAttendances } from '@/libs/data'
+import { getAccounts, getAttendances, getMe } from '@/libs/data'
+import CheckInContent from './components/CheckInContent'
 import CheckInFiltered from './components/CheckInFiltered'
-import CheckInTable from './components/CheckInTable'
 
 const page: React.FC<any> = async (prop: {
   params: any
@@ -8,10 +8,13 @@ const page: React.FC<any> = async (prop: {
 }) => {
   const searchParams = await prop.searchParams
 
-  const attendances = await getAttendances({
-    date: searchParams?.date || '',
-  })
-  const members = await getAccounts()
+  const [attendances, members, user] = await Promise.all([
+    getAttendances({
+      date: searchParams?.date || '',
+    }),
+    getAccounts(),
+    getMe(),
+  ])
 
   const day = String(searchParams?.date).split('-').pop()
 
@@ -22,18 +25,14 @@ const page: React.FC<any> = async (prop: {
         <CheckInFiltered />
       </div>
       <div className="h-[calc(100vh-72px)] overflow-auto p-[16px]">
-        <CheckInTable
+        <CheckInContent
+          hasForm={!!searchParams?.form}
           options={{
             attendances,
-            members: members?.filter((mem: any) => mem?.type !== 'department'),
-            day: Number(day || 0),
+            members,
+            day,
+            user,
           }}
-          scroll={{
-            x: 'max-content',
-          }}
-          pagination={false}
-          bordered
-          rootClassName="!customize-scroll"
         />
       </div>
     </div>

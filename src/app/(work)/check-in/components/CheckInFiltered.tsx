@@ -25,11 +25,14 @@ const CheckInFiltered: React.FC<CheckInFilteredProps> = () => {
 
   return (
     <ConfigProvider locale={locale}>
-      <DatePicker
-        style={{ width: 160 }}
-        picker="month"
-        onChange={handleChange}
-      />
+      <div className="flex items-center gap-[8px]">
+        {/* <DatePicker.RangePicker /> */}
+        <DatePicker
+          style={{ width: 200 }}
+          picker="month"
+          onChange={handleChange}
+        />
+      </div>
     </ConfigProvider>
   )
 }
