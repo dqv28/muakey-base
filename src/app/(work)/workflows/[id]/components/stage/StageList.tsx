@@ -42,6 +42,7 @@ export const StageContext = createContext<any>({})
 
 const StageList: React.FC<StageListProps> = ({ members, options }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
+  const [activeItem, setActiveItem] = useState<any>()
   const [open, setOpen] = useState(false)
   const [doneOpen, setDoneOpen] = useState(false)
   const [reports, setReports] = useState<any[]>([])
@@ -161,8 +162,11 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
   }
 
   const handleDragStart = (e: DragStartEvent) => {
-    const { active } = e
-    setActiveId(active.id)
+    const {
+      active: { id: activeId, data },
+    } = e
+    setActiveId(activeId)
+    setActiveItem(data.current)
   }
 
   const handleDragEnd = async (e: DragEndEvent) => {
@@ -183,8 +187,6 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
     } = over
 
     if (!overData || !activeData) return
-
-    console.log(overData)
 
     const activeIndex = stages?.find(
       (stage: any) => stage.id === `stage_${activeData.stage_id}`,
@@ -316,6 +318,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
           items={stages}
           options={{
             user,
+            activeItem,
           }}
         />
       </DndContext>

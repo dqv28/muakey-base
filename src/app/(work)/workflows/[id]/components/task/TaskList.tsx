@@ -27,7 +27,7 @@ const TaskList: React.FC<TaskListProps> = ({
   dataSource,
   ...rest
 }) => {
-  const { activeId, members } = useContext(StageContext)
+  const { members } = useContext(StageContext)
   const { stages, setStages } = useContext(WorkflowContext)
 
   const currentStage = stages?.find((s: any) => s?.id === stageId)
@@ -70,54 +70,62 @@ const TaskList: React.FC<TaskListProps> = ({
     [setStages, stageId],
   )
 
-  return (
-    <SortableContext items={sortItems} strategy={horizontalListSortingStrategy}>
-      <div className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]">
-        <ConfigProvider
-          theme={{
-            components: {
-              List: {
-                emptyTextPadding: 0,
-              },
-            },
-          }}
-        >
-          <List
-            dataSource={currentStage?.tasks}
-            renderItem={(task: any) => (
-              <>
-                <TaskItem
-                  task={task}
-                  isCompleted={currentStage?.index === 1}
-                  isFailed={currentStage?.index === 0}
-                  members={members}
-                  expired={currentStage?.expired_after_hours}
-                  onDelete={() => handleDelete(task?.id)}
-                  userId={userId}
-                  options={options}
-                />
+  const { activeItem } = options
 
-                {activeId === task?.id && (
-                  <DragOverlay>
-                    <TaskItem
-                      task={task}
-                      isCompleted={currentStage?.index === 1}
-                      isFailed={currentStage?.index === 0}
-                      members={members}
-                      expired={currentStage?.expired_after_hours}
-                    />
-                  </DragOverlay>
-                )}
-              </>
-            )}
-            locale={{
-              emptyText: <></>,
+  return (
+    <>
+      <SortableContext
+        items={sortItems}
+        strategy={horizontalListSortingStrategy}
+      >
+        <div className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]">
+          <ConfigProvider
+            theme={{
+              components: {
+                List: {
+                  emptyTextPadding: 0,
+                },
+              },
             }}
-            {...rest}
+          >
+            <List
+              dataSource={currentStage?.tasks}
+              renderItem={(task: any) => (
+                <>
+                  <TaskItem
+                    task={task}
+                    isCompleted={currentStage?.index === 1}
+                    isFailed={currentStage?.index === 0}
+                    members={members}
+                    expired={currentStage?.expired_after_hours}
+                    onDelete={() => handleDelete(task?.id)}
+                    userId={userId}
+                    options={options}
+                  />
+                </>
+              )}
+              locale={{
+                emptyText: <></>,
+              }}
+              {...rest}
+            />
+          </ConfigProvider>
+        </div>
+      </SortableContext>
+      <DragOverlay>
+        {activeItem && activeItem?.id && (
+          <TaskItem
+            key={activeItem?.id}
+            task={activeItem}
+            members={members}
+            expired={currentStage?.expired_after_hours}
+            style={{
+              zIndex: 9999,
+            }}
           />
-        </ConfigProvider>
-      </div>
-    </SortableContext>
+        )}
+      </DragOverlay>
+    </>
   )
 }
 

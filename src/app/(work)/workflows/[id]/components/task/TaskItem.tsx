@@ -40,6 +40,7 @@ export type TaskItemProps = {
   onDelete?: () => Promise<void>
   userId?: number
   options?: any
+  style?: React.CSSProperties
 }
 
 const TaskItem: React.FC<TaskItemProps> = memo(
@@ -52,8 +53,9 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     onDelete,
     userId,
     options,
+    style: externalStyle,
   }) => {
-    console.log('RE-RENDER CARD')
+    // console.log('RE-RENDER CARD')
 
     const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
     const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
@@ -73,7 +75,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     const style: React.CSSProperties = {
       transform: CSS.Transform.toString(transform),
       transition,
-      opacity: isDragging ? 0.5 : undefined,
+      // opacity: isDragging ? 0.5 : 1,
     }
 
     const user = members?.filter((u: any) => u?.id === task.account_id)?.[0]
@@ -183,10 +185,10 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     const time = dayjs.duration(Math.abs(t))
 
     return (
-      <div className="relative">
+      <div className="relative" style={externalStyle}>
         <div
           className={clsx(
-            'border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !transition-all',
+            'border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !opacity-100 !transition-all',
             isCompleted
               ? 'bg-[#2bbf3d] text-[#fff]'
               : isFailed

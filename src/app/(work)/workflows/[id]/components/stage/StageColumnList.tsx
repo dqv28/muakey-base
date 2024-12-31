@@ -18,7 +18,7 @@ const StageColumnList: React.FC<StageColumnListProps> = ({
   items,
   options,
 }) => {
-  const { user } = options
+  const { user, activeItem } = options
 
   const sortItems =
     items && items?.length > 0 ? items?.map((item: any) => item.id) : []
@@ -35,10 +35,11 @@ const StageColumnList: React.FC<StageColumnListProps> = ({
         userId={user?.id}
         options={{
           role: user?.role,
+          activeItem,
         }}
       />
     ))
-  }, [items, user])
+  }, [items, user, activeItem])
 
   return (
     <SortableContext items={sortItems} strategy={horizontalListSortingStrategy}>
