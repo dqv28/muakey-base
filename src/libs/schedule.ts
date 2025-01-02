@@ -6,7 +6,7 @@ export const getWorkSchedule = async (query?: any) =>
     .catch(() => [])
 
 export const updateWorkSchedule = async (data: any) =>
-  requestWithAuthorized('day-off', {
+  requestWithAuthorized('day-off/1', {
     method: 'PUT',
     data,
   }).then((data) => data)

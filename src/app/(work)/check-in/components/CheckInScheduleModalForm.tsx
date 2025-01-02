@@ -20,21 +20,25 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [dateStrings, setDateStrings] = useState<string[]>([])
   const { message } = App.useApp()
   const router = useRouter()
+
+  const [isRange, setIsRange] = useState(false)
 
   const { workSchedule } = initialValues
 
   const workScheduleFiltered = workSchedule?.filter(
     (s: any) => s?.go_to_work === 0,
   )
-
   const handleSubmit = async (formData?: any) => {
     setLoading(true)
 
+    const { ids, ...restFormData } = formData
+
     const nextSchedule = await addWorkScheduleAction()
 
-    const ids = formData?.ids?.map((date: Date) => {
+    const dayOffIds = formData?.ids?.map((date: Date) => {
       const dateStr = String(dayjs(date).format('YYYY-MM-DD'))
 
       const schedule = [...workSchedule, ...nextSchedule]?.find(
@@ -44,10 +48,15 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
       return schedule?.id || null
     })
 
+    const dayWorkIds = workScheduleFiltered
+      ?.filter((w: any) => !dateStrings?.includes(w?.day_of_week))
+      .map((w: any) => w?.id)
+
     try {
       const { message: msg, errors } = await updateWorkScheduleAction({
-        ...formData,
-        ids,
+        ...restFormData,
+        is_holiday: dayOffIds,
+        is_not_holiday: dayWorkIds,
       })
 
       if (errors) {
@@ -81,7 +90,9 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
           <Form
             layout="vertical"
             initialValues={{
-              ids: workScheduleFiltered?.map((s: any) => dayjs(s?.day_of_week)),
+              ids: !isRange
+                ? workScheduleFiltered?.map((s: any) => dayjs(s?.day_of_week))
+                : undefined,
             }}
             onFinish={handleSubmit}
           >
@@ -102,7 +113,26 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
             },
           ]}
         >
-          <DatePicker multiple locale={locale} />
+          {!isRange ? (
+            <DatePicker
+              multiple
+              locale={locale}
+              onChange={(_, dateStr) =>
+                setDateStrings(
+                  typeof dateStr === 'string' ? [dateStr] : [...dateStr],
+                )
+              }
+            />
+          ) : (
+            <DatePicker.RangePicker
+              locale={locale}
+              onChange={(_, dateStr) =>
+                setDateStrings(
+                  typeof dateStr === 'string' ? [dateStr] : [...dateStr],
+                )
+              }
+            />
+          )}
         </Form.Item>
         <Form.Item name="description" label="Ghi chú">
           <Input.TextArea

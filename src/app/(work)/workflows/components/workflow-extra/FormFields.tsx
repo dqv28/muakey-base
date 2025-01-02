@@ -14,7 +14,7 @@ const FormFields: React.FC<{
   useAsyncEffect(async () => {
     const accountList = await getAccountsAction()
 
-    setAccounts([...departments, ...accountList])
+    setAccounts([...(departments || []), ...accountList])
   }, [])
 
   return (

@@ -1,41 +1,17 @@
-import { Col, Divider, Row, Statistic } from 'antd'
+import { Col, Divider, Row } from 'antd'
 import React from 'react'
-
-type CheckInStatisticsProps = {}
 
 type CheckInDataType = {
   title?: React.ReactNode
   value?: string | number
 }
 
-const checkInData: CheckInDataType[] = [
-  {
-    title: 'Công chuẩn',
-    value: 26,
-  },
-  {
-    title: 'Công làm việc thực tế',
-    value: 0,
-  },
-  {
-    title: 'Nghỉ có hưởng lương',
-    value: 0,
-  },
-  {
-    title: 'Nghỉ không hưởng lương',
-    value: 0,
-  },
-  {
-    title: 'Tổng OT',
-    value: 0,
-  },
-  {
-    title: 'Tổng công hưởng lương',
-    value: 0,
-  },
-]
+type CheckInStatisticsProps = {
+  items?: CheckInDataType[]
+}
 
-const CheckInStatistics: React.FC<CheckInStatisticsProps> = (props) => {
+const CheckInStatistics: React.FC<CheckInStatisticsProps> = ({ items }) => {
+  console.log(items)
   return (
     <div className="bg-[#fff] p-[16px]">
       <div className="text-center text-[14px] font-[500]">
@@ -44,18 +20,15 @@ const CheckInStatistics: React.FC<CheckInStatisticsProps> = (props) => {
       <Divider className="!my-[12px]" />
 
       <Row gutter={16}>
-        {checkInData.map((data) => (
-          <Col span={4} key={data.value}>
-            <Statistic
-              className="flex flex-col items-center justify-center"
-              title={data.title}
-              value={data.value}
-              valueStyle={{
-                fontSize: 14,
-              }}
-            />
-          </Col>
-        ))}
+        {items &&
+          items.map((item) => (
+            <Col span={4} key={item.value}>
+              <div className="flex flex-col items-center justify-center">
+                <span className="text-[#00000073]">{item.title}</span>
+                <span>{item.value}</span>
+              </div>
+            </Col>
+          ))}
       </Row>
     </div>
   )

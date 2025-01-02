@@ -15,7 +15,9 @@ const page: React.FC<any> = async (prop: {
     }),
     getAccounts(),
     getMe(),
-    getWorkSchedule(),
+    getWorkSchedule({
+      date: searchParams?.date || '',
+    }),
   ])
 
   const day = String(searchParams?.date).split('-').pop()
