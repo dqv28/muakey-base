@@ -243,7 +243,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
   return (
     <div>
       {user?.role === 'Admin lv2' ? (
-        <div className="rounded bg-[#fff] p-[16px]">
+        <div className="rounded bg-[#fff]">
           <Tabs
             tabBarExtraContent={
               mode === 'schedule' && (
@@ -252,14 +252,16 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
                     workSchedule,
                   }}
                 >
-                  <SettingOutlined className="cursor-pointer text-[18px]" />
+                  <div className="px-[16px]">
+                    <SettingOutlined className="cursor-pointer text-[18px]" />
+                  </div>
                 </CheckInScheduleModalForm>
               )
             }
             items={[
               {
                 key: 'dashboard',
-                label: 'Tổng quan',
+                label: <div className="px-[16px]">Tổng quan</div>,
                 children: (
                   <Table
                     className={clsx('w-full overflow-auto', styles.customTable)}
@@ -272,7 +274,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
               },
               {
                 key: 'schedule',
-                label: 'Lịch làm việc',
+                label: <div className="px-[16px]">Lịch làm việc</div>,
                 children: <CheckInSchedule schedule={workSchedule} />,
               },
             ]}
