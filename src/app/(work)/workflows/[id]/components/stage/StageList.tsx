@@ -5,8 +5,11 @@ import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { toast } from '@/ui'
 import {
+  defaultDropAnimationSideEffects,
   DndContext,
   DragEndEvent,
+  DragOverlay,
+  DragOverlayProps,
   DragStartEvent,
   MouseSensor,
   TouchSensor,
@@ -14,7 +17,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import { App } from 'antd'
+import { App, Row } from 'antd'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
 import React, {
@@ -27,6 +30,7 @@ import React, {
 } from 'react'
 import { Converter } from 'showdown'
 import { addTaskReportAction, moveStageAction } from '../../../action'
+import TaskItem from '../task/TaskItem'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import { getReportFieldsByWorkflowIdAction } from './action'
 import StageColumnList from './StageColumnList'
@@ -42,6 +46,7 @@ export const StageContext = createContext<any>({})
 
 const StageList: React.FC<StageListProps> = ({ members, options }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
+  const [currentStage, setCurrentStage] = useState<any>()
   const [activeItem, setActiveItem] = useState<any>()
   const [open, setOpen] = useState(false)
   const [doneOpen, setDoneOpen] = useState(false)
@@ -51,9 +56,9 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
   const converter = new Converter()
 
   const { message } = App.useApp()
-  const { user } = options
+  const { user, stages } = options
 
-  const { stages, setStages } = useContext(WorkflowStageContext)
+  const { setStages } = useContext(WorkflowStageContext)
   const params = useParams()
 
   const failedStageId = Number(
@@ -163,10 +168,19 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
 
   const handleDragStart = (e: DragStartEvent) => {
     const {
-      active: { id: activeId, data },
+      active: {
+        id: activeId,
+        data: { current },
+      },
     } = e
+
+    const stage = stages?.find(
+      (s: any) => s.id === current?.stage_id || activeId,
+    )
+
+    setCurrentStage(stage)
     setActiveId(activeId)
-    setActiveItem(data.current)
+    setActiveItem(current)
   }
 
   const handleDragEnd = async (e: DragEndEvent) => {
@@ -304,46 +318,75 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
     activeRef.current = activeId
   }, [dragEvent, params?.id, activeId])
 
+  const dropAnimation: DragOverlayProps['dropAnimation'] = {
+    sideEffects: defaultDropAnimationSideEffects({
+      styles: {
+        active: {
+          opacity: '0.5',
+        },
+      },
+    }),
+  }
+
   return (
-    <StageContext.Provider
-      value={{ activeId, setActiveId, members, failedStageId }}
+    <DndContext
+      sensors={sensors}
+      // collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
     >
-      <DndContext
-        sensors={sensors}
-        // collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
+      <StageContext.Provider
+        value={{ activeId, setActiveId, members, failedStageId }}
       >
-        <StageColumnList
-          items={stages}
-          options={{
-            user,
-            activeItem,
+        <Row className="h-full w-max" wrap={false}>
+          <StageColumnList
+            items={stages}
+            options={{
+              user,
+              activeItem,
+            }}
+          />
+        </Row>
+
+        {reports?.length > 0 && activeRef.current === activeId && (
+          <TaskReportsModalForm
+            open={open}
+            onCancel={() => setOpen(false)}
+            onSubmit={(values) => handleSubmit(values)}
+            reports={reports}
+          />
+        )}
+        <TaskDoneModalForm
+          open={doneOpen}
+          onCancel={() => setDoneOpen(false)}
+          taskId={Number(activeId)}
+          onSubmit={async () => {
+            if (!dragEvent) return
+
+            await handleDrag(dragEvent)
           }}
+          onOk={() => setDoneOpen(false)}
+          initialValues={generateInitialValues()}
         />
-      </DndContext>
 
-      {reports?.length > 0 && activeRef.current === activeId && (
-        <TaskReportsModalForm
-          open={open}
-          onCancel={() => setOpen(false)}
-          onSubmit={(values) => handleSubmit(values)}
-          reports={reports}
-        />
-      )}
-      <TaskDoneModalForm
-        open={doneOpen}
-        onCancel={() => setDoneOpen(false)}
-        taskId={Number(activeId)}
-        onSubmit={async () => {
-          if (!dragEvent) return
-
-          await handleDrag(dragEvent)
-        }}
-        onOk={() => setDoneOpen(false)}
-        initialValues={generateInitialValues()}
-      />
-    </StageContext.Provider>
+        <DragOverlay dropAnimation={dropAnimation}>
+          {activeItem && activeItem?.id && (
+            <TaskItem
+              key={activeItem?.id}
+              task={activeItem}
+              isCompleted={currentStage?.index === 1}
+              isFailed={currentStage?.index === 0}
+              members={members}
+              expired={currentStage?.expired_after_hours}
+              userId={user?.id}
+              options={{
+                role: user?.role,
+              }}
+            />
+          )}
+        </DragOverlay>
+      </StageContext.Provider>
+    </DndContext>
   )
 }
 

@@ -9,6 +9,7 @@ import PageHeader from '../../components/PageHeader'
 import WorkflowTabs from '../../components/WorkflowTabs'
 import StageModalForm from './stage/StageModalForm'
 import TaskModalForm from './task/TaskModalForm'
+import WorkflowContent from './WorkflowContent'
 
 type WorkflowPageLayoutProps = {
   workflow?: any
@@ -37,6 +38,8 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
   const isAuth =
     options?.user?.role === 'Admin lv2' ||
     workflow?.members?.map((mem: any) => mem?.id).includes(options?.user.id)
+
+  const { date, tag, user } = options
 
   return (
     <StageContext.Provider value={{ stages, setStages, isAuth }}>
@@ -138,7 +141,16 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
         <div
           className={clsx(!type || type !== 'table') || 'flex-1 overflow-auto'}
         >
-          {children}
+          <WorkflowContent
+            options={{
+              type,
+              workflow,
+              stages,
+              date,
+              tag,
+              user,
+            }}
+          />
         </div>
       </div>
     </StageContext.Provider>

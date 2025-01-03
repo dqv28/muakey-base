@@ -53,7 +53,7 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
       return (
         <StageList
           members={options?.workflow?.members}
-          options={{ user: options?.user }}
+          options={{ user: options?.user, stages: options?.stages }}
         />
       )
   }

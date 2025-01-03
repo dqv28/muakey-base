@@ -1,7 +1,6 @@
 import { getMe, getStagesByWorkflowId, getWorkflowById } from '@/libs/data'
 import { Metadata } from 'next'
 import React from 'react'
-import WorkflowContent from './components/WorkflowContent'
 import WorkflowPageLayout from './components/WorkflowPageLayout'
 
 export const generateMetadata = async (props: { params: any }) => {
@@ -42,19 +41,10 @@ const Page: React.FC<any> = async (prop: {
       options={{
         stages,
         user,
+        date,
+        tag,
       }}
-    >
-      <WorkflowContent
-        options={{
-          type: searchParams?.type,
-          workflow,
-          stages,
-          date,
-          tag,
-          user,
-        }}
-      />
-    </WorkflowPageLayout>
+    />
   )
 }
 

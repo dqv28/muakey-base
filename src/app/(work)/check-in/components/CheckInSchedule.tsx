@@ -1,13 +1,12 @@
+'use client'
+
 import { Calendar } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
-import { Player } from '@lottiefiles/react-lottie-player'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import clsx from 'clsx'
 import { useRouter, useSearchParams } from 'next/navigation'
-import offlineAnimation from '../lotties/off-animation.json'
-import onlineAnimation from '../lotties/on-animation.json'
 
 type CheckInScheduleProps = {
   schedule?: any[]
@@ -24,6 +23,7 @@ const CheckInSchedule: React.FC<CheckInScheduleProps> = ({ schedule }) => {
   return (
     <Calendar
       locale={locale}
+      rootClassName="border border-[#D9D9D9]"
       headerRender={() => <></>}
       fullCellRender={(current) => {
         const currentDate = String(dayjs(current).format('YYYY-MM-DD'))
@@ -37,8 +37,12 @@ const CheckInSchedule: React.FC<CheckInScheduleProps> = ({ schedule }) => {
         return (
           <div
             className={clsx(
-              'mx-[2px] flex aspect-[220/160] size-full flex-col justify-between border-t px-[8px] pb-[8px] pt-[6px]',
+              'flex aspect-[220/160] size-full flex-col justify-between border-t px-[8px] pb-[8px] pt-[6px]',
               isCurrentMonth && 'opacity-80',
+              day?.go_to_work === 0 && 'bg-[#F5F5F5]',
+              currentDate === today
+                ? 'border-[#096DD9] bg-[#E6F7FF]'
+                : 'border-[#D9D9D9]',
             )}
             onClick={() => {
               urlSearchParams?.set(
@@ -51,31 +55,26 @@ const CheckInSchedule: React.FC<CheckInScheduleProps> = ({ schedule }) => {
           >
             <span
               className={clsx(
-                'flex h-[28px] items-center justify-center rounded py-[8px] font-semibold',
+                'flex h-[28px] items-center justify-center rounded py-[8px]',
                 currentDate === today
-                  ? 'bg-[#e6f4ff] text-[#1677ff]'
-                  : 'bg-[#f9f9f9] text-[#333]',
-                isCurrentMonth && 'text-[#00000040]',
+                  ? 'text-[#1677ff]'
+                  : isCurrentMonth
+                    ? 'text-[#00000040]'
+                    : 'text-[#333]',
               )}
             >
               {String(dayjs(current).format('DD/MM'))}
             </span>
-            <div className="flex flex-1 items-center justify-center">
+            <div className="flex-1 py-[8px]">
               {day?.go_to_work !== undefined ? (
                 day?.go_to_work === 0 ? (
-                  <Player
-                    src={offlineAnimation}
-                    loop
-                    autoplay
-                    style={{ width: 60, height: 60 }}
-                  />
+                  <span className="flex size-full items-center justify-center font-[500]">
+                    OFF
+                  </span>
                 ) : (
-                  <Player
-                    src={onlineAnimation}
-                    loop
-                    autoplay
-                    style={{ width: 60, height: 60 }}
-                  />
+                  <div className="w-full rounded-full bg-[#1890FF] py-[3px] text-center text-[#fff]">
+                    09:00 - 18:30
+                  </div>
                 )
               ) : (
                 ''

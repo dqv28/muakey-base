@@ -64,7 +64,13 @@ const StageColumn: React.FC<StageColumnProps> = memo(
     )
 
     return (
-      <div
+      <Col
+        className={clsx('w-[272px] overflow-hidden border-r border-[#eee]', {
+          'bg-[#fff3f3]': stage.index === 0,
+          'bg-[#fff]': stage.index === 1,
+          'bg-[#f6f6f6]': ![0, 1].includes(stage.index),
+        })}
+        key={stage.id}
         ref={setNodeRef}
         style={StageColumnStyle}
         {...{
@@ -72,106 +78,100 @@ const StageColumn: React.FC<StageColumnProps> = memo(
           role: 'article',
         }}
       >
-        <Col
-          className={clsx('w-[272px] overflow-hidden border-r border-[#eee]', {
-            'bg-[#fff3f3]': stage.index === 0,
-            'bg-[#fff]': stage.index === 1,
+        <StageHeader
+          className={clsx({
+            'bg-[#ffe8e8] text-[#c34343]': stage.index === 0,
+            'bg-[#deffdb]': stage.index === 1,
             'bg-[#f6f6f6]': ![0, 1].includes(stage.index),
           })}
-          key={stage.id}
-        >
-          <StageHeader
-            className={clsx({
-              'bg-[#ffe8e8] text-[#c34343]': stage.index === 0,
-              'bg-[#deffdb]': stage.index === 1,
-              'bg-[#f6f6f6]': ![0, 1].includes(stage.index),
-            })}
-            title={
-              <span>
-                {stage.name}{' '}
-                {![0, 1].includes(stage.index) && stage?.description && (
-                  <Tooltip
-                    overlayInnerStyle={{ color: '#000' }}
-                    color="#fff"
-                    title={
-                      <div
-                        dangerouslySetInnerHTML={{ __html: stage?.description }}
-                      />
-                    }
-                    destroyTooltipOnHide
-                  >
-                    <ExclamationCircleOutlined className="text-[14px]" />
-                  </Tooltip>
-                )}
-              </span>
-            }
-            extra={
-              <>
-                {![0, 1].includes(stage?.index) && (
-                  <StageDropdownMenu stage={stage} />
-                )}
-                {[1].includes(stage?.index) && (
-                  <ReloadOutlined
-                    className="cursor-pointer text-[10px]"
-                    onClick={handleRefresh}
-                  />
-                )}
-              </>
-            }
-          >
-            <div className="flex items-center justify-between">
-              <span
-                className={clsx(
-                  'text-[12px] leading-none text-[#aaa]',
-                  stage.index === 0 && 'text-[#c3434399]',
-                )}
-              >
-                {stageTasksLength} Nhiệm vụ
-              </span>
-
-              {![0, 1].includes(stage.index) && (
-                <span className="text-[12px] leading-none text-[#aaa]">
-                  {!!stageExpiredAfterHours
-                    ? `Thời hạn: ${stageExpiredAfterHours}h`
-                    : 'Không thời hạn'}
-                </span>
-              )}
-            </div>
-          </StageHeader>
-
-          {![0, 1].includes(stage.index) && stage?.description && (
-            <Collapse
-              rootClassName="rounded-none border-l-0 border-r-0 border-t-0 border-b border-[#eee]"
-              className="rounded-none bg-[#fff]"
-              expandIcon={({ isActive }) => (
-                <CaretRightOutlined rotate={isActive ? 90 : 0} />
-              )}
-              items={[
-                {
-                  key: '1',
-                  label: (
-                    <div className="cursor-pointer leading-[22px]">
-                      Mô tả giai đoạn
-                    </div>
-                  ),
-                  children: (
+          title={
+            <span>
+              {stage.name}{' '}
+              {![0, 1].includes(stage.index) && stage?.description && (
+                <Tooltip
+                  overlayInnerStyle={{ color: '#000' }}
+                  color="#fff"
+                  title={
                     <div
                       dangerouslySetInnerHTML={{ __html: stage?.description }}
                     />
-                  ),
-                },
-              ]}
-            />
-          )}
+                  }
+                  destroyTooltipOnHide
+                >
+                  <ExclamationCircleOutlined className="text-[12px]" />
+                </Tooltip>
+              )}
+            </span>
+          }
+          extra={
+            <>
+              {![0, 1].includes(stage?.index) && (
+                <StageDropdownMenu stage={stage} />
+              )}
+              {[1].includes(stage?.index) && (
+                <ReloadOutlined
+                  className="cursor-pointer text-[10px]"
+                  onClick={handleRefresh}
+                />
+              )}
+            </>
+          }
+        >
+          <div className="flex items-center justify-between">
+            <span
+              className={clsx(
+                'text-[12px] leading-none text-[#aaa]',
+                stage.index === 0 && 'text-[#c3434399]',
+              )}
+            >
+              {stageTasksLength} Nhiệm vụ
+            </span>
 
+            {![0, 1].includes(stage.index) && (
+              <span className="text-[12px] leading-none text-[#aaa]">
+                {!!stageExpiredAfterHours
+                  ? `Thời hạn: ${stageExpiredAfterHours}h`
+                  : 'Không thời hạn'}
+              </span>
+            )}
+          </div>
+        </StageHeader>
+
+        {![0, 1].includes(stage.index) && stage?.description && (
+          <Collapse
+            rootClassName="rounded-none border-l-0 border-r-0 border-t-0 border-b border-[#eee]"
+            className="rounded-none bg-[#fff]"
+            expandIcon={({ isActive }) => (
+              <CaretRightOutlined rotate={isActive ? 90 : 0} />
+            )}
+            items={[
+              {
+                key: '1',
+                label: (
+                  <div className="cursor-pointer leading-[22px]">
+                    Mô tả giai đoạn
+                  </div>
+                ),
+                children: (
+                  <div
+                    dangerouslySetInnerHTML={{ __html: stage?.description }}
+                  />
+                ),
+              },
+            ]}
+          />
+        )}
+
+        <div className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]">
           <TaskList
+            tasks={stage?.tasks}
             stageId={stage?.id}
             loading={loading}
             userId={userId}
             options={options}
           />
-        </Col>
-      </div>
+        </div>
+      </Col>
     )
   },
 )
