@@ -53,9 +53,14 @@ const LoginForm: React.FC = () => {
       ref={formRef}
     >
       <Form.Item
-        label="Email"
+        label="Email/Tên đăng nhập"
         name="email"
-        rules={[{ required: true, message: 'Email không được bỏ trống.' }]}
+        rules={[
+          {
+            required: true,
+            message: 'Email/Tên đăng nhập không được bỏ trống.',
+          },
+        ]}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >

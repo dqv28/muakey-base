@@ -30,8 +30,8 @@ const CheckInFormOptions: React.FC<CheckInFormOptionsProps> = ({
 
   return (
     <Row gutter={20}>
-      {items?.map((item: ItemType) => (
-        <Col span={6}>
+      {items?.map((item: ItemType, index) => (
+        <Col key={index} span={6}>
           <div
             className={clsx(
               'flex !h-[40px] w-full cursor-pointer items-center justify-center rounded-[4px] p-[16px] transition-all',

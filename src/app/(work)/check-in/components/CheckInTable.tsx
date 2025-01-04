@@ -5,17 +5,13 @@ import { SettingOutlined } from '@ant-design/icons'
 import {
   Avatar,
   Calendar,
-  Col,
-  ConfigProvider,
   Divider,
   Dropdown,
-  Row,
   Table,
   TableProps,
   Tabs,
 } from 'antd'
 import { createStyles } from 'antd-style'
-import locale from 'antd/locale/vi_VN'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { times } from 'lodash'
@@ -24,7 +20,9 @@ import React, { useEffect, useMemo, useState } from 'react'
 import CheckInSchedule from './CheckInSchedule'
 import CheckInScheduleModalForm from './CheckInScheduleModalForm'
 
+import locale from 'antd/es/date-picker/locale/vi_VN'
 import Image from 'next/image'
+import CheckInStatistics from './CheckInStatistics'
 import dayOffImagefrom from './day-off-img.jpg'
 
 type CheckInTableProps = TableProps & {
@@ -224,19 +222,19 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
     },
     {
       title: 'Nghỉ có hưởng lương',
-      value: days?.length,
+      value: 0,
     },
     {
       title: 'Nghỉ không hưởng lương',
-      value: days?.length,
+      value: 0,
     },
     {
       title: 'Tổng OT',
-      value: days?.length,
+      value: 0,
     },
     {
       title: 'Tổng công hưởng lương',
-      value: days?.length,
+      value: 0,
     },
   ]
 
@@ -282,106 +280,85 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
           />
         </div>
       ) : (
-        <ConfigProvider locale={locale}>
-          <div className="space-y-[16px]">
-            {user?.role !== 'Admin lv2' && (
-              <div className="bg-[#fff] p-[16px]">
-                <div className="text-center text-[14px] font-[500]">
-                  TỔNG HỢP NGÀY CÔNG
-                </div>
-                <Divider className="!my-[12px]" />
-
-                <Row gutter={16}>
-                  {checkInStatisticsItems.map((item) => (
-                    <Col span={4} key={item.value}>
-                      <div className="flex flex-col items-center justify-center">
-                        <span className="text-[#00000073]">{item.title}</span>
-                        <span>{item.value}</span>
-                      </div>
-                    </Col>
-                  ))}
-                </Row>
-              </div>
-            )}
-            <div className="bg-[#fff] p-[16px]">
-              <div className="text-center text-[14px] font-[500]">
-                CHI TIẾT NGÀY CÔNG
-              </div>
-              <Divider className="!my-[12px]" />
-              <Calendar
-                headerRender={() => <></>}
-                fullCellRender={(current) => {
-                  const timestamp = dayjs(current).format('D/M')
-                  const info = checkInDataSource[0][String(timestamp)] || []
-
-                  const date = String(dayjs(current).format('YYYY-MM-DD'))
-
-                  const day = workSchedule?.find(
-                    (s: any) => s?.day_of_week === date,
-                  )
-
-                  return (
-                    <Dropdown
-                      trigger={['click']}
-                      dropdownRender={dropdownRender}
-                    >
-                      <div
-                        className={clsx(
-                          'mx-[2px] flex aspect-[220/160] size-full flex-col justify-between border-x border-x-[#fff] px-[8px] pb-[8px] pt-[6px]',
-                          day?.go_to_work === 1 && info?.checkInValue?.[0]
-                            ? info?.on_time
-                              ? 'border-t border-t-[#deffdb] bg-[#deffdb]'
-                              : 'border-t border-t-[#ffe8e8] bg-[#ffe8e8]'
-                            : 'border-t border-t-[#eee]',
-                        )}
-                        onClick={() => {
-                          urlSearchParams?.set(
-                            'date',
-                            current
-                              ? String(dayjs(current).format('YYYY-MM'))
-                              : '',
-                          )
-
-                          router.push(`?${urlSearchParams.toString()}`)
-                        }}
-                      >
-                        <span className="block h-[22px]">
-                          {String(dayjs(current).format('DD/MM'))}
-                        </span>
-                        {day?.go_to_work !== undefined ? (
-                          day?.go_to_work === 0 ? (
-                            <div className="flex flex-1 items-center justify-center">
-                              <Image
-                                className="aspect-[600/453] object-cover"
-                                src={dayOffImagefrom.src}
-                                alt="day-off"
-                                width={100}
-                                height={80}
-                              />
-                            </div>
-                          ) : (
-                            <div className="flex items-center justify-between gap-[8px]">
-                              {info.checkInValue?.[0] && (
-                                <span>Vào: {info.checkInValue?.[0]}</span>
-                              )}
-                              {info.checkInValue?.[1] && (
-                                <span>Ra: {info.checkInValue?.[1]}</span>
-                              )}
-                            </div>
-                          )
-                        ) : (
-                          ''
-                        )}
-                      </div>
-                    </Dropdown>
-                  )
-                }}
-                value={date}
-                onPanelChange={(value) => console.log(value)}
-              />
+        <div className="space-y-[16px]">
+          {user?.role !== 'Admin lv2' && (
+            <CheckInStatistics items={checkInStatisticsItems} />
+          )}
+          <div className="bg-[#fff] p-[16px]">
+            <div className="text-center text-[14px] font-[500]">
+              CHI TIẾT NGÀY CÔNG
             </div>
+            <Divider className="!my-[12px]" />
+            <Calendar
+              headerRender={() => <></>}
+              fullCellRender={(current) => {
+                const timestamp = dayjs(current).format('D/M')
+                const info = checkInDataSource[0][String(timestamp)] || []
+
+                const date = String(dayjs(current).format('YYYY-MM-DD'))
+
+                const day = workSchedule?.find(
+                  (s: any) => s?.day_of_week === date,
+                )
+
+                return (
+                  <Dropdown trigger={['click']} dropdownRender={dropdownRender}>
+                    <div
+                      className={clsx(
+                        'mx-[2px] flex aspect-[220/160] size-full flex-col justify-between border-x border-x-[#fff] px-[8px] pb-[8px] pt-[6px]',
+                        day?.go_to_work === 1 && info?.checkInValue?.[0]
+                          ? info?.on_time
+                            ? 'border-t border-t-[#deffdb] bg-[#deffdb]'
+                            : 'border-t border-t-[#ffe8e8] bg-[#ffe8e8]'
+                          : 'border-t border-t-[#eee]',
+                      )}
+                      onClick={() => {
+                        urlSearchParams?.set(
+                          'date',
+                          current
+                            ? String(dayjs(current).format('YYYY-MM'))
+                            : '',
+                        )
+
+                        router.push(`?${urlSearchParams.toString()}`)
+                      }}
+                    >
+                      <span className="block h-[22px]">
+                        {String(dayjs(current).format('DD/MM'))}
+                      </span>
+                      {day?.go_to_work !== undefined ? (
+                        day?.go_to_work === 0 ? (
+                          <div className="flex flex-1 items-center justify-center">
+                            <Image
+                              className="aspect-[600/453] object-cover"
+                              src={dayOffImagefrom.src}
+                              alt="day-off"
+                              width={100}
+                              height={80}
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between gap-[8px]">
+                            {info.checkInValue?.[0] && (
+                              <span>Vào: {info.checkInValue?.[0]}</span>
+                            )}
+                            {info.checkInValue?.[1] && (
+                              <span>Ra: {info.checkInValue?.[1]}</span>
+                            )}
+                          </div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </Dropdown>
+                )
+              }}
+              value={date}
+              locale={locale}
+            />
           </div>
-        </ConfigProvider>
+        </div>
       )}
     </div>
   )

@@ -1,4 +1,6 @@
 import React from 'react'
+import CheckInTimeEditForm from './CheckInTimeEditFrom'
+import RegisterTimeOffForm from './RegisterTimeOffForm'
 
 type CheckInSwitchFormsProps = {
   params?: any
@@ -7,13 +9,13 @@ type CheckInSwitchFormsProps = {
 const CheckInSwitchForms: React.FC<CheckInSwitchFormsProps> = ({ params }) => {
   switch (params?.type) {
     case 'register-time-off':
-      return <>Đăng ký nghỉ</>
+      return <RegisterTimeOffForm />
 
     case 'change-shift':
       return <>Thay đổi phân ca</>
 
     case 'change-check-in':
-      return <>Sửa giờ vào ra</>
+      return <CheckInTimeEditForm />
 
     case 'register-ot':
       return <>Đăng ký OT</>

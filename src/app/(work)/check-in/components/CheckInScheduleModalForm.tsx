@@ -1,11 +1,11 @@
 'use client'
 
 import { withApp } from '@/hoc'
-import { App, DatePicker, Form, Input, Modal, ModalProps } from 'antd'
+import { App, DatePicker, Form, Input, Modal, ModalProps, Radio } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { addWorkScheduleAction, updateWorkScheduleAction } from './action'
 
 type CheckInScheduleModalFormProps = ModalProps & {
@@ -21,10 +21,11 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [dateStrings, setDateStrings] = useState<string[]>([])
+  const [ids, setIds] = useState<any[]>([])
   const { message } = App.useApp()
   const router = useRouter()
 
-  const [isRange, setIsRange] = useState(false)
+  const [mode, setMode] = useState<'multiple' | 'range'>('multiple')
 
   const { workSchedule } = initialValues
 
@@ -34,11 +35,18 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
   const handleSubmit = async (formData?: any) => {
     setLoading(true)
 
-    const { ids, ...restFormData } = formData
+    const { multiple_ids, range_ids, ...restFormData } = formData
+
+    if (!!range_ids) {
+      console.log(range_ids)
+      console.log('DATE STR ->', dateStrings)
+      setLoading(false)
+      return
+    }
 
     const nextSchedule = await addWorkScheduleAction()
 
-    const dayOffIds = formData?.ids?.map((date: Date) => {
+    const dayOffIds = multiple_ids?.map((date: Date) => {
       const dateStr = String(dayjs(date).format('YYYY-MM-DD'))
 
       const schedule = [...workSchedule, ...nextSchedule]?.find(
@@ -75,6 +83,19 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
     }
   }
 
+  const modeOptions = [
+    { label: 'Chọn nhiều ngày', value: 'multiple' },
+    { label: 'Chọn khoảng thời gian', value: 'range' },
+  ]
+
+  useEffect(() => {
+    setIds(
+      mode === 'multiple'
+        ? workScheduleFiltered?.map((s: any) => dayjs(s?.day_of_week))
+        : undefined,
+    )
+  }, [mode, workScheduleFiltered])
+
   return (
     <>
       <div onClick={() => setOpen(true)}>{children}</div>
@@ -90,9 +111,7 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
           <Form
             layout="vertical"
             initialValues={{
-              ids: !isRange
-                ? workScheduleFiltered?.map((s: any) => dayjs(s?.day_of_week))
-                : undefined,
+              multiple_ids: ids,
             }}
             onFinish={handleSubmit}
           >
@@ -103,17 +122,26 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
         destroyOnClose
         {...rest}
       >
-        <Form.Item
-          name="ids"
-          label="Chọn ngày nghỉ"
-          rules={[
-            {
-              required: true,
-              message: 'Chưa chọn ngày',
-            },
-          ]}
-        >
-          {!isRange ? (
+        <div className="item-center my-[12px] flex gap-[12px]">
+          <span>Hình thức: </span>
+          <Radio.Group
+            options={modeOptions}
+            onChange={(e) => setMode(e.target.value)}
+            value={mode}
+          />
+        </div>
+
+        {mode === 'multiple' ? (
+          <Form.Item
+            name="multiple_ids"
+            label="Chọn ngày nghỉ"
+            rules={[
+              {
+                required: true,
+                message: 'Chưa chọn ngày',
+              },
+            ]}
+          >
             <DatePicker
               multiple
               locale={locale}
@@ -123,8 +151,20 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
                 )
               }
             />
-          ) : (
+          </Form.Item>
+        ) : (
+          <Form.Item
+            name="range_ids"
+            label="Chọn ngày nghỉ"
+            rules={[
+              {
+                required: true,
+                message: 'Chưa chọn ngày',
+              },
+            ]}
+          >
             <DatePicker.RangePicker
+              className="w-full"
               locale={locale}
               onChange={(_, dateStr) =>
                 setDateStrings(
@@ -132,8 +172,9 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
                 )
               }
             />
-          )}
-        </Form.Item>
+          </Form.Item>
+        )}
+
         <Form.Item name="description" label="Ghi chú">
           <Input.TextArea
             autoSize={{ minRows: 6 }}

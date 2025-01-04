@@ -50,6 +50,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
   const [activeItem, setActiveItem] = useState<any>()
   const [open, setOpen] = useState(false)
   const [doneOpen, setDoneOpen] = useState(false)
+  const [dragInsideColumn, setDragInsideColumn] = useState(false)
   const [reports, setReports] = useState<any[]>([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
   const activeRef = useRef<any>(null)
@@ -188,19 +189,27 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
 
     const { active, over } = e
 
+    if (!over) return
+
     const {
       data: { current: activeData },
     } = active
-
-    if (!over) return
-
-    if (active.id === over.id) return
 
     const {
       data: { current: overData },
     } = over
 
     if (!overData || !activeData) return
+
+    if (
+      `stage_${activeData.stage_id}` ===
+      (overData.stage_id ? `stage_${overData.stage_id}` : overData.id)
+    ) {
+      setDragInsideColumn(true)
+      return
+    }
+
+    setDragInsideColumn(false)
 
     const activeIndex = stages?.find(
       (stage: any) => stage.id === `stage_${activeData.stage_id}`,
@@ -308,6 +317,8 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
 
     if (!activeData) return
 
+    if (dragInsideColumn) return
+
     const data = await getReportFieldsByWorkflowIdAction({
       workflow_id: Number(params?.id),
       stage_id: activeData.stage_id,
@@ -316,7 +327,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
 
     setReports([...data])
     activeRef.current = activeId
-  }, [dragEvent, params?.id, activeId])
+  }, [dragEvent, params?.id, activeId, dragInsideColumn])
 
   const dropAnimation: DragOverlayProps['dropAnimation'] = {
     sideEffects: defaultDropAnimationSideEffects({
