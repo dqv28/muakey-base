@@ -12,7 +12,7 @@ const Page: React.FC = async () => {
     <div className="h-[100vh] bg-[#f6f6f6]">
       <PageHeader options={{ accounts }} />
 
-      <div className="h-[calc(100vh-69px)] overflow-auto p-[16px]">
+      <div className="h-[(100vh-69px)] overflow-auto p-[16px]">
         <DepartmentList dataSource={departments} options={{ accounts }} />
       </div>
     </div>

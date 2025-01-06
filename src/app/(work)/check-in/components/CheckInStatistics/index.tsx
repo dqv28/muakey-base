@@ -1,4 +1,4 @@
-import { Divider } from 'antd'
+import { Button, Divider } from 'antd'
 import React from 'react'
 
 type CheckInDataType = {
@@ -12,9 +12,10 @@ type CheckInStatisticsProps = {
 
 const CheckInStatistics: React.FC<CheckInStatisticsProps> = ({ items }) => {
   return (
-    <div className="bg-[#fff] p-[16px]">
-      <div className="text-center text-[14px] font-[500]">
-        TỔNG HỢP NGÀY CÔNG
+    <div className="rounded-[16px] bg-[#fff] p-[16px]">
+      <div className="flex items-center justify-between">
+        <span className="text-[16px] font-[500]">Tổng hợp ngày công</span>
+        <Button type="primary">Lịch sử yêu cầu</Button>
       </div>
       <Divider className="!my-[12px]" />
 
@@ -25,8 +26,8 @@ const CheckInStatistics: React.FC<CheckInStatisticsProps> = ({ items }) => {
               className="flex flex-col items-center justify-center"
               key={index}
             >
-              <span className="text-[#00000073]">{item.title}</span>
-              <span>{item.value}</span>
+              <span className="text-[14px] text-[#00000073]">{item.title}</span>
+              <span className="text-[24px]">{item.value}</span>
             </div>
           ))}
       </div>

@@ -9,6 +9,7 @@ import { MDXEditorMethods } from '@mdxeditor/editor'
 import {
   App,
   Button,
+  DatePicker,
   Divider,
   Empty,
   Form,
@@ -22,6 +23,8 @@ import {
   Tag,
   Tooltip,
 } from 'antd'
+import locale from 'antd/es/date-picker/locale/vi_VN'
+import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
 import React, { useContext, useRef, useState } from 'react'
@@ -190,6 +193,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
           tag_id: tag || [],
+          expired: restFormData?.expired
+            ? String(dayjs(restFormData?.expired).format('YYYY-MM-DD HH:mm:ss'))
+            : null,
         })
 
         if (!errors) {
@@ -394,6 +400,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                 ? `${`${mem?.full_name} ·`} ${mem?.username} ${!!mem?.position ? `· ${mem?.position}` : ''}`
                 : undefined,
               tag: sticker?.map((s: any) => s?.sticker_id),
+              expired: initialValues?.expired
+                ? dayjs(initialValues?.expired)
+                : null,
             }}
             onFinish={handleSubmit}
             layout="vertical"
@@ -458,12 +467,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             placeholder="-- Lựa chọn một người dưới đây --"
           />
         </Form.Item>
-        {/* <Form.Item name="expired" label="Thời hạn">
-          <InputNumber
-            className="w-full border-b border-[#eee]"
-            placeholder="Thời hạn"
-          />
-        </Form.Item> */}
+        <Form.Item name="expired" label="Thời hạn">
+          <DatePicker className="w-full" locale={locale} showTime />
+        </Form.Item>
       </Modal>
     </>
   )

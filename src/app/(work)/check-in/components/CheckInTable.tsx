@@ -2,34 +2,26 @@
 
 import { randomColor } from '@/libs/utils'
 import { SettingOutlined } from '@ant-design/icons'
-import {
-  Avatar,
-  Calendar,
-  Divider,
-  Dropdown,
-  Table,
-  TableProps,
-  Tabs,
-} from 'antd'
+import { Avatar, Calendar, Divider, Table, TableProps, Tabs } from 'antd'
 import { createStyles } from 'antd-style'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { times } from 'lodash'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
 import CheckInSchedule from './CheckInSchedule'
 import CheckInScheduleModalForm from './CheckInScheduleModalForm'
 
 import locale from 'antd/es/date-picker/locale/vi_VN'
-import Image from 'next/image'
+import CalendarDropdown from './CalendarDropdown'
 import CheckInStatistics from './CheckInStatistics'
-import dayOffImagefrom from './day-off-img.jpg'
+import CheckInTableExplanation from './CheckInTableExplanation'
 
 type CheckInTableProps = TableProps & {
   options?: any
 }
 
-const useStyle = createStyles(({ css }) => {
+const useStyle = createStyles(({ css, token }) => {
   return {
     customTable: css`
       .ant-table {
@@ -46,11 +38,21 @@ const useStyle = createStyles(({ css }) => {
   }
 })
 
-const GLOBAL_BAN = ['Admin', 'cinren16', 'Mạnh', 'Nghĩa IT', 'Nhật']
+const GLOBAL_BAN = [
+  'Admin',
+  'cinren16',
+  'Mạnh',
+  'Nghĩa IT',
+  'Nhật',
+  'Đức Thịnh',
+]
 
-const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
+const CheckInTable: React.FC<CheckInTableProps> = ({
+  options,
+  className: customClassName,
+  ...props
+}) => {
   const searchParams = useSearchParams()
-  const router = useRouter()
   const [mode, setMode] = useState('dashboard')
 
   const today = useMemo(() => new Date(), [])
@@ -58,8 +60,8 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
   const { styles } = useStyle()
   const year = new Date().getFullYear()
   const month = options?.day || new Date().getMonth() + 1
-  const urlSearchParams = new URLSearchParams()
 
+  const dateParams = searchParams?.get('date')
   const dateNumber = new Date(year, month, 0).getDate()
 
   const checkInColumns: TableProps['columns'] = [
@@ -168,45 +170,6 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
     setDate(dayjs(searchParams?.get('date') || today))
   }, [today, searchParams])
 
-  const query = (p: string) => {
-    const url = new URLSearchParams(searchParams.toString())
-
-    url.set('form', String(p))
-
-    router.push(`?${url.toString()}`)
-  }
-
-  const dropdownRender = () => {
-    return (
-      <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
-        <div
-          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('register-time-off')}
-        >
-          Đăng Ký Nghỉ
-        </div>
-        <div
-          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('change-shift')}
-        >
-          Thay Đổi Phân Ca
-        </div>
-        <div
-          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('change-check-in')}
-        >
-          Sửa Giờ Vào Ra
-        </div>
-        <div
-          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[12px] leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('register-ot')}
-        >
-          Đăng Ký OT
-        </div>
-      </div>
-    )
-  }
-
   const days = Object.entries(checkInDataSource[0])?.filter(
     (c: any) => !!c[1]?.checkInValue,
   )
@@ -262,10 +225,11 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
                 label: <div className="px-[16px]">Tổng quan</div>,
                 children: (
                   <Table
-                    className={clsx('w-full overflow-auto', styles.customTable)}
+                    className={clsx(styles.customTable, customClassName)}
                     columns={checkInColumns}
                     dataSource={checkInDataSource}
                     rowHoverable={false}
+                    scroll={{ x: 'max-content', y: 55 * 5 }}
                     {...props}
                   />
                 ),
@@ -284,12 +248,36 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
           {user?.role !== 'Admin lv2' && (
             <CheckInStatistics items={checkInStatisticsItems} />
           )}
-          <div className="bg-[#fff] p-[16px]">
-            <div className="text-center text-[14px] font-[500]">
-              CHI TIẾT NGÀY CÔNG
+          <div className="space-y-[24px] rounded-[16px] bg-[#fff] p-[16px]">
+            <div className="flex items-center justify-between">
+              <span className="text-[16px] font-[500]">Chi tiết ngày công</span>
+              <CheckInTableExplanation
+                items={[
+                  {
+                    label: 'Giờ kế hoạch',
+                    className: 'bg-[#1890FF]',
+                  },
+                  {
+                    label: 'Giờ thực tế',
+                    className: 'bg-[#237804]',
+                  },
+                  {
+                    label: 'Lỗi chấm công',
+                    className: 'bg-[#F5222D]',
+                  },
+                  {
+                    label: 'Nghỉ',
+                    className: 'bg-[#FA8C16]',
+                  },
+                  {
+                    label: 'OT',
+                    className: 'bg-[#722ED1]',
+                  },
+                ]}
+              />
             </div>
-            <Divider className="!my-[12px]" />
             <Calendar
+              rootClassName="border border-[#0505050f]"
               headerRender={() => <></>}
               fullCellRender={(current) => {
                 const timestamp = dayjs(current).format('D/M')
@@ -301,57 +289,19 @@ const CheckInTable: React.FC<CheckInTableProps> = ({ options, ...props }) => {
                   (s: any) => s?.day_of_week === date,
                 )
 
-                return (
-                  <Dropdown trigger={['click']} dropdownRender={dropdownRender}>
-                    <div
-                      className={clsx(
-                        'mx-[2px] flex aspect-[220/160] size-full flex-col justify-between border-x border-x-[#fff] px-[8px] pb-[8px] pt-[6px]',
-                        day?.go_to_work === 1 && info?.checkInValue?.[0]
-                          ? info?.on_time
-                            ? 'border-t border-t-[#deffdb] bg-[#deffdb]'
-                            : 'border-t border-t-[#ffe8e8] bg-[#ffe8e8]'
-                          : 'border-t border-t-[#eee]',
-                      )}
-                      onClick={() => {
-                        urlSearchParams?.set(
-                          'date',
-                          current
-                            ? String(dayjs(current).format('YYYY-MM'))
-                            : '',
-                        )
+                const isCurrentMonth =
+                  String(dayjs(current).format('YYYY-MM')) ===
+                  (dateParams || dayjs(new Date()).format('YYYY-MM'))
 
-                        router.push(`?${urlSearchParams.toString()}`)
-                      }}
-                    >
-                      <span className="block h-[22px]">
-                        {String(dayjs(current).format('DD/MM'))}
-                      </span>
-                      {day?.go_to_work !== undefined ? (
-                        day?.go_to_work === 0 ? (
-                          <div className="flex flex-1 items-center justify-center">
-                            <Image
-                              className="aspect-[600/453] object-cover"
-                              src={dayOffImagefrom.src}
-                              alt="day-off"
-                              width={100}
-                              height={80}
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex items-center justify-between gap-[8px]">
-                            {info.checkInValue?.[0] && (
-                              <span>Vào: {info.checkInValue?.[0]}</span>
-                            )}
-                            {info.checkInValue?.[1] && (
-                              <span>Ra: {info.checkInValue?.[1]}</span>
-                            )}
-                          </div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                  </Dropdown>
+                return (
+                  <CalendarDropdown
+                    currentDate={current}
+                    day={day}
+                    options={{
+                      isCurrentMonth,
+                      info,
+                    }}
+                  />
                 )
               }}
               value={date}

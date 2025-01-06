@@ -20,6 +20,17 @@ const CheckInSchedule: React.FC<CheckInScheduleProps> = ({ schedule }) => {
 
   const date = searchParams?.get('date')
 
+  const handleClick = (currentDate: any, isCurrentMonth: boolean) => {
+    if (!isCurrentMonth) return
+
+    urlSearchParams?.set(
+      'date',
+      currentDate ? String(dayjs(currentDate).format('YYYY-MM')) : '',
+    )
+
+    router.push(`?${urlSearchParams.toString()}`)
+  }
+
   return (
     <Calendar
       locale={locale}
@@ -44,14 +55,7 @@ const CheckInSchedule: React.FC<CheckInScheduleProps> = ({ schedule }) => {
                 ? 'border-[#096DD9] bg-[#E6F7FF]'
                 : 'border-[#D9D9D9]',
             )}
-            onClick={() => {
-              urlSearchParams?.set(
-                'date',
-                current ? String(dayjs(current).format('YYYY-MM')) : '',
-              )
-
-              router.push(`?${urlSearchParams.toString()}`)
-            }}
+            onClick={() => handleClick(current, isCurrentMonth)}
           >
             <span
               className={clsx(

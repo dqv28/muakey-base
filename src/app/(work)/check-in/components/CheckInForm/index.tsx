@@ -4,9 +4,6 @@ import { Button } from 'antd'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import React from 'react'
-import CheckInFormOptions, {
-  CheckInFormOptionsProps,
-} from './CheckInFormOptions'
 import CheckInSwitchForms from './CheckInSwitchForms'
 
 type CheckInFormProps = {}
@@ -16,35 +13,35 @@ const CheckInForm: React.FC<CheckInFormProps> = (props) => {
 
   const search = searchParams.get('form')
 
-  const options: CheckInFormOptionsProps['items'] = [
+  const list = [
     {
-      label: 'Đăng ký nghỉ',
-      value: 'register-time-off',
+      label: 'Ngày phép chưa sử dụng',
+      value: 0.5,
     },
     {
-      label: 'Thay đổi phân ca',
-      value: 'change-shift',
+      label: 'Ngày phép đã sử dụng',
+      value: 2.5,
     },
     {
-      label: 'Sửa giờ vào ra',
-      value: 'change-check-in',
-    },
-    {
-      label: 'Đăng ký OT',
-      value: 'register-ot',
+      label: 'Tổng số ngày phép',
+      value: 3,
     },
   ]
 
   return (
     <div className="space-y-[16px]">
-      <CheckInFormOptions
-        items={options}
-        params={{
-          search,
-        }}
-      />
+      <div className="flex items-center rounded-[16px] bg-[#fff] p-[24px]">
+        {list.map((l: any, index) => (
+          <div key={index} className="flex-1 text-center">
+            <div className="mb-[4px] text-[14px] leading-[22px] text-[#00000073]">
+              {l.label}
+            </div>
+            <div className="text-[24px] leading-[38px]">{l.value}</div>
+          </div>
+        ))}
+      </div>
 
-      <div className="bg-[#fff] p-[16px]">
+      <div className="rounded-[16px] bg-[#fff] p-[16px]">
         <CheckInSwitchForms
           params={{
             type: search,

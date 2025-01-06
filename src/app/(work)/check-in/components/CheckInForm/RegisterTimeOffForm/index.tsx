@@ -12,18 +12,23 @@ import {
   Space,
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
-import React from 'react'
+import React, { useState } from 'react'
 
 type RegisterTimeOffFormProps = {}
 
 const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
+  const [mode, setMode] = useState<'date' | 'time'>('date')
+
   return (
     <Form layout="vertical">
-      <div className="flex items-center justify-between gap-[24px]">
+      <div className="flex items-start justify-between gap-[24px]">
         <div className="flex items-center gap-[24px]">
           <Form.Item label="Chọn hình thức nghỉ" name="mode">
             <Space>
-              <Radio.Group defaultValue={'date'}>
+              <Radio.Group
+                defaultValue={mode}
+                onChange={(e) => setMode(e.target.value)}
+              >
                 <Radio.Button value="date">Nghỉ cả ngày</Radio.Button>
                 <Radio.Button value="time">Nghỉ theo giờ</Radio.Button>
               </Radio.Group>
@@ -73,8 +78,8 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
                 className="flex-1"
                 locale={locale}
                 picker="time"
-                placeholder="Chọn thời bắt đầu"
-                disabled
+                placeholder="Chọn thời gian bắt đầu"
+                disabled={mode === 'date'}
               />
             </div>
           </Form.Item>
@@ -97,7 +102,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
                 locale={locale}
                 picker="time"
                 placeholder="Chọn thời kết thúc"
-                disabled
+                disabled={mode === 'date'}
               />
             </div>
           </Form.Item>
@@ -119,6 +124,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
           }}
         />
       </Form.Item>
+
       <Form.Item className="!mb-0 mt-[24px]">
         <Button htmlType="submit" type="primary">
           Gửi yêu cầu

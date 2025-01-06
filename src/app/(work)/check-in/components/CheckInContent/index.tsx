@@ -29,10 +29,10 @@ const CheckInContent: React.FC<CheckInContentProps> = ({
           }}
           scroll={{
             x: 'max-content',
+            y: 'calc(100vh - 218px)',
           }}
           pagination={false}
           bordered
-          rootClassName="!customize-scroll"
         />
       )
   }

@@ -37,13 +37,6 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
 
     const { multiple_ids, range_ids, ...restFormData } = formData
 
-    if (!!range_ids) {
-      console.log(range_ids)
-      console.log('DATE STR ->', dateStrings)
-      setLoading(false)
-      return
-    }
-
     const nextSchedule = await addWorkScheduleAction()
 
     const dayOffIds = multiple_ids?.map((date: Date) => {
@@ -63,8 +56,15 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
     try {
       const { message: msg, errors } = await updateWorkScheduleAction({
         ...restFormData,
-        is_holiday: dayOffIds,
-        is_not_holiday: dayWorkIds,
+        ...(!!range_ids
+          ? {
+              start_date: String(dayjs(range_ids[0]).format('DD-MM-YYYY')),
+              end_date: String(dayjs(range_ids[1]).format('DD-MM-YYYY')),
+            }
+          : {
+              is_holiday: dayOffIds,
+              is_not_holiday: dayWorkIds,
+            }),
       })
 
       if (errors) {
@@ -89,12 +89,17 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
   ]
 
   useEffect(() => {
+    if (!open) {
+      setMode('multiple')
+      return
+    }
+
     setIds(
       mode === 'multiple'
         ? workScheduleFiltered?.map((s: any) => dayjs(s?.day_of_week))
         : undefined,
     )
-  }, [mode, workScheduleFiltered])
+  }, [mode, open])
 
   return (
     <>
