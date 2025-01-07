@@ -1,21 +1,24 @@
 import React from 'react'
 import CheckInForm from '../CheckInForm'
+import CheckInHistoryTable from '../CheckInHistoryTable'
 import CheckInTable from '../CheckInTable'
 
 type CheckInContentProps = {
   options?: any
-  hasForm?: boolean
+  query?: any
 }
 
-const CheckInContent: React.FC<CheckInContentProps> = ({
-  hasForm,
-  options,
-}) => {
+const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
   const { attendances, members, day, user, workSchedule } = options
 
-  switch (String(hasForm)) {
-    case 'true':
+  const { type } = query
+
+  switch (type) {
+    case 'form-request':
       return <CheckInForm />
+
+    case 'table-history':
+      return <CheckInHistoryTable />
 
     default:
       return (

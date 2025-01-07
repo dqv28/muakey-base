@@ -8,52 +8,88 @@ import CheckInFiltered from './CheckInFiltered'
 
 type CheckInHeaderProps = {
   params?: any
+  activeKey?: string
 }
 
-const CheckInHeader: React.FC<CheckInHeaderProps> = ({ params }) => {
-  const { searchParams } = params
+const CheckInHeader: React.FC<CheckInHeaderProps> = ({ params, activeKey }) => {
+  const { type } = params
   const router = useRouter()
 
-  const items: TabsProps['items'] = [
+  const formTabItems: TabsProps['items'] = [
     {
       label: 'Đăng ký nghỉ',
-      key: 'register-time-off',
+      key: 'dang-ky-nghi',
     },
     {
       label: 'Sửa giờ vào ra',
-      key: 'change-check-in',
+      key: 'sua-gio-vao-ra',
     },
     {
       label: 'Đăng ký OT',
-      key: 'register-ot',
+      key: 'dang-ky-ot',
     },
   ]
 
+  const tableTabItems: TabsProps['items'] = [
+    {
+      label: 'Tất cả',
+      key: 'all',
+    },
+    {
+      label: 'Chưa duyệt',
+      key: 'pending',
+    },
+    {
+      label: 'Đã duyệt',
+      key: 'approved',
+    },
+    {
+      label: 'Đã hủy',
+      key: 'canceled',
+    },
+  ]
+
+  const items = type === 'form-request' ? formTabItems : tableTabItems
+
   return (
-    <div className="bg-[#fff] px-[16px] pt-[16px]">
-      <div className="flex items-center justify-between text-[24px]">
-        <span className="font-[500]">
-          {!!searchParams?.form ? 'Yêu cầu' : 'Chấm công'}
+    <div
+      className={clsx('bg-[#fff] px-[16px] pt-[16px]', {
+        'pb-[16px]': type === 'none',
+      })}
+    >
+      <div className="flex items-center justify-between text-[20px]">
+        <span className="font-[500] leading-[28px]">
+          {type !== 'none'
+            ? type === 'form-request'
+              ? 'Yêu cầu'
+              : 'Lịch sử yêu cầu'
+            : 'Chấm công'}
         </span>
-        {!!searchParams?.form ? (
-          <Button type="primary">Lịch sử yêu cầu</Button>
+        {type !== 'none' ? (
+          type === 'form-request' && (
+            <Button type="primary">Lịch sử yêu cầu</Button>
+          )
         ) : (
           <CheckInFiltered />
         )}
       </div>
-      {!!searchParams?.form && (
+      {type !== 'none' && (
         <Space className="mt-[12px]" size="middle">
           {items.map((item) => (
             <div
               key={item.key}
               className={clsx(
-                'cursor-pointer border-b-[2px] pb-[5px] text-[13px] leading-[17px] transition-all duration-300 hover:text-[#1677ff]',
-                searchParams?.form === item?.key
+                'cursor-pointer border-b-[2px] pb-[8px] text-[13px] leading-[17px] transition-all duration-300 hover:text-[#1677ff]',
+                activeKey === item?.key
                   ? 'border-[#1677ff] text-[#1677ff]'
-                  : 'border-transparent text-[#888]',
+                  : 'border-transparent text-[##00000E0]',
               )}
               onClick={() => {
-                router.push(`?form=${item?.key}`)
+                router.push(
+                  type === 'form-request'
+                    ? `?form=${item?.key}`
+                    : `?status=${item?.key}`,
+                )
               }}
             >
               {item?.label}

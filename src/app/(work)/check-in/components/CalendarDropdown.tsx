@@ -38,19 +38,19 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
       <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
         <div
           className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('register-time-off')}
+          onClick={() => query('dang-ky-nghi')}
         >
           Đăng Ký Nghỉ
         </div>
         <div
           className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('change-check-in')}
+          onClick={() => query('sua-gio-vao-ra')}
         >
           Sửa Giờ Vào Ra
         </div>
         <div
           className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('register-ot')}
+          onClick={() => query('dang-ky-ot')}
         >
           Đăng Ký OT
         </div>

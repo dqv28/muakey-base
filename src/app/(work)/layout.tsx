@@ -2,7 +2,7 @@ import { WorkLayoutUI } from '@/components'
 import { Metadata } from 'next'
 import React from 'react'
 
-export const metaData: Metadata = {
+export const metadata: Metadata = {
   title: 'Muakey - Wework',
 }
 

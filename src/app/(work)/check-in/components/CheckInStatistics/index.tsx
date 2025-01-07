@@ -1,4 +1,5 @@
 import { Button, Divider } from 'antd'
+import Link from 'next/link'
 import React from 'react'
 
 type CheckInDataType = {
@@ -15,7 +16,9 @@ const CheckInStatistics: React.FC<CheckInStatisticsProps> = ({ items }) => {
     <div className="rounded-[16px] bg-[#fff] p-[16px]">
       <div className="flex items-center justify-between">
         <span className="text-[16px] font-[500]">Tổng hợp ngày công</span>
-        <Button type="primary">Lịch sử yêu cầu</Button>
+        <Link href="?table=request-history">
+          <Button type="primary">Lịch sử yêu cầu</Button>
+        </Link>
       </div>
       <Divider className="!my-[12px]" />
 
