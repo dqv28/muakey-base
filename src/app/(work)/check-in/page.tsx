@@ -43,11 +43,12 @@ const page: React.FC<any> = async (prop: {
       <div className="h-[calc(100vh-72px)] overflow-auto p-[16px]">
         <CheckInContent
           query={{
-            type: hasSearchParams
-              ? searchParams?.form
-                ? 'form-request'
-                : 'table-history'
-              : 'none',
+            type:
+              hasSearchParams && !searchParams?.date
+                ? searchParams?.form
+                  ? 'form-request'
+                  : 'table-history'
+                : 'none',
             searchParams,
           }}
           options={{

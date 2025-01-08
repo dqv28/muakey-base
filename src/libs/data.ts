@@ -109,6 +109,23 @@ export const getAccounts = async (query?: any) => {
     .catch(() => [])
 }
 
+export const addAccount = async (data: any) =>
+  requestWithAuthorized('accounts', {
+    method: 'POST',
+    data,
+  }).then((data) => data)
+
+export const editAccount = async (id: number, data: any) =>
+  requestWithAuthorized(`accounts/${id}`, {
+    method: 'PUT',
+    data,
+  }).then((data) => data)
+
+export const deleteAccount = async (id: number) =>
+  requestWithAuthorized(`accounts/${id}`, {
+    method: 'DELETE',
+  }).then((data) => data)
+
 export const getTasksByStageId = async (id: number) =>
   requestWithAuthorized(`tasks/${id}/stage`)
     .then((data) => data)

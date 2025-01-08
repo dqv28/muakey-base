@@ -21,7 +21,7 @@ type CheckInTableProps = TableProps & {
   options?: any
 }
 
-const useStyle = createStyles(({ css, token }) => {
+const useStyle = createStyles(({ css }) => {
   return {
     customTable: css`
       .ant-table {
@@ -90,17 +90,6 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       dataIndex: `${num + 1}/${month}`,
       width: 80,
       align: 'center',
-      onCell: (data: any) => {
-        const cellValue = data?.[`${num + 1}/${month}`]
-
-        return {
-          className: !!cellValue?.checkInValue
-            ? cellValue?.on_time
-              ? 'bg-[#deffdb]'
-              : 'bg-[#ffe8e8]'
-            : '',
-        }
-      },
       render: (value: any) => {
         const checkIn = value.checkInValue
 
@@ -123,7 +112,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
     })),
   ]
 
-  const { user, workSchedule } = options
+  const { user, workSchedule, attendances } = options
 
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
@@ -133,7 +122,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         (user?.role !== 'Admin lv2' && user?.id === m?.id),
     )
     ?.map((m: any) => {
-      const checkInHistories = options?.attendances?.filter(
+      const checkInHistories = attendances?.filter(
         (a: any) => a?.account_id === m?.id,
       )
 
@@ -153,7 +142,11 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 
         return [
           `${num + 1}/${month}`,
-          { checkInValue, on_time: checkIn?.on_time },
+          {
+            checkInValue,
+            start_ot: checkIn?.start_over_time,
+            end_ot: checkIn?.end_over_time,
+          },
         ]
       })
 
@@ -229,7 +222,6 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                     columns={checkInColumns}
                     dataSource={checkInDataSource}
                     rowHoverable={false}
-                    scroll={{ x: 'max-content', y: 55 * 5 }}
                     {...props}
                   />
                 ),

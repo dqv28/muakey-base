@@ -118,6 +118,14 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                     {info?.checkInValue?.[1] || '--:--'}
                   </div>
                 ))}
+              {info?.start_ot && (
+                <div className="w-full rounded-full bg-[#722ED1] py-[3px] text-center text-[#fff]">
+                  {String(dayjs(info?.start_ot).format('HH:mm'))} -{' '}
+                  {info?.end_ot
+                    ? String(dayjs(info?.end_ot).format('HH:mm'))
+                    : '--:--'}
+                </div>
+              )}
             </div>
           )
         ) : (
