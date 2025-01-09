@@ -7,7 +7,9 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
   const isAuthenticated = await isLoggedIn()
 
-  const user = await getMe()
+  if (path.includes('admin')) {
+    var user = await getMe()
+  }
 
   const session = await getSession()
   const today = new Date().getDate()

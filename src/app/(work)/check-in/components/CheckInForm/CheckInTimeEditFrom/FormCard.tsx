@@ -22,13 +22,13 @@ const FormCard: React.FC<FormCardProps> = ({
       )}
     >
       <div className="text-[16px]">{title}</div>
-      <div className="flex items-center gap-[24px]">
+      <div className="flex min-h-[54px] items-center gap-[24px]">
         <div className="flex-1">
           <div className="leading-[22px] text-[#00000073]">Check in</div>
           <div className="text-[24px] leading-none">{checkIn}</div>
         </div>
         <div className="flex-1">
-          <div className="leading-[22px] text-[#00000073]">Check in</div>
+          <div className="leading-[22px] text-[#00000073]">Check out</div>
           <div className="text-[24px] leading-none">{checkOut}</div>
         </div>
       </div>

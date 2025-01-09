@@ -1,3 +1,4 @@
+import { getMe } from '@/libs/data'
 import { getProposeCategories, getProposes } from '@/libs/propose'
 import { Button } from 'antd'
 import React from 'react'
@@ -11,6 +12,9 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
 
   const proposes = await getProposes()
   const proposeCategories = await getProposeCategories()
+  const user = await getMe()
+
+  console.log(proposeCategories)
 
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
@@ -57,6 +61,9 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
           query={{
             status:
               searchParams?.status !== 'all' ? searchParams?.status || '' : '',
+          }}
+          options={{
+            user,
           }}
         />
       </div>

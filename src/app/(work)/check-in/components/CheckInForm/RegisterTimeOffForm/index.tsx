@@ -1,7 +1,9 @@
 'use client'
 
+import { withApp } from '@/hoc'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import {
+  App,
   Button,
   DatePicker,
   Divider,
@@ -12,12 +14,18 @@ import {
   Space,
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
+import dayjs from 'dayjs'
 import React, { useState } from 'react'
+import { addProposeAction } from '../action'
 
 type RegisterTimeOffFormProps = {}
 
 const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
   const [mode, setMode] = useState<'date' | 'time'>('date')
+  const [loading, setLoading] = useState(false)
+
+  const { message } = App.useApp()
+  const [form] = Form.useForm()
 
   const list = [
     {
@@ -34,6 +42,45 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
     },
   ]
 
+  const handleSubmit = async (formData: any) => {
+    setLoading(true)
+
+    const { timestamps, type, ...restFormData } = formData
+
+    const holiday = timestamps?.map((t: any) => {
+      const startDate = `${String(dayjs(t?.startDate).format('YYYY-MM-DD'))} ${t?.startTime ? String(dayjs(t?.startTime).format('HH:mm:ss')) : ''}`
+      const endDate = `${String(dayjs(t?.endDate).format('YYYY-MM-DD'))} ${t?.endTime ? String(dayjs(t?.endTime).format('HH:mm:ss')) : ''}`
+
+      return {
+        start_date: startDate.trim(),
+        end_date: endDate.trim(),
+      }
+    })
+
+    try {
+      const { message: msg, errors } = await addProposeAction({
+        holiday,
+        name: type,
+        type,
+        propose_category_id: 5,
+        ...restFormData,
+      })
+
+      if (errors) {
+        message.error(msg)
+        setLoading(false)
+        return
+      }
+
+      message.success('Đã gửi yêu cầu')
+      setLoading(false)
+      form.resetFields()
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
+  }
+
   return (
     <>
       <div className="flex items-center rounded-[16px] bg-[#fff] p-[24px]">
@@ -47,11 +94,11 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
         ))}
       </div>
 
-      <div className="rounded-[16px] bg-[#fff] p-[16px]">
-        <Form layout="vertical">
+      <div className="mt-[16px] rounded-[16px] bg-[#fff] p-[16px]">
+        <Form layout="vertical" onFinish={handleSubmit} form={form}>
           <div className="flex items-start justify-between gap-[24px]">
             <div className="flex items-center gap-[24px]">
-              <Form.Item label="Chọn hình thức nghỉ" name="mode">
+              <Form.Item label="Chọn hình thức nghỉ">
                 <Space>
                   <Radio.Group
                     defaultValue={mode}
@@ -66,17 +113,17 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
                 className="w-[400px]"
                 label="Loại nghỉ"
                 name="type"
-                initialValue="unpaid"
+                initialValue="Nghỉ không hưởng lương"
               >
                 <Select
                   options={[
                     {
                       label: 'Nghỉ không hưởng lương',
-                      value: 'unpaid',
+                      value: 'Nghỉ không hưởng lương',
                     },
                     {
                       label: 'Nghỉ có hưởng lương',
-                      value: 'paid',
+                      value: 'Nghỉ có hưởng lương',
                     },
                   ]}
                 />
@@ -89,96 +136,106 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
             </div>
           </div>
 
-          <Form.List name="timestamp">
+          <Form.List name="timestamps" initialValue={[{}]}>
             {(fields, { add, remove }) => {
-              const initFields: any[] = [
-                {
-                  key: 0,
-                  name: 0,
-                  isDefault: true,
-                },
-              ]
-
               return (
                 <div className="space-y-[24px]">
-                  {[...initFields, ...fields].map(
-                    ({ key, name, ...restField }) => (
-                      <div
-                        className="relative overflow-hidden rounded-[16px] border border-[#d9d9d9] bg-[#f6f6f6] p-[24px]"
-                        key={key}
-                      >
-                        <div className="flex items-center gap-[24px]">
+                  {fields.map(({ key, name, ...restField }) => (
+                    <div
+                      className="relative overflow-hidden rounded-[16px] border border-[#d9d9d9] bg-[#f6f6f6] p-[24px]"
+                      key={key}
+                    >
+                      <div className="flex items-center gap-[24px]">
+                        <div className="flex flex-1 items-end gap-[24px]">
                           <Form.Item
                             {...restField}
                             className="!mb-0 flex-1"
                             label="Ngày/giờ bắt đầu"
                             name={[name, 'startDate']}
                           >
-                            <div className="flex items-center gap-[24px]">
-                              <DatePicker
-                                className="flex-1"
-                                locale={locale}
-                                placeholder="Chọn ngày bắt đầu"
-                              />
-                              <DatePicker
-                                className="flex-1"
-                                locale={locale}
-                                picker="time"
-                                placeholder="Chọn thời gian bắt đầu"
-                                disabled={mode === 'date'}
-                              />
-                            </div>
+                            <DatePicker
+                              className="w-full"
+                              locale={locale}
+                              placeholder="Chọn ngày bắt đầu"
+                            />
                           </Form.Item>
+                          <Form.Item
+                            {...restField}
+                            className="!mb-0 flex-1"
+                            name={[name, 'startTime']}
+                          >
+                            <DatePicker
+                              className="w-full"
+                              locale={locale}
+                              picker="time"
+                              placeholder="Chọn thời gian bắt đầu"
+                              disabled={mode === 'date'}
+                            />
+                          </Form.Item>
+                        </div>
 
-                          <Divider type="vertical" className="h-[74px]" />
+                        <Divider type="vertical" className="h-[74px]" />
 
+                        <div className="flex flex-1 items-end gap-[24px]">
                           <Form.Item
                             {...restField}
                             className="!mb-0 flex-1"
                             label="Ngày/giờ kết thúc"
                             name={[name, 'endDate']}
                           >
-                            <div className="flex items-center gap-[24px]">
-                              <DatePicker
-                                className="flex-1"
-                                locale={locale}
-                                placeholder="Chọn ngày kết thúc"
-                              />
-                              <DatePicker
-                                className="flex-1"
-                                locale={locale}
-                                picker="time"
-                                placeholder="Chọn thời kết thúc"
-                                disabled={mode === 'date'}
-                              />
-                            </div>
+                            <DatePicker
+                              className="w-full"
+                              locale={locale}
+                              placeholder="Chọn ngày kết thúc"
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            {...restField}
+                            className="!mb-0 flex-1"
+                            name={[name, 'endTime']}
+                          >
+                            <DatePicker
+                              className="w-full"
+                              locale={locale}
+                              picker="time"
+                              placeholder="Chọn thời gian kết thúc"
+                              disabled={mode === 'date'}
+                            />
                           </Form.Item>
                         </div>
-
-                        <div className="absolute right-0 top-0 flex items-center">
-                          <Button
-                            type="primary"
-                            className="rounded-none rounded-bl-lg bg-[#52C41A]"
-                            onClick={() => add()}
-                            icon={<PlusOutlined />}
-                          >
-                            Thêm
-                          </Button>
-                          {restField?.isDefault || (
-                            <Button
-                              type="primary"
-                              className="rounded-none"
-                              danger
-                              onClick={() => remove(name)}
-                              icon={<DeleteOutlined />}
-                            >
-                              Xóa
-                            </Button>
-                          )}
-                        </div>
                       </div>
-                    ),
-                  )}
+
+                      <div className="absolute right-0 top-0 flex items-center">
+                        <Button
+                          type="primary"
+                          className="rounded-none rounded-bl-lg bg-[#52C41A]"
+                          onClick={() => add()}
+                          icon={<PlusOutlined />}
+                        >
+                          Thêm
+                        </Button>
+                        <Button
+                          type="primary"
+                          className="rounded-none"
+                          danger
+                          onClick={() => remove(name)}
+                          icon={<DeleteOutlined />}
+                        >
+                          Xóa
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+
+                  <Form.Item>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      icon={<PlusOutlined />}
+                    >
+                      Thêm
+                    </Button>
+                  </Form.Item>
                 </div>
               )
             }}
@@ -186,7 +243,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
 
           <Form.Item
             className="mt-[24px]"
-            name="reason"
+            name="description"
             label="Lý do đăng ký nghỉ"
           >
             <Input.TextArea
@@ -197,7 +254,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
           </Form.Item>
 
           <Form.Item className="!mb-0 mt-[24px]">
-            <Button htmlType="submit" type="primary">
+            <Button htmlType="submit" type="primary" loading={loading}>
               Gửi yêu cầu
             </Button>
           </Form.Item>
@@ -207,4 +264,4 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
   )
 }
 
-export default RegisterTimeOffForm
+export default withApp(RegisterTimeOffForm)

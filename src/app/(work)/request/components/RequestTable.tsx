@@ -12,6 +12,7 @@ import RequestConfirmModalForm from './RequestConfirmModalForm'
 
 type RequestTableProps = TableProps & {
   query?: any
+  options?: any
 }
 
 const generateStatus = (status: string) => {
@@ -31,8 +32,9 @@ const generateStatus = (status: string) => {
 }
 
 const RequestTable: React.FC<RequestTableProps> = memo(
-  ({ dataSource, query, ...rest }) => {
+  ({ dataSource, query, options, ...rest }) => {
     const [requests, setRequests] = useState(dataSource || [])
+    const { user } = options
 
     const { message, modal } = App.useApp()
     const [open, setOpen] = useState(false)
@@ -102,26 +104,31 @@ const RequestTable: React.FC<RequestTableProps> = memo(
         render: (_, record) =>
           record?.status === 'pending' && (
             <div className="flex items-center gap-[8px]">
-              <RequestConfirmModalForm
-                initialValues={{
-                  id: record.id,
-                }}
-                status="approved"
-              >
-                <Tooltip title="Duyệt đề xuất">
-                  <CheckOutlined className="cursor-pointer text-[#389e0d]" />
-                </Tooltip>
-              </RequestConfirmModalForm>
-              <RequestConfirmModalForm
-                initialValues={{
-                  id: record.id,
-                }}
-                status="canceled"
-              >
-                <Tooltip title="Từ chối đề xuất">
-                  <CloseOutlined className="cursor-pointer text-[#cf1322]" />
-                </Tooltip>
-              </RequestConfirmModalForm>
+              {user?.role === 'Admin lv2' && (
+                <>
+                  <RequestConfirmModalForm
+                    initialValues={{
+                      id: record.id,
+                    }}
+                    status="approved"
+                  >
+                    <Tooltip title="Duyệt đề xuất">
+                      <CheckOutlined className="cursor-pointer text-[#389e0d]" />
+                    </Tooltip>
+                  </RequestConfirmModalForm>
+                  <RequestConfirmModalForm
+                    initialValues={{
+                      id: record.id,
+                    }}
+                    status="canceled"
+                  >
+                    <Tooltip title="Từ chối đề xuất">
+                      <CloseOutlined className="cursor-pointer text-[#cf1322]" />
+                    </Tooltip>
+                  </RequestConfirmModalForm>
+                </>
+              )}
+
               <div
                 onClick={() => {
                   modal.confirm({

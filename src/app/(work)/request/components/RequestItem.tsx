@@ -10,6 +10,13 @@ type RequestItemProps = {
   onEdit?: (values: any) => void
 }
 
+const ignoreProposeCategories = [
+  'Đăng ký OT',
+  'Đăng ký nghỉ',
+  'Sửa giờ vào ra',
+  'Khác',
+]
+
 const RequestItem: React.FC<RequestItemProps> = ({
   item,
   onDelete,
@@ -71,32 +78,38 @@ const RequestItem: React.FC<RequestItemProps> = ({
               e.stopPropagation()
             }}
           >
-            <Popconfirm
-              title="Xóa nhóm đề xuất?"
-              description="Xác nhận xóa nhóm đề xuất này?"
-              onConfirm={(e) => {
-                e?.stopPropagation()
-                onDelete?.()
-              }}
-              onCancel={(e) => e?.stopPropagation()}
-              okText="Xác nhận"
-              cancelText="Hủy bỏ"
-            >
-              <CloseOutlined className="visible p-[6px] opacity-0 transition-all group-hover:opacity-100" />
-            </Popconfirm>
-            {!editable ? (
-              <EditOutlined
-                className="text-[#1677ff]"
-                onClick={() => setEditable(true)}
-              />
-            ) : (
-              <EnterOutlined
-                className="text-[#1677ff]"
-                onClick={() => {
-                  onEdit?.(values)
-                  setEditable(false)
+            {!ignoreProposeCategories.includes(item?.name) && (
+              <Popconfirm
+                title="Xóa nhóm đề xuất?"
+                description="Xác nhận xóa nhóm đề xuất này?"
+                onConfirm={(e) => {
+                  e?.stopPropagation()
+                  onDelete?.()
                 }}
-              />
+                onCancel={(e) => e?.stopPropagation()}
+                okText="Xác nhận"
+                cancelText="Hủy bỏ"
+              >
+                <CloseOutlined className="visible p-[6px] opacity-0 transition-all group-hover:opacity-100" />
+              </Popconfirm>
+            )}
+            {!ignoreProposeCategories.includes(item?.name) ? (
+              !editable ? (
+                <EditOutlined
+                  className="text-[#1677ff]"
+                  onClick={() => setEditable(true)}
+                />
+              ) : (
+                <EnterOutlined
+                  className="text-[#1677ff]"
+                  onClick={() => {
+                    onEdit?.(values)
+                    setEditable(false)
+                  }}
+                />
+              )
+            ) : (
+              ''
             )}
           </div>
         </div>

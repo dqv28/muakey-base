@@ -1,14 +1,58 @@
+'use client'
+
+import { withApp } from '@/hoc'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Col, DatePicker, Form, Input, Row } from 'antd'
+import { App, Button, Col, DatePicker, Form, Input, Row } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
-import React from 'react'
+import dayjs from 'dayjs'
+import React, { useState } from 'react'
+import { addProposeAction } from '../action'
 
 type RegisterOTFormProps = {}
 
 const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
+  const { message } = App.useApp()
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (formData: any) => {
+    setLoading(true)
+
+    const { date, timestamps, ...restFormData } = formData
+
+    const day = String(dayjs(date).format('YYYY-MM-DD'))
+
+    const holiday = timestamps?.map((t: any) => ({
+      start_date:
+        `${day} ${t?.from ? String(dayjs(t?.from).format('HH:mm:ss')) : ''}`.trim(),
+      end_date:
+        `${day} ${t?.from ? String(dayjs(t?.to).format('HH:mm:ss')) : ''}`.trim(),
+    }))
+
+    try {
+      const { message: msg, errors } = await addProposeAction({
+        ...restFormData,
+        name: 'Đăng ký OT',
+        propose_category_id: 4,
+        holiday,
+      })
+
+      if (errors) {
+        message.error(msg)
+        setLoading(false)
+        return
+      }
+
+      setLoading(false)
+      message.success('Đã gửi yêu cầu')
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
+  }
+
   return (
     <div className="rounded-[16px] bg-[#fff] p-[16px]">
-      <Form layout="vertical">
+      <Form layout="vertical" onFinish={handleSubmit}>
         <div className="flex items-start justify-between gap-[24px]">
           <Form.Item name="date" label="Ngày">
             <DatePicker className="w-[229px]" locale={locale} />
@@ -22,20 +66,12 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
           </div>
         </div>
 
-        <Form.List name="timestamp">
+        <Form.List name="timestamps" initialValue={[{}]}>
           {(fields, { add, remove }) => {
-            const initFields: any[] = [
-              {
-                key: 0,
-                name: 0,
-                isDefault: true,
-              },
-            ]
-
             return (
-              <Row gutter={[24, 24]}>
-                {[...initFields, ...fields].map(
-                  ({ key, name, ...restField }) => (
+              <>
+                <Row gutter={[24, 24]}>
+                  {fields.map(({ key, name, ...restField }) => (
                     <Col key={key} span={12}>
                       <div className="gutter-row relative overflow-hidden rounded-[16px] border border-[#D9D9D9] bg-[#F6F6F6] !px-[24px] py-[16px]">
                         <div className="mb-[24px]">Thời gian đăng ký OT</div>
@@ -75,28 +111,39 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
                           >
                             Thêm
                           </Button>
-                          {restField?.isDefault || (
-                            <Button
-                              type="primary"
-                              className="rounded-none"
-                              danger
-                              onClick={() => remove(name)}
-                              icon={<DeleteOutlined />}
-                            >
-                              Xóa
-                            </Button>
-                          )}
+                          <Button
+                            type="primary"
+                            className="rounded-none"
+                            danger
+                            onClick={() => remove(name)}
+                            icon={<DeleteOutlined />}
+                          >
+                            Xóa
+                          </Button>
                         </div>
                       </div>
                     </Col>
-                  ),
-                )}
-              </Row>
+                  ))}
+                </Row>
+                <Form.Item className="mt-[24px]">
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    icon={<PlusOutlined />}
+                  >
+                    Thêm
+                  </Button>
+                </Form.Item>
+              </>
             )
           }}
         </Form.List>
 
-        <Form.Item className="mt-[24px]" name="reason" label="Lý do đăng ký OT">
+        <Form.Item
+          className="mt-[24px]"
+          name="description"
+          label="Lý do đăng ký OT"
+        >
           <Input.TextArea
             autoSize={{
               minRows: 3,
@@ -105,7 +152,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
         </Form.Item>
 
         <Form.Item className="!mb-0 mt-[24px]">
-          <Button htmlType="submit" type="primary">
+          <Button htmlType="submit" type="primary" loading={loading}>
             Gửi yêu cầu
           </Button>
         </Form.Item>
@@ -114,4 +161,4 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
   )
 }
 
-export default RegisterOTForm
+export default withApp(RegisterOTForm)

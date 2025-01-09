@@ -2,11 +2,12 @@ import { Col } from '@/ui'
 import {
   CaretRightOutlined,
   ExclamationCircleOutlined,
+  FilterFilled,
   ReloadOutlined,
 } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Collapse, Tooltip } from 'antd'
+import { Checkbox, Collapse, Dropdown, Tooltip } from 'antd'
 import clsx from 'clsx'
 import { useParams } from 'next/navigation'
 import React, { memo, useCallback, useMemo, useState } from 'react'
@@ -63,6 +64,11 @@ const StageColumn: React.FC<StageColumnProps> = memo(
       [stage?.expired_after_hours],
     )
 
+    const filteredOptions = [
+      { label: '>1k views', value: 'views' },
+      { label: '>7 days', value: 'days' },
+    ]
+
     return (
       <Col
         className={clsx('w-[272px] overflow-hidden border-r border-[#eee]', {
@@ -113,6 +119,22 @@ const StageColumn: React.FC<StageColumnProps> = memo(
                   className="cursor-pointer text-[10px]"
                   onClick={handleRefresh}
                 />
+              )}
+              {stage.index === 1 && (
+                <Dropdown
+                  trigger={['click']}
+                  dropdownRender={() => (
+                    <div className="rounded-[8px] bg-[#fff] px-[16px] py-[12px] shadow-lg">
+                      <Checkbox.Group
+                        className="flex-col space-y-[8px]"
+                        options={filteredOptions}
+                      />
+                    </div>
+                  )}
+                  placement="bottomRight"
+                >
+                  <FilterFilled className="ml-[8px] cursor-pointer text-[12px] text-[#00000099]" />
+                </Dropdown>
               )}
             </>
           }

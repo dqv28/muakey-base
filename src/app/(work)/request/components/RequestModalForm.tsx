@@ -22,7 +22,7 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
 
   const [open, setOpen] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
-  const [groupId, setGroupId] = useState<number>()
+  const [groupId, setGroupId] = useState<number | null>()
   const editorRef = useRef<MDXEditorMethods>(null)
   const { message, modal } = App.useApp()
   const router = useRouter()
@@ -50,7 +50,7 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
   }
 
   useEffect(() => {
-    setFormOpen(!!groupId)
+    setFormOpen(groupId !== undefined)
   }, [groupId])
 
   return (
@@ -69,7 +69,7 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
           <Form
             layout="vertical"
             initialValues={{
-              propose_category_id: groupId ? +groupId : 0,
+              propose_category_id: groupId,
             }}
             onFinish={handleSubmit}
           >
@@ -111,7 +111,7 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
             placeholder="-- Lựa chọn nhóm đề xuất --"
             options={groups?.map((g: any) => ({
               label: g?.name,
-              value: +g?.id,
+              value: g?.id,
             }))}
           />
         </Form.Item>
