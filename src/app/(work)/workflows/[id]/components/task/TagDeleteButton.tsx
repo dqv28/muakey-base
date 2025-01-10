@@ -41,7 +41,7 @@ const TagDeleteButton: React.FC<
       type="text"
       loading={tagDeleteLoading}
       onClick={(e) => {
-        e.preventDefault()
+        e.stopPropagation()
         handleDelete(Number(tagId))
       }}
       {...rest}

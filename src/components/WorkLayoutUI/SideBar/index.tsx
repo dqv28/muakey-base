@@ -36,13 +36,17 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
     }),
   ])
 
+  const lastAttendance = attendances[attendances?.length - 1]
+
+  const isCheckedIn = !!lastAttendance?.checkin && !lastAttendance?.checkout
+
   return (
     <Layout.Side
       subSide={
         <LeftSideBar
           user={user}
           options={{
-            isCheckedIn: !!attendances?.checkin && !attendances?.checkout,
+            isCheckedIn,
             isFirstLogin: session.firstLoginDate !== today,
           }}
         />

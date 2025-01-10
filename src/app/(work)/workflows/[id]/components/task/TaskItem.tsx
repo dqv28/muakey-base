@@ -69,6 +69,11 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     const { setStages } = useContext(WorkflowStageContext)
     const { modal } = App.useApp()
 
+    const now = new Date()
+    const days = Math.abs(dayjs(task?.date_posted).diff(now, 'day'))
+
+    const isAchieved = task?.view_count > 1000 && days > 7
+
     const {
       attributes,
       listeners,
@@ -269,7 +274,9 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           className={clsx(
             'border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !transition-all',
             isCompleted
-              ? 'bg-[#2bbf3d] text-[#fff]'
+              ? isAchieved || days < 7
+                ? 'bg-[#2bbf3d] text-[#fff]'
+                : 'bg-yellow-400 text-[#fff]'
               : isFailed
                 ? 'bg-[#c34343] text-[#fff]'
                 : 'bg-[#fff] hover:bg-[#f8f8f8]',

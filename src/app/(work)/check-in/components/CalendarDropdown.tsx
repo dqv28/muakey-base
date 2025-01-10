@@ -69,6 +69,8 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
     router.push(`?${urlSearchParams.toString()}`)
   }
 
+  console.log(info)
+
   return (
     <Dropdown
       trigger={['click']}
@@ -84,7 +86,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
     >
       <div
         className={clsx(
-          'flex aspect-[220/160] size-full flex-col border-x border-t border-x-[#fff] px-[8px] pb-[8px] pt-[6px]',
+          'flex aspect-[220/160] min-h-[160px] w-full flex-col border-x border-t border-x-[#fff] px-[8px] pb-[8px] pt-[6px]',
           day?.go_to_work !== undefined &&
             day?.go_to_work === 0 &&
             'bg-[#f5f5f5]',
@@ -109,9 +111,16 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
               </div>
               {info?.checkInValue?.[0] &&
                 (info?.checkInValue?.[1] ? (
-                  <div className="w-full rounded-full bg-[#237804] py-[3px] text-center text-[#fff]">
-                    {info?.checkInValue?.[0]} - {info?.checkInValue?.[1]}
-                  </div>
+                  <>
+                    {info?.checkInValue?.map((c: any) => (
+                      <div
+                        className="flex w-full items-center justify-center rounded-full bg-[#237804] px-[4px] py-[3px] text-[#fff]"
+                        key={c[0]}
+                      >
+                        {c?.[0]} - {c?.[1] || '--:--'}
+                      </div>
+                    ))}
+                  </>
                 ) : (
                   <div className="w-full rounded-full bg-[#F5222D] py-[3px] text-center text-[#fff]">
                     {info?.checkInValue?.[0]} -{' '}

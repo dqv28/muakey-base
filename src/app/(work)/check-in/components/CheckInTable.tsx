@@ -13,6 +13,8 @@ import CheckInSchedule from './CheckInSchedule'
 import CheckInScheduleModalForm from './CheckInScheduleModalForm'
 
 import locale from 'antd/es/date-picker/locale/vi_VN'
+import dayjsLocale from 'dayjs/locale/vi'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import CalendarDropdown from './CalendarDropdown'
 import CheckInStatistics from './CheckInStatistics'
 import CheckInTableExplanation from './CheckInTableExplanation'
@@ -61,6 +63,9 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
   const year = new Date().getFullYear()
   const month = options?.day || new Date().getMonth() + 1
 
+  dayjs.extend(relativeTime)
+  dayjs.locale(dayjsLocale)
+
   const dateParams = searchParams?.get('date')
   const dateNumber = new Date(year, month, 0).getDate()
 
@@ -85,31 +90,39 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         </div>
       ),
     },
-    ...times(dateNumber, (num): any => ({
-      title: `${num + 1 > 9 ? num + 1 : `0${num + 1}`}/${month}`,
-      dataIndex: `${num + 1}/${month}`,
-      width: 80,
-      align: 'center',
-      render: (value: any) => {
-        const checkIn = value.checkInValue
+    ...times(dateNumber, (num): any => {
+      const date = dayjs(
+        `${year}-${month > 9 ? month : `0${month}-${num + 1 > 9 ? num + 1 : `0${num + 1}`}`}`,
+      )
 
-        return (
-          <>
-            {Array.isArray(checkIn) ? (
-              <div className="flex flex-col gap-[4px]">
-                <span>{checkIn[0]}</span>
-                {checkIn[1] && (
-                  <>
-                    <Divider className="!m-0 !w-[10px]" />
-                    <span>{checkIn[1]}</span>
-                  </>
-                )}
-              </div>
-            ) : null}
-          </>
-        )
-      },
-    })),
+      return {
+        title: (
+          <div>
+            <div>{String(date.format('dd'))}</div>
+            <div>{String(date.format('DD/MM'))}</div>
+          </div>
+        ),
+        dataIndex: `${num + 1}/${month}`,
+        width: 120,
+        align: 'center',
+        render: (value: any) => {
+          const checkIn = value.checkInValue
+
+          return (
+            <div className="flex flex-col gap-[4px]">
+              {checkIn?.map((c: any, index: number) => (
+                <>
+                  {index > 0 && <Divider className="!my-[4px]" />}
+                  <div key={c[0]}>
+                    {c[0]} - {c[1] ? c[1] : '--:--'}
+                  </div>
+                </>
+              ))}
+            </div>
+          )
+        },
+      }
+    }),
   ]
 
   const { user, workSchedule, attendances } = options
@@ -127,25 +140,24 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       )
 
       const fields = times(dateNumber, (num): any => {
-        const checkIn = checkInHistories?.find(
+        const checkIn = checkInHistories?.filter(
           (c: any) => new Date(c?.checkin).getDate() == num + 1,
         )
 
-        const checkInValue = checkIn
-          ? [
-              dayjs(checkIn?.checkin).format('HH:mm'),
-              checkIn?.checkout
-                ? dayjs(checkIn?.checkout).format('HH:mm')
-                : null,
-            ]
-          : null
+        const checkInValue =
+          checkIn?.length >= 1
+            ? checkIn?.map((c: any) => [
+                dayjs(c?.checkin).format('HH:mm'),
+                c?.checkout ? dayjs(c?.checkout).format('HH:mm') : null,
+              ])
+            : null
 
         return [
           `${num + 1}/${month}`,
           {
             checkInValue,
-            start_ot: checkIn?.start_over_time,
-            end_ot: checkIn?.end_over_time,
+            start_ot: checkIn[0]?.start_over_time,
+            end_ot: checkIn[0]?.end_over_time,
           },
         ]
       })

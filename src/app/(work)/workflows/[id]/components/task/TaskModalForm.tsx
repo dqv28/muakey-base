@@ -3,7 +3,6 @@
 import { InitializedMDXEditor } from '@/components'
 import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
-import { randomColor } from '@/libs/utils'
 import { PlusOutlined } from '@ant-design/icons'
 import { MDXEditorMethods } from '@mdxeditor/editor'
 import {
@@ -33,7 +32,7 @@ import { Converter } from 'showdown'
 import { addTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
 import { addTagAction, addTagToTaskAction, getTagsAction } from './action'
-import TagDeleteButton from './TagDeleteButton'
+import TagOption from './tag-option'
 
 type TaskModalFormProps = ModalProps & {
   children?: React.ReactNode
@@ -52,28 +51,33 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 }) => {
   const [loading, setLoading] = useState(false)
   const [tagAddLoading, setTagAddLoading] = useState(false)
-
   const [open, setOpen] = useState(false)
+  const [tags, setTags] = useState<any[]>([])
+  const [tagName, setTagName] = useState('')
+  const [tagColor, setTagColor] = useState('')
+
   const formRef = useRef<FormInstance>(null)
   const params = useParams()
   const { setStages, isAuth } = useContext(StageContext)
   const editorRef = useRef<MDXEditorMethods>(null)
+  const inputRef = useRef<InputRef>(null)
+  const { message } = App.useApp()
+
   const converter = new Converter({
     tables: true,
     strikethrough: true,
     tasklists: true,
     simpleLineBreaks: true,
   })
-
-  const [tags, setTags] = useState<any[]>([])
-  const [name, setName] = useState('')
-  const inputRef = useRef<InputRef>(null)
   const { account_id, members, sticker, description, ...restInitialValues } =
     initialValues
-  const { message } = App.useApp()
 
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value)
+    setTagName(event.target.value)
+  }
+
+  const onColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTagColor(event.target.value)
   }
 
   const handleAdd = async (
@@ -83,14 +87,15 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
     e.preventDefault()
 
-    if (!name) {
+    if (!tagName) {
       setTagAddLoading(false)
       return
     }
 
     try {
       const { id, message, errors } = await addTagAction({
-        title: name,
+        title: tagName,
+        code_color: tagColor,
         workflow_id: params?.id,
       })
 
@@ -103,11 +108,14 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       setTags([
         ...tags,
         {
-          title: name,
+          title: tagName,
+          code_color: tagColor,
           id,
         },
       ])
-      setName('')
+      setTagName('')
+      setTagColor('')
+
       setTimeout(() => {
         inputRef.current?.focus()
       }, 0)
@@ -116,6 +124,13 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       setTagAddLoading(false)
       throw new Error(String(error))
     }
+  }
+
+  const handleEdit = async (values: any) => {
+    console.log(values)
+    // setTags((prevTags: any[]) => {
+    //   return prevTags
+    // })
   }
 
   const handleSubmit = async (formData: any) => {
@@ -284,30 +299,19 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     editorRef.current?.setMarkdown(description || '')
   }, [open])
 
-  const optionRender: SelectProps['optionRender'] = (option) => (
-    <div className="group relative flex min-h-[32px] items-center gap-[16px]">
-      <div className="flex w-full flex-1 items-center gap-[8px]">
-        <div
-          className="size-[24px] rounded-[4px]"
-          style={{
-            backgroundColor: randomColor(String(option?.label || '')),
-          }}
-        />
-        <span className="line-clamp-1 inline-block w-[calc(100%-68px)]">
-          {option?.label}
-        </span>
-      </div>
-      <TagDeleteButton
-        className="visible absolute right-[8px] z-[10020] !size-[16px] opacity-0 transition-all group-hover:opacity-100"
-        tagId={Number(option?.value)}
+  const optionRender: SelectProps['optionRender'] = (option: any) => {
+    return (
+      <TagOption
+        option={option}
         onDelete={() => {
           setTags((prevTags: any[]) =>
             prevTags.filter((tag: any) => tag?.id !== Number(option?.value)),
           )
         }}
+        onEdit={handleEdit}
       />
-    </div>
-  )
+    )
+  }
 
   const dropdownRender: SelectProps['dropdownRender'] = (menu) => (
     <>
@@ -317,12 +321,21 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         className="flex w-full items-center gap-[8px]"
         style={{ padding: '0 8px 4px' }}
       >
-        <div className="flex-1">
+        <div className="flex flex-1 items-center gap-[12px]">
           <Input
-            placeholder="Nhập tên nhãn"
+            className="flex-1"
+            placeholder="Tên nhãn"
             ref={inputRef}
-            value={name}
+            value={tagName}
             onChange={onNameChange}
+            onKeyDown={(e) => e.stopPropagation()}
+          />
+          <Input
+            className="flex-1"
+            placeholder="Màu"
+            ref={inputRef}
+            value={tagColor}
+            onChange={onColorChange}
             onKeyDown={(e) => e.stopPropagation()}
           />
         </div>
@@ -346,16 +359,20 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       event.stopPropagation()
     }
     return (
-      <Tooltip title={label}>
+      <Tooltip title={String(label).split('-')[0]}>
         <Tag
           className="flex items-center"
-          color={randomColor(String(label || ''))}
+          color={
+            String(label).split('-')[1] !== 'null'
+              ? String(label).split('-')[1]
+              : '#888'
+          }
           onMouseDown={onPreventMouseDown}
           closable={closable}
           onClose={onClose}
           style={{ marginInlineEnd: 4, maxWidth: 150 }}
         >
-          <span className="line-clamp-1">{label}</span>
+          <span className="line-clamp-1">{String(label).split('-')[0]}</span>
         </Tag>
       </Tooltip>
     )
@@ -432,13 +449,15 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             placeholder="Chọn nhãn"
             mode="multiple"
             options={tags.map((item: any) => ({
-              label: item?.title,
+              label: `${item?.title}-${item?.code_color}`,
               value: item?.id,
+              code_color: item?.code_color,
             }))}
             optionRender={optionRender}
             dropdownRender={dropdownRender}
             tagRender={tagRender}
             notFoundContent={<Empty description="Chưa có nhãn" />}
+            allowClear
           />
         </Form.Item>
         <Form.Item

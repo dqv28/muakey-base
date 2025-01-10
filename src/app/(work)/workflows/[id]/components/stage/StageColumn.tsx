@@ -7,10 +7,11 @@ import {
 } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Checkbox, Collapse, Dropdown, Tooltip } from 'antd'
+import { Button, Collapse, Dropdown, Form, Input, Tooltip } from 'antd'
 import clsx from 'clsx'
+import dayjs from 'dayjs'
 import { useParams } from 'next/navigation'
-import React, { memo, useCallback, useMemo, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import TaskList from '../task/TaskList'
 import StageDropdownMenu from './StageDropdownMenu'
 import StageHeader from './StageHeader'
@@ -25,6 +26,14 @@ type StageColumnProps = {
 const StageColumn: React.FC<StageColumnProps> = memo(
   ({ stage, userId, options }) => {
     const [loading, setLoading] = useState(false)
+    const [tasks, setTasks] = useState<any[]>(stage?.tasks || [])
+    const [filteredValues, setFilteredValues] = useState({
+      views: '',
+      days: '',
+    })
+
+    const now = new Date()
+    const [form] = Form.useForm()
 
     const params = useParams()
     const { attributes, setNodeRef, transform, transition } = useSortable({
@@ -64,10 +73,42 @@ const StageColumn: React.FC<StageColumnProps> = memo(
       [stage?.expired_after_hours],
     )
 
-    const filteredOptions = [
-      { label: '>1k views', value: 'views' },
-      { label: '>7 days', value: 'days' },
-    ]
+    useEffect(() => {
+      const { views, days: formDays } = filteredValues
+
+      if (!views && !formDays) {
+        setTasks(stage?.tasks || [])
+        return
+      }
+
+      setTasks(() => {
+        if (views && formDays) {
+          return [
+            ...stage?.tasks?.filter((t: any) => {
+              const days = Math.abs(dayjs(t?.date_posted).diff(now, 'day'))
+
+              return t?.view_count > +views && days > +formDays
+            }),
+          ]
+        }
+
+        if (views) {
+          return [...stage?.tasks?.filter((t: any) => t?.view_count > +views)]
+        }
+
+        if (formDays) {
+          return [
+            ...stage?.tasks.filter((t: any) => {
+              const days = Math.abs(dayjs(t?.date_posted).diff(now, 'day'))
+
+              return days > +formDays
+            }),
+          ]
+        }
+
+        return [...stage?.tasks]
+      })
+    }, [filteredValues])
 
     return (
       <Col
@@ -124,11 +165,38 @@ const StageColumn: React.FC<StageColumnProps> = memo(
                 <Dropdown
                   trigger={['click']}
                   dropdownRender={() => (
-                    <div className="rounded-[8px] bg-[#fff] px-[16px] py-[12px] shadow-lg">
-                      <Checkbox.Group
-                        className="flex-col space-y-[8px]"
-                        options={filteredOptions}
-                      />
+                    <div className="max-w-[200px] rounded-[8px] bg-[#fff] p-[12px] shadow-lg">
+                      <Form onFinish={setFilteredValues} form={form}>
+                        <Form.Item className="!mb-[8px]" name="views">
+                          <Input placeholder="> Lượt xem" type="number" />
+                        </Form.Item>
+                        <Form.Item className="!mb-[8px]" name="days">
+                          <Input placeholder="> Ngày" type="number" />
+                        </Form.Item>
+                        <Form.Item className="!mb-0">
+                          <div className="flex items-center justify-between">
+                            <Button
+                              size="small"
+                              onClick={() => {
+                                form.resetFields()
+                                setFilteredValues({
+                                  views: '',
+                                  days: '',
+                                })
+                              }}
+                            >
+                              Reset
+                            </Button>
+                            <Button
+                              type="primary"
+                              size="small"
+                              htmlType="submit"
+                            >
+                              Ok
+                            </Button>
+                          </div>
+                        </Form.Item>
+                      </Form>
                     </div>
                   )}
                   placement="bottomRight"
@@ -186,7 +254,7 @@ const StageColumn: React.FC<StageColumnProps> = memo(
 
         <div className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]">
           <TaskList
-            tasks={stage?.tasks}
+            tasks={tasks}
             stageId={stage?.id}
             loading={loading}
             userId={userId}
