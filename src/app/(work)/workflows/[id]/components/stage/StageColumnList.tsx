@@ -51,6 +51,7 @@ const StageColumnList: React.FC<StageColumnListProps> = ({
           options={{
             role: user?.role,
             activeItem,
+            stages: items,
           }}
         />
       ))}

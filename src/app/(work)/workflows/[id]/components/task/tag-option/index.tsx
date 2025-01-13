@@ -1,8 +1,8 @@
 'use client'
 
 import { EditOutlined, EnterOutlined } from '@ant-design/icons'
-import { Button, Input } from 'antd'
-import React, { useState } from 'react'
+import { Button, Input, InputRef } from 'antd'
+import React, { useRef, useState } from 'react'
 import TagDeleteButton from '../TagDeleteButton'
 
 type TagOptionProps = {
@@ -20,6 +20,9 @@ const TagOption: React.FC<TagOptionProps> = ({ option, onDelete, onEdit }) => {
   )
   const [tagColor, setTagColor] = useState(data?.code_color || '')
 
+  const nameRef = useRef<InputRef>(null)
+  const colorRef = useRef<InputRef>(null)
+
   return (
     <div className="group relative flex min-h-[32px] items-center gap-[16px]">
       <div className="flex w-full flex-1 items-center gap-[8px]">
@@ -27,13 +30,21 @@ const TagOption: React.FC<TagOptionProps> = ({ option, onDelete, onEdit }) => {
           <>
             <Input
               value={tagName}
+              ref={nameRef}
               onChange={(e) => setTagName(e.target.value)}
-              onClick={(e) => e?.stopPropagation()}
+              onClick={(e) => {
+                e?.stopPropagation()
+                nameRef.current?.focus()
+              }}
             />
             <Input
               value={tagColor}
+              ref={colorRef}
               onChange={(e) => setTagColor(e.target.value)}
-              onClick={(e) => e?.stopPropagation()}
+              onClick={(e) => {
+                e?.stopPropagation()
+                colorRef.current?.focus()
+              }}
             />
           </>
         ) : (

@@ -1,13 +1,12 @@
 import { Col } from '@/ui'
 import {
-  CaretRightOutlined,
   ExclamationCircleOutlined,
   FilterFilled,
   ReloadOutlined,
 } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Button, Collapse, Dropdown, Form, Input, Tooltip } from 'antd'
+import { Button, Dropdown, Form, Input, Tooltip } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { useParams } from 'next/navigation'
@@ -227,7 +226,7 @@ const StageColumn: React.FC<StageColumnProps> = memo(
           </div>
         </StageHeader>
 
-        {![0, 1].includes(stage.index) && stage?.description && (
+        {/* {![0, 1].includes(stage.index) && stage?.description && (
           <Collapse
             rootClassName="rounded-none border-l-0 border-r-0 border-t-0 border-b border-[#eee]"
             className="rounded-none bg-[#fff]"
@@ -250,7 +249,7 @@ const StageColumn: React.FC<StageColumnProps> = memo(
               },
             ]}
           />
-        )}
+        )} */}
 
         <div className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]">
           <TaskList

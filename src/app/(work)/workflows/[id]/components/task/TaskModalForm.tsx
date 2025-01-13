@@ -31,7 +31,12 @@ import toast from 'react-hot-toast'
 import { Converter } from 'showdown'
 import { addTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
-import { addTagAction, addTagToTaskAction, getTagsAction } from './action'
+import {
+  addTagAction,
+  addTagToTaskAction,
+  getTagsAction,
+  updateTagAction,
+} from './action'
 import TagOption from './tag-option'
 
 type TaskModalFormProps = ModalProps & {
@@ -127,10 +132,40 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   }
 
   const handleEdit = async (values: any) => {
-    console.log(values)
-    // setTags((prevTags: any[]) => {
-    //   return prevTags
-    // })
+    const { id, ...restValues } = values
+
+    if (!restValues?.title && !restValues?.color) return
+
+    try {
+      const { message: msg, errors } = await updateTagAction(id, {
+        title: restValues.title,
+        code_color: restValues.color,
+        workflow_id: params?.id,
+      })
+
+      if (errors) {
+        message.error(msg)
+        return
+      }
+
+      setTags((prevTags: any[]) => {
+        const newTags = [...prevTags]
+
+        return newTags.map((tag: any) => {
+          if (tag.id === id) {
+            return {
+              ...tag,
+              title: restValues.title,
+              code_color: restValues.color,
+            }
+          }
+
+          return tag
+        })
+      })
+    } catch (error) {
+      throw new Error(String(error))
+    }
   }
 
   const handleSubmit = async (formData: any) => {
@@ -293,6 +328,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     const res = await getTagsAction({
       workflow_id: params?.id,
     })
+
+    console.log(res)
 
     setTags(res)
 
