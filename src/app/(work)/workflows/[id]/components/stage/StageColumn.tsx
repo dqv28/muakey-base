@@ -86,13 +86,13 @@ const StageColumn: React.FC<StageColumnProps> = memo(
             ...stage?.tasks?.filter((t: any) => {
               const days = Math.abs(dayjs(t?.date_posted).diff(now, 'day'))
 
-              return t?.view_count > +views && days > +formDays
+              return t?.view_count >= +views && days >= +formDays
             }),
           ]
         }
 
         if (views) {
-          return [...stage?.tasks?.filter((t: any) => t?.view_count > +views)]
+          return [...stage?.tasks?.filter((t: any) => t?.view_count >= +views)]
         }
 
         if (formDays) {
@@ -100,7 +100,7 @@ const StageColumn: React.FC<StageColumnProps> = memo(
             ...stage?.tasks.filter((t: any) => {
               const days = Math.abs(dayjs(t?.date_posted).diff(now, 'day'))
 
-              return days > +formDays
+              return days >= +formDays
             }),
           ]
         }
@@ -108,6 +108,10 @@ const StageColumn: React.FC<StageColumnProps> = memo(
         return [...stage?.tasks]
       })
     }, [filteredValues])
+
+    useEffect(() => {
+      setTasks(stage?.tasks)
+    }, [stage?.tasks])
 
     return (
       <Col
@@ -225,31 +229,6 @@ const StageColumn: React.FC<StageColumnProps> = memo(
             )}
           </div>
         </StageHeader>
-
-        {/* {![0, 1].includes(stage.index) && stage?.description && (
-          <Collapse
-            rootClassName="rounded-none border-l-0 border-r-0 border-t-0 border-b border-[#eee]"
-            className="rounded-none bg-[#fff]"
-            expandIcon={({ isActive }) => (
-              <CaretRightOutlined rotate={isActive ? 90 : 0} />
-            )}
-            items={[
-              {
-                key: '1',
-                label: (
-                  <div className="cursor-pointer leading-[22px]">
-                    Mô tả giai đoạn
-                  </div>
-                ),
-                children: (
-                  <div
-                    dangerouslySetInnerHTML={{ __html: stage?.description }}
-                  />
-                ),
-              },
-            ]}
-          />
-        )} */}
 
         <div className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]">
           <TaskList

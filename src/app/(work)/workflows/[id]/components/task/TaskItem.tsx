@@ -3,6 +3,7 @@
 import { getTaskHistoriesAction } from '@/components/action'
 import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
 import { withApp } from '@/hoc'
+import { useAsyncEffect } from '@/libs/hook'
 import {
   abbreviateNumber,
   convertRelativeTime,
@@ -18,7 +19,6 @@ import {
   Dropdown,
   Input,
   MenuProps,
-  message,
   Modal,
   Popconfirm,
   Tag,
@@ -32,8 +32,16 @@ import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import React, { memo, useContext, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { editTaskAction, moveStageAction } from '../../../action'
+import { Converter } from 'showdown'
+import {
+  addTaskReportAction,
+  editTaskAction,
+  moveStageAction,
+} from '../../../action'
+import { getReportFieldsByWorkflowIdAction } from '../stage/action'
 import { StageContext } from '../stage/StageList'
+import TaskDoneModalForm from '../stage/TaskDoneModalForm'
+import TaskReportsModalForm from '../stage/TaskReportsModalForm'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import MemberList from './member-list'
 import TaskItemStatistics from './task-item-statistics'
@@ -66,18 +74,23 @@ const TaskItem: React.FC<TaskItemProps> = memo(
   }) => {
     const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
     const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
+    const [taskReportOpen, setTaskReportOpen] = useState(false)
+    const [doneOpen, setDoneOpen] = useState(false)
+    const [reports, setReports] = useState<any[]>([])
+    const [currentStage, setCurrentStage] = useState<any>()
     const router = useRouter()
 
     const { failedStageId } = useContext(StageContext)
     const { setStages } = useContext(WorkflowStageContext)
     const params = useParams()
-    const { modal } = App.useApp()
+    const { message, modal } = App.useApp()
+    const converter = new Converter()
 
     const now = new Date()
-    const days = Math.abs(dayjs(task?.date_posted).diff(now, 'day'))
-    const { stages } = options
+    const daysFromNow = Math.abs(dayjs(task?.date_posted).diff(now, 'day'))
+    const { stages, role } = options
 
-    const isAchieved = task?.view_count > 1000 && days > 7
+    const isNotAchieved = task?.view_count < 1000 && daysFromNow > 7
 
     const {
       attributes,
@@ -95,53 +108,6 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     }
 
     const user = members?.filter((u: any) => u?.id === task.account_id)?.[0]
-
-    const handleAssign = async (id: number) => {
-      try {
-        const { message, errors } = await editTaskAction(task?.id, {
-          account_id: id,
-        })
-
-        setStages((prevStages: any[]) => {
-          const newStages = cloneDeep(prevStages)
-
-          return newStages?.map((stage: any) => {
-            if (stage?.id === `stage_${task?.stage_id}`) {
-              return {
-                ...stage,
-                tasks: stage?.tasks?.map((t: any) => {
-                  if (t?.id === task?.id) {
-                    return {
-                      ...t,
-                      account_id: id,
-                      expired: stage.expired_after_hours
-                        ? new Date().setHours(
-                            new Date().getHours() + stage.expired_after_hours,
-                          )
-                        : null,
-                    }
-                  }
-
-                  return t
-                }),
-              }
-            }
-
-            return stage
-          })
-        })
-
-        if (errors) {
-          toast.error(message)
-          return
-        }
-
-        toast.success('Nhiệm vụ đã được giao.')
-        setAssignConfirmOpen(false)
-      } catch (error: any) {
-        throw new Error(error)
-      }
-    }
 
     const handleRemoveExecutor = async (id: number) => {
       if (!String(options?.role).toLowerCase().includes('admin')) {
@@ -200,10 +166,6 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     const timeStatus = t >= 0 ? 'inprogress' : 'overdue'
     const time = dayjs.duration(Math.abs(t))
 
-    const filteredStages = stages?.filter(
-      (stage: any) => ![0, 1].includes(stage?.index),
-    )
-
     const taskDropdownItems: MenuProps['items'] = [
       {
         key: '1',
@@ -211,21 +173,48 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           <Link href={`/job/${task?.id}?wid=${params?.id}`}>Xem nhiệm vụ</Link>
         ),
       },
-      // {
-      //   key: '2',
-      //   label: 'Chuyển giai đoạn',
-      //   children: filteredStages?.map((stage: any, index: number) => ({
-      //     key: `2-${index + 1}`,
-      //     label: (
-      //       <div
-      //         key={stage?.id}
-      //         onClick={() => handleStageClick(+String(stage?.id).split('_')[1])}
-      //       >
-      //         {stage?.name}
-      //       </div>
-      //     ),
-      //   })),
-      // },
+      {
+        key: '2',
+        label: 'Chuyển giai đoạn',
+        children: stages?.map((stage: any, index: number) => ({
+          key: `2-${index + 1}`,
+          label: (
+            <div
+              className={clsx({
+                'text-[#d96c6c]': stage?.index === 0,
+                'text-[#42bb14]': stage?.index === 1,
+              })}
+              key={stage?.id}
+              onClick={() => {
+                const activeStage = stages?.find(
+                  (s: any) => s?.id === `stage_${task?.stage_id}`,
+                )
+                const overStage = stages?.find((s: any) => s?.id === stage?.id)
+
+                setCurrentStage(stage)
+
+                if (overStage?.index === 1) {
+                  setDoneOpen(true)
+                  return
+                }
+
+                if (
+                  reports?.length > 0 &&
+                  task?.account_id &&
+                  activeStage?.index > overStage?.index
+                ) {
+                  setTaskReportOpen(true)
+                  return
+                }
+
+                handleStageClick(stage)
+              }}
+            >
+              {stage?.name}
+            </div>
+          ),
+        })),
+      },
       {
         key: '3',
         label: (
@@ -290,8 +279,22 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       },
     ]
 
-    const handleStageClick = async (stageId: number) => {
+    const handleStageClick = async (stage: any) => {
+      const stageId = +String(stage?.id).split('_')[1]
+
       if (task?.stage_id === stageId) return
+
+      if (!task.account_id && [1].includes(stage?.index)) {
+        message.error('Nhiệm vụ chưa được giao.')
+        return
+      }
+
+      if (!String(role).toLocaleLowerCase().includes('admin')) {
+        if (task.account_id !== userId) {
+          message.error('Không thể kéo nhiệm vụ của người khác.')
+          return
+        }
+      }
 
       const taskHistory = await getTaskHistoriesAction({
         task_id: task?.stage_id,
@@ -354,6 +357,46 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       }
     }
 
+    const handleSubmit = async (values: any) => {
+      const formData = Object.fromEntries(
+        Object.keys(values).map((key: string) => [
+          key,
+          converter.makeHtml(values[key]),
+        ]),
+      )
+
+      try {
+        const { message, errors } = await addTaskReportAction(
+          {
+            ...formData,
+          },
+          {
+            task_id: task?.id,
+          },
+        )
+
+        if (errors) {
+          toast.error(message)
+          return
+        }
+
+        handleStageClick(currentStage)
+        setTaskReportOpen(false)
+      } catch (error) {
+        throw new Error()
+      }
+    }
+
+    useAsyncEffect(async () => {
+      const data = await getReportFieldsByWorkflowIdAction({
+        workflow_id: Number(params?.id),
+        stage_id: task?.stage_id,
+        task_id: task?.id,
+      })
+
+      setReports(data)
+    }, [])
+
     return (
       <div
         className="relative"
@@ -368,9 +411,9 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           className={clsx(
             'border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !transition-all',
             isCompleted
-              ? isAchieved || days < 7
-                ? 'bg-[#2bbf3d] text-[#fff]'
-                : 'bg-yellow-400 text-[#fff]'
+              ? isNotAchieved
+                ? 'bg-yellow-400 text-[#fff]'
+                : 'bg-[#2bbf3d] text-[#fff]'
               : isFailed
                 ? 'bg-[#c34343] text-[#fff]'
                 : 'bg-[#fff] hover:bg-[#f8f8f8]',
@@ -458,6 +501,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             )}
           </Link>
         </div>
+
         {!isCompleted && !isFailed && (
           <>
             {(!task?.account_id || !user) && (
@@ -472,6 +516,18 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             )}
           </>
         )}
+
+        <div className="absolute right-[16px] top-[12px] flex items-center">
+          <Dropdown
+            trigger={['click']}
+            rootClassName="!z-auto"
+            placement="bottomRight"
+            menu={{ items: taskDropdownItems, style: { width: 200 } }}
+          >
+            <EllipsisOutlined className="p-[2px] text-[16px] leading-[20px]" />
+          </Dropdown>
+        </div>
+
         <Modal
           open={assignConfirmOpen}
           onCancel={() => setAssignConfirmOpen(false)}
@@ -487,22 +543,34 @@ const TaskItem: React.FC<TaskItemProps> = memo(
               {members && (
                 <MemberList
                   members={members}
-                  onAssign={(id) => handleAssign(id)}
+                  options={{
+                    taskId: task?.id,
+                    stageId: task?.stage_id,
+                  }}
+                  onCompleted={() => setAssignConfirmOpen(false)}
                 />
               )}
             </div>
           </div>
         </Modal>
-        <div className="absolute right-[16px] top-[12px] flex items-center">
-          <Dropdown
-            trigger={['click']}
-            rootClassName="!z-auto"
-            placement="bottomRight"
-            menu={{ items: taskDropdownItems, style: { width: 200 } }}
-          >
-            <EllipsisOutlined className="p-[2px] text-[16px] leading-[20px]" />
-          </Dropdown>
-        </div>
+
+        <TaskReportsModalForm
+          reports={reports}
+          open={taskReportOpen}
+          onCancel={() => setTaskReportOpen(false)}
+          onSubmit={(values) => handleSubmit(values)}
+        />
+
+        <TaskDoneModalForm
+          open={doneOpen}
+          onCancel={() => setDoneOpen(false)}
+          taskId={Number(task?.id)}
+          onSubmit={() => handleStageClick(currentStage)}
+          onOk={() => setDoneOpen(false)}
+          initialValues={{
+            link_youtube: task?.link_youtube,
+          }}
+        />
       </div>
     )
   },

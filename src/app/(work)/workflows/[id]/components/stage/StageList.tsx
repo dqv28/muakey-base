@@ -342,7 +342,6 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
   return (
     <DndContext
       sensors={sensors}
-      // collisionDetection={closestCenter}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >

@@ -1,21 +1,30 @@
-import { getKpi } from '@/libs/data'
-import React from 'react'
+'use client'
+
+import { useAsyncEffect } from '@/libs/hook'
+import React, { useState } from 'react'
 import WorkflowStatisticsFiltered from './WorkflowStatisticsFiltered'
 import WorkflowStatisticsTable from './WorkflowStatisticsTable'
+import { getKpiAction } from './action'
 
 type WorkflowStatisticsProps = {
   workflowId: number
   params?: any
 }
 
-const WorkflowStatistics: React.FC<WorkflowStatisticsProps> = async ({
+const WorkflowStatistics: React.FC<WorkflowStatisticsProps> = ({
   workflowId,
   params,
 }) => {
-  const statistics = await getKpi({
-    ...params,
-    workflow_id: workflowId,
-  })
+  const [statistics, setStatistics] = useState<any[]>([])
+
+  useAsyncEffect(async () => {
+    const res = await getKpiAction({
+      ...params,
+      workflow_id: workflowId,
+    })
+
+    setStatistics(res)
+  }, [])
 
   return (
     <div className="px-[16px] pb-[24px] pt-[12px]">
@@ -23,7 +32,10 @@ const WorkflowStatistics: React.FC<WorkflowStatisticsProps> = async ({
         <span className="font-[500]">Thống kê</span>
         <WorkflowStatisticsFiltered />
       </div>
-      <WorkflowStatisticsTable statistics={statistics} />
+      <WorkflowStatisticsTable
+        statistics={statistics}
+        loading={statistics?.length <= 0}
+      />
     </div>
   )
 }

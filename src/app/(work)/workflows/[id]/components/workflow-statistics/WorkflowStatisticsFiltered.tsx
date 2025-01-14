@@ -1,7 +1,6 @@
 'use client'
 
 import { useAsyncEffect } from '@/libs/hook'
-import { randomColor } from '@/libs/utils'
 import { DatePicker, Select, SelectProps, Tag } from 'antd'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
@@ -47,11 +46,14 @@ const WorkflowStatisticsFiltered: React.FC = () => {
       <div
         className="size-[20px] rounded-[4px]"
         style={{
-          backgroundColor: randomColor(String(option?.label || '')),
+          backgroundColor: option?.data?.color || '#888',
         }}
       />
-      <span className="line-clamp-1 flex-1" title={String(option?.label)}>
-        {option?.label}
+      <span
+        className="line-clamp-1 flex-1"
+        title={String(option?.label).split('-')[0]}
+      >
+        {String(option?.label).split('-')[0]}
       </span>
     </div>
   )
@@ -64,13 +66,13 @@ const WorkflowStatisticsFiltered: React.FC = () => {
     }
     return (
       <Tag
-        color={randomColor(String(label || ''))}
+        color={String(label).split('-')[1]}
         onMouseDown={onPreventMouseDown}
         closable={closable}
         onClose={onClose}
         style={{ marginInlineEnd: 4 }}
       >
-        {label}
+        {String(label).split('-')[0]}
       </Tag>
     )
   }
@@ -81,8 +83,9 @@ const WorkflowStatisticsFiltered: React.FC = () => {
         style={{ minWidth: 160 }}
         placeholder="Lọc theo nhãn"
         options={tags?.map((t: any) => ({
-          label: t?.title,
+          label: `${t?.title}-${t?.code_color}`,
           value: t?.id,
+          color: t?.code_color,
         }))}
         onChange={handleSelect}
         mode="multiple"

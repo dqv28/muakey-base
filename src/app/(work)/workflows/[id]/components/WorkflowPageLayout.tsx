@@ -127,10 +127,10 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
                 key: 'docs',
                 label: 'Báo cáo',
               },
-              {
-                key: 'custom-field',
-                label: 'Trường tùy chỉnh',
-              },
+              // {
+              //   key: 'custom-field',
+              //   label: 'Trường tùy chỉnh',
+              // },
               {
                 key: 'report-field',
                 label: 'Trường báo cáo',

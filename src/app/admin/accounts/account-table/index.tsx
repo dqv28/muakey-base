@@ -9,12 +9,19 @@ import React, { useState } from 'react'
 import AccountModalForm from '../account-actions/AccountModalForm'
 import { deleteAccountAction } from '../account-actions/action'
 
-type AccountTableProps = TableProps & {}
+type AccountTableProps = TableProps & {
+  options?: any
+}
 
-const AccountTable: React.FC<AccountTableProps> = (props) => {
+const AccountTable: React.FC<AccountTableProps> = ({
+  options,
+  ...restProps
+}) => {
   const [open, setOpen] = useState(false)
   const { modal, message } = App.useApp()
   const router = useRouter()
+
+  const { roles } = options
 
   const handleDelete = async (id: number) => {
     try {
@@ -62,6 +69,15 @@ const AccountTable: React.FC<AccountTableProps> = (props) => {
       dataIndex: 'email',
     },
     {
+      title: 'Phân quyền',
+      dataIndex: 'role_id',
+      render: (value) => {
+        const role = roles?.find((r: any) => r?.id === value)
+
+        return role ? role?.name : 'Người dùng'
+      },
+    },
+    {
       title: 'Số điện thoại',
       dataIndex: 'phone',
     },
@@ -105,7 +121,7 @@ const AccountTable: React.FC<AccountTableProps> = (props) => {
           pagination={{
             pageSize: 8,
           }}
-          {...props}
+          {...restProps}
         />
       </div>
     </div>

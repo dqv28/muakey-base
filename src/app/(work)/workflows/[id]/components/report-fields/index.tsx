@@ -1,7 +1,10 @@
-import { getReportFieldsByWorkflowId } from '@/libs/data'
+'use client'
+
+import { useAsyncEffect } from '@/libs/hook'
 import { Button } from '@/ui'
 import { PlusOutlined } from '@/ui/icons'
-import React from 'react'
+import React, { useState } from 'react'
+import { getReportFieldsByWorkflowIdRequest } from '../action'
 import ReportFieldList from './ReportFieldList'
 import ReportFieldsModalForm from './ReportFieldsModalForm'
 
@@ -10,17 +13,14 @@ type ReportFieldsProps = {
   workflowId: number
 }
 
-const getReportFieldsByWorkflowIdRequest = async (workflowId: number) => {
-  return await getReportFieldsByWorkflowId({
-    workflow_id: workflowId,
-  })
-}
+const ReportFields: React.FC<ReportFieldsProps> = ({ stages, workflowId }) => {
+  const [fields, setFields] = useState([])
 
-const ReportFields: React.FC<ReportFieldsProps> = async ({
-  stages,
-  workflowId,
-}) => {
-  const fields = await getReportFieldsByWorkflowIdRequest(workflowId)
+  useAsyncEffect(async () => {
+    const res = await getReportFieldsByWorkflowIdRequest(workflowId)
+
+    setFields(res)
+  }, [])
 
   return (
     <div className="h-[calc(100vh-82px)] overflow-auto bg-[#eee] p-[20px]">

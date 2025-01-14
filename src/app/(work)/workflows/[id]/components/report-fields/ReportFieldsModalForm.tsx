@@ -33,11 +33,13 @@ const ReportFieldsModalForm: React.FC<ReportFieldsModalFormProps> = ({
         var { errors } = await addReportFieldAction({
           ...formData,
           workflow_id: Number(params?.id),
+          stage_id: +String(formData?.stage_id).split('_')[1],
         })
       } else {
         var { errors } = await updateReportFieldAction(fieldId, {
           ...formData,
           workflow_id: Number(params?.id),
+          stage_id: +String(formData?.stage_id).split('_')[1],
         })
       }
 
@@ -69,6 +71,10 @@ const ReportFieldsModalForm: React.FC<ReportFieldsModalFormProps> = ({
     }
   }
 
+  const initStageId = initialValues?.stage_id
+    ? `stage_${initialValues?.stage_id}`
+    : stages?.[0]?.id
+
   return (
     <>
       <div onClick={() => setOpen(true)}>{children}</div>
@@ -88,7 +94,10 @@ const ReportFieldsModalForm: React.FC<ReportFieldsModalFormProps> = ({
           onFinish={handleSubmit}
           labelCol={{ flex: '24px' }}
           wrapperCol={{ flex: 1 }}
-          initialValues={initialValues}
+          initialValues={{
+            ...initialValues,
+            stage_id: initStageId,
+          }}
           ref={formRef}
         >
           <Form.Item
@@ -173,7 +182,7 @@ const ReportFieldsModalForm: React.FC<ReportFieldsModalFormProps> = ({
               },
             ]}
             layout="vertical"
-            initialValue={initialValues?.stage_id ?? stages?.[0]?.id}
+            initialValue={initStageId}
           >
             <Select
               className="w-full"
