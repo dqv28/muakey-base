@@ -1,3 +1,4 @@
+import { randomColor } from '@/libs/utils'
 import { Avatar } from 'antd'
 import React from 'react'
 
@@ -6,7 +7,15 @@ const User: React.FC<{
 }> = ({ user }) => {
   return (
     <div className="flex w-full items-center gap-[12px] py-[16px]">
-      <Avatar className="!text-[16px]" size={32} shape="circle">
+      <Avatar
+        className="!text-[16px]"
+        size={32}
+        shape="circle"
+        src={user?.avatar}
+        style={{
+          backgroundColor: randomColor(String(user?.full_name)),
+        }}
+      >
         {String(user?.full_name).charAt(0).toLocaleUpperCase()}
       </Avatar>{' '}
       <div>

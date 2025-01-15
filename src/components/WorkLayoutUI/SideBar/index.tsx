@@ -54,10 +54,8 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       {...props}
     >
       <div className="flex-1 px-[12px]">
-        <div>
-          <User user={user} />
-          <Search />
-        </div>
+        <User user={user} />
+        <Search />
         <Navigation
           className="no-scroll mt-[20px] h-[calc(100vh-96px)] overflow-auto pb-[40px]"
           items={[

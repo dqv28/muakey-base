@@ -409,7 +409,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       >
         <div
           className={clsx(
-            'border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !transition-all',
+            '-z-10 border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !transition-all',
             isCompleted
               ? isNotAchieved
                 ? 'bg-yellow-400 text-[#fff]'
@@ -524,9 +524,17 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             placement="bottomRight"
             menu={{ items: taskDropdownItems, style: { width: 200 } }}
           >
-            <EllipsisOutlined className="p-[2px] text-[16px] leading-[20px]" />
+            <EllipsisOutlined
+              className={clsx('p-[2px] text-[16px] leading-[20px]', {
+                'text-[#fff]': isCompleted || isFailed,
+              })}
+            />
           </Dropdown>
         </div>
+
+        {/* <div className="absolute -right-[11px] top-[50%] -translate-y-[50%] rounded-full border p-[3px] leading-none">
+          <DoubleRightOutlined />
+        </div> */}
 
         <Modal
           open={assignConfirmOpen}

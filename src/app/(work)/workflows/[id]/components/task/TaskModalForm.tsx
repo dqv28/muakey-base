@@ -8,6 +8,7 @@ import { MDXEditorMethods } from '@mdxeditor/editor'
 import {
   App,
   Button,
+  ColorPicker,
   DatePicker,
   Divider,
   Empty,
@@ -22,11 +23,12 @@ import {
   Tag,
   Tooltip,
 } from 'antd'
+import { AggregationColor } from 'antd/es/color-picker/color'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useCallback, useContext, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Converter } from 'showdown'
 import { addTaskAction, editTaskAction } from '../../../action'
@@ -61,6 +63,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const [tagName, setTagName] = useState('')
   const [tagColor, setTagColor] = useState('')
 
+  const [selectOpen, setSelectOpen] = useState(false)
+
   const formRef = useRef<FormInstance>(null)
   const params = useParams()
   const { setStages, isAuth } = useContext(StageContext)
@@ -77,13 +81,16 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const { account_id, members, sticker, description, ...restInitialValues } =
     initialValues
 
-  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTagName(event.target.value)
-  }
+  const onNameChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setTagName(event.target.value)
+    },
+    [],
+  )
 
-  const onColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTagColor(event.target.value)
-  }
+  const onColorChange = useCallback((event: AggregationColor) => {
+    setTagColor(event.toHexString())
+  }, [])
 
   const handleAdd = async (
     e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>,
@@ -323,13 +330,14 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const mem: any = members?.find((m: any) => m?.id === account_id)
 
   useAsyncEffect(async () => {
-    if (!open) return
+    if (!open) {
+      setSelectOpen(false)
+      return
+    }
 
     const res = await getTagsAction({
       workflow_id: params?.id,
     })
-
-    console.log(res)
 
     setTags(res)
 
@@ -351,7 +359,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   }
 
   const dropdownRender: SelectProps['dropdownRender'] = (menu) => (
-    <>
+    <div onClick={(e) => e.stopPropagation()}>
       {menu}
       <Divider style={{ margin: '8px 0' }} />
       <div
@@ -367,14 +375,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             onChange={onNameChange}
             onKeyDown={(e) => e.stopPropagation()}
           />
-          <Input
-            className="flex-1"
-            placeholder="Màu"
-            ref={inputRef}
-            value={tagColor}
-            onChange={onColorChange}
-            onKeyDown={(e) => e.stopPropagation()}
-          />
+          <ColorPicker defaultValue="#888" onChange={onColorChange} showText />
         </div>
         <Button
           className="!w-[130px]"
@@ -386,7 +387,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           Thêm nhãn
         </Button>
       </div>
-    </>
+    </div>
   )
 
   const tagRender: SelectProps['tagRender'] = (props) => {
@@ -460,6 +461,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             }}
             onFinish={handleSubmit}
             layout="vertical"
+            onClick={() => setSelectOpen(false)}
           >
             {dom}
           </Form>
@@ -495,6 +497,11 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             tagRender={tagRender}
             notFoundContent={<Empty description="Chưa có nhãn" />}
             allowClear
+            open={selectOpen}
+            onClick={(e) => {
+              e.stopPropagation()
+              setSelectOpen(!selectOpen)
+            }}
           />
         </Form.Item>
         <Form.Item

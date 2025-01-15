@@ -35,7 +35,9 @@ const page: React.FC<any> = async (prop: {
           type: hasSearchParams
             ? searchParams?.form
               ? 'form-request'
-              : 'table-history'
+              : searchParams?.table
+                ? 'table-history'
+                : ''
             : 'none',
         }}
         activeKey={form || (table ? 'all' : status)}

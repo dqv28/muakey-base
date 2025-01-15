@@ -38,19 +38,19 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
       <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
         <div
           className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('dang-ky-nghi')}
+          onClick={() => router.push('?form=dang-ky-nghi')}
         >
           Đăng Ký Nghỉ
         </div>
         <div
           className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('sua-gio-vao-ra')}
+          onClick={() => router.push('?form=sua-gio-vao-ra')}
         >
           Sửa Giờ Vào Ra
         </div>
         <div
           className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
-          onClick={() => query('dang-ky-ot')}
+          onClick={() => router.push('?form=dang-ky-ot')}
         >
           Đăng Ký OT
         </div>
@@ -110,21 +110,18 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                 09:00 - 18:30
               </div>
               {info?.checkInValue?.[0] &&
-                (info?.checkInValue?.[1] ? (
-                  <>
-                    {info?.checkInValue?.map((c: any) => (
-                      <div
-                        className="flex w-full items-center justify-center rounded-full bg-[#237804] px-[4px] py-[3px] text-[#fff]"
-                        key={c[0]}
-                      >
-                        {c?.[0]} - {c?.[1] || '--:--'}
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <div className="w-full rounded-full bg-[#F5222D] py-[3px] text-center text-[#fff]">
-                    {info?.checkInValue?.[0]} -{' '}
-                    {info?.checkInValue?.[1] || '--:--'}
+                info?.checkInValue?.map((c: any) => (
+                  <div
+                    className={clsx(
+                      'flex w-full items-center justify-center rounded-full px-[4px] py-[3px] text-[#fff]',
+                      {
+                        'bg-[#237804]': !!c?.[1],
+                        'bg-[#F5222D]': !c?.[1],
+                      },
+                    )}
+                    key={c[0]}
+                  >
+                    {c?.[0]} - {c?.[1] || '--:--'}
                   </div>
                 ))}
               {info?.start_ot && (

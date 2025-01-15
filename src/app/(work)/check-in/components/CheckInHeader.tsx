@@ -2,6 +2,7 @@
 
 import { Button, Space, TabsProps } from 'antd'
 import clsx from 'clsx'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import CheckInFiltered from './CheckInFiltered'
@@ -67,7 +68,9 @@ const CheckInHeader: React.FC<CheckInHeaderProps> = ({ params, activeKey }) => {
         </span>
         {type !== 'none' ? (
           type === 'form-request' && (
-            <Button type="primary">Lịch sử yêu cầu</Button>
+            <Link href="?table=request-history">
+              <Button type="primary">Lịch sử yêu cầu</Button>
+            </Link>
           )
         ) : (
           <CheckInFiltered />

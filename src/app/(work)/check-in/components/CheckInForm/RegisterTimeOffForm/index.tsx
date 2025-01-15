@@ -136,84 +136,84 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
             </div>
           </div>
 
-          <Form.List name="timestamps" initialValue={[{}]}>
-            {(fields, { add, remove }) => {
-              return (
-                <div className="space-y-[24px]">
-                  {fields.map(({ key, name, ...restField }) => (
-                    <div
-                      className="relative overflow-hidden rounded-[16px] border border-[#d9d9d9] bg-[#f6f6f6] p-[24px]"
-                      key={key}
-                    >
-                      <div className="flex items-center gap-[24px]">
-                        <div className="flex flex-1 items-end gap-[24px]">
-                          <Form.Item
-                            {...restField}
-                            className="!mb-0 flex-1"
-                            label="Ngày/giờ bắt đầu"
-                            name={[name, 'startDate']}
-                          >
-                            <DatePicker
-                              className="w-full"
-                              locale={locale}
-                              placeholder="Chọn ngày bắt đầu"
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            {...restField}
-                            className="!mb-0 flex-1"
-                            name={[name, 'startTime']}
-                          >
-                            <DatePicker
-                              className="w-full"
-                              locale={locale}
-                              picker="time"
-                              placeholder="Chọn thời gian bắt đầu"
-                              disabled={mode === 'date'}
-                            />
-                          </Form.Item>
-                        </div>
-
-                        <Divider type="vertical" className="h-[74px]" />
-
-                        <div className="flex flex-1 items-end gap-[24px]">
-                          <Form.Item
-                            {...restField}
-                            className="!mb-0 flex-1"
-                            label="Ngày/giờ kết thúc"
-                            name={[name, 'endDate']}
-                          >
-                            <DatePicker
-                              className="w-full"
-                              locale={locale}
-                              placeholder="Chọn ngày kết thúc"
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            {...restField}
-                            className="!mb-0 flex-1"
-                            name={[name, 'endTime']}
-                          >
-                            <DatePicker
-                              className="w-full"
-                              locale={locale}
-                              picker="time"
-                              placeholder="Chọn thời gian kết thúc"
-                              disabled={mode === 'date'}
-                            />
-                          </Form.Item>
-                        </div>
+          <Form.List name="timestamps" initialValue={[{ isDefault: true }]}>
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }, index) => (
+                  <div
+                    className="relative overflow-hidden rounded-[16px] border border-[#d9d9d9] bg-[#f6f6f6] p-[24px]"
+                    key={key}
+                  >
+                    <div className="flex items-center gap-[24px]">
+                      <div className="flex flex-1 items-end gap-[24px]">
+                        <Form.Item
+                          {...restField}
+                          className="!mb-0 flex-1"
+                          label="Ngày/giờ bắt đầu"
+                          name={[name, 'startDate']}
+                        >
+                          <DatePicker
+                            className="w-full"
+                            locale={locale}
+                            placeholder="Chọn ngày bắt đầu"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          className="!mb-0 flex-1"
+                          name={[name, 'startTime']}
+                        >
+                          <DatePicker
+                            className="w-full"
+                            locale={locale}
+                            picker="time"
+                            placeholder="Chọn thời gian bắt đầu"
+                            disabled={mode === 'date'}
+                          />
+                        </Form.Item>
                       </div>
 
-                      <div className="absolute right-0 top-0 flex items-center">
-                        <Button
-                          type="primary"
-                          className="rounded-none rounded-bl-lg bg-[#52C41A]"
-                          onClick={() => add()}
-                          icon={<PlusOutlined />}
+                      <Divider type="vertical" className="h-[74px]" />
+
+                      <div className="flex flex-1 items-end gap-[24px]">
+                        <Form.Item
+                          {...restField}
+                          className="!mb-0 flex-1"
+                          label="Ngày/giờ kết thúc"
+                          name={[name, 'endDate']}
                         >
-                          Thêm
-                        </Button>
+                          <DatePicker
+                            className="w-full"
+                            locale={locale}
+                            placeholder="Chọn ngày kết thúc"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          className="!mb-0 flex-1"
+                          name={[name, 'endTime']}
+                        >
+                          <DatePicker
+                            className="w-full"
+                            locale={locale}
+                            picker="time"
+                            placeholder="Chọn thời gian kết thúc"
+                            disabled={mode === 'date'}
+                          />
+                        </Form.Item>
+                      </div>
+                    </div>
+
+                    <div className="absolute right-0 top-0 flex items-center">
+                      <Button
+                        type="primary"
+                        className="rounded-none rounded-bl-lg bg-[#52C41A]"
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                      >
+                        Thêm
+                      </Button>
+                      {index > 0 && (
                         <Button
                           type="primary"
                           className="rounded-none"
@@ -223,22 +223,12 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
                         >
                           Xóa
                         </Button>
-                      </div>
+                      )}
                     </div>
-                  ))}
-
-                  <Form.Item>
-                    <Button
-                      type="dashed"
-                      onClick={() => add()}
-                      icon={<PlusOutlined />}
-                    >
-                      Thêm
-                    </Button>
-                  </Form.Item>
-                </div>
-              )
-            }}
+                  </div>
+                ))}
+              </>
+            )}
           </Form.List>
 
           <Form.Item

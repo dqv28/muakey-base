@@ -67,76 +67,65 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
         </div>
 
         <Form.List name="timestamps" initialValue={[{}]}>
-          {(fields, { add, remove }) => {
-            return (
-              <>
-                <Row gutter={[24, 24]}>
-                  {fields.map(({ key, name, ...restField }) => (
-                    <Col key={key} span={12}>
-                      <div className="gutter-row relative overflow-hidden rounded-[16px] border border-[#D9D9D9] bg-[#F6F6F6] !px-[24px] py-[16px]">
-                        <div className="mb-[24px]">Thời gian đăng ký OT</div>
-                        <div className="flex items-center gap-[24px]">
-                          <Form.Item
-                            {...restField}
-                            className="!mb-0 flex-1"
-                            name={[name, 'from']}
-                            label="Từ giờ"
-                          >
-                            <DatePicker
-                              className="w-full"
-                              locale={locale}
-                              picker="time"
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            {...restField}
-                            className="!mb-0 flex-1"
-                            name={[name, 'to']}
-                            label="Đến giờ"
-                          >
-                            <DatePicker
-                              className="w-full"
-                              locale={locale}
-                              picker="time"
-                            />
-                          </Form.Item>
-                        </div>
+          {(fields, { add, remove }) => (
+            <Row gutter={[24, 24]}>
+              {fields.map(({ key, name, ...restField }, index) => (
+                <Col key={key} span={12}>
+                  <div className="gutter-row relative overflow-hidden rounded-[16px] border border-[#D9D9D9] bg-[#F6F6F6] !px-[24px] py-[16px]">
+                    <div className="mb-[24px]">Thời gian đăng ký OT</div>
+                    <div className="flex items-center gap-[24px]">
+                      <Form.Item
+                        {...restField}
+                        className="!mb-0 flex-1"
+                        name={[name, 'from']}
+                        label="Từ giờ"
+                      >
+                        <DatePicker
+                          className="w-full"
+                          locale={locale}
+                          picker="time"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        className="!mb-0 flex-1"
+                        name={[name, 'to']}
+                        label="Đến giờ"
+                      >
+                        <DatePicker
+                          className="w-full"
+                          locale={locale}
+                          picker="time"
+                        />
+                      </Form.Item>
+                    </div>
 
-                        <div className="absolute right-0 top-0 flex items-center">
-                          <Button
-                            type="primary"
-                            className="rounded-none rounded-bl-lg bg-[#52C41A]"
-                            onClick={() => add()}
-                            icon={<PlusOutlined />}
-                          >
-                            Thêm
-                          </Button>
-                          <Button
-                            type="primary"
-                            className="rounded-none"
-                            danger
-                            onClick={() => remove(name)}
-                            icon={<DeleteOutlined />}
-                          >
-                            Xóa
-                          </Button>
-                        </div>
-                      </div>
-                    </Col>
-                  ))}
-                </Row>
-                <Form.Item className="mt-[24px]">
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    icon={<PlusOutlined />}
-                  >
-                    Thêm
-                  </Button>
-                </Form.Item>
-              </>
-            )
-          }}
+                    <div className="absolute right-0 top-0 flex items-center">
+                      <Button
+                        type="primary"
+                        className="rounded-none rounded-bl-lg bg-[#52C41A]"
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                      >
+                        Thêm
+                      </Button>
+                      {index > 0 && (
+                        <Button
+                          type="primary"
+                          className="rounded-none"
+                          danger
+                          onClick={() => remove(name)}
+                          icon={<DeleteOutlined />}
+                        >
+                          Xóa
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </Col>
+              ))}
+            </Row>
+          )}
         </Form.List>
 
         <Form.Item
