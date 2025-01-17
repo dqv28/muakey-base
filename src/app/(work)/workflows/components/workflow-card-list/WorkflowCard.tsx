@@ -48,7 +48,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
   }
 
   return (
-    <div className="relative">
+    <div className="relative aspect-[378/200] min-h-[200px] overflow-hidden">
       <Link href={`/workflows/${workflow.id}`}>
         <Card className="size-full">
           <div className="text-[16px] leading-[20px]">
@@ -59,6 +59,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
           </p>
           <div className="mt-[16px] space-y-[8px]">
             <Avatar.Group
+              className="h-[32px] overflow-hidden"
               max={{
                 count: 3,
                 style: {
@@ -77,6 +78,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
                         backgroundColor: randomColor(mem?.full_name || ''),
                         cursor: 'pointer',
                       }}
+                      alt={mem?.full_name}
                     >
                       {String(mem?.full_name).charAt(0).toLocaleUpperCase()}
                     </Avatar>

@@ -6,7 +6,7 @@ import {
   addTagToTask,
   deleteTag,
   getTags,
-  updateTagToTask,
+  updateTagById,
 } from '@/libs/tag'
 
 export const addTagAction = async (data: any) => {
@@ -26,7 +26,7 @@ export const addTagToTaskAction = async (data: any) => {
 }
 
 export const updateTagAction = async (id: number, data: any) => {
-  return await updateTagToTask(id, data)
+  return await updateTagById(id, data)
 }
 
 export const getMeAction = async () => {

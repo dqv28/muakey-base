@@ -139,7 +139,11 @@ const StageColumn: React.FC<StageColumnProps> = memo(
               {stage.name}{' '}
               {![0, 1].includes(stage.index) && stage?.description && (
                 <Tooltip
-                  overlayInnerStyle={{ color: '#000' }}
+                  styles={{
+                    body: {
+                      color: '#000',
+                    },
+                  }}
                   color="#fff"
                   title={
                     <div

@@ -26,7 +26,7 @@ import {
 } from '@mdxeditor/editor'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { Divider } from 'antd'
-import { type ForwardedRef } from 'react'
+import { memo, type ForwardedRef } from 'react'
 import toast from 'react-hot-toast'
 
 type InitializedMDXEditorProps = MDXEditorProps & {
@@ -54,6 +54,8 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
   editorRef,
   ...props
 }) => {
+  console.log('render')
+
   const imageUploadHandler = async (image: File) => {
     const formData = new FormData()
     formData.append('image', image)
@@ -101,12 +103,6 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
       imageUploadHandler,
     }),
     markdownShortcutPlugin(),
-    // directivesPlugin({
-    //   directiveDescriptors: [
-    //     YoutubeDirectiveDescriptor,
-    //     AdmonitionDirectiveDescriptor,
-    //   ],
-    // }),
   ]
 
   return (
@@ -119,4 +115,4 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
   )
 }
 
-export default withApp(InitializedMDXEditor)
+export default memo(withApp(InitializedMDXEditor))

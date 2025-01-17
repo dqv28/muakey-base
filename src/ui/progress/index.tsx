@@ -29,7 +29,10 @@ const ProgressBar: React.FC<
           const c = Array.isArray(color) ? color[i] : color
           return (
             p > 1 && (
-              <div style={{ width: `${p}%`, backgroundColor: c, height }} />
+              <div
+                key={i}
+                style={{ width: `${p}%`, backgroundColor: c, height }}
+              />
             )
           )
         })}

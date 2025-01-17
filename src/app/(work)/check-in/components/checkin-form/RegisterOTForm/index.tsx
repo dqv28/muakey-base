@@ -5,7 +5,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { App, Button, Col, DatePicker, Form, Input, Row } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { addProposeAction } from '../action'
 
 type RegisterOTFormProps = {}
@@ -13,6 +13,11 @@ type RegisterOTFormProps = {}
 const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
   const { message } = App.useApp()
   const [loading, setLoading] = useState(false)
+
+  const [startTime, setStartTime] = useState<any>()
+  const [endTime, setEndTime] = useState<any>()
+
+  const [ot, setOt] = useState(0)
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -50,6 +55,21 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
     }
   }
 
+  useEffect(() => {
+    if (!startTime && !endTime) {
+      setOt(0)
+    }
+
+    if (!startTime || !endTime) return
+
+    const start = new Date(startTime)
+    const end = new Date(endTime)
+
+    const total = (+end - +start) / (1000 * 60 * 60 * 24)
+
+    setOt(Number(total.toFixed(2)))
+  }, [startTime, endTime])
+
   return (
     <div className="rounded-[16px] bg-[#fff] p-[16px]">
       <Form layout="vertical" onFinish={handleSubmit}>
@@ -62,7 +82,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
             <div className="text-[14px] text-[#00000073]">
               Tổng thời gian OT
             </div>
-            <div className="text-[24px]">0 ngày</div>
+            <div className="text-[24px]">{ot} ngày</div>
           </div>
         </div>
 
@@ -84,6 +104,8 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
                           className="w-full"
                           locale={locale}
                           picker="time"
+                          showSecond={false}
+                          onChange={(e) => setStartTime(e ? e.toDate() : '')}
                         />
                       </Form.Item>
                       <Form.Item
@@ -96,6 +118,8 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
                           className="w-full"
                           locale={locale}
                           picker="time"
+                          showSecond={false}
+                          onChange={(e) => setEndTime(e ? e.toDate() : '')}
                         />
                       </Form.Item>
                     </div>

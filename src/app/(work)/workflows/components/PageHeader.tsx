@@ -33,7 +33,7 @@ const PageHeader: React.ForwardRefRenderFunction<
     <div className={className} ref={ref} {...rest}>
       <div
         className={clsx(
-          'flex items-center justify-between gap-[24px]',
+          'flex max-h-[34px] items-center justify-between gap-[24px]',
           headerClassName,
         )}
       >

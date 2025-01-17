@@ -2,10 +2,15 @@
 
 import { Input } from '@/ui'
 import { SearchOutlined } from '@/ui/icons'
+import clsx from 'clsx'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 
-const WorkflowSearch: React.FC = () => {
+type WorkflowSearchProps = {
+  className?: string
+}
+
+const WorkflowSearch: React.FC<WorkflowSearchProps> = ({ className }) => {
   const [searchValue, setSearchValue] = useState('')
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -29,7 +34,12 @@ const WorkflowSearch: React.FC = () => {
   }, [searchValue, query, router])
 
   return (
-    <div className="flex items-center gap-[8px] overflow-hidden rounded-[4px] border border-[#ddd] pr-[8px]">
+    <div
+      className={clsx(
+        'flex items-center gap-[8px] overflow-hidden rounded-[4px] border border-[#ddd] pr-[8px]',
+        className,
+      )}
+    >
       <Input
         className="border-transparent"
         placeholder="Lọc nhanh"

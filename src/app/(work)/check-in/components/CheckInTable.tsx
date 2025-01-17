@@ -12,11 +12,12 @@ import React, { useEffect, useMemo, useState } from 'react'
 import CheckInSchedule from './CheckInSchedule'
 import CheckInScheduleModalForm from './CheckInScheduleModalForm'
 
+import { GLOBAL_BAN } from '@/libs/constant'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjsLocale from 'dayjs/locale/vi'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import CalendarDropdown from './CalendarDropdown'
-import CheckInStatistics from './CheckInStatistics'
+import CheckInStatistics from './check-statistics'
 import CheckInTableExplanation from './CheckInTableExplanation'
 
 type CheckInTableProps = TableProps & {
@@ -39,15 +40,6 @@ const useStyle = createStyles(({ css }) => {
     `,
   }
 })
-
-const GLOBAL_BAN = [
-  'Admin',
-  'cinren16',
-  'Mạnh',
-  'Nghĩa IT',
-  'Nhật',
-  'Đức Thịnh',
-]
 
 const CheckInTable: React.FC<CheckInTableProps> = ({
   options,
@@ -125,7 +117,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
     }),
   ]
 
-  const { user, workSchedule, attendances } = options
+  const { user, workSchedule, attendances, propose } = options
 
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
@@ -138,6 +130,21 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       const checkInHistories = attendances?.filter(
         (a: any) => a?.account_id === m?.id,
       )
+
+      const myPropose = propose?.filter(
+        (p: any) => p?.full_name === m?.full_name,
+      )
+      const ot = myPropose.filter((p: any) => p?.category_name === 'Đăng ký OT')
+
+      const timeOff = myPropose
+        .filter((p: any) => p?.category_name === 'Đăng ký nghỉ')
+        .map((p: any) => p?.date)
+
+      console.log('PROPOSE ->', {
+        ot,
+        timeOff,
+        myPropose,
+      })
 
       const fields = times(dateNumber, (num): any => {
         const checkIn = checkInHistories?.filter(
@@ -156,8 +163,6 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           `${num + 1}/${month}`,
           {
             checkInValue,
-            start_ot: checkIn[0]?.start_over_time,
-            end_ot: checkIn[0]?.end_over_time,
           },
         ]
       })

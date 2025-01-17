@@ -1,6 +1,6 @@
 import React from 'react'
-import CheckInForm from '../CheckInForm'
-import CheckInHistoryTable from '../CheckInHistoryTable'
+import CheckInForm from '../checkin-form'
+import CheckInHistoryTable from '../checkin-history-table'
 import CheckInTable from '../CheckInTable'
 
 type CheckInContentProps = {
@@ -9,7 +9,7 @@ type CheckInContentProps = {
 }
 
 const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
-  const { attendances, members, day, user, workSchedule } = options
+  const { members, day } = options
 
   const { type } = query
 
@@ -24,11 +24,9 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
       return (
         <CheckInTable
           options={{
-            attendances,
+            ...options,
             members: members?.filter((mem: any) => mem?.type !== 'department'),
             day: Number(day || 0),
-            user,
-            workSchedule,
           }}
           scroll={{
             x: 'max-content',

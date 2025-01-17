@@ -23,7 +23,7 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons'
 
-export const EDITOR_ICON_KEYS: any  = {
+export const EDITOR_ICON_KEYS: any = {
   format_bold: <BoldOutlined />,
   format_italic: <ItalicOutlined />,
   format_underlined: <UnderlineOutlined />,
@@ -45,3 +45,5 @@ export const EDITOR_ICON_KEYS: any  = {
   delete_small: <DeleteOutlined />,
   settings: <SettingOutlined />,
 }
+
+export const GLOBAL_BAN = ['Admin', 'cinren16', 'Mạnh', 'Nghĩa IT', 'Nhật']

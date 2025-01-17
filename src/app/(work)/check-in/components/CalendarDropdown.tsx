@@ -69,8 +69,6 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
     router.push(`?${urlSearchParams.toString()}`)
   }
 
-  console.log(info)
-
   return (
     <Dropdown
       trigger={['click']}

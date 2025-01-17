@@ -1,3 +1,4 @@
+import { GLOBAL_BAN } from '@/libs/constant'
 import { getWeek, randomColor } from '@/libs/utils'
 import { Avatar, Col, Row } from 'antd'
 import clsx from 'clsx'
@@ -5,9 +6,9 @@ import dayjs from 'dayjs'
 import { times } from 'lodash'
 import Link from 'next/link'
 import React from 'react'
-import StatisticsCard from './StatisticsCard'
-import StatisticsColHeader from './StatisticsColHeader'
-import StatisticsModalForm from './StatisticsModalForm'
+import StatisticsCard from './statistics-card'
+import StatisticsColHeader from './statistics-col-header'
+import StatisticsModalForm from './statistics-modal-form'
 
 type StatisticsScheduleProps = {
   options?: any
@@ -31,6 +32,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = async ({
             .includes(String(acc?.id))) &&
         acc?.type !== 'department',
     )
+    ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
     ?.map((acc: any) => {
       const days = week?.map((w: any) => {
         const tasks = schedule[w?.date] || []

@@ -7,7 +7,7 @@ import React, { useState } from 'react'
 import {
   addDepartmentAction,
   updateDepartmentAction,
-} from './DepartmentList/action'
+} from './department-list/action'
 
 type DepartmentModalFormProps = ModalProps & {
   children?: React.ReactNode

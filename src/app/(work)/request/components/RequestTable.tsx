@@ -8,7 +8,7 @@ import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { memo, useEffect, useState } from 'react'
 import { deleteProposeAction } from './action'
-import RequestConfirmModalForm from './RequestConfirmModalForm'
+import RequestConfirmModalForm from './request-confirm-modal-form'
 
 type RequestTableProps = TableProps & {
   query?: any

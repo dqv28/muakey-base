@@ -1,6 +1,7 @@
 import { getAccounts, getAttendances, getMe } from '@/libs/data'
+import { getProposes } from '@/libs/propose'
 import { getWorkSchedule } from '@/libs/schedule'
-import CheckInContent from './components/CheckInContent'
+import CheckInContent from './components/checkin-content'
 import CheckInHeader from './components/CheckInHeader'
 
 const page: React.FC<any> = async (prop: {
@@ -13,16 +14,21 @@ const page: React.FC<any> = async (prop: {
   const table = await searchParams?.table
   const status = await searchParams?.status
 
-  const [attendances, members, user, workSchedule] = await Promise.all([
-    getAttendances({
-      date: searchParams?.date || '',
-    }),
-    getAccounts(),
-    getMe(),
-    getWorkSchedule({
-      date: searchParams?.date || '',
-    }),
-  ])
+  const [attendances, members, user, workSchedule, propose] = await Promise.all(
+    [
+      getAttendances({
+        date: searchParams?.date || '',
+      }),
+      getAccounts(),
+      getMe(),
+      getWorkSchedule({
+        date: searchParams?.date || '',
+      }),
+      getProposes(),
+    ],
+  )
+
+  console.log(propose)
 
   const day = String(searchParams?.date).split('-').pop()
 
@@ -59,6 +65,11 @@ const page: React.FC<any> = async (prop: {
             day,
             user,
             workSchedule,
+            propose: propose?.filter(
+              (p: any) =>
+                ['Đăng ký OT', 'Đăng ký nghỉ'].includes(p?.category_name) &&
+                p?.status === 'approved',
+            ),
           }}
         />
       </div>

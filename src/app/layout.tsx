@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="vi" className={leagueSpartan.variable}>
+    <html lang="vi" className={leagueSpartan.variable} suppressHydrationWarning>
       {process.env.GOOGLE_TAG_MANAGER_ID && (
         <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER_ID} />
       )}

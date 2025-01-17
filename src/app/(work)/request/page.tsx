@@ -3,8 +3,8 @@ import { getProposeCategories, getProposes } from '@/libs/propose'
 import { Button } from 'antd'
 import React from 'react'
 import PageHeader from './components/PageHeader'
+import RequestTabs from './components/request-tabs'
 import RequestModalForm from './components/RequestModalForm'
-import RequestTabs from './components/RequestTab'
 import RequestTable from './components/RequestTable'
 
 const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
@@ -13,8 +13,6 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const proposes = await getProposes()
   const proposeCategories = await getProposeCategories()
   const user = await getMe()
-
-  console.log(proposeCategories)
 
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
@@ -26,7 +24,10 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
           </h1>
         }
         extra={
-          <RequestModalForm groups={proposeCategories}>
+          <RequestModalForm
+            groups={proposeCategories}
+            options={{ role: user?.role }}
+          >
             <Button type="primary">Tạo đề xuất</Button>
           </RequestModalForm>
         }

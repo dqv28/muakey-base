@@ -1,6 +1,5 @@
 'use client'
 
-import { getTaskHistoriesAction } from '@/components/action'
 import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
 import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
@@ -291,21 +290,25 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
       if (!String(role).toLocaleLowerCase().includes('admin')) {
         if (task.account_id !== userId) {
-          message.error('Không thể kéo nhiệm vụ của người khác.')
+          message.error(
+            'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',
+          )
           return
         }
       }
 
-      const taskHistory = await getTaskHistoriesAction({
-        task_id: task?.stage_id,
-        stage_id: stageId,
-      })
-
       try {
-        const { message: msg, errors } = await moveStageAction(
-          task?.id,
-          stageId,
-        )
+        const {
+          message: msg,
+          errors,
+          account_id,
+          expired,
+        } = await moveStageAction(task?.id, stageId)
+
+        if (errors) {
+          message.error(msg)
+          return
+        }
 
         setStages((prevStages: any[]) => {
           const newStages = [...prevStages]
@@ -326,10 +329,10 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                   {
                     ...task,
                     stage_id: stageId,
-                    account_id: taskHistory?.worker || null,
-                    expired: taskHistory?.worker
-                      ? taskHistory?.expired_at
-                        ? taskHistory?.expired_at
+                    account_id: account_id || null,
+                    expired: account_id
+                      ? expired
+                        ? expired
                         : stage?.expired_after_hours
                           ? new Date().setHours(
                               new Date().getHours() +
@@ -345,11 +348,6 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             return stage
           })
         })
-
-        if (errors) {
-          message.error(msg)
-          return
-        }
 
         router.refresh()
       } catch (error: any) {

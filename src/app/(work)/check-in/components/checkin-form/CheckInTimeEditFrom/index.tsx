@@ -37,12 +37,22 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = (props) => {
             title="Sửa giờ vào/ra"
             checkIn={
               <Form.Item className="!mb-0" name="check_in">
-                <DatePicker className="w-full" locale={locale} picker="time" />
+                <DatePicker
+                  className="w-full"
+                  locale={locale}
+                  picker="time"
+                  showSecond={false}
+                />
               </Form.Item>
             }
             checkOut={
               <Form.Item className="!mb-0" name="check_out">
-                <DatePicker className="w-full" locale={locale} picker="time" />
+                <DatePicker
+                  className="w-full"
+                  locale={locale}
+                  picker="time"
+                  showSecond={false}
+                />
               </Form.Item>
             }
           />

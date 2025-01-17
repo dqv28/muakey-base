@@ -14,12 +14,14 @@ type RequestSelectModalProps = Omit<ModalProps, 'onCancel'> & {
   dataSource?: any[]
   onItemClick?: (id: number) => void
   onCancel?: () => void
+  isAdmin?: boolean
 }
 
 const RequestSelectModal: React.FC<RequestSelectModalProps> = ({
   dataSource,
   onItemClick,
   onCancel,
+  isAdmin,
   ...rest
 }) => {
   const [loading, setLoading] = useState(false)
@@ -112,7 +114,7 @@ const RequestSelectModal: React.FC<RequestSelectModalProps> = ({
             className="group -mx-[24px] cursor-pointer hover:bg-[#fafafa]"
             onClick={() => {
               onCancel?.()
-              onItemClick?.(item?.id)
+              onItemClick?.(item)
             }}
           >
             <RequestItem
@@ -123,33 +125,35 @@ const RequestSelectModal: React.FC<RequestSelectModalProps> = ({
           </List.Item>
         )}
       />
-      <div className="mt-[16px] flex items-center gap-[12px]">
-        <Input
-          placeholder="Tên nhóm đề xuất"
-          onChange={(e) =>
-            setGroup((prev) => ({
-              ...prev,
-              name: e.target.value || '',
-            }))
-          }
-        />
-        <Input
-          placeholder="Mô tả"
-          onChange={(e) =>
-            setGroup((prev) => ({
-              ...prev,
-              description: e.target.value || '',
-            }))
-          }
-        />
-        <Button
-          className="!w-[100px]"
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleAddGroup}
-          loading={loading}
-        />
-      </div>
+      {isAdmin && (
+        <div className="mt-[16px] flex items-center gap-[12px]">
+          <Input
+            placeholder="Tên nhóm đề xuất"
+            onChange={(e) =>
+              setGroup((prev) => ({
+                ...prev,
+                name: e.target.value || '',
+              }))
+            }
+          />
+          <Input
+            placeholder="Mô tả"
+            onChange={(e) =>
+              setGroup((prev) => ({
+                ...prev,
+                description: e.target.value || '',
+              }))
+            }
+          />
+          <Button
+            className="!w-[100px]"
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleAddGroup}
+            loading={loading}
+          />
+        </div>
+      )}
     </Modal>
   )
 }

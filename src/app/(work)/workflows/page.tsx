@@ -1,4 +1,4 @@
-import { getMe, getWorkflowCategories, getWorkflows } from '@/libs/data'
+import { getWorkflowCategories } from '@/libs/data'
 import { getDepartments } from '@/libs/department'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
@@ -14,15 +14,9 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const searchParams = await prop.searchParams
   const type = searchParams?.type
 
-  const workflows = await getWorkflows({
-    type: !type || type === 'all' ? '' : type || 'open',
-    search: searchParams?.q || '',
-  })
-
-  const [workflowCategories, departments, user] = await Promise.all([
+  const [workflowCategories, departments] = await Promise.all([
     getWorkflowCategories(),
     getDepartments(),
-    getMe(),
   ])
 
   return (
@@ -35,7 +29,7 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
           }
           extra={
             <div className="flex items-center gap-[12px]">
-              <WorkflowSearch />
+              <WorkflowSearch className="flex-1" />
               <WorkflowExtra
                 initialValues={{
                   workflowCategories,
@@ -43,7 +37,7 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
                 }}
               >
                 <Button
-                  className="!p-[10px] !text-[12px] text-[#fff]"
+                  className="w-[150px] !p-[10px] !text-[12px] text-[#fff]"
                   icon={<PlusOutlined className="text-[16px]" />}
                   type="primary"
                 >
@@ -74,22 +68,12 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
         </PageHeader>
         <div className="flex-1 overflow-auto bg-[#eee] px-[24px] py-[8px]">
           <WorkflowList
-            dataSource={
-              workflowCategories?.length > 0
-                ? workflowCategories?.map((cate: any) => ({
-                    id: cate?.id,
-                    label: cate?.name,
-                    workflows: workflows.filter(
-                      (w: any) => w.workflow_category_id === cate.id,
-                    ),
-                    members: cate?.members || [],
-                  }))
-                : []
-            }
-            options={{
+            query={{
+              type,
+              searchParams,
               departments,
-              user,
             }}
+            suspense
           />
         </div>
       </div>

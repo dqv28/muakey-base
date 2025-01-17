@@ -1,12 +1,6 @@
-'use client'
-
 import { Col, Row } from '@/ui'
-import dynamic from 'next/dynamic'
 import React from 'react'
-
-const WorkflowCard = dynamic(() => import('./WorkflowCard'), {
-  ssr: false,
-})
+import WorkflowCard from './WorkflowCard'
 
 type WorkflowCardListProps = {
   items?: any[]

@@ -48,3 +48,6 @@ export { default as Divider } from './divider'
 
 export type * from './progress'
 export { default as Progress } from './progress'
+
+export type * from './skeleton'
+export { default as Skeleton } from './skeleton'

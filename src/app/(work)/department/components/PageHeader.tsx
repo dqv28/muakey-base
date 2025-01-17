@@ -14,7 +14,7 @@ const PageHeader: React.FC<{
 
   return (
     <div className="border-b bg-[#fff] p-[16px]">
-      <div className="flex items-center justify-between text-[24px]">
+      <div className="flex max-h-[36px] items-center justify-between overflow-hidden text-[24px]">
         <span className="font-[500]">Phòng ban</span>
 
         <DepartmentModalForm
@@ -22,8 +22,14 @@ const PageHeader: React.FC<{
             members,
           }}
         >
-          <Button type="primary" icon={<PlusOutlined />}>
-            Tạo phòng ban mới
+          <Button
+            className="flex items-center gap-[8px] rounded-[4px] bg-[#1677ff] px-[15px] py-[5px] !text-[14px]"
+            type="primary"
+            icon={<PlusOutlined className="!text-[14px] text-[#fff]" />}
+          >
+            <span className="leading-[22px] text-[#fff]">
+              Tạo phòng ban mới
+            </span>
           </Button>
         </DepartmentModalForm>
       </div>

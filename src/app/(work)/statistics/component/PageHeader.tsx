@@ -1,6 +1,6 @@
 import { getAccounts } from '@/libs/data'
 import React from 'react'
-import StatisticsFiltered from './StatisticsFiltered'
+import StatisticsFiltered from './statistics-filtered'
 
 const PageHeader: React.FC = async () => {
   const accounts = await getAccounts()

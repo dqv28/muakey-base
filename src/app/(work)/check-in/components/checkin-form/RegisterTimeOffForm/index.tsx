@@ -15,7 +15,7 @@ import {
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { addProposeAction } from '../action'
 
 type RegisterTimeOffFormProps = {}
@@ -23,6 +23,9 @@ type RegisterTimeOffFormProps = {}
 const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
   const [mode, setMode] = useState<'date' | 'time'>('date')
   const [loading, setLoading] = useState(false)
+
+  const [timestamps, setTimestamps] = useState<any>({})
+  const [timeOff, setTimeOff] = useState(0)
 
   const { message } = App.useApp()
   const [form] = Form.useForm()
@@ -81,6 +84,27 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
     }
   }
 
+  useEffect(() => {
+    const { startDate, startTime, endDate, endTime } = timestamps
+
+    if (!startDate && !startTime && !endDate && !endTime) {
+      setTimeOff(0)
+    }
+
+    if (!startDate || !startTime || !endDate || !endTime) return
+
+    const start = new Date(
+      `${String(dayjs(startDate).format('YYYY-MM-DD'))} ${startTime ? String(dayjs(startTime).format('HH:mm:ss')) : ''}`,
+    )
+    const end = new Date(
+      `${String(dayjs(endDate).format('YYYY-MM-DD'))} ${endTime ? String(dayjs(endTime).format('HH:mm:ss')) : ''}`,
+    )
+
+    const total = (+end - +start) / (1000 * 60 * 60 * 24)
+
+    setTimeOff(Number(total.toFixed(2)))
+  }, [timestamps])
+
   return (
     <>
       <div className="flex items-center rounded-[16px] bg-[#fff] p-[24px]">
@@ -95,7 +119,14 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
       </div>
 
       <div className="mt-[16px] rounded-[16px] bg-[#fff] p-[16px]">
-        <Form layout="vertical" onFinish={handleSubmit} form={form}>
+        <Form
+          layout="vertical"
+          onFinish={handleSubmit}
+          onValuesChange={(_, { timestamps }) => {
+            setTimestamps(timestamps[0])
+          }}
+          form={form}
+        >
           <div className="flex items-start justify-between gap-[24px]">
             <div className="flex items-center gap-[24px]">
               <Form.Item label="Chọn hình thức nghỉ">
@@ -132,7 +163,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
 
             <div className="text-right">
               <div className="text-[#00000073]">Tổng thời gian nghỉ</div>
-              <div className="text-[24px]">0 ngày</div>
+              <div className="text-[24px]">{timeOff} ngày</div>
             </div>
           </div>
 
@@ -169,6 +200,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
                             picker="time"
                             placeholder="Chọn thời gian bắt đầu"
                             disabled={mode === 'date'}
+                            showSecond={false}
                           />
                         </Form.Item>
                       </div>
@@ -199,6 +231,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
                             picker="time"
                             placeholder="Chọn thời gian kết thúc"
                             disabled={mode === 'date'}
+                            showSecond={false}
                           />
                         </Form.Item>
                       </div>

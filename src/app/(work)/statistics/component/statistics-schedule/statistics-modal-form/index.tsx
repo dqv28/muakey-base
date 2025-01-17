@@ -9,7 +9,7 @@ import vn from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
-import { addTodoAction } from './action'
+import { addTodoAction } from '../action'
 
 type StatisticsModalFormProps = {
   options?: any

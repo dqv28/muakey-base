@@ -3,7 +3,7 @@ import { getSchedule } from '@/libs/statistics'
 import { getWeek } from '@/libs/utils'
 import React from 'react'
 import PageHeader from './component/PageHeader'
-import StatisticsSchedule from './component/StatisticsSchedule'
+import StatisticsSchedule from './component/statistics-schedule'
 
 const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
   const searchParams = await prop.searchParams
@@ -27,6 +27,7 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
         <StatisticsSchedule
           options={{
             account_id: searchParams?.mid || '',
+            dw: searchParams?.dw || '',
             schedule,
             accounts,
           }}

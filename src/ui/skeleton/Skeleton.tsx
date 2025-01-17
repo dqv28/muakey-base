@@ -20,7 +20,7 @@ const InternalSkeleton: React.ForwardRefRenderFunction<
   ref,
 ) => {
   const className = clsx(
-    'h-[14px] rounded-[4px] bg-[#FFFFFF99]',
+    'h-[14px] rounded-[4px] bg-[#999]',
     {
       'animate-pulse': active,
     },

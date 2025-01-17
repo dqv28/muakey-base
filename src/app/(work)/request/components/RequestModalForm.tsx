@@ -3,7 +3,7 @@
 import { InitializedMDXEditor } from '@/components'
 import { withApp } from '@/hoc'
 import { MDXEditorMethods } from '@mdxeditor/editor'
-import { App, Form, Input, Modal, Select } from 'antd'
+import { App, Form, FormInstance, Input, Modal, Select } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import RequestSelectModal from './RequestSelectModal'
@@ -12,19 +12,22 @@ import { addProposeAction } from './action'
 type RequestModalFormProps = {
   children?: React.ReactNode
   groups?: any[]
+  options?: any
 }
 
 const RequestModalForm: React.FC<RequestModalFormProps> = ({
   children,
   groups,
+  options,
 }) => {
   const [loading, setLoading] = useState(false)
-
   const [open, setOpen] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
-  const [groupId, setGroupId] = useState<number | null>()
+  const [group, setGroup] = useState<any>()
+
   const editorRef = useRef<MDXEditorMethods>(null)
-  const { message, modal } = App.useApp()
+  const formRef = useRef<FormInstance>(null)
+  const { message } = App.useApp()
   const router = useRouter()
 
   const handleSubmit = async (formData: any) => {
@@ -50,8 +53,12 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
   }
 
   useEffect(() => {
-    setFormOpen(groupId !== undefined)
-  }, [groupId])
+    if (group?.name === 'Khác') {
+      formRef.current?.resetFields()
+    }
+
+    setFormOpen(group !== undefined)
+  }, [group])
 
   return (
     <>
@@ -60,7 +67,7 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
         open={formOpen}
         onCancel={() => {
           setFormOpen(false)
-          setGroupId(undefined)
+          setGroup(undefined)
           // setOpen(true)
         }}
         title="TẠO ĐỀ XUẤT MỚI"
@@ -69,9 +76,11 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
           <Form
             layout="vertical"
             initialValues={{
-              propose_category_id: groupId,
+              propose_category_id:
+                group?.name === 'Khác' ? undefined : group?.id,
             }}
             onFinish={handleSubmit}
+            ref={formRef}
           >
             {dom}
           </Form>
@@ -107,13 +116,25 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
             },
           ]}
         >
-          <Select
-            placeholder="-- Lựa chọn nhóm đề xuất --"
-            options={groups?.map((g: any) => ({
-              label: g?.name,
-              value: g?.id,
-            }))}
-          />
+          {group?.name !== 'Khác' ? (
+            <Select
+              placeholder="-- Lựa chọn nhóm đề xuất --"
+              options={groups?.map((g: any) => ({
+                label: g?.name,
+                value: g?.id,
+              }))}
+              onChange={(_, option) => {
+                if (!Array.isArray(option) && option?.label === 'Khác') {
+                  setGroup({
+                    name: option?.label,
+                    id: +option?.value,
+                  })
+                }
+              }}
+            />
+          ) : (
+            <Input placeholder="Nhập nhóm đề xuất" />
+          )}
         </Form.Item>
 
         <Form.Item label="Mô tả" name="description">
@@ -127,10 +148,11 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
       </Modal>
 
       <RequestSelectModal
-        dataSource={groups}
-        onItemClick={setGroupId}
         open={open}
+        dataSource={groups}
+        onItemClick={setGroup}
         onCancel={() => setOpen(false)}
+        isAdmin={options?.role === 'Admin lv2'}
       />
     </>
   )

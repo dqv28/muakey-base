@@ -37,11 +37,13 @@ const TagOption: React.FC<TagOptionProps> = ({ option, onDelete, onEdit }) => {
                 nameRef.current?.focus()
               }}
             />
-            <ColorPicker
-              defaultValue={tagColor || '#888'}
-              onChange={(value) => setTagColor(value.toHexString())}
-              showText
-            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <ColorPicker
+                defaultValue={tagColor || '#888'}
+                onChange={(value) => setTagColor(value.toHexString())}
+                showText
+              />
+            </div>
           </>
         ) : (
           <>
