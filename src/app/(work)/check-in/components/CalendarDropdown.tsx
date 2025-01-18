@@ -1,7 +1,7 @@
 import { Dropdown } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 type CalendarDropdownProps = {
@@ -15,7 +15,6 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
   day,
   options,
 }) => {
-  const searchParams = useSearchParams()
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const urlSearchParams = new URLSearchParams()
@@ -24,14 +23,6 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
   const currentDate = String(dayjs(current).format('YYYY-MM-DD'))
 
   const { isCurrentMonth, info } = options
-
-  const query = (p: string) => {
-    const url = new URLSearchParams(searchParams.toString())
-
-    url.set('form', String(p))
-
-    router.push(`?${url.toString()}`)
-  }
 
   const dropdownRender = () => {
     return (
@@ -128,6 +119,13 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                   {info?.end_ot
                     ? String(dayjs(info?.end_ot).format('HH:mm'))
                     : '--:--'}
+                </div>
+              )}
+
+              {info?.timeOff && (
+                <div className="w-full rounded-full bg-[#FA8C16] py-[3px] text-center text-[#fff]">
+                  {info?.timeOff[0]} -{' '}
+                  {info?.timeOff[1] ? info?.timeOff[1] : '--:--'}
                 </div>
               )}
             </div>

@@ -325,7 +325,6 @@ const TaskItem: React.FC<TaskItemProps> = memo(
               return {
                 ...stage,
                 tasks: [
-                  ...stage?.tasks,
                   {
                     ...task,
                     stage_id: stageId,
@@ -341,6 +340,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                           : null
                       : null,
                   },
+                  ...stage?.tasks,
                 ],
               }
             }

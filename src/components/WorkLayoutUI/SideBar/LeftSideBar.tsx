@@ -6,6 +6,7 @@ import {
   logoutAction,
 } from '@/components/action'
 import { withApp } from '@/hoc'
+import { useAsyncEffect } from '@/libs/hook'
 import {
   BellFilled,
   ExclamationCircleFilled,
@@ -17,6 +18,7 @@ import {
 import { App, Avatar, Badge, Drawer, Dropdown } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { getNotificationsAction } from './action'
 import CheckoutButton from './CheckoutButton'
 import NotificationsList from './NotificationsList'
 
@@ -29,6 +31,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const [loading, setLoading] = useState(false)
   const [openNotice, setOpenNotice] = useState(false)
   const router = useRouter()
+  const [notifications, setNotifications] = useState<any[]>()
 
   const { message, modal } = App.useApp()
 
@@ -92,6 +95,20 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
     }
   }, [])
 
+  useAsyncEffect(async () => {
+    const res = await getNotificationsAction()
+
+    console.log(res)
+
+    setNotifications(res)
+  }, [])
+
+  const notificationsWithNotRead = notifications?.filter(
+    (notify: any) => notify?.seen === 0,
+  )
+
+  console.log(notifications)
+
   return (
     <div className="w-[60px] text-[#fff]">
       <Dropdown
@@ -124,11 +141,11 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
       >
         <Badge
           size="small"
-          overflowCount={99}
-          dot
+          count={notificationsWithNotRead?.length}
           classNames={{
             indicator: '!shadow-[0_0_0_1px_#1469c9]',
           }}
+          showZero
         >
           <BellFilled className="text-[16px] text-[#fff]" />
         </Badge>
@@ -137,13 +154,23 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         classNames={{
           body: '!p-0',
         }}
-        title="Thông báo"
+        title={
+          <div className="flex items-center justify-between">
+            <span className="text-[20px]">Thông báo</span>
+            <div className="cursor-pointer text-[14px] text-[#1677ff]">
+              Gỡ tất cả thông báo
+            </div>
+          </div>
+        }
         onClose={() => setOpenNotice(false)}
         open={openNotice}
         placement="left"
         width={600}
       >
-        <NotificationsList />
+        <NotificationsList
+          dataSource={notifications}
+          loading={notifications === undefined}
+        />
       </Drawer>
 
       <div className="flex size-[60px] cursor-pointer items-center justify-center">

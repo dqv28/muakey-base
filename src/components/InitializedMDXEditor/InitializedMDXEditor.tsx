@@ -26,7 +26,7 @@ import {
 } from '@mdxeditor/editor'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { Divider } from 'antd'
-import { memo, type ForwardedRef } from 'react'
+import { useCallback, useMemo, type ForwardedRef } from 'react'
 import toast from 'react-hot-toast'
 
 type InitializedMDXEditorProps = MDXEditorProps & {
@@ -54,9 +54,9 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
   editorRef,
   ...props
 }) => {
-  console.log('render')
+  console.log('render MDXEditor', props)
 
-  const imageUploadHandler = async (image: File) => {
+  const imageUploadHandler = useCallback(async (image: File) => {
     const formData = new FormData()
     formData.append('image', image)
 
@@ -72,38 +72,41 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
     } catch (error: any) {
       throw new Error(error)
     }
-  }
+  }, [])
 
-  const plugins = [
-    toolbarPlugin({
-      toolbarContents: () => (
-        <>
-          <BoldItalicUnderlineToggles />
-          <CodeToggle />
+  const plugins = useMemo(
+    () => [
+      toolbarPlugin({
+        toolbarContents: () => (
+          <>
+            <BoldItalicUnderlineToggles />
+            <CodeToggle />
 
-          <Divider type="vertical" />
-          <StrikeThroughSupSubToggles />
+            <Divider type="vertical" />
+            <StrikeThroughSupSubToggles />
 
-          <Divider type="vertical" />
-          <ListsToggle options={['bullet', 'number']} />
+            <Divider type="vertical" />
+            <ListsToggle options={['bullet', 'number']} />
 
-          <Divider type="vertical" />
-          <BlockTypeSelect />
-          <CreateLink />
-          <InsertImage />
-          {/* <YouTubeButton /> */}
-        </>
-      ),
-    }),
-    listsPlugin(),
-    headingsPlugin(),
-    linkPlugin(),
-    linkDialogPlugin(),
-    imagePlugin({
-      imageUploadHandler,
-    }),
-    markdownShortcutPlugin(),
-  ]
+            <Divider type="vertical" />
+            <BlockTypeSelect />
+            <CreateLink />
+            <InsertImage />
+            {/* <YouTubeButton /> */}
+          </>
+        ),
+      }),
+      listsPlugin(),
+      headingsPlugin(),
+      linkPlugin(),
+      linkDialogPlugin(),
+      imagePlugin({
+        imageUploadHandler,
+      }),
+      markdownShortcutPlugin(),
+    ],
+    [imageUploadHandler],
+  )
 
   return (
     <MDXEditor
@@ -115,4 +118,4 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
   )
 }
 
-export default memo(withApp(InitializedMDXEditor))
+export default withApp(InitializedMDXEditor)

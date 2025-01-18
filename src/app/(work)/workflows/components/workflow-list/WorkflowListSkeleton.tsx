@@ -15,8 +15,8 @@ const WorkflowListSkeleton: React.FC<any> = (props) => (
           <Skeleton.Node style={{ height: 18, width: 185 }} active />
         </div>
         <Row gutter={24}>
-          {times(4, () => (
-            <Col span={6}>
+          {times(4, (num) => (
+            <Col key={num} span={6}>
               <div className="aspect-[378/200] h-[200px] rounded-[8px] bg-[#fff] p-[20px]">
                 <Skeleton active />
               </div>

@@ -28,8 +28,6 @@ const page: React.FC<any> = async (prop: {
     ],
   )
 
-  console.log(propose)
-
   const day = String(searchParams?.date).split('-').pop()
 
   const hasSearchParams = Object.keys(searchParams).length > 0

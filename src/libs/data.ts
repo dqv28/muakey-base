@@ -279,6 +279,17 @@ export const getNotifications = async () =>
     .then((data) => data)
     .catch(() => [])
 
+export const updateNotification = async (id: number, data: any) =>
+  requestWithAuthorized(`notifications/${id}`, {
+    method: 'PUT',
+    data,
+  }).then((data) => data)
+
+export const deleteNotification = async (id: number, query?: any) =>
+  requestWithAuthorized(`notifications/${id}?` + new URLSearchParams(query), {
+    method: 'DELETE',
+  }).then((data) => data)
+
 export const getAttendances = async (query?: any) =>
   requestWithAuthorized('attendances?' + new URLSearchParams(query))
     .then((data) => data)

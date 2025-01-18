@@ -47,3 +47,6 @@ export const EDITOR_ICON_KEYS: any = {
 }
 
 export const GLOBAL_BAN = ['Admin', 'cinren16', 'Mạnh', 'Nghĩa IT', 'Nhật']
+
+export const START_TIME = '08:30'
+export const END_TIME = '17:30'

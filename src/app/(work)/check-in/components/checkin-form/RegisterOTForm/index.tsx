@@ -13,6 +13,7 @@ type RegisterOTFormProps = {}
 const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
   const { message } = App.useApp()
   const [loading, setLoading] = useState(false)
+  const [form] = Form.useForm()
 
   const [startTime, setStartTime] = useState<any>()
   const [endTime, setEndTime] = useState<any>()
@@ -23,7 +24,6 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
     setLoading(true)
 
     const { date, timestamps, ...restFormData } = formData
-
     const day = String(dayjs(date).format('YYYY-MM-DD'))
 
     const holiday = timestamps?.map((t: any) => ({
@@ -49,6 +49,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
 
       setLoading(false)
       message.success('Đã gửi yêu cầu')
+      form.resetFields()
     } catch (error) {
       setLoading(false)
       throw new Error(String(error))
@@ -72,7 +73,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
 
   return (
     <div className="rounded-[16px] bg-[#fff] p-[16px]">
-      <Form layout="vertical" onFinish={handleSubmit}>
+      <Form layout="vertical" onFinish={handleSubmit} form={form}>
         <div className="flex items-start justify-between gap-[24px]">
           <Form.Item name="date" label="Ngày">
             <DatePicker className="w-[229px]" locale={locale} />
