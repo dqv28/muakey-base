@@ -297,7 +297,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             tags={tags}
             onTagsChange={(data) => setTags(data)}
             open={selectOpen}
-            onOpenChange={(o) => setSelectOpen(o)}
+            onClick={() => setSelectOpen(!selectOpen)}
           />
         </Form.Item>
         <Form.Item
@@ -310,7 +310,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             ref={editorRef}
             markdown={converter.makeMarkdown(description || '')}
             placeholder="Mô tả nhiệm vụ"
-            onError={(payload) => console.log(payload)}
           />
         </Form.Item>
         <Form.Item name="member" label="Giao cho">

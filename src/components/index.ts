@@ -12,3 +12,6 @@ export { default as BackButton } from './BackButton'
 
 export * from './InitializedMDXEditor'
 export { default as InitializedMDXEditor } from './InitializedMDXEditor'
+
+export * from './TiptapEditor'
+export { default as TiptapEditor } from './TiptapEditor'

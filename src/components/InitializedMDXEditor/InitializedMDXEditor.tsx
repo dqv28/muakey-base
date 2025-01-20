@@ -26,7 +26,7 @@ import {
 } from '@mdxeditor/editor'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import { Divider } from 'antd'
-import { useCallback, useMemo, type ForwardedRef } from 'react'
+import { useCallback, type ForwardedRef } from 'react'
 import toast from 'react-hot-toast'
 
 type InitializedMDXEditorProps = MDXEditorProps & {
@@ -54,7 +54,7 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
   editorRef,
   ...props
 }) => {
-  console.log('render MDXEditor', props)
+  console.log('render MDXEditor')
 
   const imageUploadHandler = useCallback(async (image: File) => {
     const formData = new FormData()
@@ -74,39 +74,36 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
     }
   }, [])
 
-  const plugins = useMemo(
-    () => [
-      toolbarPlugin({
-        toolbarContents: () => (
-          <>
-            <BoldItalicUnderlineToggles />
-            <CodeToggle />
+  const plugins = [
+    toolbarPlugin({
+      toolbarContents: () => (
+        <>
+          <BoldItalicUnderlineToggles />
+          <CodeToggle />
 
-            <Divider type="vertical" />
-            <StrikeThroughSupSubToggles />
+          <Divider type="vertical" />
+          <StrikeThroughSupSubToggles />
 
-            <Divider type="vertical" />
-            <ListsToggle options={['bullet', 'number']} />
+          <Divider type="vertical" />
+          <ListsToggle options={['bullet', 'number']} />
 
-            <Divider type="vertical" />
-            <BlockTypeSelect />
-            <CreateLink />
-            <InsertImage />
-            {/* <YouTubeButton /> */}
-          </>
-        ),
-      }),
-      listsPlugin(),
-      headingsPlugin(),
-      linkPlugin(),
-      linkDialogPlugin(),
-      imagePlugin({
-        imageUploadHandler,
-      }),
-      markdownShortcutPlugin(),
-    ],
-    [imageUploadHandler],
-  )
+          <Divider type="vertical" />
+          <BlockTypeSelect />
+          <CreateLink />
+          <InsertImage />
+          {/* <YouTubeButton /> */}
+        </>
+      ),
+    }),
+    listsPlugin(),
+    headingsPlugin(),
+    linkPlugin(),
+    linkDialogPlugin(),
+    imagePlugin({
+      imageUploadHandler,
+    }),
+    markdownShortcutPlugin(),
+  ]
 
   return (
     <MDXEditor

@@ -107,8 +107,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
     (notify: any) => notify?.seen === 0,
   )
 
-  console.log(notifications)
-
   return (
     <div className="w-[60px] text-[#fff]">
       <Dropdown

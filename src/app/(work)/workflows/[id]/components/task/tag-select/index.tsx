@@ -18,6 +18,7 @@ import {
 } from 'antd'
 import { AggregationColor } from 'antd/es/color-picker/color'
 import React, {
+  memo,
   useCallback,
   useContext,
   useEffect,
@@ -28,12 +29,12 @@ import { StageContext } from '../../WorkflowPageLayout'
 import { addTagAction, getTagsAction, updateTagAction } from '../action'
 import TagOption from '../tag-option'
 
-type TagSelectProps = Omit<SelectProps, 'open'> & {
+type TagSelectProps = Omit<SelectProps, 'open' | 'onClick'> & {
   params?: any
   tags?: any
   onTagsChange?: (tags: any) => void
   open?: boolean
-  onOpenChange?: (open: boolean) => void
+  onClick?: () => void
 }
 
 const TagSelect: React.FC<TagSelectProps> = ({
@@ -41,12 +42,11 @@ const TagSelect: React.FC<TagSelectProps> = ({
   tags: initTags,
   onTagsChange,
   open: initOpen,
-  onOpenChange,
+  onClick,
   ...rest
 }) => {
   const [tags, setTags] = useState<any[]>(initTags || [])
   const [tagAddLoading, setTagAddLoading] = useState(false)
-  const [open, setOpen] = useState(!!initOpen)
   const inputRef = useRef<InputRef>(null)
   const [tagName, setTagName] = useState('')
   const [tagColor, setTagColor] = useState('')
@@ -250,22 +250,16 @@ const TagSelect: React.FC<TagSelectProps> = ({
   }
 
   useAsyncEffect(async () => {
-    onOpenChange?.(open)
-
     const res = await getTagsAction({
       workflow_id: params?.id,
     })
 
     setTags(res)
-  }, [open])
+  }, [])
 
   useEffect(() => {
     onTagsChange?.(tags)
   }, [tags])
-
-  useEffect(() => {
-    setOpen(!!initOpen)
-  }, [initOpen])
 
   return (
     <Select
@@ -281,14 +275,13 @@ const TagSelect: React.FC<TagSelectProps> = ({
       tagRender={tagRender}
       notFoundContent={<Empty description="Chưa có nhãn" />}
       allowClear
-      open={open}
       onClick={(e) => {
         e.stopPropagation()
-        setOpen(!open)
+        onClick?.()
       }}
       {...rest}
     />
   )
 }
 
-export default withApp(TagSelect)
+export default memo(withApp(TagSelect))

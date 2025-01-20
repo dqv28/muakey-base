@@ -218,7 +218,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
     setDate(dayjs(searchParams?.get('date') || today))
   }, [today, searchParams])
 
-  const days = Object.entries(checkInDataSource[0])?.filter(
+  const days = Object.entries(checkInDataSource[0] || {})?.filter(
     (c: any) => !!c[1]?.checkInValue,
   )
 
@@ -328,7 +328,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               headerRender={() => <></>}
               fullCellRender={(current) => {
                 const timestamp = dayjs(current).format('D/M')
-                const info = checkInDataSource[0][String(timestamp)] || []
+                const info = checkInDataSource[0]?.[String(timestamp)] || []
 
                 const date = String(dayjs(current).format('YYYY-MM-DD'))
 
