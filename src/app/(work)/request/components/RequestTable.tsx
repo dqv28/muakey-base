@@ -33,7 +33,7 @@ const generateStatus = (status: string) => {
 
 const RequestTable: React.FC<RequestTableProps> = memo(
   ({ dataSource, query, options, ...rest }) => {
-    const [requests, setRequests] = useState(dataSource || [])
+    const [requests, setRequests] = useState<any>([])
     const { user } = options
 
     const { message, modal } = App.useApp()
@@ -153,9 +153,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
 
     useEffect(() => {
       setRequests(() =>
-        (dataSource || [])?.filter((data: any) =>
-          data.status.includes(query?.status),
-        ),
+        dataSource?.filter((data: any) => data.status.includes(query?.status)),
       )
     }, [query?.status, dataSource])
 

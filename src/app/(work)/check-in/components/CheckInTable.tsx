@@ -24,7 +24,7 @@ type CheckInTableProps = TableProps & {
   options?: any
 }
 
-const generateTimeOff = (start: string, end: string, currentDate: number) => {
+const generateTimestamp = (start: string, end: string, currentDate: number) => {
   const startDate = new Date(start).getDate()
   const endDate = new Date(end).getDate()
 
@@ -166,9 +166,10 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       const myPropose = propose?.filter(
         (p: any) => p?.full_name === m?.full_name,
       )
-      // const ot = myPropose
-      //   .filter((p: any) => p?.category_name === 'Đăng ký OT')
-      //   .map((p: any) => p?.date)
+      const otPropose = myPropose
+        .filter((p: any) => p?.category_name === 'Đăng ký OT')
+        .map((p: any) => p?.date)
+        .flat()
 
       const timeOffPropose = myPropose
         .filter((p: any) => p?.category_name === 'Đăng ký nghỉ')
@@ -190,10 +191,12 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               ])
             : null
 
-        const timeOff = generateTimeOff(
-          timeOffPropose[0]?.start_date,
-          timeOffPropose[0]?.end_date,
-          currentDate,
+        const timeOff = timeOffPropose?.map((t: any) =>
+          generateTimestamp(t?.start_date, t?.end_date, currentDate),
+        )
+
+        const ot = otPropose?.map((t: any) =>
+          generateTimestamp(t?.start_date, t?.end_date, currentDate),
         )
 
         return [
@@ -201,6 +204,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           {
             checkInValue,
             timeOff,
+            ot,
           },
         ]
       })

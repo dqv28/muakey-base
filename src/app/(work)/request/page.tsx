@@ -14,6 +14,8 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const proposeCategories = await getProposeCategories()
   const user = await getMe()
 
+  console.log(proposes)
+
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
       <PageHeader

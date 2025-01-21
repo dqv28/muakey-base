@@ -1,21 +1,63 @@
 'use client'
 
-import { Button, DatePicker, Form, Input } from 'antd'
+import { withApp } from '@/hoc'
+import { App, Button, DatePicker, Form, Input } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
-import React from 'react'
+import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { addProposeAction } from '../action'
 import FormCard from './FormCard'
 
 type CheckInTimeEditFormProps = {}
 
 const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = (props) => {
+  const [loading, setLoading] = useState(false)
+  const [form] = Form.useForm()
+  const { message } = App.useApp()
+  const router = useRouter()
+
   const handleSubmit = async (formData: any) => {
-    console.log(formData)
+    setLoading(true)
+
+    const { check_in, check_out, date } = formData
+
+    const startDate = `${String(dayjs(date).format('YYYY-MM-DD'))} ${check_in ? String(dayjs(check_in).format('HH:mm:ss')) : ''}`
+    const endDate = `${String(dayjs(date).format('YYYY-MM-DD'))} ${check_out ? String(dayjs(check_out).format('HH:mm:ss')) : ''}`
+
+    try {
+      const { message: msg, errors } = await addProposeAction({
+        name: 'Sửa giờ vào ra',
+        start_time: startDate.trim(),
+        end_time: endDate.trim(),
+        propose_category_id: 6,
+      })
+
+      if (errors) {
+        message.error(msg)
+        setLoading(false)
+        return
+      }
+
+      message.success('Gửi yêu cầu thành công')
+      setLoading(false)
+      form.resetFields()
+      router.refresh()
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
   }
 
   return (
     <div className="rounded-[16px] bg-[#fff] p-[16px]">
-      <Form layout="vertical" onFinish={handleSubmit}>
-        <Form.Item className="w-[230px]" label="Ngày" name="date">
+      <Form layout="vertical" onFinish={handleSubmit} form={form}>
+        <Form.Item
+          className="w-[230px]"
+          label="Ngày"
+          name="date"
+          rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
+        >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
 
@@ -36,7 +78,11 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = (props) => {
             className="flex-1"
             title="Sửa giờ vào/ra"
             checkIn={
-              <Form.Item className="!mb-0" name="check_in">
+              <Form.Item
+                className="!mb-0"
+                name="check_in"
+                rules={[{ required: true, message: 'Vui lòng chọn giờ vào' }]}
+              >
                 <DatePicker
                   className="w-full"
                   locale={locale}
@@ -46,7 +92,11 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = (props) => {
               </Form.Item>
             }
             checkOut={
-              <Form.Item className="!mb-0" name="check_out">
+              <Form.Item
+                className="!mb-0"
+                name="check_out"
+                rules={[{ required: true, message: 'Vui lòng chọn giờ ra' }]}
+              >
                 <DatePicker
                   className="w-full"
                   locale={locale}
@@ -71,7 +121,7 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = (props) => {
         </Form.Item>
 
         <Form.Item className="!mb-0">
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading}>
             Gửi yêu cầu
           </Button>
         </Form.Item>
@@ -80,4 +130,4 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = (props) => {
   )
 }
 
-export default CheckInTimeEditForm
+export default withApp(CheckInTimeEditForm)

@@ -15,6 +15,7 @@ import {
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { addProposeAction } from '../action'
 
@@ -23,6 +24,7 @@ type RegisterTimeOffFormProps = {}
 const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
   const [mode, setMode] = useState<'date' | 'time'>('date')
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const [timestamps, setTimestamps] = useState<any>({})
   const [timeOff, setTimeOff] = useState(0)
@@ -75,9 +77,10 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
         return
       }
 
-      message.success('Đã gửi yêu cầu')
+      message.success('Gửi yêu cầu thành công')
       setLoading(false)
       form.resetFields()
+      router.refresh()
     } catch (error) {
       setLoading(false)
       throw new Error(String(error))

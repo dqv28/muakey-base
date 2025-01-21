@@ -1,12 +1,17 @@
+import { CodeBlockOutlined, CodeOutlined } from '@/ui/icons'
 import {
+  BoldOutlined,
   DownOutlined,
   ItalicOutlined,
   OrderedListOutlined,
+  StrikethroughOutlined,
+  UnderlineOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons'
 import { type Editor } from '@tiptap/react'
 import { Dropdown } from 'antd'
 import React from 'react'
+import TiptapLink from './TiptapLink'
 
 export type TiptapToolbarsProps = {
   editor?: Editor | null
@@ -20,6 +25,29 @@ type OptionType = {
 
 const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
   if (!editor) return <></>
+
+  const setLink = (url: string) => {
+    if (url === null) {
+      return
+    }
+
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run()
+
+      return
+    }
+
+    try {
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run()
+    } catch (e) {
+      console.log(String(e))
+    }
+  }
 
   const options: OptionType[] = [
     {
@@ -106,7 +134,25 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
               </div>
               <div
                 className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
-                onClick={() => editor.commands.setFontFamily('courier')}
+                onClick={() => editor.commands.setFontFamily('Garamond')}
+              >
+                Garamond
+              </div>
+              <div
+                className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
+                onClick={() => editor.commands.setFontFamily('Georgia')}
+              >
+                Georgia
+              </div>
+              <div
+                className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
+                onClick={() => editor.commands.setFontFamily('monospace')}
+              >
+                Monospace
+              </div>
+              <div
+                className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
+                onClick={() => editor.commands.setFontFamily('Courier')}
               >
                 Courier
               </div>
@@ -121,9 +167,38 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
       ),
     },
     {
+      icon: <BoldOutlined className="cursor-pointer" />,
+      onClick: () => editor.chain().focus().toggleBold().run(),
+      active: editor.isActive('bold'),
+    },
+    {
       icon: <ItalicOutlined className="cursor-pointer" />,
       onClick: () => editor.chain().focus().toggleItalic().run(),
       active: editor.isActive('italic'),
+    },
+    {
+      icon: <UnderlineOutlined className="cursor-pointer" />,
+      onClick: () => editor.chain().focus().toggleUnderline().run(),
+      active: editor.isActive('underline'),
+    },
+    {
+      icon: <StrikethroughOutlined className="cursor-pointer" />,
+      onClick: () => editor.chain().focus().toggleStrike().run(),
+      active: editor.isActive('strike'),
+    },
+    {
+      icon: <CodeOutlined className="cursor-pointer" />,
+      onClick: () => editor.chain().focus().toggleCode().run(),
+      active: editor.isActive('code'),
+    },
+    {
+      icon: <CodeBlockOutlined className="cursor-pointer" />,
+      onClick: () => editor.chain().focus().toggleCodeBlock().run(),
+      active: editor.isActive('codeBlock'),
+    },
+    {
+      icon: <TiptapLink onAdd={setLink} />,
+      active: editor.isActive('link'),
     },
     {
       icon: <OrderedListOutlined className="cursor-pointer" />,

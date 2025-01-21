@@ -5,6 +5,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { App, Button, Col, DatePicker, Form, Input, Row } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { addProposeAction } from '../action'
 
@@ -14,6 +15,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
   const { message } = App.useApp()
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
+  const router = useRouter()
 
   const [startTime, setStartTime] = useState<any>()
   const [endTime, setEndTime] = useState<any>()
@@ -48,8 +50,9 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
       }
 
       setLoading(false)
-      message.success('Đã gửi yêu cầu')
+      message.success('Gửi yêu cầu thành công')
       form.resetFields()
+      router.refresh()
     } catch (error) {
       setLoading(false)
       throw new Error(String(error))

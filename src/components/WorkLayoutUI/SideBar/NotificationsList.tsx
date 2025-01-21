@@ -62,7 +62,7 @@ const NotificationsList: React.FC<NotificationsListProps> = (props) => {
                 'bg-[#F5FCFF]': item?.seen === 0,
               },
             )}
-            href={item?.link}
+            href={item?.link || ''}
             onClick={() => handleClick(item)}
           >
             <Avatar
