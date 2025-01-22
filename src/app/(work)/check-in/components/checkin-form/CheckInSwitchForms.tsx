@@ -8,15 +8,17 @@ type CheckInSwitchFormsProps = {
 }
 
 const CheckInSwitchForms: React.FC<CheckInSwitchFormsProps> = ({ params }) => {
-  switch (params?.type) {
+  const { initialValues, ...rest } = params
+
+  switch (rest?.type) {
     case 'dang-ky-nghi':
-      return <RegisterTimeOffForm />
+      return <RegisterTimeOffForm initialValues={initialValues} />
 
     case 'sua-gio-vao-ra':
-      return <CheckInTimeEditForm />
+      return <CheckInTimeEditForm initialValues={initialValues} />
 
     case 'dang-ky-ot':
-      return <RegisterOTForm />
+      return <RegisterOTForm initialValues={initialValues} />
 
     default:
       return <></>

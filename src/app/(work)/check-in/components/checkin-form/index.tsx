@@ -6,9 +6,11 @@ import { useSearchParams } from 'next/navigation'
 import React from 'react'
 import CheckInSwitchForms from './CheckInSwitchForms'
 
-type CheckInFormProps = {}
+type CheckInFormProps = {
+  initialValues?: any
+}
 
-const CheckInForm: React.FC<CheckInFormProps> = (props) => {
+const CheckInForm: React.FC<CheckInFormProps> = ({ initialValues }) => {
   const searchParams = useSearchParams()
 
   const search = searchParams.get('form')
@@ -18,6 +20,7 @@ const CheckInForm: React.FC<CheckInFormProps> = (props) => {
       <CheckInSwitchForms
         params={{
           type: search,
+          initialValues,
         }}
       />
 

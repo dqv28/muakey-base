@@ -19,9 +19,13 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { addProposeAction } from '../action'
 
-type RegisterTimeOffFormProps = {}
+type RegisterTimeOffFormProps = {
+  initialValues?: any
+}
 
-const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
+const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
+  initialValues,
+}) => {
   const [mode, setMode] = useState<'date' | 'time'>('date')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -129,6 +133,10 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
             setTimestamps(timestamps[0])
           }}
           form={form}
+          initialValues={{
+            timestamps: [{ isDefault: true, startDate: initialValues?.date }],
+            type: 'Nghỉ không hưởng lương',
+          }}
         >
           <div className="flex items-start justify-between gap-[24px]">
             <div className="flex items-center gap-[24px]">
@@ -143,12 +151,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = (props) => {
                   </Radio.Group>
                 </Space>
               </Form.Item>
-              <Form.Item
-                className="w-[400px]"
-                label="Loại nghỉ"
-                name="type"
-                initialValue="Nghỉ không hưởng lương"
-              >
+              <Form.Item className="w-[400px]" label="Loại nghỉ" name="type">
                 <Select
                   options={[
                     {

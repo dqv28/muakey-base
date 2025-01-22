@@ -9,9 +9,11 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { addProposeAction } from '../action'
 
-type RegisterOTFormProps = {}
+type RegisterOTFormProps = {
+  initialValues?: any
+}
 
-const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
+const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
   const { message } = App.useApp()
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
@@ -76,7 +78,19 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
 
   return (
     <div className="rounded-[16px] bg-[#fff] p-[16px]">
-      <Form layout="vertical" onFinish={handleSubmit} form={form}>
+      <Form
+        layout="vertical"
+        onFinish={handleSubmit}
+        form={form}
+        initialValues={{
+          ...initialValues,
+          timestamps: [
+            {
+              from: initialValues?.date,
+            },
+          ],
+        }}
+      >
         <div className="flex items-start justify-between gap-[24px]">
           <Form.Item name="date" label="Ngày">
             <DatePicker className="w-[229px]" locale={locale} />
@@ -90,7 +104,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = (props) => {
           </div>
         </div>
 
-        <Form.List name="timestamps" initialValue={[{}]}>
+        <Form.List name="timestamps">
           {(fields, { add, remove }) => (
             <Row gutter={[24, 24]}>
               {fields.map(({ key, name, ...restField }, index) => (

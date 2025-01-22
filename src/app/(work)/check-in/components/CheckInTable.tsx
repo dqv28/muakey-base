@@ -23,6 +23,7 @@ import CheckInTableExplanation from './CheckInTableExplanation'
 
 type CheckInTableProps = TableProps & {
   options?: any
+  onDateSelect?: (date: any) => void
 }
 
 const generateTimestamp = (start: string, end: string, currentDate: number) => {
@@ -76,6 +77,7 @@ const useStyle = createStyles(({ css }) => {
 
 const CheckInTable: React.FC<CheckInTableProps> = ({
   options,
+  onDateSelect,
   className: customClassName,
   ...props
 }) => {
@@ -363,6 +365,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                       isCurrentMonth,
                       info,
                     }}
+                    onDateClick={(date) => onDateSelect?.(date)}
                   />
                 )
               }}

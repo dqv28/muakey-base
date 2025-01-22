@@ -6,20 +6,20 @@ on:
       - master
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Deploy
-      uses: apple/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: 22
-        script: |
-          cd /var/www/muakey-base
-          git pull --rebase
-          npm install
-          npm run build
-          pm2 reload muakey-base
-  
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/muakey-base
+            git pull --rebase
+            npm install
+            npm run build
+            pm2 reload muakey-base

@@ -9,9 +9,13 @@ import React, { useState } from 'react'
 import { addProposeAction } from '../action'
 import FormCard from './FormCard'
 
-type CheckInTimeEditFormProps = {}
+type CheckInTimeEditFormProps = {
+  initialValues?: any
+}
 
-const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = (props) => {
+const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
+  initialValues,
+}) => {
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
   const { message } = App.useApp()
@@ -51,7 +55,15 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = (props) => {
 
   return (
     <div className="rounded-[16px] bg-[#fff] p-[16px]">
-      <Form layout="vertical" onFinish={handleSubmit} form={form}>
+      <Form
+        layout="vertical"
+        onFinish={handleSubmit}
+        form={form}
+        initialValues={{
+          ...initialValues,
+          check_in: initialValues?.date,
+        }}
+      >
         <Form.Item
           className="w-[230px]"
           label="Ngày"

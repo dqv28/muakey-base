@@ -1,5 +1,7 @@
 import React from 'react'
 
+export const fetchCache = 'force-cache'
+
 const AuthLayout: React.FC<
   Readonly<{
     children?: React.ReactNode

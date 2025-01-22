@@ -16,9 +16,13 @@ type JobCommentFormProps = {
 const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
   const [loading, setLoading] = useState(false)
   const [disabled, setDisabled] = useState(true)
+  const [content, setContent] = useState('')
+
   const router = useRouter()
   const formRef = useRef<FormInstance>(null)
   const converter = new Converter()
+
+  const [listOpen, setListOpen] = useState(false)
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -53,9 +57,12 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
         <InitializedMDXEditor
           contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
           markdown=""
-          placeholder="Mô tả nhiệm vụ"
+          placeholder="Bình luận"
           plugins={[linkPlugin()]}
-          onChange={(markdown) => setDisabled(!markdown)}
+          onChange={(markdown) => {
+            setDisabled(!markdown)
+            console.log(markdown)
+          }}
         />
       </Form.Item>
 

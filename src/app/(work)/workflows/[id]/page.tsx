@@ -16,6 +16,8 @@ export const generateMetadata = async (props: { params: any }) => {
   return metadata
 }
 
+export const fetchCache = 'default-no-store'
+
 const Page: React.FC<any> = async (prop: {
   params: any
   searchParams: any
@@ -33,8 +35,6 @@ const Page: React.FC<any> = async (prop: {
     }),
     getMe(),
   ])
-
-  console.log(stages)
 
   return (
     <WorkflowPageLayout

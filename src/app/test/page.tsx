@@ -5,7 +5,7 @@ import TestForm from './TestForm'
 const Page: React.FC = () => {
   return (
     <div className="p-[12px]">
-      <h1>Re-test Deploy</h1>
+      <h1 className="text-2xl font-bold">Add Github Action</h1>
       <Group />
       <TestForm />
     </div>

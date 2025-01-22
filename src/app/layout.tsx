@@ -10,8 +10,6 @@ export const metadata: Metadata = {
   description: 'Muakey Base',
 }
 
-export const fetchCache = 'force-cache'
-
 const ToastHolder = dynamic(() => import('@/ui').then((ui) => ui.ToastHolder))
 
 export default function RootLayout({

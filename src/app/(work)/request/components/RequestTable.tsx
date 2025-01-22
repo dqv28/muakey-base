@@ -2,13 +2,19 @@
 
 import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
-import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons'
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+} from '@ant-design/icons'
 import { App, Avatar, Table, TableProps, Tag, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { memo, useEffect, useState } from 'react'
 import { deleteProposeAction } from './action'
 import RequestConfirmModalForm from './request-confirm-modal-form'
+import RequestDetailModal from './request-detail-modal'
 
 type RequestTableProps = TableProps & {
   query?: any
@@ -75,14 +81,16 @@ const RequestTable: React.FC<RequestTableProps> = memo(
         render: (_, record) => (
           <div className="flex items-center gap-[8px]">
             <Avatar
-              src={record?.avatar}
+              src={record?.account?.avatar}
               style={{
-                backgroundColor: randomColor(String(record?.full_name)),
+                backgroundColor: randomColor(
+                  String(record?.account?.full_name),
+                ),
               }}
             >
-              {String(record?.full_name).charAt(0).toUpperCase()}
+              {String(record?.account?.full_name).charAt(0).toUpperCase()}
             </Avatar>
-            <span>{record?.full_name}</span>
+            <span>{record?.account?.full_name}</span>
           </div>
         ),
       },
@@ -129,23 +137,34 @@ const RequestTable: React.FC<RequestTableProps> = memo(
                 </>
               )}
 
-              <div
-                onClick={() => {
-                  modal.confirm({
-                    title: 'Xác nhận xóa',
-                    content: 'Bạn có chắc chắn muốn xóa đề xuất này không?',
-                    open,
-                    onOk: () => handleDeletePropose(record.id),
-                    onCancel: () => setOpen(false),
-                    okText: 'Xóa',
-                    cancelText: 'Hủy',
-                  })
+              {(user?.role === 'Admin lv2' ||
+                user?.id === record?.account?.id) && (
+                <div
+                  onClick={() => {
+                    modal.confirm({
+                      title: 'Xác nhận xóa',
+                      content: 'Bạn có chắc chắn muốn xóa đề xuất này không?',
+                      open,
+                      onOk: () => handleDeletePropose(record.id),
+                      onCancel: () => setOpen(false),
+                      okText: 'Xóa',
+                      cancelText: 'Hủy',
+                    })
+                  }}
+                >
+                  <Tooltip title="Xóa đề xuất">
+                    <DeleteOutlined className="cursor-pointer" />
+                  </Tooltip>
+                </div>
+              )}
+
+              <RequestDetailModal
+                initialValues={{
+                  request: record,
                 }}
               >
-                <Tooltip title="Xóa đề xuất">
-                  <DeleteOutlined className="cursor-pointer" />
-                </Tooltip>
-              </div>
+                <EyeOutlined className="cursor-pointer text-[#1677ff]" />
+              </RequestDetailModal>
             </div>
           ),
       },
@@ -153,7 +172,11 @@ const RequestTable: React.FC<RequestTableProps> = memo(
 
     useEffect(() => {
       setRequests(() =>
-        dataSource?.filter((data: any) => data.status.includes(query?.status)),
+        dataSource
+          ?.filter((data: any) =>
+            user?.role !== 'Admin lv2' ? data?.account?.id === user?.id : true,
+          )
+          ?.filter((data: any) => data.status.includes(query?.status)),
       )
     }, [query?.status, dataSource])
 
