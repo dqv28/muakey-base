@@ -50,3 +50,4 @@ export const GLOBAL_BAN = ['Admin', 'cinren16', 'Mạnh', 'Nhật']
 
 export const START_TIME = '08:30'
 export const END_TIME = '17:30'
+export const REVALIDATE_TIME = 900

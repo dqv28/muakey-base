@@ -16,6 +16,7 @@ import { END_TIME, GLOBAL_BAN, START_TIME } from '@/libs/constant'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjsLocale from 'dayjs/locale/vi'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { calculateWorkTime } from '../ultils'
 import CalendarDropdown from './CalendarDropdown'
 import CheckInStatistics from './check-statistics'
 import CheckInTableExplanation from './CheckInTableExplanation'
@@ -98,21 +99,31 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       title: 'Thành viên',
       dataIndex: 'member',
       fixed: true,
-      width: 240,
-      render: (value) => (
-        <div className="flex items-center gap-[8px]">
-          <Avatar
-            src={value?.avatar}
-            style={{
-              backgroundColor: randomColor(value?.fullName || ''),
-            }}
-            size={32}
-          >
-            {String(value?.fullName).charAt(0).toLocaleUpperCase()}
-          </Avatar>
-          <span>{value?.fullName}</span>
-        </div>
-      ),
+      width: 300,
+      render: (value, record) => {
+        const workDays = Object.entries(record)?.filter(
+          (c: any) => !!c[1]?.checkInValue,
+        )
+
+        return (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-[8px]">
+              <Avatar
+                src={value?.avatar}
+                style={{
+                  backgroundColor: randomColor(value?.fullName || ''),
+                }}
+                size={32}
+              >
+                {String(value?.fullName).charAt(0).toLocaleUpperCase()}
+              </Avatar>
+              <span>{value?.fullName}</span>
+            </div>
+
+            <div>TC: {calculateWorkTime(workDays)}</div>
+          </div>
+        )
+      },
     },
     ...times(dateNumber, (num): any => {
       const date = dayjs(
@@ -233,7 +244,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
     },
     {
       title: 'Công làm việc thực tế',
-      value: days?.length,
+      value: calculateWorkTime(days),
     },
     {
       title: 'Nghỉ có hưởng lương',

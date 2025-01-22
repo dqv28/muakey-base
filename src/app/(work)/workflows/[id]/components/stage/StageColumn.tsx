@@ -86,13 +86,13 @@ const StageColumn: React.FC<StageColumnProps> = memo(
             ...stage?.tasks?.filter((t: any) => {
               const days = Math.abs(dayjs(t?.date_posted).diff(now, 'day'))
 
-              return t?.view_count >= +views && days >= +formDays
+              return t?.view_count < +views && days >= +formDays
             }),
           ]
         }
 
         if (views) {
-          return [...stage?.tasks?.filter((t: any) => t?.view_count >= +views)]
+          return [...stage?.tasks?.filter((t: any) => t?.view_count < +views)]
         }
 
         if (formDays) {
@@ -175,7 +175,7 @@ const StageColumn: React.FC<StageColumnProps> = memo(
                     <div className="max-w-[200px] rounded-[8px] bg-[#fff] p-[12px] shadow-lg">
                       <Form onFinish={setFilteredValues} form={form}>
                         <Form.Item className="!mb-[8px]" name="views">
-                          <Input placeholder="> Lượt xem" type="number" />
+                          <Input placeholder="< Lượt xem" type="number" />
                         </Form.Item>
                         <Form.Item className="!mb-[8px]" name="days">
                           <Input placeholder="> Ngày" type="number" />

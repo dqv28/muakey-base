@@ -98,8 +98,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   useAsyncEffect(async () => {
     const res = await getNotificationsAction()
 
-    console.log(res)
-
     setNotifications(res)
   }, [])
 
@@ -139,11 +137,12 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
       >
         <Badge
           size="small"
+          overflowCount={99}
           count={notificationsWithNotRead?.length}
           classNames={{
-            indicator: '!shadow-[0_0_0_1px_#1469c9]',
+            indicator:
+              '!shadow-[0_0_0_1px_#1469c9] !p-[2px] !text-[10px] !leading-none',
           }}
-          showZero
         >
           <BellFilled className="text-[16px] text-[#fff]" />
         </Badge>

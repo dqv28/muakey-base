@@ -34,6 +34,8 @@ const Page: React.FC<any> = async (prop: {
     getMe(),
   ])
 
+  console.log(stages)
+
   return (
     <WorkflowPageLayout
       workflow={workflow}

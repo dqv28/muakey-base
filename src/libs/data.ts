@@ -29,6 +29,7 @@ export const getStagesByWorkflowId = async (
 ) => {
   return requestWithAuthorized('stages?' + new URLSearchParams(query), {
     ...options,
+    cache: 'force-cache',
   })
     .then((data) => data)
     .catch(() => [])

@@ -1,5 +1,6 @@
 import { BackButton } from '@/components'
 import {
+  getMe,
   getStagesByWorkflowId,
   getTaskById,
   getTaskReportsByTaskId,
@@ -54,13 +55,14 @@ const page: React.FC<any> = async (props: {
   const params = await props.params
   const searchParams = await props.searchParams
 
-  const [task, stages, workflow, reports] = await Promise.all([
+  const [task, stages, workflow, reports, user] = await Promise.all([
     getTaskById(params?.id),
     getStagesByWorkflowId({
       workflow_id: searchParams?.wid,
     }),
     getWorkflowById(searchParams?.wid),
     getTaskReportsByTaskId(params?.id),
+    getMe(),
   ])
 
   const timeStages = await getTimeStagesByTaskId(task?.id)
@@ -95,6 +97,8 @@ const page: React.FC<any> = async (props: {
                 options={{
                   failedStageId,
                   task,
+                  stages,
+                  user,
                 }}
               />
             }

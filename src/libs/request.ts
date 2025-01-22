@@ -1,4 +1,4 @@
-import { getSession } from "./session"
+import { getSession } from './session'
 
 export type RequestOptions = NodeJS.RequestInit & {
   params?: Record<string, any>
