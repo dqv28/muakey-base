@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import { calculateCheckInTime, formatDecimal } from '../ultils'
+import { calculateCheckInTime } from '../ultils'
 
 type CalendarDropdownProps = {
   currentDate?: any
@@ -97,7 +97,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
     0,
   )
 
-  const totalTime = Number((total / 7.5).toFixed(1))
+  const totalTime = Number((total / 7.5).toFixed(2))
 
   return (
     <Dropdown
@@ -186,7 +186,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                     <ClockCircleOutlined /> <span>{total}h</span>
                   </div>
                   <div>
-                    {total > 0 ? formatDecimal(totalTime) : total}
+                    {total > 0 ? totalTime : total}
                     /1 NC
                   </div>
                 </div>

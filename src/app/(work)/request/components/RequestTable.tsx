@@ -158,11 +158,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
                 </div>
               )}
 
-              <RequestDetailModal
-                initialValues={{
-                  request: record,
-                }}
-              >
+              <RequestDetailModal request={record}>
                 <EyeOutlined className="cursor-pointer text-[#1677ff]" />
               </RequestDetailModal>
             </div>

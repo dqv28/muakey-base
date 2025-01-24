@@ -36,13 +36,14 @@ const page: React.FC<any> = async (prop: {
     <div className="h-[100vh] bg-[#f6f6f6]">
       <CheckInHeader
         params={{
-          type: hasSearchParams
-            ? searchParams?.form
-              ? 'form-request'
-              : searchParams?.table
-                ? 'table-history'
-                : ''
-            : 'none',
+          type:
+            !searchParams?.date && hasSearchParams
+              ? searchParams?.form
+                ? 'form-request'
+                : searchParams?.table
+                  ? 'table-history'
+                  : ''
+              : 'none',
         }}
         activeKey={form || (table ? 'all' : status)}
       />

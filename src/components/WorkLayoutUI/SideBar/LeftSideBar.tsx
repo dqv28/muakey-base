@@ -78,7 +78,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   }
 
   useEffect(() => {
-    if (!options?.isCheckedIn) {
+    if (!options?.hasCheckedIn) {
       modal.info({
         title: `Điểm danh`,
         content: (

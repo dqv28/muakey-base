@@ -10,10 +10,10 @@ export const calculateCheckInTime = (time: [string, string]) => {
   const endTime = Number(endHour) * 60 + Number(endMinute)
 
   if (Number(startHour) > 12 || Number(endHour) < 12) {
-    return ((endTime - startTime) / 60).toFixed(1)
+    return ((endTime - startTime) / 60).toFixed(2)
   }
 
-  return ((endTime - startTime) / 60 - 1.5).toFixed(1)
+  return ((endTime - startTime) / 60 - 1.5).toFixed(2)
 }
 
 export const formatDecimal = (number: number) => {
@@ -37,7 +37,7 @@ export const calculateWorkTime = (time: any[]) => {
       ),
     )
     .reduce((i: number, c: number) => {
-      const t = Number((+c / 7.5).toFixed(1))
+      const t = Number((+c / 7.5).toFixed(2))
 
       return i + Number(t)
     }, 0)
