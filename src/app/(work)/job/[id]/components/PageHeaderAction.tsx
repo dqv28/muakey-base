@@ -56,6 +56,8 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
     }
   }
 
+  console.log(stages)
+
   return (
     <div className="flex items-center gap-[8px]">
       <MarkTaskFailedModalForm options={rest}>
@@ -63,34 +65,36 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
           Đánh dấu thất bại
         </Button>
       </MarkTaskFailedModalForm>
-      <Dropdown
-        trigger={['click']}
-        rootClassName="!z-auto"
-        placement="bottomLeft"
-        open={dropdownOpen}
-        onOpenChange={setDropdownOpen}
-        dropdownRender={() => (
-          <div className="mt-[4px] w-[200px] rounded-[4px] bg-[#fff] p-[8px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
-            {stages?.map((stage: any) => (
-              <div
-                className={clsx(
-                  'cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]',
-                  {
-                    'text-[#d96c6c]': stage?.index === 0,
-                    'text-[#42bb14]': stage?.index === 1,
-                  },
-                )}
-                key={stage?.id}
-                onClick={() => handleStageClick(stage)}
-              >
-                {stage?.name}
-              </div>
-            ))}
-          </div>
-        )}
-      >
-        <Button icon={<DoubleRightOutlined className="text-[16px]" />} />
-      </Dropdown>
+      {!!stages && stages?.length > 0 && (
+        <Dropdown
+          trigger={['click']}
+          rootClassName="!z-auto"
+          placement="bottomLeft"
+          open={dropdownOpen}
+          onOpenChange={setDropdownOpen}
+          dropdownRender={() => (
+            <div className="mt-[4px] w-[200px] rounded-[4px] bg-[#fff] p-[8px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
+              {stages?.map((stage: any) => (
+                <div
+                  className={clsx(
+                    'cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]',
+                    {
+                      'text-[#d96c6c]': stage?.index === 0,
+                      'text-[#42bb14]': stage?.index === 1,
+                    },
+                  )}
+                  key={stage?.id}
+                  onClick={() => handleStageClick(stage)}
+                >
+                  {stage?.name}
+                </div>
+              ))}
+            </div>
+          )}
+        >
+          <Button icon={<DoubleRightOutlined className="text-[16px]" />} />
+        </Dropdown>
+      )}
     </div>
   )
 }

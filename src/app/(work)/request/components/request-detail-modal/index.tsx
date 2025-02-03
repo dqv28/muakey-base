@@ -11,6 +11,7 @@ import RequestDetailLine from './request-detail-line'
 type RequestDetailModalProps = ModalProps & {
   children?: React.ReactNode
   request?: any
+  userRole?: string
 }
 
 const generateStatus = (status: string) => {
@@ -32,10 +33,9 @@ const generateStatus = (status: string) => {
 const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   children,
   request,
+  userRole,
 }) => {
   const [open, setOpen] = useState(false)
-
-  console.log(request)
 
   return (
     <>
@@ -103,7 +103,10 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
 
           <Divider className="!my-0" />
 
-          <RequestDetailActions options={{ requestId: request.id }} />
+          <RequestDetailActions
+            hasConfirm={userRole === 'Admin lv2'}
+            options={{ requestId: request.id }}
+          />
         </div>
       </Modal>
     </>

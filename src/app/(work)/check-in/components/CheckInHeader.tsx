@@ -52,8 +52,6 @@ const CheckInHeader: React.FC<CheckInHeaderProps> = ({ params, activeKey }) => {
 
   const items = type === 'form-request' ? formTabItems : tableTabItems
 
-  console.log(type)
-
   return (
     <div
       className={clsx('bg-[#fff] px-[16px] pt-[16px]', {

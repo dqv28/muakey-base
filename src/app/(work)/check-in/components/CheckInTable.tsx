@@ -9,7 +9,6 @@ import dayjs from 'dayjs'
 import { times } from 'lodash'
 import { useSearchParams } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
-import CheckInSchedule from './CheckInSchedule'
 import CheckInScheduleModalForm from './CheckInScheduleModalForm'
 
 import { END_TIME, GLOBAL_BAN, START_TIME } from '@/libs/constant'
@@ -166,11 +165,11 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
-    ?.filter(
-      (m: any) =>
-        user?.role === 'Admin lv2' ||
-        (user?.role !== 'Admin lv2' && user?.id === m?.id),
-    )
+    // ?.filter(
+    //   (m: any) =>
+    //     user?.role === 'Admin lv2' ||
+    //     (user?.role !== 'Admin lv2' && user?.id === m?.id),
+    // )
     ?.map((m: any) => {
       const checkInHistories = attendances?.filter(
         (a: any) => a?.account_id === m?.id,
@@ -301,7 +300,44 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               {
                 key: 'schedule',
                 label: <div className="px-[16px]">Lịch làm việc</div>,
-                children: <CheckInSchedule schedule={workSchedule} />,
+                children: (
+                  <Calendar
+                    rootClassName="border border-[#0505050f]"
+                    headerRender={() => <></>}
+                    fullCellRender={(current) => {
+                      const timestamp = dayjs(current).format('D/M')
+                      const checkInData = checkInDataSource?.find(
+                        (c: any) => c?.member?.fullName === user?.full_name,
+                      )
+
+                      const info = checkInData?.[String(timestamp)] || []
+
+                      const date = String(dayjs(current).format('YYYY-MM-DD'))
+
+                      const day = workSchedule?.find(
+                        (s: any) => s?.day_of_week === date,
+                      )
+
+                      const isCurrentMonth =
+                        String(dayjs(current).format('YYYY-MM')) ===
+                        (dateParams || dayjs(new Date()).format('YYYY-MM'))
+
+                      return (
+                        <CalendarDropdown
+                          currentDate={current}
+                          day={day}
+                          options={{
+                            isCurrentMonth,
+                            info,
+                          }}
+                          onDateClick={(date) => onDateSelect?.(date)}
+                        />
+                      )
+                    }}
+                    value={date}
+                    locale={locale}
+                  />
+                ),
               },
             ]}
             onChange={(key) => setMode(key)}

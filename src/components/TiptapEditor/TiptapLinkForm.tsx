@@ -9,7 +9,7 @@ type TiptapLinkProps = {
   onAdd?: (url: string) => void
 }
 
-const TiptapLink: React.FC<TiptapLinkProps> = ({ onAdd }) => {
+const TiptapLinkForm: React.FC<TiptapLinkProps> = ({ onAdd }) => {
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [form] = Form.useForm()
 
@@ -52,8 +52,12 @@ const TiptapLink: React.FC<TiptapLinkProps> = ({ onAdd }) => {
 
   return (
     <div className="relative">
-      <div ref={buttonRef} onClick={() => setShowLinkInput(!showLinkInput)}>
-        <LinkOutlined className="cursor-pointer" />
+      <div
+        className="flex size-[32px] cursor-pointer items-center justify-center rounded-[6px] bg-transparent transition-all hover:bg-[#0000000a]"
+        ref={buttonRef}
+        onClick={() => setShowLinkInput(!showLinkInput)}
+      >
+        <LinkOutlined className="text-[14px]" />
       </div>
       <div
         className={clsx(
@@ -88,4 +92,4 @@ const TiptapLink: React.FC<TiptapLinkProps> = ({ onAdd }) => {
   )
 }
 
-export default TiptapLink
+export default TiptapLinkForm

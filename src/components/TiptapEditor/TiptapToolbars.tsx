@@ -1,3 +1,5 @@
+'use client'
+
 import { CodeBlockOutlined, CodeOutlined } from '@/ui/icons'
 import {
   BoldOutlined,
@@ -8,10 +10,12 @@ import {
   UnderlineOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons'
-import { type Editor } from '@tiptap/react'
-import { Dropdown } from 'antd'
+import { BubbleMenu, type Editor } from '@tiptap/react'
+import { Button, Divider, Dropdown } from 'antd'
+import clsx from 'clsx'
 import React from 'react'
-import TiptapLink from './TiptapLink'
+import TiptapLinkAction from './TiptapLinkAction'
+import TiptapLinkForm from './TiptapLinkForm'
 
 export type TiptapToolbarsProps = {
   editor?: Editor | null
@@ -21,6 +25,7 @@ type OptionType = {
   icon?: React.ReactNode
   onClick?: () => void
   active?: boolean
+  [key: string]: any
 }
 
 const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
@@ -42,7 +47,7 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
         .chain()
         .focus()
         .extendMarkRange('link')
-        .setLink({ href: url })
+        .setLink({ href: url, target: '_blank' })
         .run()
     } catch (e) {
       console.log(String(e))
@@ -51,7 +56,7 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
 
   const options: OptionType[] = [
     {
-      icon: (
+      children: (
         <Dropdown
           trigger={['click']}
           dropdownRender={() => (
@@ -97,7 +102,7 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
       ),
     },
     {
-      icon: (
+      children: (
         <Dropdown
           trigger={['click']}
           dropdownRender={() => (
@@ -167,6 +172,11 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
       ),
     },
     {
+      component: (
+        <Divider className="h-[20px] border-s-[#cdced6]" type="vertical" />
+      ),
+    },
+    {
       icon: <BoldOutlined className="cursor-pointer" />,
       onClick: () => editor.chain().focus().toggleBold().run(),
       active: editor.isActive('bold'),
@@ -197,8 +207,9 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
       active: editor.isActive('codeBlock'),
     },
     {
-      icon: <TiptapLink onAdd={setLink} />,
+      component: <TiptapLinkForm onAdd={setLink} />,
       active: editor.isActive('link'),
+      isLink: true,
     },
     {
       icon: <OrderedListOutlined className="cursor-pointer" />,
@@ -213,10 +224,38 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
   ]
 
   return (
-    <div className="flex items-center gap-[8px] rounded-[8px] border p-[4px]">
+    <div className="flex items-center gap-[2px] rounded-t-[8px] bg-[#f0f0f3] p-[4px]">
       {options.map((option, index) => (
-        <div key={index} onClick={() => option.onClick?.()}>
-          {option.icon}
+        <div key={`tiptap-${index}`}>
+          {!option?.icon && !option?.children ? (
+            <div>{option?.component}</div>
+          ) : (
+            <Button
+              className={clsx('!px-[12px]', {
+                'bg-[#e0e1e6]': option?.active,
+              })}
+              type="text"
+              onClick={() => option.onClick?.()}
+              icon={option.icon}
+            >
+              {option.children}
+            </Button>
+          )}
+
+          {option.isLink && (
+            <BubbleMenu
+              editor={editor}
+              shouldShow={({ editor }) => editor.isActive('link')}
+            >
+              <div className="rounded border bg-[#fff] p-[8px] shadow-lg">
+                <TiptapLinkAction
+                  editor={editor}
+                  href={editor.getAttributes('link').href || ''}
+                  onEdit={setLink}
+                />
+              </div>
+            </BubbleMenu>
+          )}
         </div>
       ))}
     </div>

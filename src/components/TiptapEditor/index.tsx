@@ -54,9 +54,10 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({ content, onChange }) => {
       }),
       Link.configure({
         openOnClick: false,
-        autolink: true,
+        autolink: false,
         defaultProtocol: 'https',
         protocols: ['http', 'https'],
+        linkOnPaste: true,
         isAllowedUri: (url, ctx) => {
           try {
             const parsedUrl = url.includes(':')
@@ -115,26 +116,20 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({ content, onChange }) => {
           }
         },
         HTMLAttributes: {
+          target: '_blank',
           class: 'text-[#1677ff] underline font-[500]',
         },
       }),
     ],
     content,
     onUpdate: ({ editor }) => {
-      // console.log(editor.getHTML())
       onChange?.(editor.getHTML())
-    },
-    onSelectionUpdate: ({ editor, transaction }) => {
-      const childNodes = editor.view.dom.children[0].childNodes
-
-      console.log(transaction.selection)
-
-      // editor.chain().focus().insertContent(<></>).run()
     },
 
     editorProps: {
       attributes: {
-        class: 'min-h-[150px] p-[8px] border rounded-[12px] focus:outline-none',
+        class:
+          'min-h-[150px] p-[8px] border-x border-b rounded-b-[12px] focus:outline-none',
       },
     },
     immediatelyRender: false,

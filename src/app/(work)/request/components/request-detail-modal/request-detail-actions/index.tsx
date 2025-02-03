@@ -8,10 +8,12 @@ import { deleteProposeAction } from '../../action'
 import RequestConfirmModalForm from '../../request-confirm-modal-form'
 
 type RequestDetailActionsProps = {
+  hasConfirm?: boolean
   options?: any
 }
 
 const RequestDetailActions: React.FC<RequestDetailActionsProps> = ({
+  hasConfirm,
   options,
 }) => {
   const { requestId } = options
@@ -37,30 +39,34 @@ const RequestDetailActions: React.FC<RequestDetailActionsProps> = ({
 
   return (
     <div className="flex items-center gap-[12px]">
-      <RequestConfirmModalForm
-        initialValues={{
-          id: requestId,
-        }}
-        status="approved"
-      >
-        <Button
-          className="hover:brightness-110"
-          type="primary"
-          style={{ background: '#389e0d' }}
-        >
-          Duyệt
-        </Button>
-      </RequestConfirmModalForm>
-      <RequestConfirmModalForm
-        initialValues={{
-          id: requestId,
-        }}
-        status="canceled"
-      >
-        <Button type="primary" danger>
-          Từ chối
-        </Button>
-      </RequestConfirmModalForm>
+      {hasConfirm && (
+        <>
+          <RequestConfirmModalForm
+            initialValues={{
+              id: requestId,
+            }}
+            status="approved"
+          >
+            <Button
+              className="hover:brightness-110"
+              type="primary"
+              style={{ background: '#389e0d' }}
+            >
+              Duyệt
+            </Button>
+          </RequestConfirmModalForm>
+          <RequestConfirmModalForm
+            initialValues={{
+              id: requestId,
+            }}
+            status="canceled"
+          >
+            <Button type="primary" danger>
+              Từ chối
+            </Button>
+          </RequestConfirmModalForm>
+        </>
+      )}
 
       <div
         onClick={() => {

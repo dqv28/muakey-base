@@ -68,10 +68,6 @@ const RequestTable: React.FC<RequestTableProps> = memo(
         dataIndex: 'name',
       },
       {
-        title: 'Mô tả',
-        dataIndex: 'description',
-      },
-      {
         title: 'Nhóm',
         dataIndex: 'category_name',
       },
@@ -158,7 +154,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
                 </div>
               )}
 
-              <RequestDetailModal request={record}>
+              <RequestDetailModal request={record} userRole={user?.role}>
                 <EyeOutlined className="cursor-pointer text-[#1677ff]" />
               </RequestDetailModal>
             </div>
