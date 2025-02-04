@@ -35,7 +35,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
 
   const dropdownRender = () => {
     return (
-      <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
+      <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_3px_6px_-4px_rgba(0,0,0,0.12),0_6px_16px_0_rgba(0,0,0,0.08),0_9px_28px_8px_rgba(0,0,0,0.05)]">
         {isYesterday || (
           <div
             className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
@@ -98,6 +98,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
   )
 
   const totalTime = Number((total / 7.5).toFixed(2))
+  const currentDay = dayjs(current).format('ddd')
 
   return (
     <Dropdown
@@ -114,13 +115,16 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
     >
       <div
         className={clsx(
-          'flex aspect-[220/160] min-h-[160px] w-full flex-col border-x border-t border-x-[#fff] px-[8px] pb-[8px] pt-[6px]',
+          'flex aspect-[220/160] min-h-[160px] w-full flex-col border-t px-[8px] pb-[8px] pt-[6px]',
           day?.go_to_work !== undefined &&
             day?.go_to_work === 0 &&
             'bg-[#f5f5f5]',
           currentDate === today
             ? 'border-t-[#096DD9] bg-[#E6F7FF]'
             : 'border-t-[#0505050f]',
+          {
+            'border-r border-r-[#0505050f]': currentDay !== 'CN',
+          },
         )}
         onClick={() => handleClick(current, isCurrentMonth)}
       >

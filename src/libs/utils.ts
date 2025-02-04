@@ -148,9 +148,10 @@ export const getYoutubeVideoId = (youtubeString: string) => {
 
 export default getYoutubeVideoId
 
+dayjs.extend(relativeTime)
+dayjs.locale(locale)
+
 export const convertRelativeTime = (date: Date) => {
-  dayjs.extend(relativeTime)
-  dayjs.locale(locale)
   const relativeDate = dayjs(date).fromNow()
 
   return relativeDate

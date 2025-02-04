@@ -1,20 +1,17 @@
 'use client'
 
+import { withApp } from '@/hoc'
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons'
-import { Badge, Table, TableProps } from 'antd'
+import { App, Badge, Table, TableProps } from 'antd'
 import dayjs from 'dayjs'
-import { times, uniqueId } from 'lodash'
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { deleteProposeAction, updateProposeAction } from '../action'
 import CheckInHistoryFiltered from './CheckInHistoryFiltered'
 
-type CheckInHistoryTableProps = {}
-
-const getRandomStatus = () => {
-  const statuses = ['pending', 'approved', 'canceled']
-  const randomIndex = Math.floor(Math.random() * statuses.length)
-
-  return statuses[randomIndex]
+type CheckInHistoryTableProps = {
+  options?: any
 }
 
 const generatedStatus = (status: string) => {
@@ -23,7 +20,7 @@ const generatedStatus = (status: string) => {
       return (
         <div className="flex items-center gap-[8px] text-[#FAAD14]">
           <Badge dot color="#FAAD14" />
-          <span>Chưa duyệt</span>
+          <span>Đang chờ duyệt</span>
         </div>
       )
 
@@ -43,28 +40,89 @@ const generatedStatus = (status: string) => {
         </div>
       )
 
+    case 'rejected':
+      return (
+        <div className="flex items-center gap-[8px] text-[#CF1322]">
+          <Badge dot color="#CF1322" />
+          <span>Từ chối</span>
+        </div>
+      )
+
     default:
       return <></>
   }
 }
 
-const CheckInHistoryTable: React.FC<CheckInHistoryTableProps> = (props) => {
+const CheckInHistoryTable: React.FC<CheckInHistoryTableProps> = ({
+  options,
+}) => {
+  const [loading, setLoading] = useState(false)
+  const { propose, user } = options
+  const { message, modal } = App.useApp()
+  const router = useRouter()
+
+  const handleCanceled = async (propose: any) => {
+    setLoading(true)
+
+    try {
+      const { message: msg, errors } = await updateProposeAction(propose?.id, {
+        ...propose,
+        status: 'canceled',
+      })
+
+      if (errors) {
+        message.error(msg)
+        setLoading(false)
+        return
+      }
+
+      message.success('Đã hủy yêu cầu')
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    setLoading(true)
+
+    try {
+      const { message: msg, errors } = await deleteProposeAction(id)
+
+      if (errors) {
+        message.error(msg)
+        setLoading(false)
+        return
+      }
+
+      message.success('Xóa yêu cầu thành công')
+      setLoading(false)
+      router.refresh()
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
+  }
+
   const columns: TableProps['columns'] = [
     {
       title: 'Mã yêu cầu',
-      dataIndex: 'code',
+      dataIndex: 'id',
     },
     {
       title: 'Loại yêu cầu',
-      dataIndex: 'type',
+      dataIndex: 'name',
     },
     {
       title: 'Thời gian gửi yêu cầu',
       dataIndex: 'created_at',
+      render: (value) => String(dayjs(value).format('DD-MM-YYYY HH:mm:ss')),
     },
     {
       title: 'Tổng thời gian',
       dataIndex: 'total',
+      render: () => '--',
     },
     {
       title: 'Trạng thái',
@@ -75,30 +133,49 @@ const CheckInHistoryTable: React.FC<CheckInHistoryTableProps> = (props) => {
       title: 'Hành động',
       dataIndex: 'action',
       render: (_, record) => (
-        <>
-          <div className="flex items-center gap-[12px]">
-            {record?.status === 'pending' && (
-              <>
-                <EditOutlined className="text-[16px] text-[#389E0D]" />
-                <DeleteOutlined className="text-[16px] text-[#CF1322]" />
-              </>
-            )}
-            <Link href={`/request-history/${record.code}`}>
-              <EyeOutlined className="text-[16px] text-[#1677ff]" />
-            </Link>
-          </div>
-        </>
+        <div className="flex items-center gap-[12px]">
+          {record?.status === 'pending' ? (
+            <>
+              <EditOutlined className="cursor-pointer text-[16px] text-[#389E0D]" />
+              {/* <CloseOutlined
+                className="cursor-pointer text-[16px] text-[#CF1322]"
+                onClick={() => {
+                  modal.confirm({
+                    title: 'Xác nhận hủy yêu cầu này?',
+                    onOk: () => handleCanceled(record),
+                    okButtonProps: {
+                      loading,
+                    },
+                  })
+                }}
+              /> */}
+            </>
+          ) : (
+            <></>
+          )}
+          <DeleteOutlined
+            className="cursor-pointer text-[16px] text-[#CF1322]"
+            onClick={() => {
+              modal.confirm({
+                title: 'Xác nhận xóa yêu cầu này?',
+                onOk: () => handleDelete(record?.id),
+                okButtonProps: {
+                  loading,
+                },
+              })
+            }}
+          />
+          <Link href={`/request-history/${record.id}`}>
+            <EyeOutlined className="text-[16px] text-[#1677ff]" />
+          </Link>
+        </div>
       ),
     },
   ]
 
-  const dataSource: TableProps['dataSource'] = times(10, (num) => ({
-    code: uniqueId(),
-    type: `Loại ${num + 1}`,
-    created_at: String(dayjs(new Date()).format('DD-MM-YYYY HH:mm:ss')),
-    total: `${num + 1} ngày`,
-    status: getRandomStatus(),
-  }))
+  const dataSource: TableProps['dataSource'] = propose.filter(
+    (p: any) => p?.account?.id === user?.id,
+  )
 
   return (
     <>
@@ -109,4 +186,4 @@ const CheckInHistoryTable: React.FC<CheckInHistoryTableProps> = (props) => {
   )
 }
 
-export default CheckInHistoryTable
+export default withApp(CheckInHistoryTable)

@@ -107,7 +107,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
       `${String(dayjs(endDate).format('YYYY-MM-DD'))} ${endTime ? String(dayjs(endTime).format('HH:mm:ss')) : ''}`,
     )
 
-    const total = (+end - +start) / (1000 * 60 * 60 * 24)
+    const total = (+end - +start) / (1000 * 60 * 60 * 7.5)
 
     setTimeOff(Number(total.toFixed(2)))
   }, [timestamps])
@@ -134,8 +134,8 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
           }}
           form={form}
           initialValues={{
-            timestamps: [{ isDefault: true, startDate: initialValues?.date }],
             type: 'Nghỉ không hưởng lương',
+            timestamps: [{ isDefault: true, startDate: initialValues?.date }],
           }}
         >
           <div className="flex items-start justify-between gap-[24px]">
@@ -172,8 +172,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
               <div className="text-[24px]">{timeOff} ngày</div>
             </div>
           </div>
-
-          <Form.List name="timestamps" initialValue={[{ isDefault: true }]}>
+          <Form.List name="timestamps">
             {(fields, { add, remove }) => (
               <>
                 {fields.map(({ key, name, ...restField }, index) => (

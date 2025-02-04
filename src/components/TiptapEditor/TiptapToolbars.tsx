@@ -16,6 +16,7 @@ import clsx from 'clsx'
 import React from 'react'
 import TiptapLinkAction from './TiptapLinkAction'
 import TiptapLinkForm from './TiptapLinkForm'
+import TiptapUploadImage from './TiptapUploadImage'
 
 export type TiptapToolbarsProps = {
   editor?: Editor | null
@@ -220,6 +221,15 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
       icon: <UnorderedListOutlined className="cursor-pointer" />,
       onClick: () => editor.chain().focus().toggleBulletList().run(),
       active: editor.isActive('bulletList'),
+    },
+    {
+      component: (
+        <Divider className="h-[20px] border-s-[#cdced6]" type="vertical" />
+      ),
+    },
+    {
+      component: <TiptapUploadImage editor={editor} />,
+      active: editor.isActive('image'),
     },
   ]
 

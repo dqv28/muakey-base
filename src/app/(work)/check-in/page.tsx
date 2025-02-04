@@ -64,11 +64,7 @@ const page: React.FC<any> = async (prop: {
             day,
             user,
             workSchedule,
-            propose: propose?.filter(
-              (p: any) =>
-                ['Đăng ký OT', 'Đăng ký nghỉ'].includes(p?.category_name) &&
-                p?.status === 'approved',
-            ),
+            propose,
           }}
         />
       </div>

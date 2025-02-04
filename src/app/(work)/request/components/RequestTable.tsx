@@ -105,60 +105,65 @@ const RequestTable: React.FC<RequestTableProps> = memo(
       {
         title: 'Hành động',
         dataIndex: 'action',
-        render: (_, record) =>
-          record?.status === 'pending' && (
-            <div className="flex items-center gap-[8px]">
-              {user?.role === 'Admin lv2' && (
-                <>
-                  <RequestConfirmModalForm
-                    initialValues={{
-                      id: record.id,
-                    }}
-                    status="approved"
-                  >
-                    <Tooltip title="Duyệt đề xuất">
-                      <CheckOutlined className="cursor-pointer text-[#389e0d]" />
-                    </Tooltip>
-                  </RequestConfirmModalForm>
-                  <RequestConfirmModalForm
-                    initialValues={{
-                      id: record.id,
-                    }}
-                    status="canceled"
-                  >
-                    <Tooltip title="Từ chối đề xuất">
-                      <CloseOutlined className="cursor-pointer text-[#cf1322]" />
-                    </Tooltip>
-                  </RequestConfirmModalForm>
-                </>
-              )}
+        render: (_, record) => (
+          <div className="flex items-center gap-[8px]">
+            {record?.status === 'pending' && (
+              <>
+                {user?.role === 'Admin lv2' && (
+                  <>
+                    <RequestConfirmModalForm
+                      initialValues={{
+                        id: record.id,
+                      }}
+                      status="approved"
+                    >
+                      <Tooltip title="Duyệt đề xuất">
+                        <CheckOutlined className="cursor-pointer text-[#389e0d]" />
+                      </Tooltip>
+                    </RequestConfirmModalForm>
+                    <RequestConfirmModalForm
+                      initialValues={{
+                        id: record.id,
+                      }}
+                      status="canceled"
+                    >
+                      <Tooltip title="Từ chối đề xuất">
+                        <CloseOutlined className="cursor-pointer text-[#cf1322]" />
+                      </Tooltip>
+                    </RequestConfirmModalForm>
+                  </>
+                )}
 
-              {(user?.role === 'Admin lv2' ||
-                user?.id === record?.account?.id) && (
-                <div
-                  onClick={() => {
-                    modal.confirm({
-                      title: 'Xác nhận xóa',
-                      content: 'Bạn có chắc chắn muốn xóa đề xuất này không?',
-                      open,
-                      onOk: () => handleDeletePropose(record.id),
-                      onCancel: () => setOpen(false),
-                      okText: 'Xóa',
-                      cancelText: 'Hủy',
-                    })
-                  }}
-                >
-                  <Tooltip title="Xóa đề xuất">
-                    <DeleteOutlined className="cursor-pointer" />
-                  </Tooltip>
-                </div>
-              )}
-
-              <RequestDetailModal request={record} userRole={user?.role}>
-                <EyeOutlined className="cursor-pointer text-[#1677ff]" />
-              </RequestDetailModal>
-            </div>
-          ),
+                {(user?.role === 'Admin lv2' ||
+                  user?.id === record?.account?.id) && (
+                  <div
+                    onClick={() => {
+                      modal.confirm({
+                        title: 'Xác nhận xóa',
+                        content: 'Bạn có chắc chắn muốn xóa đề xuất này không?',
+                        open,
+                        onOk: () => handleDeletePropose(record.id),
+                        onCancel: () => setOpen(false),
+                        okText: 'Xóa',
+                        cancelText: 'Hủy',
+                      })
+                    }}
+                  >
+                    <Tooltip title="Xóa đề xuất">
+                      <DeleteOutlined className="cursor-pointer" />
+                    </Tooltip>
+                  </div>
+                )}
+              </>
+            )}
+            <RequestDetailModal request={record} userRole={user?.role}>
+              <EyeOutlined className="cursor-pointer text-[#1677ff]" />
+            </RequestDetailModal>
+            {/* <Link href={`/request-history/${record?.id}`}>
+              <EyeOutlined className="cursor-pointer text-[#1677ff]" />
+            </Link> */}
+          </div>
+        ),
       },
     ]
 

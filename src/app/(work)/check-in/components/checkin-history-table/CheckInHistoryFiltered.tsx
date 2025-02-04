@@ -15,7 +15,7 @@ const CheckInHistoryFiltered: React.FC<CheckInHistoryFilteredProps> = ({
 }) => {
   return (
     <div className={clsx('flex items-center justify-between', className)}>
-      <div className="flex w-[371px] items-center gap-[12px] overflow-hidden rounded-full border border-[#D9D9D9] bg-[#fff] pr-[8px]">
+      <div className="flex w-[371px] items-center gap-[12px] overflow-hidden rounded-[8px] border border-[#D9D9D9] bg-[#fff] pr-[8px]">
         <Input
           className="border-none"
           placeholder="Tìm kiếm người yêu cầu, mã yêu cầu"
@@ -24,7 +24,7 @@ const CheckInHistoryFiltered: React.FC<CheckInHistoryFilteredProps> = ({
       </div>
 
       <DatePicker.RangePicker
-        className="w-[256px] rounded-full"
+        className="w-[256px] rounded-[8px]"
         locale={locale}
       />
     </div>

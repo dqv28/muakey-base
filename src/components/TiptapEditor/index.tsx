@@ -3,6 +3,7 @@
 import BulletList from '@tiptap/extension-bullet-list'
 import CodeBlock from '@tiptap/extension-code-block'
 import FontFamily from '@tiptap/extension-font-family'
+import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import OrderedList from '@tiptap/extension-ordered-list'
 import TextAlign from '@tiptap/extension-text-align'
@@ -118,6 +119,11 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({ content, onChange }) => {
         HTMLAttributes: {
           target: '_blank',
           class: 'text-[#1677ff] underline font-[500]',
+        },
+      }),
+      Image.configure({
+        HTMLAttributes: {
+          class: 'h-auto w-full',
         },
       }),
     ],

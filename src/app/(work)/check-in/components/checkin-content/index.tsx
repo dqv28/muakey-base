@@ -13,9 +13,15 @@ type CheckInContentProps = {
 const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
   const [date, setDate] = useState(new Date())
 
-  const { members, day } = options
+  const { members, day, propose, ...restOptions } = options
 
   const { type } = query
+
+  const filteredPropose = propose?.filter(
+    (p: any) =>
+      ['Đăng ký OT', 'Đăng ký nghỉ'].includes(p?.category_name) &&
+      p?.status === 'approved',
+  )
 
   switch (type) {
     case 'form-request':
@@ -28,13 +34,14 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
       )
 
     case 'table-history':
-      return <CheckInHistoryTable />
+      return <CheckInHistoryTable options={{ propose, user: options?.user }} />
 
     default:
       return (
         <CheckInTable
           options={{
-            ...options,
+            ...restOptions,
+            propose: filteredPropose,
             members: members?.filter((mem: any) => mem?.type !== 'department'),
             day: Number(day || 0),
           }}

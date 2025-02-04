@@ -20,7 +20,7 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
         className="h-[82px] bg-[#fff]"
         title={
           <h1 className="text-[24px] font-[600] leading-[28px]">
-            Danh sách đề xuất
+            Danh sách yêu cầu
           </h1>
         }
         extra={
@@ -28,7 +28,7 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
             groups={proposeCategories}
             options={{ role: user?.role }}
           >
-            <Button type="primary">Tạo đề xuất</Button>
+            <Button type="primary">Tạo yêu cầu</Button>
           </RequestModalForm>
         }
       >
@@ -38,7 +38,7 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
           items={[
             {
               key: 'all',
-              label: 'Tất cả đề xuất',
+              label: 'Tất cả yêu cầu',
             },
             {
               key: 'pending',

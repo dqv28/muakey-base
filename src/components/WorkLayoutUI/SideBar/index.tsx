@@ -36,7 +36,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
     }),
   ])
 
-  const lastAttendance = attendances[attendances?.length - 1]
+  const lastAttendance = attendances ? attendances[attendances?.length - 1] : {}
 
   const isCheckedIn = !!lastAttendance?.checkin && !lastAttendance?.checkout
 
@@ -124,7 +124,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                   label: (
                     <div className="flex items-center gap-[12px]">
                       <ProfileFilled className="text-[16px]" />
-                      <span>Đề xuất</span>
+                      <span>Yêu cầu</span>
                     </div>
                   ),
                   href: '/request',

@@ -165,11 +165,6 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
-    // ?.filter(
-    //   (m: any) =>
-    //     user?.role === 'Admin lv2' ||
-    //     (user?.role !== 'Admin lv2' && user?.id === m?.id),
-    // )
     ?.map((m: any) => {
       const checkInHistories = attendances?.filter(
         (a: any) => a?.account_id === m?.id,
@@ -238,10 +233,17 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
     (c: any) => !!c[1]?.checkInValue,
   )
 
+  const checkInData = checkInDataSource?.find(
+    (c: any) => c?.member?.fullName === user?.full_name,
+  )
+
+  const timeOffs = workSchedule?.filter((s: any) => s?.go_to_work === 0)
+  const standard = dateNumber - timeOffs?.length
+
   const checkInStatisticsItems = [
     {
       title: 'Công chuẩn',
-      value: 26,
+      value: standard,
     },
     {
       title: 'Công làm việc thực tế',
@@ -306,9 +308,6 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                     headerRender={() => <></>}
                     fullCellRender={(current) => {
                       const timestamp = dayjs(current).format('D/M')
-                      const checkInData = checkInDataSource?.find(
-                        (c: any) => c?.member?.fullName === user?.full_name,
-                      )
 
                       const info = checkInData?.[String(timestamp)] || []
 
@@ -381,7 +380,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               headerRender={() => <></>}
               fullCellRender={(current) => {
                 const timestamp = dayjs(current).format('D/M')
-                const info = checkInDataSource[0]?.[String(timestamp)] || []
+                const info = checkInData?.[String(timestamp)] || []
 
                 const date = String(dayjs(current).format('YYYY-MM-DD'))
 
