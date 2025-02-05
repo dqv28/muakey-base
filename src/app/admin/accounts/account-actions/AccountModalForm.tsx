@@ -146,7 +146,10 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
           <Form
             layout="vertical"
             onFinish={handleSubmit}
-            initialValues={{ ...initialValues }}
+            initialValues={{
+              ...initialValues,
+              day_off: initialValues?.day_off || 0,
+            }}
           >
             {dom}
           </Form>
@@ -194,21 +197,31 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
           </Form.Item>
         </div>
 
-        <Form.Item
-          name="role_id"
-          label="Phân quyền"
-          initialValue={roleOptions[0]?.value}
-        >
-          <Select
-            options={[
-              {
-                label: 'Người dùng',
-                value: null,
-              },
-              ...roleOptions,
-            ]}
-          />
-        </Form.Item>
+        <div className="flex items-center gap-[24px]">
+          <Form.Item
+            className="flex-1"
+            name="role_id"
+            label="Phân quyền"
+            initialValue={roleOptions[0]?.value}
+          >
+            <Select
+              options={[
+                {
+                  label: 'Người dùng',
+                  value: null,
+                },
+                ...roleOptions,
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
+            className="flex-1"
+            name="day_off"
+            label="Ngày phép có lương"
+          >
+            <Input placeholder="Nhập số ngày" />
+          </Form.Item>
+        </div>
 
         {action === 'create' && (
           <Form.Item

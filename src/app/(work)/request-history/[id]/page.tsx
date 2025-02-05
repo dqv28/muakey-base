@@ -1,3 +1,4 @@
+import { RequestConfirmModalForm } from '@/components'
 import { getMe } from '@/libs/data'
 import { getProposeById } from '@/libs/propose'
 import { randomColor } from '@/libs/utils'
@@ -9,6 +10,7 @@ import {
 } from '@ant-design/icons'
 import { Avatar, Badge, Button, Divider } from 'antd'
 import dayjs from 'dayjs'
+import { uniqueId } from 'lodash'
 import React from 'react'
 import PageHeader from './components/PageHeader'
 import RequestInfo from './components/RequestInfo'
@@ -59,47 +61,93 @@ const page: React.FC<any> = async (props) => {
   const user = await getMe()
   const propose = await getProposeById(id)
 
-  console.log(propose)
-
   const isAdmin = user?.role === 'Admin lv2'
 
-  // const totalTime = propose?.date_holidays?.reduce(
-  //   (total: number, current: any) => {
-  //     const t =
-  //       new Date(current?.start_date || '').getTime() -
-  //       new Date(current?.end_date || '').getTime()
+  const totalTime = propose?.date_holidays?.reduce(
+    (total: number, current: any) => {
+      const start = new Date(current?.start_date)
+      const end = new Date(current?.end_date)
 
-  //     const time = dayjs.duration(Math.abs(t))
+      total += (+end - +start) / (1000 * 60 * 60 * 9)
 
-  //     return (total += time.asSeconds())
-  //   },
-  //   0,
-  // )
+      return Number(total.toFixed(2))
+    },
+    0,
+  )
+
+  const oldTime = `${dayjs(propose?.old_check_in).format('DD/MM/YYYY HH:mm')} - ${propose?.old_check_out ? dayjs(propose?.old_check_out).format('DD/MM/YYYY HH:mm') : '--:--'}`
+  const newTime = `${dayjs(propose?.start_time).format('DD/MM/YYYY HH:mm')} - ${propose?.end_time ? dayjs(propose?.end_time).format('DD/MM/YYYY HH:mm') : '--:--'}`
+
+  const timeInfo =
+    propose?.propose_category?.name !== 'Sửa giờ vào ra'
+      ? [
+          {
+            key: uniqueId(),
+            label: 'Ngày yêu cầu',
+            children: (
+              <div className="flex flex-wrap items-center gap-[8px]">
+                {propose?.date_holidays?.map((d: any) => {
+                  const start = dayjs(d?.start_date).format('DD/MM/YYYY HH:mm')
+                  const end = dayjs(d?.end_date).format('DD/MM/YYYY HH:mm')
+
+                  return `${start} - ${end}`
+                })}
+              </div>
+            ),
+          },
+          {
+            key: uniqueId(),
+            label: 'Tổng thời gian',
+            children: `${totalTime} ngày`,
+          },
+        ]
+      : [
+          {
+            key: uniqueId(),
+            label: 'Giờ cũ',
+            children: (
+              <div className="flex items-center gap-[8px]">
+                <Badge dot color="#cf1322" />
+                <span>{oldTime}</span>
+              </div>
+            ),
+          },
+          {
+            key: uniqueId(),
+            label: 'Giờ mới',
+            children: (
+              <div className="flex items-center gap-[8px]">
+                <Badge dot color="#389e0d" />
+                <span>{newTime}</span>
+              </div>
+            ),
+          },
+        ]
 
   const items: any[] = [
     [
       {
-        key: '1',
+        key: uniqueId(),
         label: 'Mã yêu cầu',
         children: propose?.id,
       },
       {
-        key: '2',
+        key: uniqueId(),
         label: 'Loại yêu cầu',
         children: propose?.propose_category?.name,
       },
       {
-        key: '3',
+        key: uniqueId(),
         label: 'Thời gian gửi yêu cầu',
         children: dayjs(propose?.created_at).format('HH:mm - DD/MM/YYYY'),
       },
       {
-        key: '6',
+        key: uniqueId(),
         label: 'Trạng thái',
         children: generateStatus(propose?.status),
       },
       {
-        key: '8',
+        key: uniqueId(),
         label: 'Người yêu cầu',
         children: (
           <div className="flex items-center gap-[8px]">
@@ -124,34 +172,11 @@ const page: React.FC<any> = async (props) => {
       },
     ],
     [
+      ...timeInfo,
       {
-        key: '5',
-        label: 'Ngày yêu cầu',
-        children: (
-          <div>
-            {propose?.date_holidays?.map((d: any, index: number) => {
-              const start = dayjs(d?.start_date).format('DD/MM/YYYY HH:mm')
-              const end = dayjs(d?.end_date).format('DD/MM/YYYY HH:mm')
-
-              return (
-                <div
-                  key={index}
-                  className="flex w-max items-center justify-center rounded-full bg-[#f6f6f6] px-[12px] py-[4px]"
-                >{`${start} - ${end}`}</div>
-              )
-            })}
-          </div>
-        ),
-      },
-      {
-        key: '4',
-        label: 'Tổng thời gian',
-        children: '',
-      },
-      {
-        key: '7',
+        key: uniqueId(),
         label: 'Lý do đăng ký nghỉ',
-        children: propose?.description,
+        children: propose?.description || 'Chưa có',
       },
     ],
   ]
@@ -164,31 +189,47 @@ const page: React.FC<any> = async (props) => {
         <div className="rounded-[16px] bg-[#fff] p-[24px]">
           <RequestInfo info={items} />
 
-          <div className="mt-[24px] flex items-center gap-[12px]">
-            {isAdmin ? (
-              <>
-                <Button
-                  icon={<CheckOutlined />}
-                  type="primary"
-                  style={{ backgroundColor: '#389E0D' }}
-                >
-                  Duyệt
-                </Button>
-                <Button icon={<CloseOutlined />} type="primary" danger>
-                  TỪ chối
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button icon={<EditOutlined />} type="primary">
-                  Sửa yêu cầu
-                </Button>
-                <Button icon={<DeleteOutlined />} danger>
-                  Hủy yêu cầu
-                </Button>
-              </>
-            )}
-          </div>
+          {propose?.status !== 'approved' && (
+            <div className="mt-[24px] flex items-center gap-[12px]">
+              {isAdmin ? (
+                <>
+                  <RequestConfirmModalForm
+                    initialValues={{
+                      id,
+                    }}
+                    status="approved"
+                  >
+                    <Button
+                      icon={<CheckOutlined />}
+                      type="primary"
+                      style={{ backgroundColor: '#389E0D' }}
+                    >
+                      Duyệt
+                    </Button>
+                  </RequestConfirmModalForm>
+                  <RequestConfirmModalForm
+                    initialValues={{
+                      id,
+                    }}
+                    status="canceled"
+                  >
+                    <Button icon={<CloseOutlined />} type="primary" danger>
+                      Từ chối
+                    </Button>
+                  </RequestConfirmModalForm>
+                </>
+              ) : (
+                <>
+                  <Button icon={<EditOutlined />} type="primary">
+                    Sửa yêu cầu
+                  </Button>
+                  <Button icon={<DeleteOutlined />} danger>
+                    Hủy yêu cầu
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

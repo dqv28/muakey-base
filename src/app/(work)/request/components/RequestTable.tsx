@@ -1,5 +1,6 @@
 'use client'
 
+import { RequestConfirmModalForm } from '@/components'
 import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
 import {
@@ -10,11 +11,10 @@ import {
 } from '@ant-design/icons'
 import { App, Avatar, Table, TableProps, Tag, Tooltip } from 'antd'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { memo, useEffect, useState } from 'react'
 import { deleteProposeAction } from './action'
-import RequestConfirmModalForm from './request-confirm-modal-form'
-import RequestDetailModal from './request-detail-modal'
 
 type RequestTableProps = TableProps & {
   query?: any
@@ -156,12 +156,12 @@ const RequestTable: React.FC<RequestTableProps> = memo(
                 )}
               </>
             )}
-            <RequestDetailModal request={record} userRole={user?.role}>
+            {/* <RequestDetailModal request={record} userRole={user?.role}>
               <EyeOutlined className="cursor-pointer text-[#1677ff]" />
-            </RequestDetailModal>
-            {/* <Link href={`/request-history/${record?.id}`}>
+            </RequestDetailModal> */}
+            <Link href={`/request-history/${record?.id}`}>
               <EyeOutlined className="cursor-pointer text-[#1677ff]" />
-            </Link> */}
+            </Link>
           </div>
         ),
       },

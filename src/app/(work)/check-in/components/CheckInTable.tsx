@@ -173,6 +173,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       const myPropose = propose?.filter(
         (p: any) => p?.full_name === m?.full_name,
       )
+
       const otPropose = myPropose
         .filter((p: any) => p?.category_name === 'Đăng ký OT')
         .map((p: any) => p?.date)
@@ -376,8 +377,10 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               />
             </div>
             <Calendar
-              rootClassName="border border-[#0505050f]"
-              headerRender={() => <></>}
+              className="border border-[#0505050f]"
+              headerRender={({ value, type, onChange, onTypeChange }) => {
+                return <></>
+              }}
               fullCellRender={(current) => {
                 const timestamp = dayjs(current).format('D/M')
                 const info = checkInData?.[String(timestamp)] || []

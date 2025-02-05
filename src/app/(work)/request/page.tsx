@@ -2,9 +2,9 @@ import { getMe } from '@/libs/data'
 import { getProposeCategories, getProposes } from '@/libs/propose'
 import { Button } from 'antd'
 import React from 'react'
+import RequestModalForm from '../../../components/RequestModalForm'
 import PageHeader from './components/PageHeader'
 import RequestTabs from './components/request-tabs'
-import RequestModalForm from './components/RequestModalForm'
 import RequestTable from './components/RequestTable'
 
 const Page: React.FC<any> = async (prop: { searchParams?: any }) => {

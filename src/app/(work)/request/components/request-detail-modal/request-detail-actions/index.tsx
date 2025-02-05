@@ -1,11 +1,11 @@
 'use client'
 
+import { RequestConfirmModalForm } from '@/components'
 import { withApp } from '@/hoc'
 import { App, Button } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { deleteProposeAction } from '../../action'
-import RequestConfirmModalForm from '../../request-confirm-modal-form'
 
 type RequestDetailActionsProps = {
   hasConfirm?: boolean

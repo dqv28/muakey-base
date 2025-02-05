@@ -28,6 +28,8 @@ const page: React.FC<any> = async (prop: {
     ],
   )
 
+  console.log(attendances)
+
   const day = String(searchParams?.date).split('-').pop()
 
   const hasSearchParams = Object.keys(searchParams).length > 0
@@ -59,7 +61,7 @@ const page: React.FC<any> = async (prop: {
             searchParams,
           }}
           options={{
-            attendances,
+            attendances: attendances?.attendances,
             members,
             day,
             user,

@@ -1,9 +1,11 @@
+import {
+  CheckInTimeEditForm,
+  RegisterOTForm,
+  RegisterTimeOffForm,
+} from '@/components'
 import React from 'react'
-import CheckInTimeEditForm from './CheckInTimeEditFrom'
-import RegisterOTForm from './RegisterOTForm'
-import RegisterTimeOffForm from './RegisterTimeOffForm'
 
-type CheckInSwitchFormsProps = {
+export type CheckInSwitchFormsProps = {
   params?: any
 }
 

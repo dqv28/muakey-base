@@ -36,7 +36,7 @@ const generatedStatus = (status: string) => {
       return (
         <div className="flex items-center gap-[8px] text-[#CF1322]">
           <Badge dot color="#CF1322" />
-          <span>Đã hủy</span>
+          <span>Từ chối</span>
         </div>
       )
 

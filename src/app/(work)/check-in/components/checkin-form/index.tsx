@@ -1,10 +1,10 @@
 'use client'
 
+import { CheckInSwitchForms } from '@/components'
 import { Button } from 'antd'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import React from 'react'
-import CheckInSwitchForms from './CheckInSwitchForms'
 
 type CheckInFormProps = {
   initialValues?: any
