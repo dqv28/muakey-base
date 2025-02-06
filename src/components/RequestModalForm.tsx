@@ -14,14 +14,14 @@ type RequestModalFormProps = {
   children?: React.ReactNode
   groups?: any[]
   options?: any
-  initialGroupId?: number
 }
+
+const GROUPS = ['Đăng ký OT', 'Đăng ký nghỉ', 'Sửa giờ vào ra']
 
 const RequestModalForm: React.FC<RequestModalFormProps> = ({
   children,
   groups,
   options,
-  initialGroupId,
 }) => {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
@@ -99,26 +99,11 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
     setFormOpen(group !== undefined)
   }, [group])
 
-  useEffect(() => {
-    if (initialGroupId) {
-      const gr = groups?.find((g: any) => g?.id === initialGroupId)
-
-      setGroup({
-        name: gr?.name,
-        id: +gr?.id,
-      })
-    }
-  }, [])
-
   return (
     <>
       <div
         onClick={() => {
-          if (group) {
-            setOpen(true)
-          } else {
-            setFormOpen(true)
-          }
+          setOpen(true)
         }}
       >
         {children}
@@ -130,16 +115,13 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
           setGroup(undefined)
           // setOpen(true)
         }}
-        title={initialGroupId ? 'SỬA ĐỀ XUẤT' : 'TẠO ĐỀ XUẤT MỚI'}
+        title={'TẠO ĐỀ XUẤT MỚI'}
         destroyOnClose
         modalRender={(dom) => (
           <Form
             layout="vertical"
             initialValues={{
-              propose_category_id:
-                group?.name === 'Khác'
-                  ? undefined
-                  : initialGroupId || group?.id,
+              propose_category_id: group?.id,
               type: 'Nghỉ không hưởng lương',
             }}
             onFinish={handleSubmit}
@@ -166,35 +148,51 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
             },
           ]}
         >
-          {group?.name !== 'Khác' ? (
-            <Select
-              placeholder="-- Lựa chọn nhóm đề xuất --"
-              options={groups?.map((g: any) => ({
-                label: g?.name,
-                value: g?.id,
-              }))}
-              onChange={(_, option) => {
-                if (!Array.isArray(option)) {
-                  setGroup({
-                    name: option?.label,
-                    id: +option?.value,
-                  })
-                }
-              }}
-            />
-          ) : (
-            <Input placeholder="Nhập nhóm đề xuất" />
-          )}
+          <Select
+            placeholder="-- Lựa chọn nhóm đề xuất --"
+            options={groups?.map((g: any) => ({
+              label: g?.name,
+              value: g?.id,
+            }))}
+            onChange={(_, option) => {
+              if (!Array.isArray(option)) {
+                setGroup({
+                  name: option?.label,
+                  id: +option?.value,
+                })
+              }
+            }}
+          />
         </Form.Item>
 
-        <CheckInSwitchForms
-          params={{
-            type: convertToSlug(group?.name || ''),
-            initialValues: {
-              mode: 'modal',
-            },
-          }}
-        />
+        {group?.name === 'Khác' && (
+          <Form.Item label="Tên đề xuất" name="name">
+            <Input placeholder="Nhập tên đề xuất" />
+          </Form.Item>
+        )}
+
+        {GROUPS.includes(group?.name) ? (
+          <CheckInSwitchForms
+            params={{
+              type: convertToSlug(group?.name || ''),
+              initialValues: {
+                mode: 'modal',
+              },
+            }}
+          />
+        ) : (
+          <Form.Item
+            className="mt-[24px]"
+            name="description"
+            label="Lý do đăng ký nghỉ"
+          >
+            <Input.TextArea
+              autoSize={{
+                minRows: 3,
+              }}
+            />
+          </Form.Item>
+        )}
       </Modal>
 
       <RequestSelectModal

@@ -5,7 +5,7 @@ import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons'
 import { App, Badge, Table, TableProps } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useState } from 'react'
 import { deleteProposeAction, updateProposeAction } from '../action'
 import CheckInHistoryFiltered from './CheckInHistoryFiltered'
@@ -60,6 +60,9 @@ const CheckInHistoryTable: React.FC<CheckInHistoryTableProps> = ({
   const { propose, user } = options
   const { message, modal } = App.useApp()
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const statusParams = searchParams.get('status')
 
   const handleCanceled = async (propose: any) => {
     setLoading(true)
@@ -173,9 +176,13 @@ const CheckInHistoryTable: React.FC<CheckInHistoryTableProps> = ({
     },
   ]
 
-  const dataSource: TableProps['dataSource'] = propose.filter(
-    (p: any) => p?.account?.id === user?.id,
-  )
+  const dataSource: TableProps['dataSource'] = propose
+    .filter((p: any) => p?.account?.id === user?.id)
+    .filter((p: any) =>
+      !statusParams || statusParams === 'all'
+        ? true
+        : statusParams === p?.status,
+    )
 
   return (
     <>

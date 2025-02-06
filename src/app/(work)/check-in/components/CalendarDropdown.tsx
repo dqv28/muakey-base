@@ -28,53 +28,42 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
 
   const { isCurrentMonth, info } = options
 
-  const isYesterday =
-    isCurrentMonth && new Date().getDate() > new Date(current).getDate()
-  const isNextDay =
-    isCurrentMonth && new Date().getDate() < new Date(current).getDate()
-
   const dropdownRender = () => {
     return (
       <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_3px_6px_-4px_rgba(0,0,0,0.12),0_6px_16px_0_rgba(0,0,0,0.08),0_9px_28px_8px_rgba(0,0,0,0.05)]">
-        {isYesterday || (
-          <div
-            className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
-            onClick={() => {
-              onDateClick?.(current)
-              router.push('?form=dang-ky-nghi')
-            }}
-          >
-            Đăng Ký Nghỉ
-          </div>
-        )}
-        {isNextDay || (
-          <div
-            className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
-            onClick={() => {
-              onDateClick?.(
-                info?.checkInValue
-                  ? dayjs(
-                      `${String(dayjs(current).format('YYYY-MM-DD'))} ${info?.checkInValue?.pop()?.[0]}`,
-                    )
-                  : null,
-              )
-              router.push('?form=sua-gio-vao-ra')
-            }}
-          >
-            Sửa Giờ Vào Ra
-          </div>
-        )}
-        {isYesterday || (
-          <div
-            className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
-            onClick={() => {
-              onDateClick?.(current)
-              router.push('?form=dang-ky-ot')
-            }}
-          >
-            Đăng Ký OT
-          </div>
-        )}
+        <div
+          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
+          onClick={() => {
+            onDateClick?.(current)
+            router.push('?form=dang-ky-nghi')
+          }}
+        >
+          Đăng Ký Nghỉ
+        </div>
+        <div
+          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
+          onClick={() => {
+            onDateClick?.(
+              info?.checkInValue
+                ? dayjs(
+                    `${String(dayjs(current).format('YYYY-MM-DD'))} ${info?.checkInValue?.pop()?.[0]}`,
+                  )
+                : null,
+            )
+            router.push('?form=sua-gio-vao-ra')
+          }}
+        >
+          Sửa Giờ Vào Ra
+        </div>
+        <div
+          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
+          onClick={() => {
+            onDateClick?.(current)
+            router.push('?form=dang-ky-ot')
+          }}
+        >
+          Đăng Ký OT
+        </div>
       </div>
     )
   }
@@ -111,7 +100,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
         setOpen(o)
       }}
       arrow
-      placement="bottom"
+      placement="top"
     >
       <div
         className={clsx(
@@ -140,7 +129,9 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
             <div className="flex h-full flex-col justify-between">
               <div className="flex-1 space-y-[4px] py-[4px]">
                 <div className="w-full rounded-full bg-[#1890FF] py-[3px] text-center text-[#fff]">
-                  09:00 - 18:30
+                  {info?.plan_time?.length <= 0
+                    ? '09:00 - 18:30'
+                    : `${info?.plan_time?.[0]} - ${info?.plan_time?.[1]}`}
                 </div>
                 {info?.checkInValue?.[0] &&
                   info?.checkInValue?.map((c: any, index: number) => (

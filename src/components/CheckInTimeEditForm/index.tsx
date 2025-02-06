@@ -16,6 +16,8 @@ type CheckInTimeEditFormProps = {
 const FormFields: React.FC<{
   initialValues?: any
 }> = ({ initialValues }) => {
+  const attendances = initialValues?.attendances
+
   return (
     <>
       <Form.Item
@@ -31,14 +33,30 @@ const FormFields: React.FC<{
         <FormCard
           className="flex-1"
           title="Giờ kế hoạch"
-          checkIn="09:00:00"
-          checkOut="18:30:00"
+          checkIn={
+            attendances?.checkin
+              ? dayjs(attendances?.checkin).format('HH:mm:ss')
+              : '09:00:00'
+          }
+          checkOut={
+            attendances?.check_out_regulation
+              ? dayjs(attendances?.check_out_regulation).format('HH:mm:ss')
+              : '18:30:00'
+          }
         />
         <FormCard
           className="flex-1"
           title="Giờ thực tế"
-          checkIn="09:00:00"
-          checkOut="--:--:--"
+          checkIn={
+            attendances?.checkin
+              ? dayjs(attendances?.checkin).format('HH:mm:ss')
+              : '09:00:00'
+          }
+          checkOut={
+            attendances?.checkout
+              ? dayjs(attendances?.checkout).format('HH:mm:ss')
+              : '--:--:--'
+          }
         />
         <FormCard
           className="flex-1"
@@ -92,7 +110,7 @@ const FormFields: React.FC<{
 const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
   initialValues,
 }) => {
-  const { mode, ...restInitialVlues } = initialValues
+  const { mode, attendances, ...restInitialVlues } = initialValues
 
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
@@ -146,7 +164,7 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
           check_in: restInitialVlues?.date,
         }}
       >
-        <FormFields />
+        <FormFields initialValues={{ attendances }} />
 
         <Form.Item className="!mb-0">
           <Button type="primary" htmlType="submit" loading={loading}>

@@ -1,7 +1,7 @@
 import { RequestConfirmModalForm } from '@/components'
 import { getMe } from '@/libs/data'
 import { getProposeById } from '@/libs/propose'
-import { randomColor } from '@/libs/utils'
+import { calculateDayOffTotal, randomColor } from '@/libs/utils'
 import {
   CheckOutlined,
   CloseOutlined,
@@ -65,12 +65,14 @@ const page: React.FC<any> = async (props) => {
 
   const totalTime = propose?.date_holidays?.reduce(
     (total: number, current: any) => {
-      const start = new Date(current?.start_date)
-      const end = new Date(current?.end_date)
+      const dayOffTotal = calculateDayOffTotal(
+        current?.start_date,
+        current?.end_date,
+      )
 
-      total += (+end - +start) / (1000 * 60 * 60 * 9)
+      total += dayOffTotal
 
-      return Number(total.toFixed(2))
+      return total
     },
     0,
   )

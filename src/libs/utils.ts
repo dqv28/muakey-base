@@ -242,3 +242,93 @@ export const convertTime = (seconds: number) => {
       return null
   }
 }
+
+const generateShift = (day: string) => {
+  // Thời gian bắt đầu ca sáng
+  const startM = new Date(`${day} 08:30:00`)
+  // Thời gian kết thúc ca tối
+  const endM = new Date(`${day} 12:00:00`)
+  // Thời gian bắt đầu ca chiều
+  const startA = new Date(`${day} 13:30:00`)
+  // Thời gian kết thúc ca chiều
+  const endA = new Date(`${day} 17:30:00`)
+
+  return { startM, endM, startA, endA }
+}
+
+export const calculateDayOffTotal = (startDate: Date, endDate: Date) => {
+  const start = new Date(startDate)
+  const end = new Date(endDate)
+
+  let hourPerDayOff = 0
+  const startDay = Number(dayjs(startDate).format('DD'))
+  const endDay = Number(dayjs(endDate).format('DD'))
+
+  const secondsPerHour = 1000 * 60 * 60
+  // Thời gian nghỉ trưa (s)
+  const timeOffPerDay = 1000 * 60 * 60 * 1.5
+
+  if (startDay === endDay) {
+    const { startM, endM, startA, endA } = generateShift(
+      String(dayjs(start).format('YYYY-MM-DD')),
+    )
+
+    // Thời gian yêu cầu không đúng
+    const inValidTime = +start > +endA || +end < +startM || +start === +end
+
+    const startT = +start <= +startM ? +startM : +start
+    const endT = +end >= +endA ? +endA : +end
+    const tPerDay = +start >= +startA || +end <= +endM ? 0 : timeOffPerDay
+
+    hourPerDayOff += inValidTime
+      ? 0
+      : (endT - startT - tPerDay) / secondsPerHour
+
+    return hourPerDayOff / 7.5
+  }
+
+  const date = dayjs(new Date())
+  for (let i = startDay; i <= endDay; i++) {
+    const currentDate = `${String(date.format('YYYY'))}-${String(date.format('MM'))}-${i > 9 ? i : `0${i}`}`
+
+    const { startM, endM, startA, endA } = generateShift(currentDate)
+
+    // Thời gian bắt đầu hiện tại
+    const s = new Date(
+      `${currentDate} ${String(dayjs(start).format('HH:mm:ss'))}`,
+    )
+    // Thời gian kết thúc hiện tại
+    const e = new Date(
+      `${currentDate} ${String(dayjs(end).format('HH:mm:ss'))}`,
+    )
+
+    if (i === startDay) {
+      if (+s > +startM) {
+        const t = +s < +endM ? +s : +startA
+        const tPerDay = +s < +endM ? timeOffPerDay : 0
+
+        hourPerDayOff += +s > +endA ? 0 : (+endA - t - tPerDay) / secondsPerHour
+      }
+
+      if (+s <= +startM) {
+        hourPerDayOff += (+endA - +startM - timeOffPerDay) / secondsPerHour
+      }
+    } else if (i === endDay) {
+      if (+e >= +endA) {
+        hourPerDayOff += (+endA - +startM - timeOffPerDay) / secondsPerHour
+      }
+
+      if (+e < +endA) {
+        const t = +e > +startA ? +e : +endM
+        const tPerDay = +e > +startA ? timeOffPerDay : 0
+
+        hourPerDayOff +=
+          +e < +startM ? 0 : (t - +startM - tPerDay) / secondsPerHour
+      }
+    } else {
+      hourPerDayOff += 7.5
+    }
+  }
+
+  return Number((hourPerDayOff / 7.5).toFixed(2))
+}

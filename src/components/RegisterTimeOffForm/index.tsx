@@ -1,6 +1,7 @@
 'use client'
 
 import { withApp } from '@/hoc'
+import { calculateDayOffTotal } from '@/libs/utils'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import {
   App,
@@ -62,7 +63,7 @@ const FormFields: React.FC<{
 
         <div className="text-right">
           <div className="text-[#00000073]">Tổng thời gian nghỉ</div>
-          <div className="text-[24px]">{timeOff} ngày</div>
+          <div className="text-[24px]">{Number(timeOff?.toFixed(2))} ngày</div>
         </div>
       </div>
       <Form.List name="timestamps" initialValue={initialValues?.timestamps}>
@@ -180,7 +181,7 @@ const FormFields: React.FC<{
 const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
   initialValues,
 }) => {
-  const { mode: initMode, ...restInitialValues } = initialValues
+  const { mode: initMode, user, ...restInitialValues } = initialValues
 
   const [mode, setMode] = useState<'date' | 'time'>('date')
   const [loading, setLoading] = useState(false)
@@ -195,15 +196,15 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
   const list = [
     {
       label: 'Ngày phép chưa sử dụng',
-      value: 0.5,
+      value: user?.day_off - user?.day_off_used,
     },
     {
       label: 'Ngày phép đã sử dụng',
-      value: 2.5,
+      value: user?.day_off_used,
     },
     {
       label: 'Tổng số ngày phép',
-      value: 3,
+      value: user?.day_off,
     },
   ]
 
@@ -214,7 +215,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
 
     const holiday = timestamps?.map((t: any) => {
       const startDate = `${String(dayjs(t?.startDate).format('YYYY-MM-DD'))} ${t?.startTime ? String(dayjs(t?.startTime).format('HH:mm:ss')) : ''}`
-      const endDate = `${String(dayjs(t?.endDate).format('YYYY-MM-DD'))} ${t?.endTime ? String(dayjs(t?.endTime).format('HH:mm:ss')) : ''}`
+      const endDate = `${String(dayjs(t?.endDate).format('YYYY-MM-DD'))} ${t?.endTime ? String(dayjs(t?.endTime).format('HH:mm:ss')) : '23:59:59'}`
 
       return {
         start_date: startDate.trim(),
@@ -249,22 +250,23 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
   useEffect(() => {
     const { startDate, startTime, endDate, endTime } = timestamps
 
-    if (!startDate && !startTime && !endDate && !endTime) {
+    if (!startDate || !endDate) {
       setTimeOff(0)
+      return
     }
 
-    if (!startDate || !startTime || !endDate || !endTime) return
+    if ((!startTime || !endTime) && mode === 'time') return
 
     const start = new Date(
       `${String(dayjs(startDate).format('YYYY-MM-DD'))} ${startTime ? String(dayjs(startTime).format('HH:mm:ss')) : ''}`,
     )
     const end = new Date(
-      `${String(dayjs(endDate).format('YYYY-MM-DD'))} ${endTime ? String(dayjs(endTime).format('HH:mm:ss')) : ''}`,
+      `${String(dayjs(endDate).format('YYYY-MM-DD'))} ${endTime ? String(dayjs(endTime).format('HH:mm:ss')) : '23:59:59'}`,
     )
 
-    const total = (+end - +start) / (1000 * 60 * 60 * 9)
+    const total = calculateDayOffTotal(start, end)
 
-    setTimeOff(Number(total.toFixed(2)))
+    setTimeOff(total)
   }, [timestamps])
 
   if (initMode === 'modal') {

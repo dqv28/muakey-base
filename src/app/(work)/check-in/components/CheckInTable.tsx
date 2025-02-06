@@ -71,6 +71,34 @@ const useStyle = createStyles(({ css }) => {
         }
       }
     `,
+    customCalendar: css`
+      .ant-picker-panel {
+        border: 0 !important;
+      }
+      .ant-picker-body {
+        padding: 0 !important;
+        .ant-picker-content {
+          tbody {
+            tr {
+              td {
+                padding: 0 !important;
+              }
+            }
+          }
+          thead {
+            tr {
+              th {
+                padding: 12px 0;
+                font-weight: 600;
+              }
+              & > :not(:last-child) {
+                border-right: solid 1px #0505050f;
+              }
+            }
+          }
+        }
+      }
+    `,
   }
 })
 
@@ -81,10 +109,10 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
   ...props
 }) => {
   const searchParams = useSearchParams()
-  const [mode, setMode] = useState('dashboard')
-
   const today = useMemo(() => new Date(), [])
+  const [mode, setMode] = useState('dashboard')
   const [date, setDate] = useState<any>(dayjs(today))
+
   const { styles } = useStyle()
   const year = new Date().getFullYear()
   const month = options?.day || new Date().getMonth() + 1
@@ -166,7 +194,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
     ?.map((m: any) => {
-      const checkInHistories = attendances?.filter(
+      const checkInHistories = attendances?.attendances?.filter(
         (a: any) => a?.account_id === m?.id,
       )
 
@@ -213,6 +241,12 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
             checkInValue,
             timeOff,
             ot,
+            plan_time: checkIn[0]
+              ? [
+                  dayjs(checkIn[0]?.checkin).format('HH:mm'),
+                  dayjs(checkIn[0]?.check_out_regulation).format('HH:mm'),
+                ]
+              : [],
           },
         ]
       })
@@ -230,41 +264,34 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
     setDate(dayjs(searchParams?.get('date') || today))
   }, [today, searchParams])
 
-  const days = Object.entries(checkInDataSource[0] || {})?.filter(
-    (c: any) => !!c[1]?.checkInValue,
-  )
-
   const checkInData = checkInDataSource?.find(
     (c: any) => c?.member?.fullName === user?.full_name,
   )
 
-  const timeOffs = workSchedule?.filter((s: any) => s?.go_to_work === 0)
-  const standard = dateNumber - timeOffs?.length
-
   const checkInStatisticsItems = [
     {
       title: 'Công chuẩn',
-      value: standard,
+      value: attendances?.standard_work,
     },
     {
       title: 'Công làm việc thực tế',
-      value: calculateWorkTime(days),
+      value: attendances?.number_of_working_days,
     },
     {
       title: 'Nghỉ có hưởng lương',
-      value: 0,
+      value: attendances?.day_off_with_pay,
     },
     {
       title: 'Nghỉ không hưởng lương',
-      value: 0,
+      value: attendances?.day_off_without_pay,
     },
     {
       title: 'Tổng OT',
-      value: 0,
+      value: attendances?.total_over_time,
     },
     {
       title: 'Tổng công hưởng lương',
-      value: 0,
+      value: attendances?.day_off_account,
     },
   ]
 
@@ -377,10 +404,11 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               />
             </div>
             <Calendar
-              className="border border-[#0505050f]"
-              headerRender={({ value, type, onChange, onTypeChange }) => {
-                return <></>
-              }}
+              className={clsx(
+                'overflow-hidden border border-[#0505050f]',
+                styles.customCalendar,
+              )}
+              headerRender={() => <></>}
               fullCellRender={(current) => {
                 const timestamp = dayjs(current).format('D/M')
                 const info = checkInData?.[String(timestamp)] || []
@@ -409,6 +437,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               }}
               value={date}
               locale={locale}
+              fullscreen={false}
             />
           </div>
         </div>

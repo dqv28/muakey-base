@@ -38,9 +38,9 @@ const DepartmentItem: React.FC<DepartmentItemProps> = ({ item, options }) => {
   }
 
   return (
-    <div className="aspect-[384/104] max-h-[104px] w-[384px] space-y-[16px] overflow-hidden rounded-[4px] bg-[#fff] p-[16px]">
+    <div className="h-auto w-full space-y-[16px] overflow-hidden rounded-[4px] bg-[#fff] p-[16px]">
       <div className="flex items-center justify-between gap-[16px] leading-none">
-        <span className="text-[16px]">{item?.name}</span>
+        <span className="line-clamp-1 text-[16px]">{item?.name}</span>
         <Dropdown
           rootClassName="!z-50"
           trigger={['click']}

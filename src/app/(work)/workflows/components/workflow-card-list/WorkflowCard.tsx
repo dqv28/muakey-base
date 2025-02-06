@@ -48,11 +48,11 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
   }
 
   return (
-    <div className="relative aspect-[378/200] min-h-[200px] overflow-hidden">
+    <div className="relative h-auto w-full overflow-hidden">
       <Link href={`/workflows/${workflow.id}`}>
         <Card className="size-full">
           <div className="text-[16px] leading-[20px]">
-            <span className="font-[400]">{workflow?.name}</span>
+            <span className="line-clamp-1 font-[400]">{workflow?.name}</span>
           </div>
           <p className="mt-[8px] min-h-[36px] text-[12px] text-[#999]">
             {workflow?.description || 'Không có mô tả'}
