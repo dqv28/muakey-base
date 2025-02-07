@@ -1,6 +1,5 @@
 'use client'
 
-import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import CheckInForm from '../checkin-form'
 import CheckInHistoryTable from '../checkin-history-table'
@@ -25,13 +24,6 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
   )
   const { attendances } = restOptions?.attendances
 
-  const dateStr = String(dayjs(date).format('YYYY-MM-DD'))
-  const dateTarget = attendances?.find((a: any) => {
-    const dateTargetStr = String(dayjs(a?.checkin).format('YYYY-MM-DD'))
-
-    return dateStr === dateTargetStr
-  })
-
   switch (type) {
     case 'form-request':
       return (
@@ -39,7 +31,7 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
           initialValues={{
             date,
             user: options?.user,
-            attendances: dateTarget,
+            attendances,
           }}
         />
       )

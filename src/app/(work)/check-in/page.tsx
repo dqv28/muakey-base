@@ -19,7 +19,9 @@ const page: React.FC<any> = async (prop: {
       getAttendances({
         date: searchParams?.date || '',
       }),
-      getAccounts(),
+      getAccounts({
+        date: searchParams?.date || '',
+      }),
       getMe(),
       getWorkSchedule({
         date: searchParams?.date || '',

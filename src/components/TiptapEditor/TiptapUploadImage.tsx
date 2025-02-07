@@ -28,9 +28,7 @@ const TiptapUploadImage: React.FC<TiptapUploadImageProps> = ({
         return
       }
 
-      console.log(url)
-
-      editor.chain().focus().setImage({ src: url })
+      editor.chain().focus().setImage({ src: url }).run()
     } catch (error) {
       throw new Error(String(error))
     }

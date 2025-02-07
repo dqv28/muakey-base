@@ -86,7 +86,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
     0,
   )
 
-  const totalTime = Number((total / 7.5).toFixed(2))
+  const totalTime = Number((total / 7.5).toFixed(3))
   const currentDay = dayjs(current).format('ddd')
 
   return (

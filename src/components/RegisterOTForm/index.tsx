@@ -174,7 +174,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
 
     const total = (+end - +start) / (1000 * 60 * 60 * 24)
 
-    setOt(Number(total.toFixed(2)))
+    setOt(Number(total.toFixed(3)))
   }, [startTime, endTime])
 
   if (mode === 'modal') {

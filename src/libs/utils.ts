@@ -330,5 +330,5 @@ export const calculateDayOffTotal = (startDate: Date, endDate: Date) => {
     }
   }
 
-  return Number((hourPerDayOff / 7.5).toFixed(2))
+  return Number((hourPerDayOff / 7.5).toFixed(3))
 }

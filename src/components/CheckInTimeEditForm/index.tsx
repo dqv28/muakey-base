@@ -1,7 +1,7 @@
 'use client'
 
 import { withApp } from '@/hoc'
-import { App, Button, DatePicker, Form, Input } from 'antd'
+import { App, Button, DatePicker, DatePickerProps, Form, Input } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
@@ -15,7 +15,8 @@ type CheckInTimeEditFormProps = {
 
 const FormFields: React.FC<{
   initialValues?: any
-}> = ({ initialValues }) => {
+  onDateChange?: DatePickerProps['onChange']
+}> = ({ initialValues, onDateChange }) => {
   const attendances = initialValues?.attendances
 
   return (
@@ -26,7 +27,11 @@ const FormFields: React.FC<{
         name="date"
         rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
       >
-        <DatePicker className="w-full" locale={locale} />
+        <DatePicker
+          className="w-full"
+          locale={locale}
+          onChange={onDateChange}
+        />
       </Form.Item>
 
       <div className="flex items-center gap-[24px]">
@@ -113,9 +118,22 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
   const { mode, attendances, ...restInitialVlues } = initialValues
 
   const [loading, setLoading] = useState(false)
+  const [dateVal, setDateVal] = useState(restInitialVlues?.date || undefined)
+
   const [form] = Form.useForm()
   const { message } = App.useApp()
   const router = useRouter()
+
+  const dateStr = dateVal
+    ? String(dayjs(dateVal).format('YYYY-MM-DD'))
+    : undefined
+  const dateTarget = attendances?.find((a: any) => {
+    const dateTargetStr = String(dayjs(a?.checkin).format('YYYY-MM-DD'))
+
+    return (
+      dateStr === dateTargetStr && restInitialVlues?.user?.id === a?.account_id
+    )
+  })
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -150,7 +168,15 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
   }
 
   if (mode === 'modal') {
-    return <FormFields />
+    return (
+      <FormFields
+        initialValues={{
+          attendances: dateTarget,
+          check_in: dateVal,
+        }}
+        onDateChange={(d) => setDateVal(d)}
+      />
+    )
   }
 
   return (
@@ -161,10 +187,13 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
         form={form}
         initialValues={{
           ...restInitialVlues,
-          check_in: restInitialVlues?.date,
+          check_in: dateVal,
         }}
       >
-        <FormFields initialValues={{ attendances }} />
+        <FormFields
+          initialValues={{ attendances: dateTarget }}
+          onDateChange={(d) => setDateVal(d)}
+        />
 
         <Form.Item className="!mb-0">
           <Button type="primary" htmlType="submit" loading={loading}>

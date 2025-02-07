@@ -1,4 +1,4 @@
-import { getMe } from '@/libs/data'
+import { getAttendances, getMe } from '@/libs/data'
 import { getProposeCategories, getProposes } from '@/libs/propose'
 import { Button } from 'antd'
 import React from 'react'
@@ -10,9 +10,12 @@ import RequestTable from './components/RequestTable'
 const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const searchParams = await prop.searchParams
 
-  const proposes = await getProposes()
-  const proposeCategories = await getProposeCategories()
-  const user = await getMe()
+  const [attendances, proposes, proposeCategories, user] = await Promise.all([
+    getAttendances(),
+    getProposes(),
+    getProposeCategories(),
+    getMe(),
+  ])
 
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
@@ -26,7 +29,7 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
         extra={
           <RequestModalForm
             groups={proposeCategories}
-            options={{ role: user?.role }}
+            options={{ user, attendances: attendances.attendances }}
           >
             <Button type="primary">Tạo yêu cầu</Button>
           </RequestModalForm>

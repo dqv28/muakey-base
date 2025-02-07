@@ -100,7 +100,7 @@ const page: React.FC<any> = async (props) => {
           {
             key: uniqueId(),
             label: 'Tổng thời gian',
-            children: `${totalTime} ngày`,
+            children: `${Number(totalTime.toFixed(3))} ngày`,
           },
         ]
       : [
@@ -191,7 +191,7 @@ const page: React.FC<any> = async (props) => {
         <div className="rounded-[16px] bg-[#fff] p-[24px]">
           <RequestInfo info={items} />
 
-          {propose?.status !== 'approved' && (
+          {!['approved', 'canceled'].includes(propose?.status) && (
             <div className="mt-[24px] flex items-center gap-[12px]">
               {isAdmin ? (
                 <>

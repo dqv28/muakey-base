@@ -177,6 +177,8 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
               type: convertToSlug(group?.name || ''),
               initialValues: {
                 mode: 'modal',
+                attendances: options?.attendances,
+                user: options?.user,
               },
             }}
           />
@@ -200,7 +202,7 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
         dataSource={groups}
         onItemClick={setGroup}
         onCancel={() => setOpen(false)}
-        isAdmin={options?.role === 'Admin lv2'}
+        isAdmin={options?.user?.role === 'Admin lv2'}
       />
     </>
   )

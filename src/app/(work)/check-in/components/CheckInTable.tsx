@@ -15,7 +15,6 @@ import { END_TIME, GLOBAL_BAN, START_TIME } from '@/libs/constant'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjsLocale from 'dayjs/locale/vi'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { calculateWorkTime } from '../ultils'
 import CalendarDropdown from './CalendarDropdown'
 import CheckInStatistics from './check-statistics'
 import CheckInTableExplanation from './CheckInTableExplanation'
@@ -129,11 +128,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       dataIndex: 'member',
       fixed: true,
       width: 300,
-      render: (value, record) => {
-        const workDays = Object.entries(record)?.filter(
-          (c: any) => !!c[1]?.checkInValue,
-        )
-
+      render: (value) => {
         return (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-[8px]">
@@ -149,7 +144,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               <span>{value?.fullName}</span>
             </div>
 
-            <div>TC: {calculateWorkTime(workDays)}</div>
+            <div>TC: {Number(value?.workDay)}</div>
           </div>
         )
       },
@@ -255,6 +250,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         member: {
           fullName: m?.full_name,
           avatar: m?.avatar,
+          workDay: m?.workday,
         },
         ...Object.fromEntries(fields),
       }

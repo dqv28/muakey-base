@@ -125,6 +125,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({ content, onChange }) => {
         HTMLAttributes: {
           class: 'h-auto w-full',
         },
+        allowBase64: true,
       }),
     ],
     content,
@@ -144,7 +145,11 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({ content, onChange }) => {
   return (
     <div>
       <TiptapToolbars editor={editor} />
-      <EditorContent editor={editor} placeholder="Mô tả" />
+      <EditorContent
+        editor={editor}
+        placeholder="Mô tả"
+        onPaste={(e) => console.log(e)}
+      />
     </div>
   )
 }

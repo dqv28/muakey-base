@@ -7,6 +7,7 @@ import {
   App,
   Button,
   DatePicker,
+  DatePickerProps,
   Divider,
   Form,
   Input,
@@ -30,6 +31,53 @@ const FormFields: React.FC<{
   onModeChange?: (mode: 'time' | 'date') => void
   initialValues?: any
 }> = ({ timeOff, mode, initialValues, onModeChange }) => {
+  const [startDate, setStartDate] = useState()
+  const [endDate, setEndDate] = useState()
+  const [startTime, setStartTime] = useState()
+
+  const startDay = String(dayjs(startDate).format('YYYY-MM-DD'))
+  const endDay = String(dayjs(endDate).format('YYYY-MM-DD'))
+
+  const handleStartDateChange = (d: any) => {
+    setStartDate(d)
+  }
+
+  const handleEndDateChange = (d: any) => {
+    setEndDate(d)
+  }
+
+  const handleStartTimeChange = (d: any) => {
+    setStartTime(d)
+  }
+
+  const disabledDate: DatePickerProps['disabledDate'] = (current) => {
+    return current && current < dayjs(startDate).subtract(1, 'day').endOf('day')
+  }
+
+  const range = (start: number, end: number) => {
+    const result = []
+    for (let i = start; i < end; i++) {
+      result.push(i)
+    }
+    return result
+  }
+
+  const disabledTime: DatePickerProps['disabledTime'] = () => {
+    if (startDay !== endDay) return {}
+
+    const hour = Number(dayjs(startTime).format('HH'))
+    const minute = Number(dayjs(startTime).format('mm'))
+
+    return {
+      disabledHours: () => range(0, hour),
+      // disabledMinutes: () => range(0, minute),
+    }
+  }
+
+  useEffect(() => {
+    setStartDate(initialValues?.startDate)
+  }, [])
+
   return (
     <>
       <div className="flex items-start justify-between gap-[24px]">
@@ -63,10 +111,10 @@ const FormFields: React.FC<{
 
         <div className="text-right">
           <div className="text-[#00000073]">Tổng thời gian nghỉ</div>
-          <div className="text-[24px]">{Number(timeOff?.toFixed(2))} ngày</div>
+          <div className="text-[24px]">{Number(timeOff?.toFixed(3))} ngày</div>
         </div>
       </div>
-      <Form.List name="timestamps" initialValue={initialValues?.timestamps}>
+      <Form.List name="timestamps">
         {(fields, { add, remove }) => (
           <div className="space-y-[24px]">
             {fields.map(({ key, name, ...restField }, index) => (
@@ -86,6 +134,7 @@ const FormFields: React.FC<{
                         className="w-full"
                         locale={locale}
                         placeholder="Chọn ngày bắt đầu"
+                        onChange={handleStartDateChange}
                       />
                     </Form.Item>
                     <Form.Item
@@ -100,6 +149,7 @@ const FormFields: React.FC<{
                         placeholder="Chọn thời gian bắt đầu"
                         disabled={mode === 'date'}
                         showSecond={false}
+                        onChange={handleStartTimeChange}
                       />
                     </Form.Item>
                   </div>
@@ -117,6 +167,8 @@ const FormFields: React.FC<{
                         className="w-full"
                         locale={locale}
                         placeholder="Chọn ngày kết thúc"
+                        disabledDate={disabledDate}
+                        onChange={handleEndDateChange}
                       />
                     </Form.Item>
                     <Form.Item
@@ -131,6 +183,7 @@ const FormFields: React.FC<{
                         placeholder="Chọn thời gian kết thúc"
                         disabled={mode === 'date'}
                         showSecond={false}
+                        disabledTime={disabledTime}
                       />
                     </Form.Item>
                   </div>
@@ -255,8 +308,6 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
       return
     }
 
-    if ((!startTime || !endTime) && mode === 'time') return
-
     const start = new Date(
       `${String(dayjs(startDate).format('YYYY-MM-DD'))} ${startTime ? String(dayjs(startTime).format('HH:mm:ss')) : ''}`,
     )
@@ -311,7 +362,14 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
             ],
           }}
         >
-          <FormFields mode={mode} timeOff={timeOff} onModeChange={setMode} />
+          <FormFields
+            mode={mode}
+            timeOff={timeOff}
+            onModeChange={setMode}
+            initialValues={{
+              startDate: restInitialValues?.date,
+            }}
+          />
 
           <Form.Item className="!mb-0 mt-[24px]">
             <Button htmlType="submit" type="primary" loading={loading}>
