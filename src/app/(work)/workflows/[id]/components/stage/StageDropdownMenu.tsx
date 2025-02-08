@@ -1,10 +1,12 @@
 'use client'
 
+import { withApp } from '@/hoc'
+import { arrayMove } from '@/libs/utils'
 import { CaretDownFilled } from '@ant-design/icons'
-import { Dropdown, DropdownProps, Popconfirm } from 'antd'
+import { App, Dropdown, DropdownProps, MenuProps, Popconfirm } from 'antd'
 import React, { useContext } from 'react'
 import toast from 'react-hot-toast'
-import { deleteStageByIdAction } from '../../../action'
+import { deleteStageByIdAction, editStageAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
 import StageModalForm from './StageModalForm'
 
@@ -16,7 +18,8 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
   stage,
   ...rest
 }) => {
-  const { setStages } = useContext(StageContext)
+  const { stages, setStages } = useContext(StageContext)
+  const { message } = App.useApp()
 
   const handleDelete = async () => {
     const stageId = Number(String(stage?.id).split('_').pop())
@@ -39,50 +42,105 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
     }
   }
 
+  const items: MenuProps['items'] = [
+    {
+      key: 1,
+      label: (
+        <StageModalForm
+          title={`Chỉnh sửa giai đoạn ${stage?.name}`}
+          initialValues={stage}
+          query={{
+            stage_id: Number(String(stage?.id).split('_').pop()),
+          }}
+          action="edit"
+        >
+          Chỉnh sửa giai đoạn
+        </StageModalForm>
+      ),
+    },
+    {
+      key: 2,
+      label: 'Di chuyển',
+      children: stages
+        ?.filter((s: any) => ![0, 1].includes(s?.index) && s?.id !== stage?.id)
+        ?.map((s: any, index: number) => ({
+          key: `2-${index + 1}`,
+          label: (
+            <div
+              key={s?.id}
+              onClick={async (e) => {
+                e.preventDefault()
+
+                const oldIndex = stages?.findIndex(
+                  (st: any) => st?.id === stage?.id,
+                )
+                const newIndex = stages?.findIndex(
+                  (st: any) => st?.id === s?.id,
+                )
+
+                setStages(arrayMove(stages, oldIndex, newIndex))
+
+                try {
+                  const { message: msg, errors } = await editStageAction(
+                    +String(stage?.id).split('_')[1],
+                    stage,
+                    {
+                      index: newIndex,
+                    },
+                  )
+
+                  if (errors) {
+                    message.error(msg)
+                    return
+                  }
+                } catch (error) {
+                  throw new Error(String(error))
+                }
+              }}
+            >
+              {s?.index > stage?.index ? 'Trước' : 'Sau'}{' '}
+              <span className="font-[500]">{s?.name}</span>
+            </div>
+          ),
+        })),
+    },
+    {
+      key: 3,
+      label: (
+        <StageModalForm
+          query={{
+            right: 1,
+            index: stage?.index,
+          }}
+        >
+          Thêm 1 giai đoạn bên phải
+        </StageModalForm>
+      ),
+    },
+    {
+      key: 4,
+      label: (
+        <Popconfirm
+          title={
+            <div>
+              Xác nhận xóa giai đoạn{' '}
+              <span className="font-[500]">{stage?.name}</span>
+            </div>
+          }
+          onConfirm={handleDelete}
+        >
+          Xóa giai đoạn
+        </Popconfirm>
+      ),
+    },
+  ]
+
   return (
     <Dropdown
       rootClassName="!z-auto"
       placement="bottomRight"
       trigger={['click']}
-      dropdownRender={() => (
-        <div className="mt-[4px] w-[240px] rounded-[4px] bg-[#fff] p-[8px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
-          <StageModalForm
-            title={`Chỉnh sửa giai đoạn ${stage?.name}`}
-            initialValues={stage}
-            query={{
-              stage_id: Number(String(stage?.id).split('_').pop()),
-            }}
-            action="edit"
-          >
-            <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
-              Chỉnh sửa giai đoạn
-            </div>
-          </StageModalForm>
-          <StageModalForm
-            query={{
-              right: 1,
-              index: stage?.index,
-            }}
-          >
-            <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]">
-              Thêm 1 giai đoạn bên phải
-            </div>
-          </StageModalForm>
-          <Popconfirm
-            title={
-              <div>
-                Xác nhận xóa giai đoạn{' '}
-                <span className="font-[500]">{stage?.name}</span>
-              </div>
-            }
-            onConfirm={handleDelete}
-          >
-            <div className="cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] text-[#cc1111] transition-all hover:bg-[#f8f8f8]">
-              Xóa giai đoạn
-            </div>
-          </Popconfirm>
-        </div>
-      )}
+      menu={{ items }}
       {...rest}
     >
       <CaretDownFilled className="text-[12px]" />
@@ -90,4 +148,4 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
   )
 }
 
-export default StageDropdownMenu
+export default withApp(StageDropdownMenu)

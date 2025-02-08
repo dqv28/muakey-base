@@ -2,6 +2,14 @@ import dayjs from 'dayjs'
 import locale from 'dayjs/locale/vi'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
+export const arrayMove = (array: any[], from: number, to: number) => {
+  const newArray = [...array]
+
+  newArray.splice(to, 0, newArray.splice(from, 1)[0])
+
+  return newArray
+}
+
 export const randomColor = (s: string) => {
   let hash = 0
   for (var i = 0; i < s.length; i++) {

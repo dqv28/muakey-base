@@ -75,8 +75,8 @@ export const addStage = async (data: any, query?: any) =>
     data,
   }).then((data) => data)
 
-export const editStage = async (id: number, data: any) =>
-  requestWithAuthorized(`stages/${id}`, {
+export const editStage = async (id: number, data: any, query?: any) =>
+  requestWithAuthorized(`stages/${id}?` + new URLSearchParams(query), {
     method: 'PUT',
     data,
   }).then((data) => data)

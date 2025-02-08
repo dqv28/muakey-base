@@ -30,8 +30,8 @@ import {
 export const addStageAction = async (data: any, query?: any) =>
   addStage(data, query)
 
-export const editStageAction = async (id: number, data: any) =>
-  editStage(id, data)
+export const editStageAction = async (id: number, data: any, query?: any) =>
+  editStage(id, data, query)
 
 export const deleteStageByIdAction = async (id: number) => deleteStageById(id)
 
