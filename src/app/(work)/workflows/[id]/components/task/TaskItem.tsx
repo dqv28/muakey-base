@@ -34,6 +34,7 @@ import { toast } from 'react-hot-toast'
 import { Converter } from 'showdown'
 import {
   addTaskReportAction,
+  assignTaskWithoutWorkAction,
   editTaskAction,
   moveStageAction,
 } from '../../../action'
@@ -106,7 +107,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       opacity: isDragging ? 0.5 : 1,
     }
 
-    const user = members?.filter((u: any) => u?.id === task.account_id)?.[0]
+    const user = members?.find((u: any) => u?.id === task?.account_id)
 
     const handleRemoveExecutor = async (id: number) => {
       if (!String(options?.role).toLowerCase().includes('admin')) {
@@ -214,21 +215,38 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           ),
         })),
       },
-      {
-        key: '3',
-        label: (
-          <TaskModalForm
-            title="CHỈNH SỬA NHIỆM VỤ"
-            initialValues={{
-              ...task,
-              members,
-            }}
-            action="edit"
-          >
-            Chỉnh sửa nhiệm vụ
-          </TaskModalForm>
-        ),
-      },
+      ...(String(role).includes('Admin')
+        ? [
+            {
+              key: '3',
+              label: (
+                <TaskModalForm
+                  title="CHỈNH SỬA NHIỆM VỤ"
+                  initialValues={{
+                    ...task,
+                    members,
+                  }}
+                  action="edit"
+                >
+                  Chỉnh sửa nhiệm vụ
+                </TaskModalForm>
+              ),
+            },
+            {
+              key: '7',
+              label: (
+                <div
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setAssignConfirmOpen(true)
+                  }}
+                >
+                  Giao
+                </div>
+              ),
+            },
+          ]
+        : []),
       {
         key: '4',
         label: (
@@ -242,40 +260,44 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           </MarkTaskFailedModalForm>
         ),
       },
-      {
-        key: '5',
-        label: (
-          <div
-            onClick={() => {
-              modal.confirm({
-                title: 'Xác nhận gỡ người thực thi của nhiệm vụ này?',
-                open: removeConfirmOpen,
-                width: 600,
-                onCancel: () => setRemoveConfirmOpen(false),
-                onOk: () => handleRemoveExecutor(task?.id),
-              })
-            }}
-          >
-            Gỡ người thực thi
-          </div>
-        ),
-      },
-      {
-        key: '6',
-        label: (
-          <Popconfirm
-            title={
-              <div>
-                Xác nhận muốn xóa nhiệm vụ{' '}
-                <span className="font-[600]">{task?.name}</span>?
-              </div>
-            }
-            onConfirm={onDelete}
-          >
-            <span className="text-[#cc1111]">Xóa nhiệm vụ</span>
-          </Popconfirm>
-        ),
-      },
+      ...(String(role).includes('Admin')
+        ? [
+            {
+              key: '5',
+              label: (
+                <div
+                  onClick={() => {
+                    modal.confirm({
+                      title: 'Xác nhận gỡ người thực thi của nhiệm vụ này?',
+                      open: removeConfirmOpen,
+                      width: 600,
+                      onCancel: () => setRemoveConfirmOpen(false),
+                      onOk: () => handleRemoveExecutor(task?.id),
+                    })
+                  }}
+                >
+                  Gỡ người thực thi
+                </div>
+              ),
+            },
+            {
+              key: '6',
+              label: (
+                <Popconfirm
+                  title={
+                    <div>
+                      Xác nhận muốn xóa nhiệm vụ{' '}
+                      <span className="font-[600]">{task?.name}</span>?
+                    </div>
+                  }
+                  onConfirm={onDelete}
+                >
+                  <span className="text-[#cc1111]">Xóa nhiệm vụ</span>
+                </Popconfirm>
+              ),
+            },
+          ]
+        : []),
     ]
 
     const handleStageClick = async (stage: any) => {
@@ -385,6 +407,103 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       }
     }
 
+    const handleAssign = async (id: number) => {
+      try {
+        const { message: msg, errors } = await editTaskAction(task?.id, {
+          account_id: id,
+        })
+
+        setStages((prevStages: any[]) => {
+          const newStages = [...prevStages]
+
+          return newStages?.map((stage: any) => {
+            if (stage?.id === `stage_${task?.stage_id}`) {
+              return {
+                ...stage,
+                tasks: stage?.tasks?.map((t: any) => {
+                  if (t?.id === task?.id) {
+                    return {
+                      ...t,
+                      account_id: id,
+                      expired: stage.expired_after_hours
+                        ? new Date().setHours(
+                            new Date().getHours() + stage.expired_after_hours,
+                          )
+                        : null,
+                    }
+                  }
+
+                  return t
+                }),
+              }
+            }
+
+            return stage
+          })
+        })
+
+        if (errors) {
+          message.error(msg)
+          return
+        }
+
+        message.success('Nhận thành công.')
+        setAssignConfirmOpen(false)
+      } catch (error: any) {
+        throw new Error(error)
+      }
+    }
+
+    const handleAssignWithoutWork = async (id: number) => {
+      try {
+        const { message: msg, errors } = await assignTaskWithoutWorkAction(
+          task?.id,
+          {
+            account_id: id,
+          },
+        )
+
+        setStages((prevStages: any[]) => {
+          const newStages = [...prevStages]
+
+          return newStages?.map((stage: any) => {
+            if (stage?.id === `stage_${task?.stage_id}`) {
+              return {
+                ...stage,
+                tasks: stage?.tasks?.map((t: any) => {
+                  if (t?.id === task?.id) {
+                    return {
+                      ...t,
+                      account_id: id,
+                      expired: stage.expired_after_hours
+                        ? new Date().setHours(
+                            new Date().getHours() + stage.expired_after_hours,
+                          )
+                        : null,
+                    }
+                  }
+
+                  return t
+                }),
+              }
+            }
+
+            return stage
+          })
+        })
+
+        if (errors) {
+          message.error(msg)
+          return
+        }
+
+        message.success('Nhiệm vụ đã được giao.')
+        setAssignConfirmOpen(false)
+      } catch (error: any) {
+        throw new Error(error)
+      }
+    }
+
     useAsyncEffect(async () => {
       const data = await getReportFieldsByWorkflowIdAction({
         workflow_id: Number(params?.id),
@@ -394,6 +513,8 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
       setReports(data)
     }, [])
+
+    console.log(stages)
 
     return (
       <div
@@ -456,7 +577,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             />
             {!isCompleted && !isFailed ? (
               <div>
-                {task?.account_id && user ? (
+                {user ? (
                   <div className="flex min-h-[28px] items-center justify-between gap-[8px]">
                     <div className="flex items-center gap-[4px]">
                       <Avatar src={user?.avatar} shape="circle" size={20}>
@@ -464,21 +585,22 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                       </Avatar>
                       {user?.full_name}
                     </div>
-                    {task?.expired ? (
-                      <div
-                        className={clsx({
-                          'text-[#42b814]': timeStatus === 'inprogress',
-                          'text-[#D96C6C]': timeStatus === 'overdue',
-                        })}
-                      >
-                        {timeStatus === 'inprogress'
-                          ? 'Đến hạn trong'
-                          : 'Quá hạn'}{' '}
-                        {convertTime(time.asSeconds())}
-                      </div>
-                    ) : (
-                      <div className="text-[#999]">Không thời hạn</div>
-                    )}
+                    {task?.started_at &&
+                      (task?.expired ? (
+                        <div
+                          className={clsx({
+                            'text-[#42b814]': timeStatus === 'inprogress',
+                            'text-[#D96C6C]': timeStatus === 'overdue',
+                          })}
+                        >
+                          {timeStatus === 'inprogress'
+                            ? 'Đến hạn trong'
+                            : 'Quá hạn'}{' '}
+                          {convertTime(time.asSeconds())}
+                        </div>
+                      ) : (
+                        <div className="text-[#999]">Không thời hạn</div>
+                      ))}
                   </div>
                 ) : (
                   <span className="flex items-center gap-[4px] leading-[28px] text-[#D96C6C]">
@@ -502,14 +624,19 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
         {!isCompleted && !isFailed && (
           <>
-            {(!task?.account_id || !user) && (
+            {!task?.started_at && (
               <Button
                 className="absolute bottom-[12px] right-[16px] !p-[10px] !text-[12px] text-[#fff]"
                 size="small"
                 type="primary"
-                onClick={() => setAssignConfirmOpen(true)}
+                onClick={() => {
+                  modal.confirm({
+                    title: 'Bạn muốn nhận công việc này?',
+                    onOk: () => handleAssign(userId || 0),
+                  })
+                }}
               >
-                Giao
+                Bắt đầu
               </Button>
             )}
           </>
@@ -530,10 +657,6 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           </Dropdown>
         </div>
 
-        {/* <div className="absolute -right-[11px] top-[50%] -translate-y-[50%] rounded-full border p-[3px] leading-none">
-          <DoubleRightOutlined />
-        </div> */}
-
         <Modal
           open={assignConfirmOpen}
           onCancel={() => setAssignConfirmOpen(false)}
@@ -549,11 +672,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
               {members && (
                 <MemberList
                   members={members}
-                  options={{
-                    taskId: task?.id,
-                    stageId: task?.stage_id,
-                  }}
-                  onCompleted={() => setAssignConfirmOpen(false)}
+                  onItemCLick={(userId) => handleAssignWithoutWork(userId)}
                 />
               )}
             </div>

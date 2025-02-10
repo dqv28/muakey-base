@@ -99,6 +99,7 @@ const page: React.FC<any> = async (props: {
                   task,
                   stages,
                   user,
+                  members: workflow?.members,
                 }}
               />
             }

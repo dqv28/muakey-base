@@ -18,7 +18,7 @@ import {
 import { App, Avatar, Badge, Drawer, Dropdown } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { getNotificationsAction } from './action'
+import { getNotificationsAction, seenNotificationsAction } from './action'
 import CheckoutButton from './CheckoutButton'
 import NotificationsList from './NotificationsList'
 
@@ -102,7 +102,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   }, [])
 
   const notificationsWithNotRead = notifications?.filter(
-    (notify: any) => notify?.seen === 0,
+    (notify: any) => notify?.new === 1,
   )
 
   return (
@@ -133,7 +133,16 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
 
       <div
         className="flex size-[60px] cursor-pointer items-center justify-center"
-        onClick={() => setOpenNotice(true)}
+        onClick={async () => {
+          if (
+            notificationsWithNotRead &&
+            notificationsWithNotRead?.length > 0
+          ) {
+            await seenNotificationsAction()
+            router.refresh()
+          }
+          setOpenNotice(true)
+        }}
       >
         <Badge
           size="small"

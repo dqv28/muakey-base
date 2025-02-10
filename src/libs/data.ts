@@ -144,6 +144,13 @@ export const editTask = async (id: number, data: any) => {
   }).then((data) => data)
 }
 
+export const assignTaskWithoutWork = async (id: number, data: any) => {
+  return await requestWithAuthorized(`assign-work/${id}`, {
+    method: 'PUT',
+    data,
+  }).then((data) => data)
+}
+
 export const moveStage = async (id: number, stageId: number, data?: any) => {
   return await requestWithAuthorized(`tasks/${id}?stage_id=${stageId}`, {
     method: 'PUT',

@@ -8,6 +8,7 @@ import {
   addTaskReport,
   addWorkflow,
   addWorkflowCategory,
+  assignTaskWithoutWork,
   deleteCustomFieldById,
   deleteReportField,
   deleteStageById,
@@ -85,6 +86,10 @@ export const addTaskAction = async (data: any) => addTask(data)
 
 export const editTaskAction = async (id: number, data: any) =>
   editTask(id, data)
+
+export const assignTaskWithoutWorkAction = async (id: number, data: any) => {
+  return await assignTaskWithoutWork(id, data)
+}
 
 export const moveStageAction = async (id: number, stageId: number) =>
   moveStage(id, stageId)

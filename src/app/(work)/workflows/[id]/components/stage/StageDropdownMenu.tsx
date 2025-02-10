@@ -78,14 +78,17 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
                   (st: any) => st?.id === s?.id,
                 )
 
+                const toStage = stages?.find((st: any) => st?.id === s?.id)
+
+                console.log(toStage)
+
                 setStages(arrayMove(stages, oldIndex, newIndex))
 
                 try {
                   const { message: msg, errors } = await editStageAction(
                     +String(stage?.id).split('_')[1],
-                    stage,
                     {
-                      index: newIndex,
+                      index: toStage?.index,
                     },
                   )
 

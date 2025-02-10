@@ -1,12 +1,17 @@
 'use client'
 
+import { StageContext } from '@/app/(work)/workflows/[id]/components/WorkflowPageLayout'
 import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
+import MemberList from '@/components/MemberList'
+import TaskModalForm from '@/components/TaskModalForm'
+import { assignTaskWithoutWorkAction } from '@/components/action'
 import { withApp } from '@/hoc'
-import { DoubleRightOutlined } from '@ant-design/icons'
-import { App, Button, Dropdown } from 'antd'
+import { DoubleRightOutlined, MenuOutlined } from '@ant-design/icons'
+import { App, Button, Dropdown, Input, MenuProps, Modal } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { editTaskAction } from '../../actions'
 import { moveStageAction } from '../action'
 
 type PageHeaderActionProps = {
@@ -15,9 +20,12 @@ type PageHeaderActionProps = {
 
 const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  const { message } = App.useApp()
+  const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
+  const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
+  const { message, modal } = App.useApp()
   const router = useRouter()
 
+  const { setStages } = useContext(StageContext)
   const { stages, user, ...rest } = options
 
   const handleStageClick = async (stage: any) => {
@@ -56,46 +64,237 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
     }
   }
 
-  console.log(stages)
+  const handleAssignWithoutWork = async (id: number) => {
+    try {
+      const { message: msg, errors } = await assignTaskWithoutWorkAction(
+        options?.task?.id,
+        {
+          account_id: id,
+        },
+      )
+
+      setStages((prevStages: any[]) => {
+        const newStages = [...prevStages]
+
+        return newStages?.map((stage: any) => {
+          if (stage?.id === `stage_${options?.task?.stage_id}`) {
+            return {
+              ...stage,
+              tasks: stage?.tasks?.map((t: any) => {
+                if (t?.id === options?.task?.id) {
+                  return {
+                    ...t,
+                    account_id: id,
+                    expired: stage.expired_after_hours
+                      ? new Date().setHours(
+                          new Date().getHours() + stage.expired_after_hours,
+                        )
+                      : null,
+                  }
+                }
+
+                return t
+              }),
+            }
+          }
+
+          return stage
+        })
+      })
+
+      if (errors) {
+        message.error(msg)
+        return
+      }
+
+      message.success('Nhiệm vụ đã được giao.')
+      setAssignConfirmOpen(false)
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+
+  const handleRemoveExecutor = async (id: number) => {
+    if (!String(options?.role).toLowerCase().includes('admin')) {
+      if (options?.user?.id !== options?.task.account_id) {
+        message.error('Không thể gỡ nhiệm vụ của người khác.')
+        return
+      }
+    }
+
+    try {
+      const { message: msg, errors } = await editTaskAction(id, {
+        account_id: null,
+        started_at: null,
+      })
+
+      setStages((prevStages: any[]) => {
+        const newStages = [...prevStages]
+
+        return newStages?.map((stage: any) => {
+          if (stage?.id === `stage_${options?.task?.stage_id}`) {
+            return {
+              ...stage,
+              tasks: stage?.tasks?.map((t: any) => {
+                if (t?.id === options?.task?.id) {
+                  return {
+                    ...t,
+                    account_id: null,
+                    expired: null,
+                  }
+                }
+
+                return t
+              }),
+            }
+          }
+
+          return stage
+        })
+      })
+
+      if (errors) {
+        message.error(msg)
+        return
+      }
+
+      message.success('Đã gỡ người thực thi.')
+      setRemoveConfirmOpen(false)
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+
+  const stageItems: MenuProps['items'] = stages?.map(
+    (s: any, index: number) => ({
+      key: index,
+      label: (
+        <div
+          className={clsx({
+            'text-[#d96c6c]': s?.index === 0,
+            'text-[#42bb14]': s?.index === 1,
+          })}
+          onClick={() => handleStageClick(s)}
+        >
+          {s?.name}
+        </div>
+      ),
+    }),
+  )
+
+  const items: MenuProps['items'] = [
+    {
+      key: 1,
+      label: (
+        <TaskModalForm
+          title="CHỈNH SỬA NHIỆM VỤ"
+          initialValues={{
+            ...options?.task,
+            members: options?.members,
+          }}
+          action="edit"
+        >
+          Chỉnh sửa nhiệm vụ
+        </TaskModalForm>
+      ),
+    },
+    {
+      key: 2,
+      label: (
+        <div
+          onClick={(e) => {
+            e.preventDefault()
+            setAssignConfirmOpen(true)
+          }}
+        >
+          Giao
+        </div>
+      ),
+    },
+    {
+      key: 3,
+      label: (
+        <div
+          onClick={() => {
+            modal.confirm({
+              title: 'Xác nhận gỡ người thực thi của nhiệm vụ này?',
+              open: removeConfirmOpen,
+              width: 600,
+              onCancel: () => setRemoveConfirmOpen(false),
+              onOk: () => handleRemoveExecutor(options?.task?.id),
+            })
+          }}
+        >
+          Gỡ người thực thi
+        </div>
+      ),
+    },
+    {
+      key: 4,
+      label: (
+        <MarkTaskFailedModalForm options={rest}>
+          Đánh dấu thất bại
+        </MarkTaskFailedModalForm>
+      ),
+    },
+    {
+      key: 5,
+      label: 'Xóa nhiệm vụ',
+    },
+  ]
 
   return (
-    <div className="flex items-center gap-[8px]">
-      <MarkTaskFailedModalForm options={rest}>
-        <Button className="font-[500]" color="danger" variant="filled">
-          Đánh dấu thất bại
-        </Button>
-      </MarkTaskFailedModalForm>
-      {!!stages && stages?.length > 0 && (
+    <>
+      <div className="flex items-center gap-[8px]">
+        <MarkTaskFailedModalForm options={rest}>
+          <Button className="font-[500]" color="danger" variant="filled">
+            Đánh dấu thất bại
+          </Button>
+        </MarkTaskFailedModalForm>
+        {!!stages && stages?.length > 0 && (
+          <Dropdown
+            trigger={['click']}
+            rootClassName="!z-auto"
+            placement="bottomLeft"
+            open={dropdownOpen}
+            onOpenChange={setDropdownOpen}
+            menu={{ items: stageItems }}
+          >
+            <Button icon={<DoubleRightOutlined className="text-[16px]" />} />
+          </Dropdown>
+        )}
         <Dropdown
           trigger={['click']}
           rootClassName="!z-auto"
           placement="bottomLeft"
-          open={dropdownOpen}
-          onOpenChange={setDropdownOpen}
-          dropdownRender={() => (
-            <div className="mt-[4px] w-[200px] rounded-[4px] bg-[#fff] p-[8px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
-              {stages?.map((stage: any) => (
-                <div
-                  className={clsx(
-                    'cursor-pointer bg-transparent px-[10px] py-[6px] text-[14px] leading-[17px] transition-all hover:bg-[#f8f8f8]',
-                    {
-                      'text-[#d96c6c]': stage?.index === 0,
-                      'text-[#42bb14]': stage?.index === 1,
-                    },
-                  )}
-                  key={stage?.id}
-                  onClick={() => handleStageClick(stage)}
-                >
-                  {stage?.name}
-                </div>
-              ))}
-            </div>
-          )}
+          menu={{ items }}
         >
-          <Button icon={<DoubleRightOutlined className="text-[16px]" />} />
+          <Button icon={<MenuOutlined className="text-[16px]" />} />
         </Dropdown>
-      )}
-    </div>
+      </div>
+
+      <Modal
+        open={assignConfirmOpen}
+        onCancel={() => setAssignConfirmOpen(false)}
+        title="LỰA CHỌN NGƯỜI PHỤ TRÁCH NHIỆM VỤ NÀY"
+        footer={<></>}
+        width={500}
+      >
+        <div className="-mx-[24px] text-[#b1b1b1]">
+          <div className="px-[20px]">
+            <Input.Search placeholder="Tìm nhanh" />
+          </div>
+          <div className="divide-y divide-[#0000001a]">
+            {options?.members && (
+              <MemberList
+                members={options?.members}
+                onItemCLick={(userId) => handleAssignWithoutWork(userId)}
+              />
+            )}
+          </div>
+        </div>
+      </Modal>
+    </>
   )
 }
 

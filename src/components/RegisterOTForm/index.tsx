@@ -27,7 +27,7 @@ const FormFields: React.FC<{
 
         <div className="text-right">
           <div className="text-[14px] text-[#00000073]">Tổng thời gian OT</div>
-          <div className="text-[24px]">{initialValues?.ot} ngày</div>
+          <div className="text-[24px]">{initialValues?.ot} giờ</div>
         </div>
       </div>
 
@@ -120,7 +120,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
   const [form] = Form.useForm()
   const router = useRouter()
 
-  const [startTime, setStartTime] = useState<any>()
+  const [startTime, setStartTime] = useState<any>(new Date())
   const [endTime, setEndTime] = useState<any>()
 
   const [ot, setOt] = useState(0)
@@ -172,7 +172,9 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
     const start = new Date(startTime)
     const end = new Date(endTime)
 
-    const total = (+end - +start) / (1000 * 60 * 60 * 24)
+    const total = (+end - +start) / (1000 * 60 * 60)
+
+    console.log(total)
 
     setOt(Number(total.toFixed(3)))
   }, [startTime, endTime])

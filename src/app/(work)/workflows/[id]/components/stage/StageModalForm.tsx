@@ -40,7 +40,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
 
     try {
       if (action === 'edit') {
-        var { errors } = await editStageAction(query?.stage_id, {
+        var { errors, index } = await editStageAction(query?.stage_id, {
           ...formData,
           description: converter.makeHtml(formData?.description),
           workflow_id: params?.id,
@@ -63,7 +63,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
           })
         })
       } else {
-        var { errors, id } = await addStageAction(
+        var { errors, id, index } = await addStageAction(
           {
             ...formData,
             description: converter.makeHtml(formData?.description),
@@ -84,6 +84,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
                 ...formData,
                 workflow_id: params?.id,
                 id,
+                index,
               },
               ...prev.slice(currentIndex + 1),
             ]
@@ -94,6 +95,7 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
               ...formData,
               workflow_id: params?.id,
               id,
+              index,
             },
             ...prev,
           ]

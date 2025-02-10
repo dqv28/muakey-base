@@ -5,6 +5,7 @@ import {
   getNotifications,
   updateNotification,
 } from '@/libs/data'
+import { seenNotifications } from '@/libs/notifications'
 import { getSession } from '@/libs/session'
 
 export const getNotificationsAction = async () => {
@@ -21,4 +22,8 @@ export const deleteNotificationAction = async (id: number, query?: any) => {
 
 export const getSessionAction = async () => {
   return await getSession()
+}
+
+export const seenNotificationsAction = async () => {
+  return await seenNotifications()
 }
