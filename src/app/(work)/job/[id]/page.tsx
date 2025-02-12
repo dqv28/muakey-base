@@ -72,6 +72,9 @@ const page: React.FC<any> = async (props: {
   )
 
   const failedStageId = stages?.find((stage: any) => stage.index === 0)?.['id']
+  const completedStageId = stages?.find((stage: any) => stage.index === 1)?.[
+    'id'
+  ]
   const currentStage = stages?.find((stage: any) => stage.id === task?.stage_id)
 
   let INDEX: number = 0
@@ -96,10 +99,12 @@ const page: React.FC<any> = async (props: {
               <PageHeaderAction
                 options={{
                   failedStageId,
+                  completedStageId,
                   task,
                   stages,
                   user,
                   members: workflow?.members,
+                  workflow,
                 }}
               />
             }

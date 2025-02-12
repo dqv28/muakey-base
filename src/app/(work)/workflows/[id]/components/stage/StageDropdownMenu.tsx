@@ -80,8 +80,6 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
 
                 const toStage = stages?.find((st: any) => st?.id === s?.id)
 
-                console.log(toStage)
-
                 setStages(arrayMove(stages, oldIndex, newIndex))
 
                 try {

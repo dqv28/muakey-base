@@ -194,7 +194,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       )
 
       const myPropose = propose?.filter(
-        (p: any) => p?.full_name === m?.full_name,
+        (p: any) => p?.account?.full_name === m?.full_name,
       )
 
       const otPropose = myPropose

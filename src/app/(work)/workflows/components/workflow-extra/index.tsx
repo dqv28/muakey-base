@@ -82,7 +82,7 @@ const WorkflowExtra: React.FC<{
   }
 
   const isAuth =
-    initialValues?.user?.role === 'Admin lv2' ||
+    String(initialValues?.user?.role).toLowerCase().includes('admin') ||
     initialValues?.members
       ?.map((mem: any) => mem?.id)
       .includes(initialValues?.user?.id)

@@ -33,3 +33,9 @@ export { default as CheckInSwitchForms } from './CheckInSwitchForms'
 
 export * from './RequestModalForm'
 export { default as RequestModalForm } from './RequestModalForm'
+
+export * from './MarkTaskModalForm'
+export { default as MarkTaskModalForm } from './MarkTaskModalForm'
+
+export * from './TaskDoneModalForm'
+export { default as TaskDoneModalForm } from './TaskDoneModalForm'

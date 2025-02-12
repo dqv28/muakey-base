@@ -222,8 +222,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     editorRef.current?.setMarkdown(description || '')
   }, [open])
 
-  console.log('render')
-
   return (
     <>
       <div
@@ -262,7 +260,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
               member: account_id
                 ? `${`${mem?.full_name} ·`} ${mem?.username} ${!!mem?.position ? `· ${mem?.position}` : ''}`
                 : undefined,
-              tag: sticker?.map((s: any) => s?.sticker_id),
+              tag: initialValues?.tags?.map((s: any) => s?.id),
               expired: initialValues?.expired
                 ? dayjs(initialValues?.expired)
                 : null,

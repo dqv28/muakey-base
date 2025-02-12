@@ -1,10 +1,11 @@
 'use client'
 
 import { convertTime } from '@/libs/utils'
-import { CheckOutlined } from '@ant-design/icons'
+import { CheckOutlined, EyeOutlined } from '@ant-design/icons'
 import { Table, TableProps, Tag } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import Link from 'next/link'
 import React from 'react'
 import TodoCompletedButton from './todo-completed-button'
 
@@ -24,7 +25,12 @@ const columns: TableProps['columns'] = [
 
       return (
         <>
-          <div className="mb-[4px]">{name}</div>
+          <Link
+            href={`/job/${record?.id}?wid=${record?.workflowId}`}
+            className="mb-[4px]"
+          >
+            {name}
+          </Link>
           {record?.expired && (
             <Tag color={timeStatus === 'inprogress' ? 'green' : 'red'}>
               {timeStatus === 'inprogress' ? 'Đến hạn trong' : 'Quá hạn'}{' '}
@@ -59,21 +65,26 @@ const columns: TableProps['columns'] = [
   },
   {
     title: 'Quy trình',
-    dataIndex: 'workflow',
+    dataIndex: 'workflowName',
   },
   {
     title: 'Hành động',
     dataIndex: 'action',
     render: (_, record) => {
       return (
-        record?.stage === 'Không có' &&
-        (record?.status ? (
-          <Tag color="green">
-            Đã hoàn thành <CheckOutlined />
-          </Tag>
-        ) : (
-          <TodoCompletedButton todoId={record?.id} />
-        ))
+        <div className="flex items-center gap-[8px]">
+          <Link href={`/job/${record?.id}?wid=${record?.workflowId}`}>
+            <EyeOutlined className="text-[#1677ff]" />
+          </Link>
+          {record?.stage === 'Không có' &&
+            (record?.status ? (
+              <Tag color="green">
+                Đã hoàn thành <CheckOutlined />
+              </Tag>
+            ) : (
+              <TodoCompletedButton todoId={record?.id} />
+            ))}
+        </div>
       )
     },
   },

@@ -1,6 +1,5 @@
 'use client'
 
-import { StageContext } from '@/app/(work)/workflows/[id]/components/WorkflowPageLayout'
 import { InitializedMDXEditor } from '@/components'
 import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
@@ -17,10 +16,8 @@ import {
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash'
-import { useParams } from 'next/navigation'
-import React, { useContext, useRef, useState } from 'react'
-import toast from 'react-hot-toast'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useRef, useState } from 'react'
 import { Converter } from 'showdown'
 import { addTagToTaskAction, addTaskAction, editTaskAction } from '../action'
 import TagSelect from './TagSelect'
@@ -46,11 +43,11 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
   const [selectOpen, setSelectOpen] = useState(false)
 
-  const params = useParams()
-  const { setStages, isAuth } = useContext(StageContext)
+  const searchParams = useSearchParams()
   const { message } = App.useApp()
   const editorRef = useRef<MDXEditorMethods>(null)
   const formRef = useRef<FormInstance>(null)
+  const router = useRouter()
 
   const converter = new Converter({
     tables: true,
@@ -58,8 +55,16 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     tasklists: true,
     simpleLineBreaks: true,
   })
-  const { account_id, members, sticker, description, ...restInitialValues } =
-    initialValues
+  const {
+    account_id,
+    members,
+    sticker,
+    description,
+    userId,
+    ...restInitialValues
+  } = initialValues
+
+  const isAuth = members?.map((mem: any) => mem?.id).includes(userId)
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -78,7 +83,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           ...restFormData,
           description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
-          workflow_id: params?.id || null,
+          workflow_id: Number(searchParams.get('wid')),
           tag_id: tag || [],
         })
 
@@ -86,43 +91,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           await addTagToTaskAction({
             task_id: id,
             tag_id: tag,
-          })
-
-          setStages((prevStages: any[]) => {
-            const newStages = cloneDeep(prevStages)
-
-            return newStages?.map((stage: any) => {
-              if (
-                !restInitialValues?.stage_id &&
-                stage?.id === newStages[0]?.id
-              ) {
-                return {
-                  ...stage,
-                  tasks: [
-                    {
-                      ...restFormData,
-                      description: converter.makeHtml(restFormData.description),
-                      account_id: member?.id || null,
-                      workflow_id: params?.id || null,
-                      stage_id: Number(String(stage?.id).split('_').pop()),
-                      id,
-                      sticker: tag?.map((t: number) => {
-                        const tagName = tags.find(
-                          (s: any) => s?.id === t,
-                        )?.title
-                        return {
-                          name: tagName,
-                          sticker_id: t,
-                        }
-                      }),
-                    },
-                    ...stage?.tasks,
-                  ],
-                }
-              }
-
-              return stage
-            })
           })
         }
       } else {
@@ -140,52 +108,11 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             ? String(dayjs(restFormData?.expired).format('YYYY-MM-DD HH:mm:ss'))
             : null,
         })
-
-        if (!errors) {
-          setStages((prevStages: any[]) => {
-            const newStages = cloneDeep(prevStages)
-
-            return newStages?.map((stage: any) => {
-              if (stage?.id === `stage_${initialValues?.stage_id}`) {
-                return {
-                  ...stage,
-                  tasks: stage?.tasks?.map((task: any) => {
-                    if (task?.id === initialValues?.id) {
-                      return {
-                        ...restFormData,
-                        description: converter.makeHtml(
-                          restFormData.description,
-                        ),
-                        account_id: member?.id || null,
-                        stage_id: stage?.id,
-                        id: initialValues?.id,
-                        sticker: tag?.map((t: number) => {
-                          const tagName = tags.find(
-                            (s: any) => s?.id === t,
-                          )?.title
-
-                          return {
-                            name: tagName,
-                            sticker_id: t,
-                          }
-                        }),
-                      }
-                    }
-
-                    return task
-                  }),
-                }
-              }
-
-              return stage
-            })
-          })
-        }
       }
 
       if (errors) {
         if (errors.task) {
-          toast.error(errors.task)
+          message.error(errors.task)
           setLoading(false)
           return
         }
@@ -202,11 +129,12 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         return
       }
 
-      toast.success(
+      message.success(
         action === 'create' ? 'Thêm thành công.' : 'Cập nhật thành công.',
       )
       setOpen(false)
       setLoading(false)
+      router.refresh()
     } catch (error: any) {
       setLoading(false)
       throw new Error(error)
@@ -220,8 +148,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
     editorRef.current?.setMarkdown(description || '')
   }, [open])
-
-  console.log('render')
 
   return (
     <>
@@ -238,10 +164,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         {children}
       </div>
       <Modal
-        classNames={{
-          mask: '!z-auto',
-          wrapper: '!z-auto',
-        }}
         title={title || 'TẠO NHIỆM VỤ MỚI'}
         open={open}
         onCancel={() => setOpen(false)}
@@ -292,7 +214,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         </Form.Item>
         <Form.Item name="tag" label="Thêm nhãn">
           <TagSelect
-            params={params}
+            params={{
+              id: Number(searchParams.get('wid')),
+            }}
             tags={tags}
             onTagsChange={(data) => setTags(data)}
             open={selectOpen}

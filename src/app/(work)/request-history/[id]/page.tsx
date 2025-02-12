@@ -1,7 +1,7 @@
 import { RequestConfirmModalForm } from '@/components'
 import { getMe } from '@/libs/data'
 import { getProposeById } from '@/libs/propose'
-import { calculateDayOffTotal, randomColor } from '@/libs/utils'
+import { randomColor } from '@/libs/utils'
 import {
   CheckOutlined,
   CloseOutlined,
@@ -63,20 +63,6 @@ const page: React.FC<any> = async (props) => {
 
   const isAdmin = user?.role === 'Admin lv2'
 
-  const totalTime = propose?.date_holidays?.reduce(
-    (total: number, current: any) => {
-      const dayOffTotal = calculateDayOffTotal(
-        current?.start_date,
-        current?.end_date,
-      )
-
-      total += dayOffTotal
-
-      return total
-    },
-    0,
-  )
-
   const oldTime = `${dayjs(propose?.old_check_in).format('DD/MM/YYYY HH:mm')} - ${propose?.old_check_out ? dayjs(propose?.old_check_out).format('DD/MM/YYYY HH:mm') : '--:--'}`
   const newTime = `${dayjs(propose?.start_time).format('DD/MM/YYYY HH:mm')} - ${propose?.end_time ? dayjs(propose?.end_time).format('DD/MM/YYYY HH:mm') : '--:--'}`
 
@@ -100,7 +86,7 @@ const page: React.FC<any> = async (props) => {
           {
             key: uniqueId(),
             label: 'Tổng thời gian',
-            children: `${Number(totalTime.toFixed(3))} ngày`,
+            children: `${propose?.number_holiday} ngày`,
           },
         ]
       : [

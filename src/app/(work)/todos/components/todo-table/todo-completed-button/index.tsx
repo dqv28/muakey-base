@@ -1,7 +1,8 @@
 'use client'
 
 import { withApp } from '@/hoc'
-import { App, Button } from 'antd'
+import { CheckOutlined } from '@ant-design/icons'
+import { App, Tooltip } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { markTodoCompletedAction } from '../action'
@@ -41,23 +42,23 @@ const TodoCompletedButton: React.FC<TodoCompletedButtonProps> = ({
   }
 
   return (
-    <Button
-      type="primary"
-      onClick={() => {
-        modal.confirm({
-          title: 'Xác nhận',
-          content: 'Đánh dấu hoàn thành nhiệm vụ này?',
-          open,
-          okButtonProps: {
-            loading,
-          },
-          onCancel: () => setOpen(false),
-          onOk: () => handleMarkTodoCompleted(todoId),
-        })
-      }}
-    >
-      Đánh dấu hoàn thành
-    </Button>
+    <Tooltip title="Đánh dấu hoàn thành">
+      <CheckOutlined
+        className="cursor-pointer text-[#389e0d]"
+        onClick={() => {
+          modal.confirm({
+            title: 'Xác nhận',
+            content: 'Đánh dấu hoàn thành nhiệm vụ này?',
+            open,
+            okButtonProps: {
+              loading,
+            },
+            onCancel: () => setOpen(false),
+            onOk: () => handleMarkTodoCompleted(todoId),
+          })
+        }}
+      />
+    </Tooltip>
   )
 }
 

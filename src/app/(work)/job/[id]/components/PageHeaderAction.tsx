@@ -1,7 +1,6 @@
 'use client'
 
-import { StageContext } from '@/app/(work)/workflows/[id]/components/WorkflowPageLayout'
-import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
+import { MarkTaskModalForm } from '@/components'
 import MemberList from '@/components/MemberList'
 import TaskModalForm from '@/components/TaskModalForm'
 import { assignTaskWithoutWorkAction } from '@/components/action'
@@ -10,9 +9,9 @@ import { DoubleRightOutlined, MenuOutlined } from '@ant-design/icons'
 import { App, Button, Dropdown, Input, MenuProps, Modal } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { editTaskAction } from '../../actions'
-import { moveStageAction } from '../action'
+import { deleteTaskAction, moveStageAction } from '../action'
 
 type PageHeaderActionProps = {
   options?: any
@@ -25,8 +24,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
   const { message, modal } = App.useApp()
   const router = useRouter()
 
-  const { setStages } = useContext(StageContext)
-  const { stages, user, ...rest } = options
+  const { stages, user, failedStageId, completedStageId, ...rest } = options
 
   const handleStageClick = async (stage: any) => {
     if (rest?.task?.stage_id === stage?.id) return
@@ -73,35 +71,6 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
         },
       )
 
-      setStages((prevStages: any[]) => {
-        const newStages = [...prevStages]
-
-        return newStages?.map((stage: any) => {
-          if (stage?.id === `stage_${options?.task?.stage_id}`) {
-            return {
-              ...stage,
-              tasks: stage?.tasks?.map((t: any) => {
-                if (t?.id === options?.task?.id) {
-                  return {
-                    ...t,
-                    account_id: id,
-                    expired: stage.expired_after_hours
-                      ? new Date().setHours(
-                          new Date().getHours() + stage.expired_after_hours,
-                        )
-                      : null,
-                  }
-                }
-
-                return t
-              }),
-            }
-          }
-
-          return stage
-        })
-      })
-
       if (errors) {
         message.error(msg)
         return
@@ -109,6 +78,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
 
       message.success('Nhiệm vụ đã được giao.')
       setAssignConfirmOpen(false)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }
@@ -128,31 +98,6 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
         started_at: null,
       })
 
-      setStages((prevStages: any[]) => {
-        const newStages = [...prevStages]
-
-        return newStages?.map((stage: any) => {
-          if (stage?.id === `stage_${options?.task?.stage_id}`) {
-            return {
-              ...stage,
-              tasks: stage?.tasks?.map((t: any) => {
-                if (t?.id === options?.task?.id) {
-                  return {
-                    ...t,
-                    account_id: null,
-                    expired: null,
-                  }
-                }
-
-                return t
-              }),
-            }
-          }
-
-          return stage
-        })
-      })
-
       if (errors) {
         message.error(msg)
         return
@@ -160,6 +105,24 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
 
       message.success('Đã gỡ người thực thi.')
       setRemoveConfirmOpen(false)
+      router.refresh()
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    try {
+      const { error, success } = await deleteTaskAction(id || 0)
+
+      if (error) {
+        message.error(error)
+
+        return
+      }
+
+      message.success(success)
+      router.push(`/workflows/${options?.workflow?.id}`)
     } catch (error: any) {
       throw new Error(error)
     }
@@ -191,6 +154,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
           initialValues={{
             ...options?.task,
             members: options?.members,
+            userId: user?.id,
           }}
           action="edit"
         >
@@ -232,25 +196,48 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
     {
       key: 4,
       label: (
-        <MarkTaskFailedModalForm options={rest}>
+        <MarkTaskModalForm
+          options={{
+            ...rest,
+            stageId: failedStageId,
+          }}
+        >
           Đánh dấu thất bại
-        </MarkTaskFailedModalForm>
+        </MarkTaskModalForm>
       ),
     },
     {
       key: 5,
-      label: 'Xóa nhiệm vụ',
+      label: (
+        <div
+          className="text-[#cc1111]"
+          onClick={() => {
+            modal.confirm({
+              title: 'Xác nhận xóa nhiệm vụ này?',
+              onOk: () => handleDelete(options?.task?.id),
+            })
+          }}
+        >
+          Xóa nhiệm vụ
+        </div>
+      ),
     },
   ]
 
   return (
     <>
       <div className="flex items-center gap-[8px]">
-        <MarkTaskFailedModalForm options={rest}>
-          <Button className="font-[500]" color="danger" variant="filled">
-            Đánh dấu thất bại
-          </Button>
-        </MarkTaskFailedModalForm>
+        <MarkTaskModalForm
+          options={{
+            ...rest,
+            stageId: completedStageId,
+          }}
+          mark="completed"
+        >
+          <div className="cursor-pointer rounded-[8px] bg-[#D9F7BE] px-[16px] py-[5px] text-[14px] font-[500] leading-[22px] text-[#389E0D] brightness-100 transition-all duration-300 hover:brightness-95">
+            Đánh dấu hoàn thành
+          </div>
+        </MarkTaskModalForm>
         {!!stages && stages?.length > 0 && (
           <Dropdown
             trigger={['click']}

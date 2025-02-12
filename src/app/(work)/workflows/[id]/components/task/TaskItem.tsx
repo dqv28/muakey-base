@@ -1,6 +1,6 @@
 'use client'
 
-import MarkTaskFailedModalForm from '@/components/MarkTaskFailedModalForm'
+import MarkTaskFailedModalForm from '@/components/MarkTaskModalForm'
 import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import {
@@ -225,6 +225,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                   initialValues={{
                     ...task,
                     members,
+                    userId,
                   }}
                   action="edit"
                 >
@@ -513,8 +514,6 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
       setReports(data)
     }, [])
-
-    console.log(stages)
 
     return (
       <div

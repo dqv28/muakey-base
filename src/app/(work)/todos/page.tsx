@@ -19,7 +19,8 @@ const page: React.FC = async () => {
           name: todo?.name,
           expired: todo?.expired,
           stage: todo?.stage_name || 'Không có',
-          workflow: todo?.workflow_name || 'Không có',
+          workflowName: todo?.workflow_name || 'Không có',
+          workflowId: todo?.workflow_id,
           status: todo?.status,
           started_at: todo?.started_at,
         }))}
