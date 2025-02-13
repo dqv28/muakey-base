@@ -18,7 +18,11 @@ import {
 import { App, Avatar, Badge, Drawer, Dropdown } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { getNotificationsAction, seenNotificationsAction } from './action'
+import {
+  getIpAddressRequest,
+  getNotificationsAction,
+  seenNotificationsAction,
+} from './action'
 import CheckoutButton from './CheckoutButton'
 import NotificationsList from './NotificationsList'
 
@@ -30,11 +34,11 @@ export type SubSideProps = {
 const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const [loading, setLoading] = useState(false)
   const [openNotice, setOpenNotice] = useState(false)
-  const router = useRouter()
   const [notifications, setNotifications] = useState<any[]>()
   const [notificationsWithNotRead, setNotificationsWithNotRead] =
     useState<any[]>()
 
+  const router = useRouter()
   const { message, modal } = App.useApp()
 
   const handleLogout = async () => {
@@ -45,16 +49,20 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const handleCheckedIn = async () => {
     setLoading(true)
 
-    try {
-      const { success, error } = await checkedInAction()
+    const { ip } = await getIpAddressRequest()
 
-      if (error) {
-        message.error(error)
+    try {
+      const { message: msg, errors } = await checkedInAction({
+        ip_wifi: ip,
+      })
+
+      if (errors) {
+        message.error(msg)
         setLoading(false)
         return
       }
 
-      message.success(success)
+      message.success('Điểm danh thành công')
       setLoading(false)
       router.refresh()
     } catch (error: any) {

@@ -2,8 +2,10 @@
 
 import { GLOBAL_BAN } from '@/libs/constant'
 import { randomColor } from '@/libs/utils'
+import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import {
   Avatar,
+  Button,
   ConfigProvider,
   DatePicker,
   DatePickerProps,
@@ -70,24 +72,31 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = ({ members }) => {
   }
 
   return (
-    <div className="flex items-center gap-[8px]">
+    <div className="flex items-center gap-[8px] p-[16px]">
       <ConfigProvider locale={locale}>
         <DatePicker
           className="w-full"
           picker="week"
-          style={{ width: 300 }}
+          style={{ width: 280 }}
           onChange={handleDateChange}
           format={'YYYY-MM-DD'}
+          size="large"
         />
       </ConfigProvider>
+      <div className="flex items-center gap-[8px]">
+        <Button icon={<LeftOutlined />} size="large" />
+        <Button size="large">Hôm nay</Button>
+        <Button icon={<RightOutlined />} size="large" />
+      </div>
       <Select
         mode="multiple"
-        placeholder="Thành viên"
+        placeholder="Nhân viên"
         allowClear
-        style={{ width: 300 }}
+        style={{ width: 240 }}
         options={memberOptions}
         optionRender={optionRender}
         onChange={handleChange}
+        size="large"
       />
     </div>
   )

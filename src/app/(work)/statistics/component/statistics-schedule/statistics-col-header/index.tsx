@@ -15,12 +15,12 @@ const StatisticsColHeader: React.FC<StatisticsColHeaderProps> = ({
   return (
     <div
       className={clsx(
-        'flex flex-col items-center justify-center border-b py-[12px] font-[500]',
+        'flex h-[70px] flex-col items-center justify-center border-b py-[12px] font-[500]',
         className,
       )}
     >
-      <div className="text-[14px]">{title}</div>
-      <div className="text-[24px]">{subTitle}</div>
+      <div className="text-[14px] leading-[22px]">{title}</div>
+      <div className="text-[14px] leading-[22px]">{subTitle}</div>
     </div>
   )
 }

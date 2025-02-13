@@ -1,48 +1,32 @@
-import { randomColor } from '@/libs/utils'
-import { Avatar, Tooltip } from 'antd'
+import { Tooltip } from 'antd'
 import clsx from 'clsx'
-import dayjs from 'dayjs'
 import React from 'react'
 
 type StatisticsCardProps = {
   title?: React.ReactNode
-  user?: any
-  expire?: Date
+  timestamps?: number
   status?: 'in_progress' | 'completed' | 'failed'
 }
 
 const StatisticsCard: React.FC<StatisticsCardProps> = ({
   title,
-  user,
-  expire,
   status,
+  timestamps,
 }) => {
   return (
     <div
       className={clsx(
-        'flex flex-col gap-[12px] rounded-[4px] border p-[12px] text-[13px] leading-none',
+        'flex items-start justify-between gap-[16px] rounded-[4px] border p-[12px] text-[13px] leading-[17px]',
         status === 'in_progress' || {
-          'border-[#009c37] bg-[#d9f8e5]': status === 'completed',
-          'border-[#c34343] bg-[#ffeded]': status === 'failed',
+          'border-[#389E0D] bg-[#F6FFED]': status === 'completed',
+          'border-[#CF1322] bg-[#FFF1F0]': status === 'failed',
         },
       )}
     >
       <Tooltip title={title}>
-        <div className="line-clamp-2 font-[500] leading-[16px]">{title}</div>
+        <div className="line-clamp-2 font-[500]">{title}</div>
       </Tooltip>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-[8px]">
-          <Avatar
-            src={user?.avatar}
-            size={16}
-            style={{ backgroundColor: randomColor(String(user?.fullName)) }}
-          >
-            {String(user?.fullName).charAt(0).toUpperCase()}
-          </Avatar>
-          <span>{user?.fullName}</span>
-        </div>
-        <div>{expire && dayjs(new Date(expire)).format('HH:mm')}</div>
-      </div>
+      <span className="text-[#0958D9]">{Number(timestamps || 0)}h</span>
     </div>
   )
 }

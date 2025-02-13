@@ -51,19 +51,23 @@ const StatisticsModalForm: React.FC<StatisticsModalFormProps> = ({
   return (
     <>
       <Button
-        className="my-[8px]"
         type="text"
-        icon={<PlusOutlined className="text-[10px]" />}
+        icon={<PlusOutlined className="cursor-pointer text-[#0958D9]" />}
         onClick={() => setOpen(true)}
-      >
-        Thêm công việc
-      </Button>
+        size="small"
+      />
       <Modal
         open={open}
         onCancel={() => setOpen(false)}
         title="Thêm công việc"
         modalRender={(dom) => (
-          <Form onFinish={handleSubmit} layout="vertical">
+          <Form
+            onFinish={handleSubmit}
+            layout="vertical"
+            initialValues={{
+              account_id: options?.accountId,
+            }}
+          >
             {dom}
           </Form>
         )}

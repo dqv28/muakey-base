@@ -1,4 +1,5 @@
 import {
+  request,
   RequestOptions,
   requestWithAuthorized,
   requestWithFile,
@@ -318,21 +319,15 @@ export const deleteComment = async (id: number) =>
     method: 'DELETE',
   }).then((data) => data)
 
-export const checkIn = async () =>
-  requestWithAuthorized('check-in', {
+export const checkIn = async (query?: any) =>
+  requestWithAuthorized('check-in?' + new URLSearchParams(query), {
     method: 'POST',
   }).then(async (data) => {
-    const { success, error } = data
-
     const session = await getSession()
     session.isCheckedIn = true
 
-    if (error) {
-      return { error }
-    }
-
     await session.save()
-    return { success }
+    return data
   })
 
 export const checkOut = async () =>
@@ -361,3 +356,9 @@ export const getKpi = async (query?: any) =>
   requestWithAuthorized('kpis?' + new URLSearchParams(query)).then(
     (data) => data,
   )
+
+export const getIpAddress = async () => {
+  return await request('https://api.ipify.org?format=json')
+    .then((data) => data)
+    .catch(() => null)
+}

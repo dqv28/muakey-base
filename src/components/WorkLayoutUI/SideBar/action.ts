@@ -2,6 +2,7 @@
 
 import {
   deleteNotification,
+  getIpAddress,
   getNotifications,
   updateNotification,
 } from '@/libs/data'
@@ -26,4 +27,8 @@ export const getSessionAction = async () => {
 
 export const seenNotificationsAction = async () => {
   return await seenNotifications()
+}
+
+export const getIpAddressRequest = async () => {
+  return await getIpAddress()
 }

@@ -201,7 +201,15 @@ export const convertToSlug = (text: string) => {
     .replace(/\s+/g, '-')
 }
 
-export const daysOfWeek = ['TH 2', 'TH 3', 'TH 4', 'TH 5', 'TH 6', 'TH 7', 'CN']
+export const daysOfWeek = [
+  'Thứ 2',
+  'Thứ 3',
+  'Thứ 4',
+  'Thứ 5',
+  'Thứ 6',
+  'Thứ 7',
+  'Chủ nhật',
+]
 
 export const getWeek = (date: Date, numberOfWeek?: number) => {
   const startOfWeek = new Date(date)

@@ -31,7 +31,7 @@ export const logoutAction = async () => {
   return await logout()
 }
 
-export const checkedInAction = async () => checkIn()
+export const checkedInAction = async (query?: any) => checkIn(query)
 
 export const checkOutAction = async () => checkOut()
 
