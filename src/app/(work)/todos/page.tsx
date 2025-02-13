@@ -2,6 +2,7 @@ import { getMe } from '@/libs/data'
 import { getTodos } from '@/libs/todos'
 import React from 'react'
 import PageHeader from './components/PageHeader'
+import TodoFiltered from './components/todo-filtered'
 import TodoTable from './components/todo-table'
 
 const page: React.FC = async () => {
@@ -12,7 +13,7 @@ const page: React.FC = async () => {
 
   return (
     <div>
-      <PageHeader />
+      <PageHeader title="Công việc của tôi" extra={<TodoFiltered />} />
       <TodoTable
         dataSource={todos?.map((todo: any) => ({
           id: todo?.id,

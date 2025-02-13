@@ -27,7 +27,7 @@ const columns: TableProps['columns'] = [
         <>
           <Link
             href={`/job/${record?.id}?wid=${record?.workflowId}`}
-            className="mb-[4px]"
+            className="mb-[4px] block"
           >
             {name}
           </Link>
@@ -60,12 +60,14 @@ const columns: TableProps['columns'] = [
     ),
   },
   {
-    title: 'Giai đoạn',
-    dataIndex: 'stage',
-  },
-  {
     title: 'Quy trình',
     dataIndex: 'workflowName',
+    render: (value) => <span className="text-[#1677ff]">{value}</span>,
+  },
+  {
+    title: 'Giai đoạn',
+    dataIndex: 'stage',
+    render: (value) => <span className="text-[#1677ff]">{value}</span>,
   },
   {
     title: 'Hành động',

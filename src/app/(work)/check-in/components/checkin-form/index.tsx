@@ -15,6 +15,11 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ initialValues }) => {
 
   const search = searchParams.get('form')
 
+  const { date, ...rest } = initialValues
+
+  // console.log('Render checkin form', { date })
+  // console.log('TYPE ->', new Date(date))
+
   return (
     <div className="space-y-[16px]">
       <CheckInSwitchForms

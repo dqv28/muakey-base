@@ -187,7 +187,8 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
         form={form}
         initialValues={{
           ...restInitialVlues,
-          check_in: dateVal,
+          date: dayjs(restInitialVlues?.date),
+          check_in: dayjs(dateVal),
         }}
       >
         <FormFields

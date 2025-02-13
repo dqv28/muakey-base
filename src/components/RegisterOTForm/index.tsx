@@ -1,6 +1,7 @@
 'use client'
 
 import { withApp } from '@/hoc'
+import { calculateDayOffTotal } from '@/libs/utils'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { App, Button, Col, DatePicker, Form, Input, Row } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
@@ -27,7 +28,7 @@ const FormFields: React.FC<{
 
         <div className="text-right">
           <div className="text-[14px] text-[#00000073]">Tổng thời gian OT</div>
-          <div className="text-[24px]">{initialValues?.ot} giờ</div>
+          <div className="text-[24px]">{initialValues?.ot} ngày</div>
         </div>
       </div>
 
@@ -172,7 +173,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
     const start = new Date(startTime)
     const end = new Date(endTime)
 
-    const total = (+end - +start) / (1000 * 60 * 60)
+    const total = calculateDayOffTotal(start, end)
 
     setOt(Number(total.toFixed(3)))
   }, [startTime, endTime])
@@ -184,7 +185,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
           ...restInitialValues,
           timestamps: [
             {
-              from: restInitialValues?.date,
+              from: dayjs(restInitialValues?.date),
             },
           ],
         }}
@@ -202,9 +203,10 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
         form={form}
         initialValues={{
           ...restInitialValues,
+          date: dayjs(restInitialValues?.date),
           timestamps: [
             {
-              from: restInitialValues?.date,
+              from: dayjs(restInitialValues?.date),
             },
           ],
         }}

@@ -32,6 +32,8 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const [openNotice, setOpenNotice] = useState(false)
   const router = useRouter()
   const [notifications, setNotifications] = useState<any[]>()
+  const [notificationsWithNotRead, setNotificationsWithNotRead] =
+    useState<any[]>()
 
   const { message, modal } = App.useApp()
 
@@ -77,6 +79,21 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
     }
   }
 
+  const handleSeeNotifications = async () => {
+    if (!(notificationsWithNotRead && notificationsWithNotRead?.length > 0))
+      return
+
+    try {
+      await seenNotificationsAction()
+
+      setNotificationsWithNotRead([])
+      router.refresh()
+      setOpenNotice(true)
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+
   useEffect(() => {
     if (!options?.hasCheckedIn) {
       modal.info({
@@ -101,9 +118,11 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
     setNotifications(res)
   }, [])
 
-  const notificationsWithNotRead = notifications?.filter(
-    (notify: any) => notify?.new === 1,
-  )
+  useEffect(() => {
+    setNotificationsWithNotRead(
+      notifications?.filter((notify: any) => notify?.new === 1),
+    )
+  }, [notifications])
 
   return (
     <div className="w-[60px] text-[#fff]">
@@ -133,16 +152,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
 
       <div
         className="flex size-[60px] cursor-pointer items-center justify-center"
-        onClick={async () => {
-          if (
-            notificationsWithNotRead &&
-            notificationsWithNotRead?.length > 0
-          ) {
-            await seenNotificationsAction()
-            router.refresh()
-          }
-          setOpenNotice(true)
-        }}
+        onClick={handleSeeNotifications}
       >
         <Badge
           size="small"

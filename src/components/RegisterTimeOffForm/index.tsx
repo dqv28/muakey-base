@@ -76,7 +76,7 @@ const FormFields: React.FC<{
 
   useEffect(() => {
     setStartDate(initialValues?.startDate)
-  }, [])
+  }, [initialValues?.startDate])
 
   return (
     <>
@@ -358,7 +358,10 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
           initialValues={{
             type: 'Nghỉ không hưởng lương',
             timestamps: [
-              { isDefault: true, startDate: restInitialValues?.date },
+              {
+                isDefault: true,
+                startDate: dayjs(restInitialValues?.date),
+              },
             ],
           }}
         >
