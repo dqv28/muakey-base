@@ -90,6 +90,23 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
             ]
           }
 
+          if (query?.left && query?.index) {
+            const currentIndex = prev?.findIndex(
+              (s: any) => s?.index === query?.index,
+            )
+
+            return [
+              ...prev.slice(0, currentIndex),
+              {
+                ...formData,
+                workflow_id: params?.id,
+                id,
+                index,
+              },
+              ...prev.slice(currentIndex),
+            ]
+          }
+
           return [
             {
               ...formData,
@@ -148,6 +165,10 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
         {children}
       </div>
       <Modal
+        classNames={{
+          mask: '!z-auto',
+          wrapper: '!z-auto',
+        }}
         title={title || 'THÊM 1 GIAI ĐOẠN MỚI VÀO LUỒNG CÔNG VIỆC'}
         open={open}
         onCancel={() => setOpen(false)}

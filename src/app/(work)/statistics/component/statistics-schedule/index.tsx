@@ -52,15 +52,15 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
     })
 
   return (
-    <div className="relative">
-      <Row wrap={false} className="w-max">
+    <div className="">
+      <Row wrap={false} className="sticky top-0 z-50 w-max">
         <Col className="sticky left-0 z-10 w-[400px] border-r border-t bg-[#fff]">
           <StatisticsColHeader title="Thành viên" />
         </Col>
         {week.map((date) => (
           <Col
             key={date.day}
-            className={clsx('w-[400px] border-r border-t', {
+            className={clsx('w-[400px] border-r border-t bg-[#fff]', {
               'border-t-[#096DD9] text-[#1677ff]':
                 date.date === String(dayjs(today).format('YYYY-MM-DD')),
             })}
@@ -72,7 +72,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
           </Col>
         ))}
       </Row>
-      <div className="no-scroll sticky top-[72px] h-[calc(100vh-244px)] w-full divide-y">
+      <div className="no-scroll h-[calc(100vh-244px)] w-full divide-y">
         {todos &&
           todos?.map((t: any) => (
             <Row key={t?.name} className="w-max">
@@ -80,7 +80,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
                 className="sticky left-0 z-10 w-[400px] border-r bg-[#0000000F]"
                 span={3}
               >
-                <div className="relative h-full w-[296px] bg-[#fff] p-[16px]">
+                <div className="h-full w-[296px] bg-[#fff] p-[16px]">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-[8px]">
                       <Avatar
@@ -111,6 +111,8 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
               </Col>
               {days?.map((day: string) => {
                 const tasksOfDay = t?.tasks?.[day]
+
+                console.log('TASK OF DAY ->', tasksOfDay)
 
                 return (
                   <Col

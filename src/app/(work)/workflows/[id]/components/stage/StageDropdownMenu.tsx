@@ -8,6 +8,7 @@ import React, { useContext } from 'react'
 import toast from 'react-hot-toast'
 import { deleteStageByIdAction, editStageAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
+import StageInstructionsModal from './StageInstructionsModal'
 import StageModalForm from './StageModalForm'
 
 type StageDropdownMenuProps = DropdownProps & {
@@ -106,6 +107,36 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
         })),
     },
     {
+      key: 6,
+      label: (
+        <StageInstructionsModal
+          inititalValues={{
+            description: stage?.description,
+            stage_id: Number(String(stage?.id).split('_').pop()),
+          }}
+          onSubmit={(formData: any) => {
+            setStages((prev: any[]) => {
+              const newStages = [...prev]
+
+              return newStages.map((s: any) => {
+                if (s?.id === stage?.id) {
+                  return {
+                    ...stage,
+                    ...formData,
+                    id: stage?.id,
+                  }
+                }
+
+                return s
+              })
+            })
+          }}
+        >
+          Hướng dẫn hoàn thành các nhiệm vụ trong giai đoạn
+        </StageInstructionsModal>
+      ),
+    },
+    {
       key: 3,
       label: (
         <StageModalForm
@@ -120,6 +151,19 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
     },
     {
       key: 4,
+      label: (
+        <StageModalForm
+          query={{
+            left: 1,
+            index: stage?.index,
+          }}
+        >
+          Thêm 1 giai đoạn bên trái
+        </StageModalForm>
+      ),
+    },
+    {
+      key: 5,
       label: (
         <Popconfirm
           title={
@@ -141,7 +185,7 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
       rootClassName="!z-auto"
       placement="bottomRight"
       trigger={['click']}
-      menu={{ items }}
+      menu={{ items, style: { width: 240 } }}
       {...rest}
     >
       <CaretDownFilled className="text-[12px]" />

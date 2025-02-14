@@ -88,6 +88,8 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   }
 
   const handleSeeNotifications = async () => {
+    setOpenNotice(true)
+
     if (!(notificationsWithNotRead && notificationsWithNotRead?.length > 0))
       return
 
@@ -96,7 +98,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
 
       setNotificationsWithNotRead([])
       router.refresh()
-      setOpenNotice(true)
     } catch (error: any) {
       throw new Error(error)
     }

@@ -147,7 +147,9 @@ const StageColumn: React.FC<StageColumnProps> = memo(
                   color="#fff"
                   title={
                     <div
-                      dangerouslySetInnerHTML={{ __html: stage?.description }}
+                      dangerouslySetInnerHTML={{
+                        __html: stage?.description,
+                      }}
                     />
                   }
                   destroyTooltipOnHide

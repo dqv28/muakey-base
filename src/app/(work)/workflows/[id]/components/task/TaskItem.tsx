@@ -166,141 +166,6 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     const timeStatus = t >= 0 ? 'inprogress' : 'overdue'
     const time = dayjs.duration(Math.abs(t))
 
-    const taskDropdownItems: MenuProps['items'] = [
-      {
-        key: '1',
-        label: (
-          <Link href={`/job/${task?.id}?wid=${params?.id}`}>Xem nhiệm vụ</Link>
-        ),
-      },
-      {
-        key: '2',
-        label: 'Chuyển giai đoạn',
-        children: stages?.map((stage: any, index: number) => ({
-          key: `2-${index + 1}`,
-          label: (
-            <div
-              className={clsx({
-                'text-[#d96c6c]': stage?.index === 0,
-                'text-[#42bb14]': stage?.index === 1,
-              })}
-              key={stage?.id}
-              onClick={() => {
-                const activeStage = stages?.find(
-                  (s: any) => s?.id === `stage_${task?.stage_id}`,
-                )
-                const overStage = stages?.find((s: any) => s?.id === stage?.id)
-
-                setCurrentStage(stage)
-
-                if (overStage?.index === 1) {
-                  setDoneOpen(true)
-                  return
-                }
-
-                if (
-                  reports?.length > 0 &&
-                  task?.account_id &&
-                  activeStage?.index > overStage?.index
-                ) {
-                  setTaskReportOpen(true)
-                  return
-                }
-
-                handleStageClick(stage)
-              }}
-            >
-              {stage?.name}
-            </div>
-          ),
-        })),
-      },
-      ...(String(role).includes('Admin')
-        ? [
-            {
-              key: '3',
-              label: (
-                <TaskModalForm
-                  title="CHỈNH SỬA NHIỆM VỤ"
-                  initialValues={{
-                    ...task,
-                    members,
-                    userId,
-                  }}
-                  action="edit"
-                >
-                  Chỉnh sửa nhiệm vụ
-                </TaskModalForm>
-              ),
-            },
-            {
-              key: '7',
-              label: (
-                <div
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setAssignConfirmOpen(true)
-                  }}
-                >
-                  Giao
-                </div>
-              ),
-            },
-          ]
-        : []),
-      {
-        key: '4',
-        label: (
-          <MarkTaskFailedModalForm
-            options={{
-              failedStageId,
-              task,
-            }}
-          >
-            Đánh dấu thất bại
-          </MarkTaskFailedModalForm>
-        ),
-      },
-      ...(String(role).includes('Admin')
-        ? [
-            {
-              key: '5',
-              label: (
-                <div
-                  onClick={() => {
-                    modal.confirm({
-                      title: 'Xác nhận gỡ người thực thi của nhiệm vụ này?',
-                      open: removeConfirmOpen,
-                      width: 600,
-                      onCancel: () => setRemoveConfirmOpen(false),
-                      onOk: () => handleRemoveExecutor(task?.id),
-                    })
-                  }}
-                >
-                  Gỡ người thực thi
-                </div>
-              ),
-            },
-            {
-              key: '6',
-              label: (
-                <Popconfirm
-                  title={
-                    <div>
-                      Xác nhận muốn xóa nhiệm vụ{' '}
-                      <span className="font-[600]">{task?.name}</span>?
-                    </div>
-                  }
-                  onConfirm={onDelete}
-                >
-                  <span className="text-[#cc1111]">Xóa nhiệm vụ</span>
-                </Popconfirm>
-              ),
-            },
-          ]
-        : []),
-    ]
-
     const handleStageClick = async (stage: any) => {
       const stageId = +String(stage?.id).split('_')[1]
 
@@ -514,6 +379,141 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
       setReports(data)
     }, [])
+
+    const taskDropdownItems: MenuProps['items'] = [
+      {
+        key: '1',
+        label: (
+          <Link href={`/job/${task?.id}?wid=${params?.id}`}>Xem nhiệm vụ</Link>
+        ),
+      },
+      {
+        key: '2',
+        label: 'Chuyển giai đoạn',
+        children: stages?.map((stage: any, index: number) => ({
+          key: `2-${index + 1}`,
+          label: (
+            <div
+              className={clsx({
+                'text-[#d96c6c]': stage?.index === 0,
+                'text-[#42bb14]': stage?.index === 1,
+              })}
+              key={stage?.id}
+              onClick={() => {
+                const activeStage = stages?.find(
+                  (s: any) => s?.id === `stage_${task?.stage_id}`,
+                )
+                const overStage = stages?.find((s: any) => s?.id === stage?.id)
+
+                setCurrentStage(stage)
+
+                if (overStage?.index === 1) {
+                  setDoneOpen(true)
+                  return
+                }
+
+                if (
+                  reports?.length > 0 &&
+                  task?.account_id &&
+                  activeStage?.index > overStage?.index
+                ) {
+                  setTaskReportOpen(true)
+                  return
+                }
+
+                handleStageClick(stage)
+              }}
+            >
+              {stage?.name}
+            </div>
+          ),
+        })),
+      },
+      ...(String(role).includes('Admin')
+        ? [
+            {
+              key: '3',
+              label: (
+                <TaskModalForm
+                  title="CHỈNH SỬA NHIỆM VỤ"
+                  initialValues={{
+                    ...task,
+                    members,
+                    userId,
+                  }}
+                  action="edit"
+                >
+                  Chỉnh sửa nhiệm vụ
+                </TaskModalForm>
+              ),
+            },
+            {
+              key: '7',
+              label: (
+                <div
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setAssignConfirmOpen(true)
+                  }}
+                >
+                  Giao
+                </div>
+              ),
+            },
+          ]
+        : []),
+      {
+        key: '4',
+        label: (
+          <MarkTaskFailedModalForm
+            options={{
+              failedStageId,
+              task,
+            }}
+          >
+            Đánh dấu thất bại
+          </MarkTaskFailedModalForm>
+        ),
+      },
+      ...(String(role).includes('Admin')
+        ? [
+            {
+              key: '5',
+              label: (
+                <div
+                  onClick={() => {
+                    modal.confirm({
+                      title: 'Xác nhận gỡ người thực thi của nhiệm vụ này?',
+                      open: removeConfirmOpen,
+                      width: 600,
+                      onCancel: () => setRemoveConfirmOpen(false),
+                      onOk: () => handleRemoveExecutor(task?.id),
+                    })
+                  }}
+                >
+                  Gỡ người thực thi
+                </div>
+              ),
+            },
+            {
+              key: '6',
+              label: (
+                <Popconfirm
+                  title={
+                    <div>
+                      Xác nhận muốn xóa nhiệm vụ{' '}
+                      <span className="font-[600]">{task?.name}</span>?
+                    </div>
+                  }
+                  onConfirm={onDelete}
+                >
+                  <span className="text-[#cc1111]">Xóa nhiệm vụ</span>
+                </Popconfirm>
+              ),
+            },
+          ]
+        : []),
+    ]
 
     return (
       <div
