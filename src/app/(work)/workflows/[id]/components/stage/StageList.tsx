@@ -45,6 +45,8 @@ export type StageListProps = {
 export const StageContext = createContext<any>({})
 
 const StageList: React.FC<StageListProps> = ({ members, options }) => {
+  console.log('STAGE LIST')
+
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [currentStage, setCurrentStage] = useState<any>()
   const [activeItem, setActiveItem] = useState<any>()
@@ -309,24 +311,42 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
   useAsyncEffect(async () => {
     if (!dragEvent) return
 
-    const { active } = dragEvent
+    const { active, over } = dragEvent
+
+    if (!over) return
 
     const {
       data: { current: activeData },
     } = active
 
-    if (!activeData) return
+    const {
+      data: { current: overData },
+    } = over
+
+    if (!activeData || !overData) return
+
+    const activeIndex = stages?.find(
+      (stage: any) => stage.id === `stage_${activeData.stage_id}`,
+    )?.index
+
+    const overIndex = stages?.find(
+      (stage: any) =>
+        stage.id ===
+        (overData.stage_id ? `stage_${overData.stage_id}` : overData.id),
+    )?.index
 
     if (dragInsideColumn) return
 
-    const data = await getReportFieldsByWorkflowIdAction({
-      workflow_id: Number(params?.id),
-      stage_id: activeData.stage_id,
-      task_id: activeData.id,
-    })
+    if (activeIndex && overIndex && activeIndex > overIndex) {
+      const data = await getReportFieldsByWorkflowIdAction({
+        workflow_id: Number(params?.id),
+        stage_id: activeData.stage_id,
+        task_id: activeData.id,
+      })
 
-    setReports([...data])
-    activeRef.current = activeId
+      setReports([...data])
+      activeRef.current = activeId
+    }
   }, [dragEvent, params?.id, activeId, dragInsideColumn])
 
   const dropAnimation: DragOverlayProps['dropAnimation'] = {

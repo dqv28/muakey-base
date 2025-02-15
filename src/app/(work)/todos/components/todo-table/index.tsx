@@ -3,6 +3,7 @@
 import { convertTime } from '@/libs/utils'
 import { CheckOutlined, EyeOutlined } from '@ant-design/icons'
 import { Table, TableProps, Tag } from 'antd'
+import { createStyles } from 'antd-style'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import Link from 'next/link'
@@ -12,6 +13,18 @@ import TodoCompletedButton from './todo-completed-button'
 type TodoTableProps = TableProps & {}
 
 dayjs.extend(duration)
+
+const useStyle = createStyles(({ css }) => ({
+  customTable: css`
+    .ant-table-thead {
+      tr {
+        th {
+          background-color: #fff;
+        }
+      }
+    }
+  `,
+}))
 
 const columns: TableProps['columns'] = [
   {
@@ -93,8 +106,11 @@ const columns: TableProps['columns'] = [
 ]
 
 const TodoTable: React.FC<TodoTableProps> = (props) => {
+  const { styles } = useStyle()
+
   return (
     <Table
+      className={styles.customTable}
       columns={columns}
       rowClassName={(todo) => (todo?.status ? 'bg-[#deffdb]' : '')}
       {...props}

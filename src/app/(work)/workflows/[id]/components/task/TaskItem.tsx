@@ -2,7 +2,6 @@
 
 import MarkTaskFailedModalForm from '@/components/MarkTaskModalForm'
 import { withApp } from '@/hoc'
-import { useAsyncEffect } from '@/libs/hook'
 import {
   abbreviateNumber,
   convertRelativeTime,
@@ -370,7 +369,19 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       }
     }
 
-    useAsyncEffect(async () => {
+    const handleMoveStageClick = async (stage: any) => {
+      const activeStage = stages?.find(
+        (s: any) => s?.id === `stage_${task?.stage_id}`,
+      )
+      const overStage = stages?.find((s: any) => s?.id === stage?.id)
+
+      setCurrentStage(stage)
+
+      if (overStage?.index === 1) {
+        setDoneOpen(true)
+        return
+      }
+
       const data = await getReportFieldsByWorkflowIdAction({
         workflow_id: Number(params?.id),
         stage_id: task?.stage_id,
@@ -378,7 +389,18 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       })
 
       setReports(data)
-    }, [])
+
+      if (
+        data?.length > 0 &&
+        task?.account_id &&
+        activeStage?.index > overStage?.index
+      ) {
+        setTaskReportOpen(true)
+        return
+      }
+
+      handleStageClick(stage)
+    }
 
     const taskDropdownItems: MenuProps['items'] = [
       {
@@ -399,30 +421,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                 'text-[#42bb14]': stage?.index === 1,
               })}
               key={stage?.id}
-              onClick={() => {
-                const activeStage = stages?.find(
-                  (s: any) => s?.id === `stage_${task?.stage_id}`,
-                )
-                const overStage = stages?.find((s: any) => s?.id === stage?.id)
-
-                setCurrentStage(stage)
-
-                if (overStage?.index === 1) {
-                  setDoneOpen(true)
-                  return
-                }
-
-                if (
-                  reports?.length > 0 &&
-                  task?.account_id &&
-                  activeStage?.index > overStage?.index
-                ) {
-                  setTaskReportOpen(true)
-                  return
-                }
-
-                handleStageClick(stage)
-              }}
+              onClick={() => handleMoveStageClick(stage)}
             >
               {stage?.name}
             </div>

@@ -145,11 +145,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({ content, onChange }) => {
   return (
     <div>
       <TiptapToolbars editor={editor} />
-      <EditorContent
-        editor={editor}
-        placeholder="Mô tả"
-        onPaste={(e) => console.log(e)}
-      />
+      <EditorContent editor={editor} placeholder="Mô tả" />
     </div>
   )
 }
