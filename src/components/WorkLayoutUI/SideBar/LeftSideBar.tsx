@@ -122,6 +122,8 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   }, [])
 
   useAsyncEffect(async () => {
+    if (!openNotice) return
+
     const res = await getNotificationsAction()
 
     setNotifications(res)

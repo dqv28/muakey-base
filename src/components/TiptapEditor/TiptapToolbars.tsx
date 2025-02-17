@@ -14,6 +14,7 @@ import { BubbleMenu, type Editor } from '@tiptap/react'
 import { Button, Divider, Dropdown } from 'antd'
 import clsx from 'clsx'
 import React from 'react'
+import TiptapEmbedYoutube from './TiptapEmbedYoutube'
 import TiptapLinkAction from './TiptapLinkAction'
 import TiptapLinkForm from './TiptapLinkForm'
 import TiptapUploadImage from './TiptapUploadImage'
@@ -231,10 +232,14 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
       component: <TiptapUploadImage editor={editor} />,
       active: editor.isActive('image'),
     },
+    {
+      component: <TiptapEmbedYoutube editor={editor} />,
+      active: editor.isActive('youtube'),
+    },
   ]
 
   return (
-    <div className="flex items-center gap-[2px] rounded-t-[8px] bg-[#f0f0f3] p-[4px]">
+    <div className="flex flex-wrap items-center gap-[2px] rounded-t-[8px] bg-[#f0f0f3] p-[4px]">
       {options.map((option, index) => (
         <div key={`tiptap-${index}`}>
           {!option?.icon && !option?.children ? (
@@ -257,7 +262,7 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
               editor={editor}
               shouldShow={({ editor }) => editor.isActive('link')}
             >
-              <div className="rounded border bg-[#fff] p-[8px] shadow-lg">
+              <div className="w-max rounded border bg-[#fff] p-[8px] shadow-lg">
                 <TiptapLinkAction
                   editor={editor}
                   href={editor.getAttributes('link').href || ''}

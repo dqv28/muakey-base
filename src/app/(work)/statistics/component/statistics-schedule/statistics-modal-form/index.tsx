@@ -51,10 +51,11 @@ const StatisticsModalForm: React.FC<StatisticsModalFormProps> = ({
   return (
     <>
       <Button
-        type="text"
-        icon={<PlusOutlined className="cursor-pointer text-[#0958D9]" />}
+        className="z-10 !size-[48px] shadow-[0_6px_16px_0_rgba(0,0,0,0.08),0_3px_6px_-4px_rgba(0,0,0,0.12),0_9px_28px_8px_rgba(0,0,0,0.05)]"
+        shape="circle"
+        type="primary"
+        icon={<PlusOutlined />}
         onClick={() => setOpen(true)}
-        size="small"
       />
       <Modal
         open={open}

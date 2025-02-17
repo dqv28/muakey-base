@@ -4,14 +4,14 @@ import React from 'react'
 
 type StatisticsCardProps = {
   title?: React.ReactNode
-  timestamps?: number
+  extra?: React.ReactNode
   status?: 'in_progress' | 'completed' | 'failed'
 }
 
 const StatisticsCard: React.FC<StatisticsCardProps> = ({
   title,
   status,
-  timestamps,
+  extra,
 }) => {
   return (
     <div
@@ -24,9 +24,9 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
       )}
     >
       <Tooltip title={title}>
-        <div className="line-clamp-2 font-[500]">{title}</div>
+        <div className="line-clamp-2 flex-1 font-[500]">{title}</div>
       </Tooltip>
-      <span className="text-[#0958D9]">{Number(timestamps || 0)}h</span>
+      {extra}
     </div>
   )
 }

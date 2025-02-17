@@ -52,6 +52,8 @@ const page: React.FC<any> = async (props: {
   params: any
   searchParams: any
 }) => {
+  console.log('RENDER JOB PAGE')
+
   const params = await props.params
   const searchParams = await props.searchParams
 

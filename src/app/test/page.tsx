@@ -1,12 +1,10 @@
 import React from 'react'
-import Group from './Group'
 import TestForm from './TestForm'
 
 const Page: React.FC = () => {
   return (
     <div className="p-[12px]">
-      <h1 className="text-2xl font-bold">Add Github Action</h1>
-      <Group />
+      <h1 className="text-2xl font-bold">Test Page</h1>
       <TestForm />
     </div>
   )

@@ -65,7 +65,7 @@ const TiptapLinkAction: React.FC<TiptapLinkActionProps> = ({
       ) : (
         <div className="flex items-center gap-[4px]">
           <Link
-            className="text-[#1677ff] underline"
+            className="inline-block text-[#1677ff] underline"
             href={href || ''}
             target="_blank"
           >

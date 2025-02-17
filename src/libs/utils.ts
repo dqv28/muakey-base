@@ -212,6 +212,10 @@ export const daysOfWeek = [
 ]
 
 export const getWeek = (date: Date, numberOfWeek?: number) => {
+  if (String(dayjs(date).format('ddd')) === 'CN') {
+    date.setDate(date.getDate() - 1)
+  }
+
   const startOfWeek = new Date(date)
 
   startOfWeek.setDate(

@@ -19,8 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" className={leagueSpartan.variable} suppressHydrationWarning>
-      {process.env.GOOGLE_TAG_MANAGER_ID && (
-        <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER_ID} />
+      {process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID && (
+        <GoogleTagManager
+          gtmId={process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID}
+        />
       )}
       <body className={`${leagueSpartan.variable}`}>
         <ProgressProviders>{children}</ProgressProviders>

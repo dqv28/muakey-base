@@ -15,3 +15,8 @@ export const addWorkSchedule = async () =>
   requestWithAuthorized('day-off', {
     method: 'POST',
   }).then((data) => data)
+
+export const getWorkScheduleAsMembers = async (query?: any) =>
+  requestWithAuthorized('schedule-accounts?' + new URLSearchParams(query))
+    .then((data) => data)
+    .catch(() => [])

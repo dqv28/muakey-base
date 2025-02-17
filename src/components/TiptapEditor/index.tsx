@@ -9,18 +9,28 @@ import OrderedList from '@tiptap/extension-ordered-list'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import Underline from '@tiptap/extension-underline'
-import { Content, EditorContent, useEditor } from '@tiptap/react'
+import Youtube from '@tiptap/extension-youtube'
+import {
+  Content,
+  EditorContent,
+  EditorContentProps,
+  useEditor,
+} from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import React from 'react'
 import ImageResize from 'tiptap-extension-resize-image'
 import TiptapToolbars from './TiptapToolbars'
 
-type TiptapEditorProps = {
+type TiptapEditorProps = Omit<EditorContentProps, 'editor' | 'ref'> & {
   content?: Content
   onChange?: (content: string) => void
 }
 
-const TiptapEditor: React.FC<TiptapEditorProps> = ({ content, onChange }) => {
+const TiptapEditor: React.FC<TiptapEditorProps> = ({
+  content,
+  onChange,
+  ...rest
+}) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure(),
@@ -127,6 +137,11 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({ content, onChange }) => {
         },
         allowBase64: true,
       }),
+      Youtube.configure({
+        HTMLAttributes: {
+          class: 'w-full h-auto',
+        },
+      }),
     ],
     content,
     onUpdate: ({ editor }) => {
@@ -145,7 +160,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({ content, onChange }) => {
   return (
     <div>
       <TiptapToolbars editor={editor} />
-      <EditorContent editor={editor} placeholder="Mô tả" />
+      <EditorContent editor={editor} {...rest} />
     </div>
   )
 }

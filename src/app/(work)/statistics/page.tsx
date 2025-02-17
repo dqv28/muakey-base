@@ -1,23 +1,33 @@
-import { getAccounts } from '@/libs/data'
+import { getWorkflows } from '@/libs/data'
+import { getWorkScheduleAsMembers } from '@/libs/schedule'
 import { getSchedule } from '@/libs/statistics'
 import { getWeek } from '@/libs/utils'
+import dayjs from 'dayjs'
 import React from 'react'
 import PageHeader from './component/PageHeader'
 import StatisticsFiltered from './component/statistics-filtered'
 import StatisticsSchedule from './component/statistics-schedule'
+import StatisticsModalForm from './component/statistics-schedule/statistics-modal-form'
 
 const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
   const searchParams = await prop.searchParams
 
   const today = new Date()
   const week = getWeek(searchParams?.dw ? new Date(searchParams?.dw) : today)
-
-  const [schedule, accounts] = await Promise.all([
+  const currentDate = String(
+    dayjs(searchParams?.dw ? new Date(searchParams?.dw) : today).format(
+      'YYYY-MM-DD',
+    ),
+  )
+  const [schedule, scheduleAsMembers, workflows] = await Promise.all([
     getSchedule({
       start: week[0].date,
       end: week[6].date,
     }),
-    getAccounts(),
+    getWorkScheduleAsMembers({
+      date: currentDate,
+    }),
+    getWorkflows(),
   ])
 
   return (
@@ -25,15 +35,26 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
       <PageHeader />
 
       <div className="p-[16px]">
-        <div className="h-[calc(100vh-101px)] overflow-hidden rounded-[16px] border bg-[#fff]">
-          <StatisticsFiltered members={accounts} />
+        <div className="relative h-[calc(100vh-101px)] overflow-hidden rounded-[16px] border bg-[#fff]">
+          <StatisticsFiltered members={scheduleAsMembers} />
           <div className="overflow-x-auto">
             <StatisticsSchedule
               options={{
                 account_id: searchParams?.mid || '',
                 dw: searchParams?.dw || '',
+                as: searchParams?.as || '',
                 schedule,
-                accounts,
+                accounts: scheduleAsMembers,
+                workflows,
+                currentDate,
+              }}
+            />
+          </div>
+
+          <div className="absolute bottom-[16px] left-[16px]">
+            <StatisticsModalForm
+              options={{
+                accounts: scheduleAsMembers,
               }}
             />
           </div>

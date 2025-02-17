@@ -2,7 +2,7 @@
 
 import { InitializedMDXEditor } from '@/components'
 import { withApp } from '@/hoc'
-import { App, Breadcrumb, Button, Form, Modal, ModalProps } from 'antd'
+import { App, Breadcrumb, Button, Empty, Form, Modal, ModalProps } from 'antd'
 import React, { useState } from 'react'
 import { Converter } from 'showdown'
 import { editStageAction } from '../../../action'
@@ -121,11 +121,16 @@ const StageInstructionsModal: React.FC<StageInstructionsModalProps> = ({
                 </div>
               </Form.Item>
             </Form>
-          ) : (
+          ) : inititalValues?.description ? (
             <div
               dangerouslySetInnerHTML={{
                 __html: converter.makeHtml(inititalValues?.description || ''),
               }}
+            />
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="Chưa có hướng dẫn"
             />
           )}
         </div>

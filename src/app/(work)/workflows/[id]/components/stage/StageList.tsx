@@ -45,8 +45,6 @@ export type StageListProps = {
 export const StageContext = createContext<any>({})
 
 const StageList: React.FC<StageListProps> = ({ members, options }) => {
-  console.log('STAGE LIST')
-
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [currentStage, setCurrentStage] = useState<any>()
   const [activeItem, setActiveItem] = useState<any>()
