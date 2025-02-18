@@ -1,10 +1,9 @@
 'use client'
 
-import InitializedMDXEditor from '@/components/InitializedMDXEditor/InitializedMDXEditor'
-import { MDXEditorMethods } from '@mdxeditor/editor'
+import { TiptapEditor } from '@/components'
 import { Button, Form } from 'antd'
 import clsx from 'clsx'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import { Converter } from 'showdown'
 import { editTaskAction } from '../../../actions'
@@ -21,7 +20,6 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
   const [value, setValue] = useState(defaultValue || '')
   const [isEdit, setIsEdit] = useState(false)
   const [loading, setLoading] = useState(false)
-  const editorRef = useRef<MDXEditorMethods>(null)
   const converter = new Converter()
 
   const handleSubmit = async (formData: any) => {
@@ -48,10 +46,6 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     }
   }
 
-  useEffect(() => {
-    editorRef.current?.setMarkdown(value || '')
-  }, [isEdit, value])
-
   return (
     <div className="mt-[24px]">
       <div className="flex items-center justify-between gap-[24px]">
@@ -64,14 +58,17 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
         </span>
       </div>
       {isEdit ? (
-        <Form className="mt-[16px]" onFinish={handleSubmit}>
-          <Form.Item rootClassName="min-h-[220px]" name="description">
-            <InitializedMDXEditor
-              contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
-              editorRef={editorRef}
-              markdown=""
-              placeholder="Mô tả nhiệm vụ"
-            />
+        <Form
+          className="mt-[16px]"
+          onFinish={handleSubmit}
+          initialValues={{ description: value || '' }}
+        >
+          <Form.Item
+            rootClassName="min-h-[220px]"
+            name="description"
+            valuePropName="content"
+          >
+            <TiptapEditor placeholder="Mô tả nhiệm vụ" />
           </Form.Item>
           <Form.Item>
             <Button htmlType="submit" type="primary" loading={loading}>

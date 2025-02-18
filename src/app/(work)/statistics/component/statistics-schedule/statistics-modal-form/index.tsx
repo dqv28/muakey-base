@@ -1,14 +1,13 @@
 'use client'
 
-import { InitializedMDXEditor } from '@/components'
+import { TiptapEditor } from '@/components'
 import { withApp } from '@/hoc'
 import { PlusOutlined } from '@ant-design/icons'
-import { MDXEditorMethods } from '@mdxeditor/editor'
 import { App, Button, DatePicker, Form, Input, Modal, Select } from 'antd'
 import vn from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { addTodoAction } from '../action'
 
 type StatisticsModalFormProps = {
@@ -20,7 +19,6 @@ const StatisticsModalForm: React.FC<StatisticsModalFormProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const editorRef = useRef<MDXEditorMethods>(null)
   const { message } = App.useApp()
   const router = useRouter()
 
@@ -97,13 +95,9 @@ const StatisticsModalForm: React.FC<StatisticsModalFormProps> = ({
           rootClassName="min-h-[240px]"
           name="description"
           label="Mô tả"
+          valuePropName="content"
         >
-          <InitializedMDXEditor
-            contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
-            ref={editorRef}
-            markdown=""
-            placeholder="Mô tả nhiệm vụ"
-          />
+          <TiptapEditor placeholder="Mô tả" />
         </Form.Item>
         <Form.Item
           name="account_id"

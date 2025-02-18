@@ -24,7 +24,7 @@ const TestForm: React.FC<TestFormProps> = (props) => {
           onFinish={handleSubmit}
           layout="vertical"
         >
-          <Form.Item name="content">
+          <Form.Item name="content" valuePropName="content">
             <TiptapEditor />
           </Form.Item>
 

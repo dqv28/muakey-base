@@ -1,6 +1,6 @@
 'use client'
 
-import { InitializedMDXEditor } from '@/components'
+import { TiptapEditor } from '@/components'
 import { withApp } from '@/hoc'
 import { App, Breadcrumb, Button, Empty, Form, Modal, ModalProps } from 'antd'
 import React, { useState } from 'react'
@@ -105,12 +105,8 @@ const StageInstructionsModal: React.FC<StageInstructionsModalProps> = ({
               }}
               onFinish={handleSubmit}
             >
-              <Form.Item name="description">
-                <InitializedMDXEditor
-                  contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
-                  placeholder="Mô tả giai đoạn"
-                  markdown={restInitialValues?.description || ''}
-                />
+              <Form.Item name="description" valuePropName="content">
+                <TiptapEditor placeholder="Mô tả giai đoạn" />
               </Form.Item>
               <Form.Item>
                 <div className="flex items-center justify-end gap-[12px]">

@@ -1,9 +1,7 @@
 'use client'
 
-import { InitializedMDXEditor } from '@/components'
+import { TiptapEditor } from '@/components'
 import { withApp } from '@/hoc'
-import { useAsyncEffect } from '@/libs/hook'
-import { MDXEditorMethods } from '@mdxeditor/editor'
 import {
   App,
   DatePicker,
@@ -16,11 +14,8 @@ import {
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash'
 import { useParams } from 'next/navigation'
 import React, { useContext, useRef, useState } from 'react'
-import toast from 'react-hot-toast'
-import { Converter } from 'showdown'
 import { addTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
 import { addTagToTaskAction } from './action'
@@ -50,17 +45,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const params = useParams()
   const { setStages, isAuth } = useContext(StageContext)
   const { message } = App.useApp()
-  const editorRef = useRef<MDXEditorMethods>(null)
   const formRef = useRef<FormInstance>(null)
 
-  const converter = new Converter({
-    tables: true,
-    strikethrough: true,
-    tasklists: true,
-    simpleLineBreaks: true,
-  })
-  const { account_id, members, sticker, description, ...restInitialValues } =
-    initialValues
+  const { account_id, members, sticker, ...restInitialValues } = initialValues
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -77,7 +64,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       if (action === 'create') {
         var { errors, id } = await addTaskAction({
           ...restFormData,
-          description: converter.makeHtml(restFormData.description),
+          description: restFormData.description,
           account_id: member?.id || null,
           workflow_id: params?.id || null,
           tag_id: tag || [],
@@ -90,7 +77,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           })
 
           setStages((prevStages: any[]) => {
-            const newStages = cloneDeep(prevStages)
+            const newStages = [...prevStages]
 
             return newStages?.map((stage: any) => {
               if (
@@ -102,7 +89,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                   tasks: [
                     {
                       ...restFormData,
-                      description: converter.makeHtml(restFormData.description),
+                      description: restFormData.description,
                       account_id: member?.id || null,
                       workflow_id: params?.id || null,
                       stage_id: Number(String(stage?.id).split('_').pop()),
@@ -134,7 +121,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
         var { errors } = await editTaskAction(initialValues?.id, {
           ...restFormData,
-          description: converter.makeHtml(restFormData.description),
+          description: restFormData.description,
           account_id: member?.id || null,
           tag_id: tag || [],
           expired: restFormData?.expired
@@ -144,7 +131,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
         if (!errors) {
           setStages((prevStages: any[]) => {
-            const newStages = cloneDeep(prevStages)
+            const newStages = [...prevStages]
 
             return newStages?.map((stage: any) => {
               if (stage?.id === `stage_${initialValues?.stage_id}`) {
@@ -154,9 +141,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                     if (task?.id === initialValues?.id) {
                       return {
                         ...restFormData,
-                        description: converter.makeHtml(
-                          restFormData.description,
-                        ),
+                        description: restFormData.description,
                         account_id: member?.id || null,
                         stage_id: stage?.id,
                         id: initialValues?.id,
@@ -186,7 +171,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
       if (errors) {
         if (errors.task) {
-          toast.error(errors.task)
+          message.error(errors.task)
           setLoading(false)
           return
         }
@@ -203,7 +188,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         return
       }
 
-      toast.success(
+      message.success(
         action === 'create' ? 'Thêm thành công.' : 'Cập nhật thành công.',
       )
       setOpen(false)
@@ -215,12 +200,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   }
 
   const mem: any = members?.find((m: any) => m?.id === account_id)
-
-  useAsyncEffect(async () => {
-    if (!open) return
-
-    editorRef.current?.setMarkdown(description || '')
-  }, [open])
 
   return (
     <>
@@ -302,13 +281,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           rootClassName="min-h-[240px]"
           name="description"
           label="Mô tả"
+          valuePropName="content"
         >
-          <InitializedMDXEditor
-            contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
-            ref={editorRef}
-            markdown={converter.makeMarkdown(description || '')}
-            placeholder="Mô tả nhiệm vụ"
-          />
+          <TiptapEditor placeholder="Mô tả nhiệm vụ" />
         </Form.Item>
         <Form.Item name="member" label="Giao cho">
           <Select

@@ -1,5 +1,6 @@
 'use client'
 
+import { uploadImageAction } from '@/app/admin/accounts/account-actions/action'
 import BulletList from '@tiptap/extension-bullet-list'
 import CodeBlock from '@tiptap/extension-code-block'
 import FontFamily from '@tiptap/extension-font-family'
@@ -17,6 +18,7 @@ import {
   useEditor,
 } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { message } from 'antd'
 import React from 'react'
 import ImageResize from 'tiptap-extension-resize-image'
 import TiptapToolbars from './TiptapToolbars'
@@ -133,9 +135,8 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       }),
       Image.configure({
         HTMLAttributes: {
-          class: 'h-auto w-full',
+          class: 'size-auto',
         },
-        allowBase64: true,
       }),
       Youtube.configure({
         HTMLAttributes: {
@@ -155,6 +156,36 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       },
     },
     immediatelyRender: false,
+    enableContentCheck: true,
+    parseOptions: {
+      preserveWhitespace: true,
+    },
+    onPaste: async (e) => {
+      e.preventDefault()
+
+      const file = e.clipboardData?.files[0]
+
+      if (!file) return
+
+      const formData = new FormData()
+
+      formData.append('image', file || '')
+
+      try {
+        const { urlImage: url, error } = await uploadImageAction(formData)
+
+        if (error) {
+          message.error(error)
+          return
+        }
+
+        if (url) {
+          editor?.chain().focus().setImage({ src: url }).run()
+        }
+      } catch (error) {
+        throw new Error(String(error))
+      }
+    },
   })
 
   return (

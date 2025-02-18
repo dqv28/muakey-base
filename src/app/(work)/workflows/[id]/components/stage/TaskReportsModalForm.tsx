@@ -1,4 +1,4 @@
-import { InitializedMDXEditor } from '@/components'
+import { TiptapEditor } from '@/components'
 import { MDXEditorMethods } from '@mdxeditor/editor'
 import { Form, FormInstance, Input, Modal, ModalProps, Select } from 'antd'
 import React, { useEffect, useRef } from 'react'
@@ -49,14 +49,7 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
         return <Select placeholder={`Báo cáo ${fieldName}`} options={options} />
 
       case 'paragraph':
-        return (
-          <InitializedMDXEditor
-            contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
-            ref={editorRef}
-            markdown={converter.makeMarkdown(initFormData[fieldId] || '')}
-            placeholder={`Báo cáo ${fieldName}`}
-          />
-        )
+        return <TiptapEditor placeholder={`Báo cáo ${fieldName}`} />
 
       default:
         return <Input placeholder={`Báo cáo ${fieldName}`} />
@@ -101,6 +94,7 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
                   message: `Nhập ${field?.name}`,
                 },
               ]}
+              valuePropName={field?.type === 'paragraph' ? 'content' : ''}
             >
               {renderFieldInput(field?.type, field?.name, field?.id, options)}
             </Form.Item>

@@ -14,7 +14,6 @@ import { BubbleMenu, type Editor } from '@tiptap/react'
 import { Button, Divider, Dropdown } from 'antd'
 import clsx from 'clsx'
 import React from 'react'
-import TiptapEmbedYoutube from './TiptapEmbedYoutube'
 import TiptapLinkAction from './TiptapLinkAction'
 import TiptapLinkForm from './TiptapLinkForm'
 import TiptapUploadImage from './TiptapUploadImage'
@@ -232,10 +231,10 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
       component: <TiptapUploadImage editor={editor} />,
       active: editor.isActive('image'),
     },
-    {
-      component: <TiptapEmbedYoutube editor={editor} />,
-      active: editor.isActive('youtube'),
-    },
+    // {
+    //   component: <TiptapEmbedYoutube editor={editor} />,
+    //   active: editor.isActive('youtube'),
+    // },
   ]
 
   return (
