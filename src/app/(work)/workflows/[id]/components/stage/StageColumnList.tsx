@@ -5,7 +5,7 @@ import {
 } from '@dnd-kit/sortable'
 import { Col } from 'antd'
 import clsx from 'clsx'
-import React from 'react'
+import React, { memo } from 'react'
 import StageColumn from './StageColumn'
 import StageModalForm from './StageModalForm'
 
@@ -18,6 +18,8 @@ const StageColumnList: React.FC<StageColumnListProps> = ({
   items,
   options,
 }) => {
+  console.log('STAGE COLUMN LIST')
+
   const { user, activeItem } = options
 
   const sortItems =
@@ -59,4 +61,4 @@ const StageColumnList: React.FC<StageColumnListProps> = ({
   )
 }
 
-export default StageColumnList
+export default memo(StageColumnList)

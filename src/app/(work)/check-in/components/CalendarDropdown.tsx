@@ -121,34 +121,26 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
           {String(dayjs(current).format('DD/MM'))}
         </div>
         {day?.go_to_work !== undefined ? (
-          day?.go_to_work === 0 ? (
-            <span className="flex size-full items-center justify-center font-[500]">
-              OFF
-            </span>
-          ) : (
-            <div className="flex h-full flex-col justify-between">
-              <div className="flex-1 space-y-[4px] py-[4px]">
-                <div className="w-full rounded-full bg-[#1890FF] py-[3px] text-center text-[#fff]">
-                  {info?.plan_time?.length <= 0
-                    ? '09:00 - 18:30'
-                    : `${info?.plan_time?.[0]} - ${info?.plan_time?.[1]}`}
-                </div>
-                {info?.checkInValue?.[0] &&
-                  info?.checkInValue?.map((c: any, index: number) => (
-                    <div
-                      className={clsx(
-                        'flex w-full items-center justify-center rounded-full px-[4px] py-[3px] text-[#fff]',
-                        {
-                          'bg-[#237804]': !!c?.[1],
-                          'bg-[#F5222D]': !c?.[1],
-                        },
-                      )}
-                      key={index}
-                    >
-                      {c?.[0]} - {c?.[1] || '--:--'}
-                    </div>
-                  ))}
-
+          <div className="flex h-full flex-col justify-between">
+            {day?.go_to_work === 0 ? (
+              <div
+                className={clsx(
+                  'flex flex-1 flex-col items-center gap-[4px] py-[4px]',
+                  {
+                    'justify-center': !info?.ot || !info?.ot[0],
+                  },
+                )}
+              >
+                <span
+                  className={clsx(
+                    'flex items-center justify-center font-[500]',
+                    {
+                      'size-full': !info?.ot,
+                    },
+                  )}
+                >
+                  OFF
+                </span>
                 {info?.ot &&
                   info?.ot?.map(
                     (o: any, index: number) =>
@@ -161,33 +153,71 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                         </div>
                       ),
                   )}
-
-                {info?.timeOff &&
-                  info?.timeOff?.map(
-                    (o: any, index: number) =>
-                      o && (
-                        <div
-                          className="w-full rounded-full bg-[#FFA940] py-[3px] text-center text-[#fff]"
-                          key={index}
-                        >
-                          {o[0]} - {o[1] ? o[1] : '--:--'}
-                        </div>
-                      ),
-                  )}
               </div>
-              {info?.checkInValue?.[0] && (
-                <div className="flex items-center justify-between gap-[8px] px-[4px]">
-                  <div className="flex items-center gap-[4px]">
-                    <ClockCircleOutlined /> <span>{total}h</span>
+            ) : (
+              <>
+                <div className="flex-1 space-y-[4px] py-[4px]">
+                  <div className="w-full rounded-full bg-[#1890FF] py-[3px] text-center text-[#fff]">
+                    {info?.plan_time?.length <= 0
+                      ? '09:00 - 18:30'
+                      : `${info?.plan_time?.[0]} - ${info?.plan_time?.[1]}`}
                   </div>
-                  <div>
-                    {total > 0 ? totalTime : total}
-                    /1 NC
-                  </div>
+                  {info?.checkInValue?.[0] &&
+                    info?.checkInValue?.map((c: any, index: number) => (
+                      <div
+                        className={clsx(
+                          'flex w-full items-center justify-center rounded-full px-[4px] py-[3px] text-[#fff]',
+                          {
+                            'bg-[#237804]': !!c?.[1],
+                            'bg-[#F5222D]': !c?.[1],
+                          },
+                        )}
+                        key={index}
+                      >
+                        {c?.[0]} - {c?.[1] || '--:--'}
+                      </div>
+                    ))}
+
+                  {info?.ot &&
+                    info?.ot?.map(
+                      (o: any, index: number) =>
+                        o && (
+                          <div
+                            className="w-full rounded-full bg-[#722ED1] py-[3px] text-center text-[#fff]"
+                            key={index}
+                          >
+                            {o[0]} - {o[1] ? o[1] : '--:--'}
+                          </div>
+                        ),
+                    )}
+
+                  {info?.timeOff &&
+                    info?.timeOff?.map(
+                      (o: any, index: number) =>
+                        o && (
+                          <div
+                            className="w-full rounded-full bg-[#FFA940] py-[3px] text-center text-[#fff]"
+                            key={index}
+                          >
+                            {o[0]} - {o[1] ? o[1] : '--:--'}
+                          </div>
+                        ),
+                    )}
                 </div>
-              )}
-            </div>
-          )
+                {info?.checkInValue?.[0] && (
+                  <div className="flex items-center justify-between gap-[8px] px-[4px]">
+                    <div className="flex items-center gap-[4px]">
+                      <ClockCircleOutlined /> <span>{total}h</span>
+                    </div>
+                    <div>
+                      {total > 0 ? totalTime : total}
+                      /1 NC
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         ) : (
           ''
         )}

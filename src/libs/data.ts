@@ -159,8 +159,8 @@ export const moveStage = async (id: number, stageId: number, data?: any) => {
   }).then((data) => data)
 }
 
-export const getTaskById = async (id: number) =>
-  requestWithAuthorized(`tasks/${id}`)
+export const getTaskById = async (id: number, options?: RequestOptions) =>
+  requestWithAuthorized(`tasks/${id}`, { ...options })
     .then((data) => data)
     .catch(() => null)
 

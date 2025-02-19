@@ -9,7 +9,7 @@ import { cloneDeep } from 'lodash'
 import React, { useCallback, useContext } from 'react'
 import toast from 'react-hot-toast'
 import { deleteTaskAction } from '../../../action'
-import { StageContext } from '../stage/StageList'
+import { StageContext } from '../stage'
 import { StageContext as WorkflowContext } from '../WorkflowPageLayout'
 import TaskItem from './TaskItem'
 

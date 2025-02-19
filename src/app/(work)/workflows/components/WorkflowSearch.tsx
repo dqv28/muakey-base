@@ -26,11 +26,10 @@ const WorkflowSearch: React.FC<WorkflowSearchProps> = ({ className }) => {
   useEffect(() => {
     if (searchValue) {
       query.set('q', String(searchValue))
+      router.push(`?${String(query)}`)
     } else {
       query.delete('q')
     }
-
-    router.push(`?${String(query)}`)
   }, [searchValue, query, router])
 
   return (

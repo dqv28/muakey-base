@@ -1,7 +1,7 @@
 import React from 'react'
 import CustomFields from './custom-fields'
 import ReportFields from './report-fields'
-import StageList from './stage/StageList'
+import StageList from './stage'
 import WorkflowDocs from './workflow-docs'
 import WorkflowStatistics from './workflow-statistics'
 

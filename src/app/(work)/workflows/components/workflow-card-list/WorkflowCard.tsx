@@ -49,7 +49,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
 
   return (
     <div className="relative h-auto w-full overflow-hidden">
-      <Link href={`/workflows/${workflow.id}`}>
+      <Link href={`/workflows/${workflow.id}`} prefetch={false}>
         <Card className="size-full">
           <div className="text-[16px] leading-[20px]">
             <span className="line-clamp-1 font-[400]">{workflow?.name}</span>

@@ -50,6 +50,7 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
             <div className="flex items-center gap-[8px] text-[24px] font-[600] leading-[28px]">
               <span>{workflow?.name}</span>
               <Avatar.Group
+                className="h-[32px] overflow-hidden"
                 max={{
                   count: 3,
                   style: {
@@ -60,17 +61,13 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
               >
                 {workflow?.members &&
                   workflow?.members?.map((mem: any) => (
-                    <Tooltip
-                      className="cursor-pointer"
-                      key={mem?.id}
-                      title={mem?.full_name}
-                    >
+                    <Tooltip key={mem?.id} title={mem?.full_name}>
                       <Avatar
+                        className="size-[32px] cursor-pointer overflow-hidden"
                         key={mem?.username}
                         src={mem?.avatar}
                         style={{
                           backgroundColor: randomColor(mem?.full_name || ''),
-                          cursor: 'pointer',
                         }}
                       >
                         {String(mem?.full_name).charAt(0).toLocaleUpperCase()}

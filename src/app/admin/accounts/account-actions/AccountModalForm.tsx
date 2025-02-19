@@ -3,7 +3,7 @@
 import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { randomColor } from '@/libs/utils'
-import { EditOutlined } from '@ant-design/icons'
+import { EditOutlined, UserOutlined } from '@ant-design/icons'
 import {
   App,
   Avatar,
@@ -162,11 +162,16 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
             <div className="flex cursor-pointer items-end">
               <Avatar
                 src={avatar?.preview || avatar?.url}
-                style={{
-                  backgroundColor: randomColor(
-                    String(initialValues?.full_name),
-                  ),
-                }}
+                icon={action === 'create' ? <UserOutlined /> : undefined}
+                style={
+                  action !== 'create'
+                    ? {
+                        backgroundColor: randomColor(
+                          String(initialValues?.full_name),
+                        ),
+                      }
+                    : undefined
+                }
                 size={60}
               >
                 {String(initialValues?.full_name).charAt(0).toUpperCase()}

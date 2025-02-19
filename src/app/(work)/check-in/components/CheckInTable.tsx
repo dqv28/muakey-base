@@ -333,7 +333,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                     fullCellRender={(current) => {
                       const timestamp = dayjs(current).format('D/M')
 
-                      const info = checkInData?.[String(timestamp)] || []
+                      const info = checkInData?.[String(timestamp)]
 
                       const date = String(dayjs(current).format('YYYY-MM-DD'))
 

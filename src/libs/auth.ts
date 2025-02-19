@@ -1,5 +1,5 @@
-import { request } from "./request";
-import { getSession } from "./session";
+import { request } from './request'
+import { getSession } from './session'
 
 export const isLoggedIn = async () => {
   const session = await getSession()
@@ -16,7 +16,7 @@ export const changeLoggedInDate = async () => {
   await session.save()
 }
 
-export const loginWidthCredentials = async (data: any) => 
+export const loginWidthCredentials = async (data: any) =>
   request('login', {
     method: 'POST',
     data,
@@ -24,6 +24,8 @@ export const loginWidthCredentials = async (data: any) =>
     const { token: accessToken, errors } = data
 
     const session = await getSession()
+
+    // const accessToken = token.split('|')[1]
 
     session.accessToken = accessToken
     session.isLoggedIn = !!accessToken
@@ -40,4 +42,3 @@ export const logout = async () => {
 
   await session.save()
 }
-  

@@ -18,8 +18,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
-            cd /var/www/muakey-base
+            cd /var/www/workbase-frontend
             git pull --rebase
             npm install
             npm run build
-            pm2 reload muakey-base
+            pm2 reload muakey-server

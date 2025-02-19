@@ -37,8 +37,8 @@ import {
   editTaskAction,
   moveStageAction,
 } from '../../../action'
+import { StageContext } from '../stage'
 import { getReportFieldsByWorkflowIdAction } from '../stage/action'
-import { StageContext } from '../stage/StageList'
 import TaskDoneModalForm from '../stage/TaskDoneModalForm'
 import TaskReportsModalForm from '../stage/TaskReportsModalForm'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
@@ -547,6 +547,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             )}
             key={task?.id}
             href={`/job/${task?.id}?wid=${params?.id}`}
+            prefetch={false}
           >
             <div
               className="line-clamp-2 flex items-center justify-between pr-[24px] text-[14px] font-[600] leading-[18px]"

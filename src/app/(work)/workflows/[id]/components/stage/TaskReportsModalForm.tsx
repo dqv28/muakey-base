@@ -1,8 +1,7 @@
 import { TiptapEditor } from '@/components'
 import { MDXEditorMethods } from '@mdxeditor/editor'
 import { Form, FormInstance, Input, Modal, ModalProps, Select } from 'antd'
-import React, { useEffect, useRef } from 'react'
-import { Converter } from 'showdown'
+import React, { memo, useEffect, useRef } from 'react'
 
 type TaskReportsModalFormProps = Pick<
   ModalProps,
@@ -20,7 +19,6 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
 }) => {
   const formRef = useRef<FormInstance>(null)
   const editorRef = useRef<MDXEditorMethods>(null)
-  const converter = new Converter()
 
   const reportsAsParagraph = reports?.filter(
     (field: any) => field?.type === 'paragraph',
@@ -104,4 +102,4 @@ const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
   )
 }
 
-export default TaskReportsModalForm
+export default memo(TaskReportsModalForm)

@@ -1,12 +1,12 @@
 'use client'
 
 import { Form, Input, Modal, ModalProps } from 'antd'
-import React from 'react'
+import React, { memo } from 'react'
 import toast from 'react-hot-toast'
 import { editTaskAction } from '../../../action'
 
 type TaskDoneModalFormProps = ModalProps & {
-  taskId: number
+  taskId?: number
   onSubmit?: () => void
   initialValues?: any
 }
@@ -19,7 +19,7 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
 }) => {
   const handleSubmit = async (formData: any) => {
     try {
-      const { errors } = await editTaskAction(taskId, formData)
+      const { errors } = await editTaskAction(taskId || 0, formData)
 
       if (errors) {
         toast.error(errors)
@@ -68,4 +68,4 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
   )
 }
 
-export default TaskDoneModalForm
+export default memo(TaskDoneModalForm)
