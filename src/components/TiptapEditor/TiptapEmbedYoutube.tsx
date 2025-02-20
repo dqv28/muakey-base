@@ -7,7 +7,7 @@ type TiptapEmbedYoutubeProps = {
   editor: Editor
 }
 
-const TiptapEmbedYoutube: React.FC<TiptapEmbedYoutubeProps> = ({ editor }) => {
+const TiptapEmbedYoutube: React.FC<TiptapEmbedYoutubeProps> = () => {
   return (
     <>
       <Button type="text" icon={<YoutubeOutlined />} />

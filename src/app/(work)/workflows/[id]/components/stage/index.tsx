@@ -19,6 +19,7 @@ import {
 } from '@dnd-kit/core'
 import { App, Row } from 'antd'
 import { cloneDeep } from 'lodash'
+import dynamic from 'next/dynamic'
 import { useParams } from 'next/navigation'
 import React, {
   createContext,
@@ -26,17 +27,28 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
-import { Converter } from 'showdown'
 import { addTaskReportAction, moveStageAction } from '../../../action'
 import TaskItem from '../task/TaskItem'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import { getReportFieldsByWorkflowIdAction } from './action'
-import StageColumnList from './StageColumnList'
-import TaskDoneModalForm from './TaskDoneModalForm'
-import TaskReportsModalForm from './TaskReportsModalForm'
+import StageColumnListSkeleton from './StageColumnListSkeleton'
+
+const TaskReportsModalForm = dynamic(() => import('./TaskReportsModalForm'), {
+  ssr: false,
+})
+
+const TaskDoneModalForm = dynamic(() => import('./TaskDoneModalForm'), {
+  ssr: false,
+})
+
+const StageColumnList = dynamic(() => import('./StageColumnList'), {
+  ssr: false,
+  loading: () => <StageColumnListSkeleton />,
+})
 
 export type StageListProps = {
   members?: any
@@ -54,7 +66,6 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
   const [reports, setReports] = useState<any[]>([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
   const activeRef = useRef<any>(null)
-  const converter = new Converter()
 
   const { message } = App.useApp()
   const { user, stages } = options
@@ -62,13 +73,17 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
   const { setStages } = useContext(WorkflowStageContext)
   const params = useParams()
 
-  const failedStageId = Number(
-    stages?.length > 0
-      ? stages
-          ?.find((stage: any) => stage.index === 0)
-          ?.['id'].split('_')
-          .pop()
-      : 0,
+  const failedStageId = useMemo(
+    () =>
+      Number(
+        stages?.length > 0
+          ? stages
+              ?.find((stage: any) => stage.index === 0)
+              ?.['id'].split('_')
+              .pop()
+          : 0,
+      ),
+    [stages],
   )
 
   const mouseSensor = useSensor(MouseSensor, {
@@ -261,10 +276,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
     if (!activeData) return
 
     const formData = Object.fromEntries(
-      Object.keys(values).map((key: string) => [
-        key,
-        converter.makeHtml(values[key]),
-      ]),
+      Object.keys(values).map((key: string) => [key, values[key] || '']),
     )
 
     try {
@@ -353,15 +365,28 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
     activeRef.current = activeId
   }, [activeId])
 
-  const dropAnimation: DragOverlayProps['dropAnimation'] = {
-    sideEffects: defaultDropAnimationSideEffects({
-      styles: {
-        active: {
-          opacity: '0.5',
+  const dropAnimation: DragOverlayProps['dropAnimation'] = useMemo(
+    () => ({
+      sideEffects: defaultDropAnimationSideEffects({
+        styles: {
+          active: {
+            opacity: '0.5',
+          },
         },
-      },
+      }),
     }),
-  }
+    [],
+  )
+
+  const contextValue = useMemo(
+    () => ({
+      activeId,
+      setActiveId,
+      members,
+      failedStageId,
+    }),
+    [activeId, members, failedStageId],
+  )
 
   return (
     <DndContext
@@ -369,9 +394,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <StageContext.Provider
-        value={{ activeId, setActiveId, members, failedStageId }}
-      >
+      <StageContext.Provider value={contextValue}>
         <Row className="h-full w-max" wrap={false}>
           <StageColumnList
             items={stages}

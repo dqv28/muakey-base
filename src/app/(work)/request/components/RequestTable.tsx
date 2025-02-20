@@ -156,9 +156,6 @@ const RequestTable: React.FC<RequestTableProps> = memo(
                 )}
               </>
             )}
-            {/* <RequestDetailModal request={record} userRole={user?.role}>
-              <EyeOutlined className="cursor-pointer text-[#1677ff]" />
-            </RequestDetailModal> */}
             <Link href={`/request-history/${record?.id}`}>
               <EyeOutlined className="cursor-pointer text-[#1677ff]" />
             </Link>
@@ -168,14 +165,16 @@ const RequestTable: React.FC<RequestTableProps> = memo(
     ]
 
     useEffect(() => {
+      const { id, role } = user
+
       setRequests(() =>
         dataSource
           ?.filter((data: any) =>
-            user?.role !== 'Admin lv2' ? data?.account?.id === user?.id : true,
+            role !== 'Admin lv2' ? data?.account?.id === id : true,
           )
           ?.filter((data: any) => data.status.includes(query?.status)),
       )
-    }, [query?.status, dataSource])
+    }, [query?.status, dataSource, user])
 
     return <Table columns={columns} dataSource={requests} {...rest} />
   },

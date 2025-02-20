@@ -20,15 +20,7 @@ export type ColProps = React.ComponentPropsWithoutRef<'div'> & {
 }
 
 const InternalCol: React.ForwardRefRenderFunction<HTMLDivElement, ColProps> = (
-  {
-    span,
-    order,
-    offset,
-    className: customClassName,
-    style: customStyle,
-    children,
-    ...props
-  },
+  { span, order, offset, className: customClassName, children, ...props },
   ref,
 ) => {
   const gutter = useContext(RowContext)

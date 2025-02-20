@@ -5,9 +5,13 @@ import { getWeek } from '@/libs/utils'
 import { Col, Row } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import dynamic from 'next/dynamic'
 import React from 'react'
 import StatisticsColHeader from './statistics-col-header'
-import StatisticsRows from './statistics-rows'
+
+const StatisticsRows = dynamic(() => import('./statistics-rows'), {
+  ssr: false,
+})
 
 type StatisticsScheduleProps = {
   options?: any
@@ -31,11 +35,13 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
     ?.map((acc: any) => {
       const days = week?.map((w: any) => {
-        const tasks = schedule[w?.date] || []
+        const tasksOfDay = schedule?.filter(
+          (s: any) => String(dayjs(s?.start).format('YYYY-MM-DD')) === w?.date,
+        )
 
         return [
           w?.date,
-          [...tasks?.filter((task: any) => task?.account_id === acc?.id)],
+          [...tasksOfDay?.filter((task: any) => task?.account_id === acc?.id)],
         ]
       })
 
@@ -52,7 +58,9 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
 
   const todosWithWorkflows = workflows?.map((wf: any) => {
     const days = week?.map((w: any) => {
-      const tasks = schedule[w?.date] || []
+      const tasks = schedule?.filter(
+        (s: any) => String(dayjs(s?.start).format('YYYY-MM-DD')) === w?.date,
+      )
 
       return [
         w?.date,

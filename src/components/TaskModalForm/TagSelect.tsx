@@ -41,7 +41,6 @@ const TagSelect: React.FC<TagSelectProps> = ({
   params,
   tags: initTags,
   onTagsChange,
-  open: initOpen,
   onClick,
   ...rest
 }) => {

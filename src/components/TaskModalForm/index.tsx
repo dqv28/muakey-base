@@ -32,7 +32,6 @@ type TaskModalFormProps = ModalProps & {
 const TaskModalForm: React.FC<TaskModalFormProps> = ({
   children,
   initialValues,
-  query,
   title,
   action = 'create',
   ...rest

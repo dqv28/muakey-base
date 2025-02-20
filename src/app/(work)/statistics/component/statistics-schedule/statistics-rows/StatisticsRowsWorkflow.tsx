@@ -13,7 +13,7 @@ const StatisticsRowsWorkflow: React.FC<StatisticsRowsWorkflowProps> = ({
   todos,
   options,
 }) => {
-  const { accounts, days, currentDate } = options
+  const { days, currentDate } = options
 
   return (
     <>

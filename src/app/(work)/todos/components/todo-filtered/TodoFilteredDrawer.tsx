@@ -14,14 +14,9 @@ import {
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import React, { useState } from 'react'
 
-type TodoFilteredDrawerProps = DrawerProps & {
-  onFilter?: (values: any) => void
-}
+type TodoFilteredDrawerProps = DrawerProps & {}
 
-const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({
-  onFilter,
-  ...rest
-}) => {
+const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({ ...rest }) => {
   const [open, setOpen] = useState(false)
 
   const workflowOptions: SelectProps['options'] = [

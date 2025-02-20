@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useState } from 'react'
-import { deleteProposeAction, updateProposeAction } from '../action'
+import { deleteProposeAction } from '../action'
 import CheckInHistoryFiltered from './CheckInHistoryFiltered'
 
 type CheckInHistoryTableProps = {
@@ -63,29 +63,6 @@ const CheckInHistoryTable: React.FC<CheckInHistoryTableProps> = ({
   const searchParams = useSearchParams()
 
   const statusParams = searchParams.get('status')
-
-  const handleCanceled = async (propose: any) => {
-    setLoading(true)
-
-    try {
-      const { message: msg, errors } = await updateProposeAction(propose?.id, {
-        ...propose,
-        status: 'canceled',
-      })
-
-      if (errors) {
-        message.error(msg)
-        setLoading(false)
-        return
-      }
-
-      message.success('Đã hủy yêu cầu')
-      setLoading(false)
-    } catch (error) {
-      setLoading(false)
-      throw new Error(String(error))
-    }
-  }
 
   const handleDelete = async (id: number) => {
     setLoading(true)

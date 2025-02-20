@@ -41,7 +41,6 @@ const TagSelect: React.FC<TagSelectProps> = ({
   params,
   tags: initTags,
   onTagsChange,
-  open: initOpen,
   onClick,
   ...rest
 }) => {
@@ -259,7 +258,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
 
   useEffect(() => {
     onTagsChange?.(tags)
-  }, [tags])
+  }, [tags, onTagsChange])
 
   return (
     <Select

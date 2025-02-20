@@ -148,7 +148,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
     onUpdate: ({ editor }) => {
       onChange?.(editor.getHTML())
     },
-
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class:

@@ -267,27 +267,27 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
   const checkInStatisticsItems = [
     {
       title: 'Công chuẩn',
-      value: attendances?.standard_work,
+      value: Number(attendances?.standard_work),
     },
     {
       title: 'Công làm việc thực tế',
-      value: attendances?.number_of_working_days,
+      value: Number(attendances?.number_of_working_days),
     },
     {
       title: 'Nghỉ có hưởng lương',
-      value: attendances?.day_off_with_pay,
+      value: Number(attendances?.day_off_with_pay),
     },
     {
       title: 'Nghỉ không hưởng lương',
-      value: attendances?.day_off_without_pay,
+      value: Number(attendances?.day_off_without_pay),
     },
     {
       title: 'Tổng OT',
-      value: attendances?.total_over_time,
+      value: Number(attendances?.total_over_time),
     },
     {
       title: 'Tổng công hưởng lương',
-      value: attendances?.day_off_account,
+      value: Number(attendances?.day_off_account),
     },
   ]
 

@@ -99,7 +99,7 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
         ? workScheduleFiltered?.map((s: any) => dayjs(s?.day_of_week))
         : undefined,
     )
-  }, [mode, open])
+  }, [mode, open, workScheduleFiltered])
 
   return (
     <>

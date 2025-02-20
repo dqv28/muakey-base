@@ -66,11 +66,9 @@ const FormFields: React.FC<{
     if (startDay !== endDay) return {}
 
     const hour = Number(dayjs(startTime).format('HH'))
-    const minute = Number(dayjs(startTime).format('mm'))
 
     return {
       disabledHours: () => range(0, hour),
-      // disabledMinutes: () => range(0, minute),
     }
   }
 

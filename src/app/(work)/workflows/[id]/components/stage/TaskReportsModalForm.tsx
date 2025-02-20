@@ -13,7 +13,6 @@ type TaskReportsModalFormProps = Pick<
 
 const TaskReportsModalForm: React.FC<TaskReportsModalFormProps> = ({
   onSubmit,
-  onOk,
   reports,
   ...rest
 }) => {

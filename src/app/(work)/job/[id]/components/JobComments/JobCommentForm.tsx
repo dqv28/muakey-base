@@ -16,13 +16,9 @@ type JobCommentFormProps = {
 const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
   const [loading, setLoading] = useState(false)
   const [disabled, setDisabled] = useState(true)
-  const [content, setContent] = useState('')
-
   const router = useRouter()
   const formRef = useRef<FormInstance>(null)
   const converter = new Converter()
-
-  const [listOpen, setListOpen] = useState(false)
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)

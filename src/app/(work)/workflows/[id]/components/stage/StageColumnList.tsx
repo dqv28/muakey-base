@@ -4,7 +4,6 @@ import {
   SortableContext,
 } from '@dnd-kit/sortable'
 import { Col } from 'antd'
-import clsx from 'clsx'
 import React, { memo } from 'react'
 import StageColumn from './StageColumn'
 import StageModalForm from './StageModalForm'
@@ -18,8 +17,6 @@ const StageColumnList: React.FC<StageColumnListProps> = ({
   items,
   options,
 }) => {
-  console.log('STAGE COLUMN LIST')
-
   const { user, activeItem } = options
 
   const sortItems =
@@ -32,11 +29,7 @@ const StageColumnList: React.FC<StageColumnListProps> = ({
   return (
     <SortableContext items={sortItems} strategy={horizontalListSortingStrategy}>
       {filteredStages && filteredStages?.length <= 0 && (
-        <Col
-          className={clsx(
-            'group flex w-[272px] cursor-pointer items-center justify-center overflow-hidden border-r border-[#eee] bg-[#fff] transition-all hover:bg-[#f9f9f9]',
-          )}
-        >
+        <Col className="group flex w-[272px] cursor-pointer items-center justify-center overflow-hidden border-r border-[#eee] bg-[#fff] transition-all hover:bg-[#f9f9f9]">
           <StageModalForm>
             <div className="flex flex-col items-center gap-[8px] text-[#aaa] transition-all group-hover:text-[#267cde]">
               <PlusOutlined className="text-[40px] font-[500]" />

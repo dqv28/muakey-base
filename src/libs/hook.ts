@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import type { DependencyList } from 'react'
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const useAsyncEffect = (
   effect: () => Promise<void>,

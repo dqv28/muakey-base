@@ -36,7 +36,7 @@ const TiptapLinkAction: React.FC<TiptapLinkActionProps> = ({
     if (formRef.current) {
       formRef.current.setFieldValue('url', href)
     }
-  }, [isEdit])
+  }, [isEdit, href])
 
   return (
     <>

@@ -24,7 +24,6 @@ const TaskList: React.FC<TaskListProps> = ({
   stageId,
   userId,
   options,
-  dataSource,
   tasks,
   ...rest
 }) => {

@@ -23,7 +23,6 @@ export const StageContext = createContext<any>([])
 const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
   workflow,
   type,
-  children,
   options,
 }) => {
   const [stages, setStages] = useState<any>(
@@ -35,9 +34,9 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
       : [],
   )
 
-  const isAuth = workflow?.members
-    ?.map((mem: any) => mem?.id)
-    .includes(options?.user.id)
+  const isAuth =
+    workflow?.members?.map((mem: any) => mem?.id).includes(options?.user.id) ||
+    options?.user?.role === 'Admin lv2'
 
   const { date, tag, user } = options
 

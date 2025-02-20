@@ -79,7 +79,11 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
           manager: (formData?.manager || []).join(' '),
         })
       } else {
-        var { id: workflowId, errors } = await addWorkflowAction({
+        var {
+          message: msg,
+          id: workflowId,
+          errors,
+        } = await addWorkflowAction({
           ...formData,
           manager: (formData?.manager || []).join(' '),
         })
@@ -87,6 +91,10 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
 
       if (errors) {
         const nameList: string[] = Object.keys(errors)
+
+        if (msg) {
+          message.error(msg)
+        }
 
         formRef.current?.setFields(
           nameList.map((name) => ({
@@ -96,7 +104,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
         )
 
         setLoading(false)
-        return false
+        return
       }
 
       if (action === 'create') router.push(`/workflows/${workflowId}`)
@@ -129,7 +137,6 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
         }
         open={open}
         onCancel={() => setOpen(false)}
-        onOk={() => formRef.current?.submit()}
         width={760}
         okText={action === 'create' ? 'Tạo mới' : 'Cập nhật'}
         cancelText="Bỏ qua"

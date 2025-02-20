@@ -13,9 +13,7 @@ import dayjs from 'dayjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
-type StatisticsFilteredProps = {
-  members?: any[]
-}
+type StatisticsFilteredProps = {}
 
 const addDate = (date: Date, days: number) => {
   let d = new Date(date)
@@ -24,7 +22,7 @@ const addDate = (date: Date, days: number) => {
   return String(dayjs(d).format('YYYY-MM-DD'))
 }
 
-const StatisticsFiltered: React.FC<StatisticsFilteredProps> = ({ members }) => {
+const StatisticsFiltered: React.FC<StatisticsFilteredProps> = () => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const query = new URLSearchParams(searchParams)

@@ -7,7 +7,7 @@ import AccountModalForm from './AccountModalForm'
 
 type AccountActionsProps = {}
 
-const AccountActions: React.FC<AccountActionsProps> = (props) => {
+const AccountActions: React.FC<AccountActionsProps> = () => {
   return (
     <div className="flex items-center justify-between rounded-[16px] bg-[#fff] p-[24px]">
       <div className="flex w-[460px] items-center justify-between gap-[24px] rounded-[8px] bg-[#f0f3f4] px-[16px] py-[8px]">

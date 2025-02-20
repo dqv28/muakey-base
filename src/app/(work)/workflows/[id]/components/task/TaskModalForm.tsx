@@ -31,7 +31,6 @@ type TaskModalFormProps = ModalProps & {
 const TaskModalForm: React.FC<TaskModalFormProps> = ({
   children,
   initialValues,
-  query,
   title,
   action = 'create',
   ...rest
@@ -47,7 +46,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const { message } = App.useApp()
   const formRef = useRef<FormInstance>(null)
 
-  const { account_id, members, sticker, ...restInitialValues } = initialValues
+  const { account_id, members, ...restInitialValues } = initialValues
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
