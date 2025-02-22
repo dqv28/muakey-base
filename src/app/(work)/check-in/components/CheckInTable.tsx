@@ -144,7 +144,10 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               <span>{value?.fullName}</span>
             </div>
 
-            <div>TC: {Number(value?.workDay)}</div>
+            <div>
+              <div>TC: {Number(value?.workDay)}</div>
+              <div>OT: {Number(value?.ot)}h</div>
+            </div>
           </div>
         )
       },
@@ -236,10 +239,12 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
             checkInValue,
             timeOff,
             ot,
-            plan_time: checkIn[0]
+            hoursPerDay: checkIn?.[0]?.hours || 0,
+            dayWorking: checkIn?.[0]?.workday || 0,
+            plan_time: checkIn?.[0]
               ? [
-                  dayjs(checkIn[0]?.checkin).format('HH:mm'),
-                  dayjs(checkIn[0]?.check_out_regulation).format('HH:mm'),
+                  dayjs(checkIn?.[0]?.checkin).format('HH:mm'),
+                  dayjs(checkIn?.[0]?.check_out_regulation).format('HH:mm'),
                 ]
               : [],
           },
@@ -251,6 +256,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           fullName: m?.full_name,
           avatar: m?.avatar,
           workDay: m?.workday,
+          ot: m?.hours_over_time,
         },
         ...Object.fromEntries(fields),
       }

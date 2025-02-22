@@ -5,7 +5,7 @@ import React from 'react'
 type StatisticsCardProps = {
   title?: React.ReactNode
   extra?: React.ReactNode
-  status?: 'in_progress' | 'completed' | 'failed'
+  status?: 'in_progress' | 'completed' | 'overdue' | 'completed_late'
 }
 
 const StatisticsCard: React.FC<StatisticsCardProps> = ({
@@ -19,7 +19,8 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
         'flex items-start justify-between gap-[16px] rounded-[4px] border p-[12px] text-[13px] leading-[17px]',
         status === 'in_progress' || {
           'border-[#389E0D] bg-[#F6FFED]': status === 'completed',
-          'border-[#CF1322] bg-[#FFF1F0]': status === 'failed',
+          'border-[#CF1322] bg-[#FFF1F0]': status === 'overdue',
+          'border-[#A29BFE] bg-[#DCCEF7]': status === 'completed_late',
         },
       )}
     >

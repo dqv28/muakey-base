@@ -6,13 +6,14 @@ import {
   abbreviateNumber,
   convertRelativeTime,
   convertTime,
+  randomColor,
 } from '@/libs/utils'
-import { Avatar } from '@/ui'
 import { EllipsisOutlined, ExclamationCircleFilled } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
   App,
+  Avatar,
   Button,
   Dropdown,
   Input,
@@ -295,6 +296,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                             new Date().getHours() + stage.expired_after_hours,
                           )
                         : null,
+                      started_at: new Date(),
                     }
                   }
 
@@ -579,8 +581,16 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                 {user ? (
                   <div className="flex min-h-[28px] items-center justify-between gap-[8px]">
                     <div className="flex items-center gap-[4px]">
-                      <Avatar src={user?.avatar} shape="circle" size={20}>
-                        {user?.full_name}
+                      <Avatar
+                        src={user?.avatar}
+                        style={{
+                          backgroundColor: randomColor(user?.full_name),
+                        }}
+                        shape="circle"
+                        size="small"
+                        alt={user?.full_name}
+                      >
+                        {String(user?.full_name)?.charAt(0).toUpperCase()}
                       </Avatar>
                       {user?.full_name}
                     </div>

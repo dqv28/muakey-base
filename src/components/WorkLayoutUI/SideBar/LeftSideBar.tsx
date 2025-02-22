@@ -107,11 +107,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
     if (!options?.hasCheckedIn) {
       modal.info({
         title: `Điểm danh`,
-        content: (
-          <div>
-            <p>Điểm danh please!</p>
-          </div>
-        ),
+        content: <p>Điểm danh please!</p>,
         okText: 'Điểm danh',
         okButtonProps: {
           loading,
@@ -127,7 +123,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
     const res = await getNotificationsAction()
 
     setNotifications(res)
-  }, [])
+  }, [openNotice])
 
   useEffect(() => {
     setNotificationsWithNotRead(
@@ -145,9 +141,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
                 {String(user?.full_name).charAt(0).toLocaleUpperCase()}
               </Avatar>
               <div>
-                <div>
-                  {user?.full_name} · {user?.username}
-                </div>
+                {user?.full_name} · {user?.username}
               </div>
             </div>
           </div>

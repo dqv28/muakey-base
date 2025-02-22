@@ -1,5 +1,6 @@
 'use client'
 
+import { useAsyncEffect } from '@/libs/hook'
 import { CloseOutlined } from '@ant-design/icons'
 import {
   Button,
@@ -12,25 +13,59 @@ import {
   SelectProps,
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { getAccountsRequest, getWorkflowsRequest } from './action'
 
-type TodoFilteredDrawerProps = DrawerProps & {}
+type TodoFilteredDrawerProps = DrawerProps & {
+  onFilter?: (values: any) => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
 
-const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({ ...rest }) => {
-  const [open, setOpen] = useState(false)
+const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({
+  onFilter,
+  open: externalOpen,
+  onOpenChange,
+  ...rest
+}) => {
+  const [open, setOpen] = useState(externalOpen || false)
+  const [loading, setLoading] = useState(false)
+  const [workflows, setWorkflows] = useState<any[]>([])
+  const [accounts, setAccounts] = useState<any[]>([])
+  const [form] = Form.useForm()
+
+  useAsyncEffect(async () => {
+    onOpenChange?.(open)
+
+    if (!open) return
+
+    const wf = await getWorkflowsRequest()
+    const acc = await getAccountsRequest()
+
+    setWorkflows(wf)
+    setAccounts(acc)
+  }, [open])
+
+  useEffect(() => {
+    setOpen(externalOpen || false)
+  }, [externalOpen])
 
   const workflowOptions: SelectProps['options'] = [
     {
       label: 'Tất cả quy trình',
       value: 'all',
     },
+    ...workflows.map((wf) => ({
+      label: wf.name,
+      value: wf.id,
+    })),
   ]
 
   const userOptions: SelectProps['options'] = [
-    {
-      label: 'Tất cả quy trình',
-      value: 'all',
-    },
+    ...accounts.map((acc) => ({
+      label: acc.full_name,
+      value: acc.id,
+    })),
   ]
 
   const typeOptions: SelectProps['options'] = [
@@ -52,6 +87,16 @@ const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({ ...rest }) => {
     },
   ]
 
+  const handleSubmit = (values: any) => {
+    setLoading(true)
+    onFilter?.(values)
+    setLoading(false)
+  }
+
+  const handleReset = () => {
+    form.resetFields()
+  }
+
   return (
     <>
       <Button onClick={() => setOpen(true)}>Bộ lọc</Button>
@@ -68,9 +113,10 @@ const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({ ...rest }) => {
           <Form
             layout="vertical"
             initialValues={{
-              type: 'created_at',
-              workflow_name: 'all',
+              sort: 'created_at',
             }}
+            onFinish={handleSubmit}
+            form={form}
           >
             {dom}
           </Form>
@@ -87,42 +133,50 @@ const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({ ...rest }) => {
         }
         {...rest}
       >
-        <Form.Item className="!mb-[16px]" label="Sắp xếp theo" name="type">
+        <Form.Item className="!mb-[16px]" label="Sắp xếp theo" name="sort">
           <Select options={typeOptions} />
         </Form.Item>
-        <Form.Item
-          className="!mb-[16px]"
-          label="Quy trình"
-          name="workflow_name"
-        >
-          <Select options={workflowOptions} />
+        <Form.Item className="!mb-[16px]" label="Quy trình" name="workflow_id">
+          <Select
+            options={workflowOptions}
+            mode="multiple"
+            placeholder="Chọn quy trình"
+          />
         </Form.Item>
-        <Form.Item className="!mb-[16px]" label="Người tạo" name="user">
-          <Select options={userOptions} placeholder="Chọn người tạo" />
+        <Form.Item className="!mb-[16px]" label="Người tạo" name="created_by">
+          <Select
+            options={userOptions}
+            placeholder="Chọn người tạo"
+            allowClear
+          />
         </Form.Item>
         <Divider />
         <Form.Item
           className="!mb-[16px]"
           label="Hoàn thành từ ngày"
-          name="from"
+          name="start_completed_at"
         >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
-        <Form.Item className="!mb-[16px]" label="Hoàn thành đến ngày" name="to">
+        <Form.Item
+          className="!mb-[16px]"
+          label="Hoàn thành đến ngày"
+          name="end_completed_at"
+        >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
         <Divider />
         <Form.Item
           className="!mb-[16px]"
           label="Thời hạn từ ngày"
-          name="expired_from"
+          name="start_expired"
         >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
         <Form.Item
           className="!mb-[16px]"
           label="Thời hạn đến ngày"
-          name="expired_to"
+          name="end_expired"
         >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
@@ -130,22 +184,22 @@ const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({ ...rest }) => {
         <Form.Item
           className="!mb-[16px]"
           label="Tạo từ ngày"
-          name="created_from"
+          name="start_created_at"
         >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
         <Form.Item
           className="!mb-[16px]"
           label="Tạo đến ngày"
-          name="created_to"
+          name="end_created_at"
         >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
 
         <Form.Item className="!mb-[16px]">
           <div className="flex justify-end gap-[8px]">
-            <Button>Reset</Button>
-            <Button type="primary" htmlType="submit">
+            <Button onClick={handleReset}>Reset</Button>
+            <Button type="primary" htmlType="submit" loading={loading}>
               Lọc
             </Button>
           </div>

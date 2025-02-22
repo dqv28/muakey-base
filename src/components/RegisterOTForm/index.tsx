@@ -19,6 +19,7 @@ const FormFields: React.FC<{
   onStartChange?: (time: any) => void
   onEndChange?: (time: any) => void
 }> = ({ initialValues, onStartChange, onEndChange }) => {
+  console.log(initialValues)
   return (
     <>
       <div className="flex items-start justify-between gap-[24px]">

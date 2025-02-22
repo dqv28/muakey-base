@@ -4,7 +4,6 @@ import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import { calculateCheckInTime } from '../ultils'
 
 type CalendarDropdownProps = {
   currentDate?: any
@@ -79,14 +78,6 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
     router.push(`?${urlSearchParams.toString()}`)
   }
 
-  const total = info?.checkInValue?.reduce(
-    (initValue: number, current: [string, string]) => {
-      return initValue + +(current?.[1] ? calculateCheckInTime(current) : 0)
-    },
-    0,
-  )
-
-  const totalTime = Number((total / 7.5).toFixed(3))
   const currentDay = dayjs(current).format('ddd')
 
   return (
@@ -207,10 +198,10 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                 {info?.checkInValue?.[0] && (
                   <div className="flex items-center justify-between gap-[8px] px-[4px]">
                     <div className="flex items-center gap-[4px]">
-                      <ClockCircleOutlined /> <span>{total}h</span>
+                      <ClockCircleOutlined /> <span>{info?.hoursPerDay}h</span>
                     </div>
                     <div>
-                      {total > 0 ? totalTime : total}
+                      {info?.dayWorking}
                       /1 NC
                     </div>
                   </div>

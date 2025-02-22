@@ -42,3 +42,7 @@ export const logout = async () => {
 
   await session.save()
 }
+
+export const getIp = async () => {
+  return await request('test')
+}

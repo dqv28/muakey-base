@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'work.1997.pro.vn',
         port: '',
-        pathname: '/storage/**',
+        pathname: '/**',
       },
     ],
   },

@@ -9,6 +9,7 @@ import {
 } from '@/libs/data'
 import { Col, Row } from '@/ui'
 import { ArrowLeftOutlined, ExclamationCircleFilled } from '@ant-design/icons'
+import { Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import { Metadata } from 'next'
 import React from 'react'
@@ -90,9 +91,11 @@ const page: React.FC<any> = async (props: {
                 <BackButton>
                   <ArrowLeftOutlined className="cursor-pointer text-[20px] text-[#aaa]" />
                 </BackButton>
-                <span className="line-clamp-2 text-[20px] leading-[24px]">
-                  {task?.name}
-                </span>
+                <Tooltip title={task?.name}>
+                  <span className="line-clamp-1 text-[20px] leading-[24px]">
+                    {task?.name}
+                  </span>
+                </Tooltip>
               </div>
             }
             extra={

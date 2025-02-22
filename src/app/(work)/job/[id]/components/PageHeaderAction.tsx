@@ -234,7 +234,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
           }}
           mark="completed"
         >
-          <div className="cursor-pointer rounded-[8px] bg-[#D9F7BE] px-[16px] py-[5px] text-[14px] font-[500] leading-[22px] text-[#389E0D] brightness-100 transition-all duration-300 hover:brightness-95">
+          <div className="cursor-pointer text-nowrap rounded-[8px] bg-[#D9F7BE] px-[16px] py-[5px] text-[14px] font-[500] leading-[22px] text-[#389E0D] brightness-100 transition-all duration-300 hover:brightness-95">
             Đánh dấu hoàn thành
           </div>
         </MarkTaskModalForm>

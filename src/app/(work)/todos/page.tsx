@@ -3,6 +3,7 @@ import { getTodos } from '@/libs/todos'
 import { TabsProps } from 'antd'
 import React from 'react'
 import PageHeader from './components/PageHeader'
+import PageProvider from './components/PageProvider'
 import TodoFiltered from './components/todo-filtered'
 import TodoTable from './components/todo-table'
 
@@ -32,27 +33,18 @@ const page: React.FC = async () => {
   ]
 
   return (
-    <div>
-      <PageHeader
-        title="Công việc của tôi"
-        extra={<TodoFiltered />}
-        tab={{ items }}
-      />
-      <div className="h-[calc(100vh-99px)] bg-[#f6f6f6] p-[16px]">
-        <TodoTable
-          dataSource={todos?.map((todo: any) => ({
-            id: todo?.id,
-            name: todo?.name,
-            expired: todo?.expired,
-            stage: todo?.stage_name || 'Không có',
-            workflowName: todo?.workflow_name || 'Không có',
-            workflowId: todo?.workflow_id,
-            status: todo?.status,
-            started_at: todo?.started_at,
-          }))}
+    <PageProvider>
+      <div>
+        <PageHeader
+          title="Công việc của tôi"
+          extra={<TodoFiltered />}
+          tab={{ items }}
         />
+        <div className="h-[calc(100vh-99px)] bg-[#f6f6f6] p-[16px]">
+          <TodoTable dataSource={todos} options={{ userId: user?.id }} />
+        </div>
       </div>
-    </div>
+    </PageProvider>
   )
 }
 

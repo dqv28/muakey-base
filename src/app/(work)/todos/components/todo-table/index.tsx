@@ -1,16 +1,21 @@
 'use client'
 
-import { convertTime } from '@/libs/utils'
+import { useAsyncEffect } from '@/libs/hook'
+import { randomColor } from '@/libs/utils'
 import { CheckOutlined, EyeOutlined } from '@ant-design/icons'
-import { Table, TableProps, Tag } from 'antd'
+import { Avatar, Table, TableProps, Tag } from 'antd'
 import { createStyles } from 'antd-style'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import Link from 'next/link'
-import React from 'react'
+import { useSearchParams } from 'next/navigation'
+import React, { useContext, useState } from 'react'
+import { TodoContext } from '../PageProvider'
+import { getTodosRequest } from './action'
 import TodoCompletedButton from './todo-completed-button'
-
-type TodoTableProps = TableProps & {}
+type TodoTableProps = TableProps & {
+  options?: any
+}
 
 dayjs.extend(duration)
 
@@ -23,8 +28,30 @@ const useStyle = createStyles(({ css }) => ({
         }
       }
     }
+    .ant-table-tbody {
+      .ant-table-row:hover {
+        .ant-table-cell {
+          background: transparent;
+        }
+      }
+    }
   `,
 }))
+
+const generateStatus = (status: string) => {
+  switch (status) {
+    case 'in_progress':
+      return <Tag color="blue">Đang làm</Tag>
+    case 'overdue':
+      return <Tag color="red">Quá hạn</Tag>
+    case 'completed':
+      return <Tag color="green">Hoàn thành</Tag>
+    case 'failed':
+      return <Tag color="red">Thất bại</Tag>
+    default:
+      return <></>
+  }
+}
 
 const columns: TableProps['columns'] = [
   {
@@ -32,10 +59,6 @@ const columns: TableProps['columns'] = [
     dataIndex: 'name',
     width: 500,
     render: (name, record) => {
-      const t = new Date(record?.expired).getTime() - new Date().getTime()
-      const timeStatus = t >= 0 ? 'inprogress' : 'overdue'
-      const time = dayjs.duration(Math.abs(t))
-
       return (
         <>
           <Link
@@ -44,21 +67,44 @@ const columns: TableProps['columns'] = [
           >
             {name}
           </Link>
-          {record?.expired && (
-            <Tag color={timeStatus === 'inprogress' ? 'green' : 'red'}>
-              {timeStatus === 'inprogress' ? 'Đến hạn trong' : 'Quá hạn'}{' '}
-              {convertTime(time.asSeconds())}
-            </Tag>
-          )}
+
+          <div className="flex items-center">
+            <div>{generateStatus(record?.status)}</div>
+            {record?.creator_name && (
+              <div className="text-[#00000073]">
+                Người tạo{' '}
+                <span className="text-[#000000E0]">{record?.creator_name}</span>{' '}
+                lúc{' '}
+                {String(dayjs(record?.created_at).format('HH:mm DD/MM/YYYY'))}
+              </div>
+            )}
+          </div>
         </>
       )
     },
   },
   {
+    title: 'Người giao',
+    dataIndex: 'account_id',
+    render: (_, record) => (
+      <div className="flex items-center gap-[8px]">
+        <Avatar
+          src={record?.account_avatar}
+          style={{ backgroundColor: randomColor(record?.account_name) }}
+        >
+          {String(record?.account_name).charAt(0).toUpperCase()}
+        </Avatar>
+        <span className="font-[600] text-[#000000E0]">
+          {record?.account_name}
+        </span>
+      </div>
+    ),
+  },
+  {
     title: 'Ngày giao',
     dataIndex: 'started_at',
     render: (timestamp) => (
-      <div>{dayjs(new Date(timestamp)).format('HH:mm DD/MM/YYYY')}</div>
+      <div>{dayjs(new Date(timestamp)).format('HH:mm - DD/MM/YYYY')}</div>
     ),
   },
   {
@@ -67,20 +113,22 @@ const columns: TableProps['columns'] = [
     render: (expired) => (
       <div>
         {expired
-          ? dayjs(new Date(expired)).format('HH:mm DD/MM/YYYY')
+          ? dayjs(new Date(expired)).format('HH:mm - DD/MM/YYYY')
           : 'Không thời hạn'}
       </div>
     ),
   },
   {
     title: 'Quy trình',
-    dataIndex: 'workflowName',
-    render: (value) => <span className="text-[#1677ff]">{value}</span>,
+    dataIndex: 'workflow_name',
+    render: (value) =>
+      value ? <span className="text-[#1677ff]">{value}</span> : '---:---',
   },
   {
     title: 'Giai đoạn',
-    dataIndex: 'stage',
-    render: (value) => <span className="text-[#1677ff]">{value}</span>,
+    dataIndex: 'stage_name',
+    render: (value) =>
+      value ? <span className="text-[#1677ff]">{value}</span> : '---:---',
   },
   {
     title: 'Hành động',
@@ -88,10 +136,10 @@ const columns: TableProps['columns'] = [
     render: (_, record) => {
       return (
         <div className="flex items-center gap-[8px]">
-          <Link href={`/job/${record?.id}?wid=${record?.workflowId}`}>
+          <Link href={`/job/${record?.id}?wid=${record?.workflow_id}`}>
             <EyeOutlined className="text-[#1677ff]" />
           </Link>
-          {record?.stage === 'Không có' &&
+          {record?.stage_name === 'Không có' &&
             (record?.status ? (
               <Tag color="green">
                 Đã hoàn thành <CheckOutlined />
@@ -105,15 +153,47 @@ const columns: TableProps['columns'] = [
   },
 ]
 
-const TodoTable: React.FC<TodoTableProps> = (props) => {
+const TodoTable: React.FC<TodoTableProps> = ({
+  dataSource: initialDataSource,
+  options,
+  ...rest
+}) => {
+  const searchParams = useSearchParams()
+  const { loading, setLoading } = useContext(TodoContext)
+
+  const [dataSource, setDataSource] = useState<any>(initialDataSource || [])
   const { styles } = useStyle()
+
+  useAsyncEffect(async () => {
+    if (searchParams.size <= 0) {
+      setDataSource(initialDataSource || [])
+      setLoading(false)
+      return
+    }
+
+    const todos = await getTodosRequest(searchParams)
+
+    setLoading(false)
+    setDataSource(
+      todos?.filter((todo: any) =>
+        searchParams.get('type') === 'assign_me'
+          ? todo.account_id === options.userId
+          : todo.creator_by === options.userId,
+      ),
+    )
+  }, [searchParams])
 
   return (
     <Table
       className={styles.customTable}
       columns={columns}
-      rowClassName={(todo) => (todo?.status ? 'bg-[#deffdb]' : '')}
-      {...props}
+      dataSource={dataSource}
+      rowClassName="bg-transparent hover:bg-[#E6F4FF] transition-all duration-200"
+      loading={loading}
+      pagination={{
+        pageSize: 8,
+      }}
+      {...rest}
     />
   )
 }

@@ -9,8 +9,8 @@ import {
 import { seenNotifications } from '@/libs/notifications'
 import { getSession } from '@/libs/session'
 
-export const getNotificationsAction = async () => {
-  return await getNotifications()
+export const getNotificationsAction = async (query?: any) => {
+  return await getNotifications(query)
 }
 
 export const updateNotificationAction = async (id: number, data: any) => {

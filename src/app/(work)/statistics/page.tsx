@@ -37,19 +37,17 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
       <div className="p-[16px]">
         <div className="relative h-[calc(100vh-101px)] overflow-hidden rounded-[16px] border bg-[#fff]">
           <StatisticsFiltered />
-          <div className="overflow-x-auto">
-            <StatisticsSchedule
-              options={{
-                account_id: searchParams?.mid || '',
-                dw: searchParams?.dw || '',
-                as: searchParams?.as || '',
-                schedule,
-                accounts: scheduleAsMembers,
-                workflows,
-                currentDate,
-              }}
-            />
-          </div>
+          <StatisticsSchedule
+            options={{
+              account_id: searchParams?.mid || '',
+              dw: searchParams?.dw || '',
+              as: searchParams?.as || '',
+              schedule,
+              accounts: scheduleAsMembers,
+              workflows,
+              currentDate,
+            }}
+          />
 
           <div className="absolute bottom-[16px] left-[16px]">
             <StatisticsModalForm

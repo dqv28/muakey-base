@@ -1,12 +1,13 @@
 'use client'
 
 import { GLOBAL_BAN } from '@/libs/constant'
+import { useDragScroll } from '@/libs/hook'
 import { getWeek } from '@/libs/utils'
 import { Col, Row } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import dynamic from 'next/dynamic'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import StatisticsColHeader from './statistics-col-header'
 
 const StatisticsRows = dynamic(() => import('./statistics-rows'), {
@@ -18,6 +19,9 @@ type StatisticsScheduleProps = {
 }
 
 const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
+  const [ref] = useDragScroll()
+  const colRef = useRef<HTMLDivElement>(null)
+
   const today = new Date()
   const week = getWeek(options?.dw ? new Date(options?.dw) : today)
   const { schedule, accounts, account_id, workflows, as } = options
@@ -96,8 +100,18 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
     }
   })
 
+  useEffect(() => {
+    if (colRef.current) {
+      colRef.current.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'center',
+      })
+    }
+  }, [options?.currentDate])
+
   return (
-    <>
+    <div className="cursor-grab overflow-x-auto" ref={ref}>
       <Row wrap={false} className="sticky top-0 z-50 w-max">
         <Col className="sticky left-0 z-10 w-[400px] border-r border-t bg-[#fff]">
           <StatisticsColHeader title="Thành viên" />
@@ -105,11 +119,13 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
         {week.map((date) => (
           <Col
             key={date.day}
-            className={clsx('w-[400px] border-r border-t bg-[#fff]', {
+            ref={date.date === options?.currentDate ? colRef : null}
+            className={clsx('w-[400px] border-r border-t', {
               'text-[#1677ff]':
                 date.date === String(dayjs(today).format('YYYY-MM-DD')),
               'border-t-[#096DD9] bg-[#E6F4FF]':
                 date.date === options?.currentDate,
+              'bg-[#fff]': date.date !== options?.currentDate,
             })}
           >
             <StatisticsColHeader
@@ -131,7 +147,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
           }}
         />
       </div>
-    </>
+    </div>
   )
 }
 

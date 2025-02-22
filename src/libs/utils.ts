@@ -294,10 +294,11 @@ export const calculateDayOffTotal = (startDate: Date, endDate: Date) => {
     )
 
     // Thời gian yêu cầu không đúng
-    const inValidTime = +start > +endA || +end < +startM || +start === +end
+    // const inValidTime = +start > +endA || +end < +startM || +start === +end
+    const inValidTime = +start === +end || +start > +end
 
     const startT = Math.max(+start, +startM)
-    const endT = Math.min(+end, +endA)
+    const endT = Math.max(+end, +endA)
     const tPerDay = +start >= +startA || +end <= +endM ? 0 : timeOffPerDay
 
     hourPerDayOff += inValidTime

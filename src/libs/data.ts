@@ -282,8 +282,8 @@ export const getMe = async (options?: RequestOptions) =>
     .then((data) => data)
     .catch(() => [])
 
-export const getNotifications = async () =>
-  requestWithAuthorized('notifications')
+export const getNotifications = async (query?: any) =>
+  requestWithAuthorized('notifications?' + new URLSearchParams(query))
     .then((data) => data)
     .catch(() => [])
 

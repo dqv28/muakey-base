@@ -25,16 +25,17 @@ export type SideBarProps = SideProps & {
 
 const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const today = new Date().getDate()
-  const [workflowCategories, session, attendances, todos] = await Promise.all([
-    getWorkflowCategories(),
-    getSession(),
-    getAttendances({
-      me: 1,
-    }),
-    getTodos({
-      account_id: user?.id,
-    }),
-  ])
+  const [workflowCategories, session, attendances, todosCount] =
+    await Promise.all([
+      getWorkflowCategories(),
+      getSession(),
+      getAttendances({
+        me: 1,
+      }),
+      getTodos({
+        include: 'number',
+      }),
+    ])
 
   const lastAttendance = attendances ? attendances[attendances?.length - 1] : {}
 
@@ -100,11 +101,9 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                         <ShoppingFilled className="text-[16px]" />
                         <span>Công việc của tôi</span>
                       </div>
-                      {todos?.length > 0 && (
+                      {todosCount > 0 && (
                         <div className="rounded-[4px] bg-[#ff5555] px-[6px] pb-[4px] pt-[2px] text-[12px] font-[500]">
-                          <span className="leading-[12px]">
-                            {todos?.length}
-                          </span>
+                          <span className="leading-[12px]">{todosCount}</span>
                         </div>
                       )}
                     </div>

@@ -1,5 +1,5 @@
 import type { DependencyList } from 'react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export const useAsyncEffect = (
   effect: () => Promise<void>,
@@ -20,4 +20,79 @@ export const useDebounce = (value: string, delay: number) => {
   }, [value, delay])
 
   return debouncedValue
+}
+
+export const useDragScroll = () => {
+  const [node, setNode] = useState<HTMLDivElement | null>(null)
+
+  const ref = useCallback((ele: HTMLDivElement) => {
+    setNode(ele)
+  }, [])
+
+  // Con trỏ khi đang kéo
+  const updateCursor = (ele: HTMLDivElement) => {
+    ele.style.cursor = 'grabbing'
+    ele.style.userSelect = 'none'
+  }
+
+  // Con trỏ khi đã thả
+  const resetCursor = (ele: HTMLDivElement) => {
+    ele.style.cursor = 'grab'
+    ele.style.removeProperty('user-select')
+  }
+
+  const handleMouseDown = useCallback<any>(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.preventDefault()
+
+      if (!node) return
+
+      // Lưu bị trí ban đầu
+      const startPosition = {
+        left: node?.scrollLeft,
+        top: node?.scrollTop,
+        x: e.clientX,
+        y: e.clientY,
+      }
+
+      updateCursor(node)
+
+      const handleMouseMove: any = (
+        moveE: React.MouseEvent<HTMLDivElement>,
+      ) => {
+        moveE.preventDefault()
+
+        // Tính toán khoảng cách di chuyển theo trục X - Y
+        const dx = moveE.clientX - startPosition.x
+        const dy = moveE.clientY - startPosition.y
+
+        node.scrollTo({
+          left: startPosition.left - dx,
+          top: startPosition.top - dy,
+        })
+      }
+
+      const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+        resetCursor(node)
+      }
+
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+    },
+    [node],
+  )
+
+  useEffect(() => {
+    if (!node) return
+
+    node.addEventListener('mousedown', handleMouseDown)
+
+    return () => {
+      node.removeEventListener('mousedown', handleMouseDown)
+    }
+  }, [node, handleMouseDown])
+
+  return [ref]
 }
