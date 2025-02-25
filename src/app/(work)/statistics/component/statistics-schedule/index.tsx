@@ -116,24 +116,26 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
         <Col className="sticky left-0 z-10 w-[400px] border-r border-t bg-[#fff]">
           <StatisticsColHeader title="Thành viên" />
         </Col>
-        {week.map((date) => (
-          <Col
-            key={date.day}
-            ref={date.date === options?.currentDate ? colRef : null}
-            className={clsx('w-[400px] border-r border-t', {
-              'text-[#1677ff]':
-                date.date === String(dayjs(today).format('YYYY-MM-DD')),
-              'border-t-[#096DD9] bg-[#E6F4FF]':
-                date.date === options?.currentDate,
-              'bg-[#fff]': date.date !== options?.currentDate,
-            })}
-          >
-            <StatisticsColHeader
-              title={date.day}
-              subTitle={String(dayjs(date.date).format('DD/MM'))}
-            />
-          </Col>
-        ))}
+        {week.map((date) => {
+          return (
+            <Col
+              key={date.day}
+              ref={date.date === options?.currentDate ? colRef : null}
+              className={clsx('w-[400px] border-r border-t', {
+                'text-[#1677ff]':
+                  date.date === String(dayjs(today).format('YYYY-MM-DD')),
+                'border-t-[#096DD9] bg-[#E6F4FF]':
+                  date.date === options?.currentDate,
+                'bg-[#fff]': date.date !== options?.currentDate,
+              })}
+            >
+              <StatisticsColHeader
+                title={date.day}
+                subTitle={String(dayjs(date.date).format('DD/MM'))}
+              />
+            </Col>
+          )
+        })}
       </Row>
       <div className="no-scroll h-[calc(100vh-244px)] w-full divide-y">
         <StatisticsRows

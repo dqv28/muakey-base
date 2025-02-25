@@ -1,4 +1,3 @@
-import { getIp } from './auth'
 import { getSession } from './session'
 
 export type RequestOptions = NodeJS.RequestInit & {
@@ -71,7 +70,6 @@ export const requestWithAuthorized = async (
   options?: RequestOptions,
 ) => {
   const { accessToken } = await getSession()
-  const ip = await getIp()
 
   if (!accessToken) {
     throw new Error('Unauthorized.')
@@ -82,7 +80,7 @@ export const requestWithAuthorized = async (
     ...options,
     headers: {
       authorization: `Bearer ${accessToken}`,
-      'ip-address': ip,
+      // 'ip-address': ip,
       ...options?.headers,
     },
   })

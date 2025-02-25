@@ -50,9 +50,9 @@ export const useDragScroll = () => {
       // Lưu bị trí ban đầu
       const startPosition = {
         left: node?.scrollLeft,
-        top: node?.scrollTop,
+        // top: node?.scrollTop,
         x: e.clientX,
-        y: e.clientY,
+        // y: e.clientY,
       }
 
       updateCursor(node)
@@ -64,11 +64,11 @@ export const useDragScroll = () => {
 
         // Tính toán khoảng cách di chuyển theo trục X - Y
         const dx = moveE.clientX - startPosition.x
-        const dy = moveE.clientY - startPosition.y
+        // const dy = moveE.clientY - startPosition.y
 
         node.scrollTo({
           left: startPosition.left - dx,
-          top: startPosition.top - dy,
+          // top: startPosition.top - dy,
         })
       }
 

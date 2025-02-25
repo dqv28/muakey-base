@@ -39,3 +39,9 @@ export { default as MarkTaskModalForm } from './MarkTaskModalForm'
 
 export * from './TaskDoneModalForm'
 export { default as TaskDoneModalForm } from './TaskDoneModalForm'
+
+export * from './ResourceCategoryModalForm'
+export { default as ResourceCategoryModalForm } from './ResourceCategoryModalForm'
+
+export * from './ResourceModalForm'
+export { default as ResourceModalForm } from './ResourceModalForm'

@@ -26,6 +26,7 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = () => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const query = new URLSearchParams(searchParams)
+  const filterBy = query.get('as')
 
   const memberOptions = [
     {
@@ -92,7 +93,7 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = () => {
         style={{ width: 240 }}
         options={memberOptions}
         size="large"
-        defaultValue={['staff']}
+        defaultValue={[filterBy || 'staff']}
         onChange={(value) => {
           if (value) {
             query.set('as', String(value))

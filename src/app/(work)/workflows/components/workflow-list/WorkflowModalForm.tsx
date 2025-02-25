@@ -1,10 +1,12 @@
 'use client'
 
 import { withApp } from '@/hoc'
+import { useAsyncEffect } from '@/libs/hook'
 import { App, Form, FormInstance, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { addWorkflowAction, editWorkflowAction } from '../../action'
+import { getAccountsRequest } from './action'
 import FormFields from './FormFields'
 
 type WorkflowModalFormProps = {
@@ -31,52 +33,50 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
     ...restInitialValues
   } = initialValues
 
-  useEffect(() => {
-    const memberWithType = initMembers?.filter(
-      (mem: any) => mem?.type === 'department',
-    )
+  useAsyncEffect(async () => {
+    if (!open) return
 
-    const membersWithoutType = initMembers?.filter(
-      (mem: any) => mem?.type !== 'department' || !mem?.type,
-    )
+    const accounts = await getAccountsRequest()
 
-    var departs =
-      memberWithType?.length > 0
-        ? memberWithType?.map((mem: any) => {
-            const memberOptions = initDepartments?.find(
-              (d: any) => d?.id === Number(mem?.username),
-            )
+    setManager([
+      ...accounts?.map((acc: any) => ({
+        label: acc?.full_name,
+        value: acc?.username,
+      })),
+      ...initDepartments?.map((dep: any) => {
+        const departmentValue = JSON.stringify(
+          dep?.members?.map((m: any) => m?.username),
+        )
 
-            return [
-              ...(memberOptions?.members || []),
-              ...(membersWithoutType || []),
-            ]?.map((o: any) => ({
-              label: o?.full_name,
-              value: o?.username,
-            }))
-          })
-        : initMembers?.map((o: any) => ({
-            label: o?.full_name,
-            value: o?.username,
-          }))
-
-    const options = [...(departs?.flat() || [])]
-
-    setManager(
-      [...new Set(options.map((op: any) => JSON.stringify(op)))].map(
-        (str: string) => JSON.parse(str),
-      ),
-    )
-  }, [initDepartments, initMembers])
+        return {
+          label: dep?.name,
+          value: departmentValue,
+        }
+      }),
+    ])
+  }, [open])
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
+
+    const newManager = [
+      ...new Set(
+        formData?.manager
+          ?.map((m: any) => {
+            if (m?.includes('[')) {
+              return JSON.parse(m)
+            }
+            return m
+          })
+          .flat(),
+      ),
+    ]
 
     try {
       if (action === 'edit') {
         var { errors } = await editWorkflowAction(initialValues?.id, {
           ...formData,
-          manager: (formData?.manager || []).join(' '),
+          manager: newManager.join(' '),
         })
       } else {
         var {
@@ -85,7 +85,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
           errors,
         } = await addWorkflowAction({
           ...formData,
-          manager: (formData?.manager || []).join(' '),
+          manager: newManager.join(' '),
         })
       }
 

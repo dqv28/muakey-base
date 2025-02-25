@@ -5,6 +5,7 @@ import { Navigation } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
 import {
   CalendarFilled,
+  FileFilled,
   FolderOpenFilled,
   HddFilled,
   ProfileFilled,
@@ -43,6 +44,104 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
 
   const hasCheckedIn = !!attendances && attendances?.length > 0
 
+  const navigationItems = [
+    {
+      label: 'QUAN TRỌNG',
+      expand: true,
+      children: [
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <FolderOpenFilled className="text-[16px]" />
+              <span>Quản lý quy trình</span>
+            </div>
+          ),
+          href: '/workflows',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <HddFilled className="text-[16px]" />
+              <span>Quản lý phòng ban</span>
+            </div>
+          ),
+          href: '/department',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <CalendarFilled className="text-[16px]" />
+              <span>Chấm công</span>
+            </div>
+          ),
+          href: '/check-in',
+        },
+        {
+          label: (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-[12px]">
+                <ShoppingFilled className="text-[16px]" />
+                <span>Công việc của tôi</span>
+              </div>
+              {todosCount > 0 && (
+                <div className="rounded-[4px] bg-[#ff5555] px-[6px] pb-[4px] pt-[2px] text-[12px] font-[500]">
+                  <span className="leading-[12px]">{todosCount}</span>
+                </div>
+              )}
+            </div>
+          ),
+          href: '/todos',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <SignalFilled className="text-[16px]" />
+              <span>Thống kê</span>
+            </div>
+          ),
+          href: '/statistics',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <ProfileFilled className="text-[16px]" />
+              <span>Yêu cầu</span>
+            </div>
+          ),
+          href: '/request',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <FileFilled className="text-[16px]" />
+              <span>Tài nguyên</span>
+            </div>
+          ),
+          href: '/resources',
+        },
+      ],
+    },
+    ...(workflowCategories && workflowCategories.length > 0
+      ? workflowCategories?.map((w: any) => ({
+          label: w?.name,
+          children: w?.workflows
+            ? w?.workflows.map((i: any) => ({
+                label: (
+                  <Tooltip title={i?.name}>
+                    <div className="flex items-center gap-[12px]">
+                      <ProjectFilled className="text-[16px]" />
+                      <span className="line-clamp-1">{i?.name}</span>
+                    </div>
+                  </Tooltip>
+                ),
+                href: `/workflows/${i?.id}`,
+              }))
+            : [],
+          expand: true,
+        }))
+      : []),
+  ]
+
   return (
     <Layout.Side
       subSide={
@@ -62,94 +161,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         <Search />
         <Navigation
           className="no-scroll mt-[20px] h-[calc(100vh-96px)] overflow-auto pb-[40px]"
-          items={[
-            {
-              label: 'QUAN TRỌNG',
-              expand: true,
-              children: [
-                {
-                  label: (
-                    <div className="flex items-center gap-[12px]">
-                      <FolderOpenFilled className="text-[16px]" />
-                      <span>Quản lý quy trình</span>
-                    </div>
-                  ),
-                  href: '/workflows',
-                },
-                {
-                  label: (
-                    <div className="flex items-center gap-[12px]">
-                      <HddFilled className="text-[16px]" />
-                      <span>Quản lý phòng ban</span>
-                    </div>
-                  ),
-                  href: '/department',
-                },
-                {
-                  label: (
-                    <div className="flex items-center gap-[12px]">
-                      <CalendarFilled className="text-[16px]" />
-                      <span>Chấm công</span>
-                    </div>
-                  ),
-                  href: '/check-in',
-                },
-                {
-                  label: (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-[12px]">
-                        <ShoppingFilled className="text-[16px]" />
-                        <span>Công việc của tôi</span>
-                      </div>
-                      {todosCount > 0 && (
-                        <div className="rounded-[4px] bg-[#ff5555] px-[6px] pb-[4px] pt-[2px] text-[12px] font-[500]">
-                          <span className="leading-[12px]">{todosCount}</span>
-                        </div>
-                      )}
-                    </div>
-                  ),
-                  href: '/todos',
-                },
-                {
-                  label: (
-                    <div className="flex items-center gap-[12px]">
-                      <SignalFilled className="text-[16px]" />
-                      <span>Thống kê</span>
-                    </div>
-                  ),
-                  href: '/statistics',
-                },
-                {
-                  label: (
-                    <div className="flex items-center gap-[12px]">
-                      <ProfileFilled className="text-[16px]" />
-                      <span>Yêu cầu</span>
-                    </div>
-                  ),
-                  href: '/request',
-                },
-              ],
-            },
-            ...(workflowCategories && workflowCategories.length > 0
-              ? workflowCategories?.map((w: any) => ({
-                  label: w?.name,
-                  children: w?.workflows
-                    ? w?.workflows.map((i: any) => ({
-                        label: (
-                          <Tooltip title={i?.name}>
-                            <div className="flex items-center gap-[12px]">
-                              <ProjectFilled className="text-[16px]" />
-                              <span className="line-clamp-1">{i?.name}</span>
-                            </div>
-                          </Tooltip>
-                        ),
-                        href: `/workflows/${i?.id}`,
-                      }))
-                    : [],
-                  expand: true,
-                }))
-              : []),
-          ]}
+          items={navigationItems}
         />
       </div>
     </Layout.Side>

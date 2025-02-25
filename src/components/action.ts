@@ -7,6 +7,7 @@ import {
   checkIn,
   checkOut,
   editTask,
+  getAccounts,
   getMe,
   getTaskHistories,
   uploadImage,
@@ -19,6 +20,12 @@ import {
   updatePropose,
   updateProposeCategory,
 } from '@/libs/propose'
+import {
+  createResource,
+  createResourceCategory,
+  updateResource,
+  updateResourceCategory,
+} from '@/libs/resources'
 import {
   addTag,
   addTagToTask,
@@ -99,4 +106,24 @@ export const addTaskAction = async (data: any) => addTask(data)
 
 export const assignTaskWithoutWorkAction = async (id: number, data: any) => {
   return await assignTaskWithoutWork(id, data)
+}
+
+export const createResourceCategoryAction = async (data: any) => {
+  return await createResourceCategory(data)
+}
+
+export const updateResourceCategoryAction = async (id: number, data: any) => {
+  return await updateResourceCategory(id, data)
+}
+
+export const createResourceAction = async (data: any) => {
+  return await createResource(data)
+}
+
+export const updateResourceAction = async (id: number, data: any) => {
+  return await updateResource(id, data)
+}
+
+export const getAccountsReuqest = async () => {
+  return await getAccounts()
 }

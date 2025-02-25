@@ -1,0 +1,90 @@
+'use client'
+
+import { ResourceCategoryModalForm, ResourceModalForm } from '@/components'
+import { withApp } from '@/hoc'
+import { EllipsisOutlined } from '@ant-design/icons'
+import { App, Button, Dropdown, MenuProps, message } from 'antd'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { deleteResourceCategoryAction } from '../../action'
+export type ResourcesExtraProps = {
+  resource?: any
+  options?: any
+}
+
+const ResourcesExtra: React.FC<ResourcesExtraProps> = ({
+  resource,
+  options,
+}) => {
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const { modal } = App.useApp()
+  const router = useRouter()
+
+  const { resourcesCategories } = options
+
+  const handleDelete = async (rId: number) => {
+    setLoading(true)
+
+    try {
+      const { message: msg, errors } = await deleteResourceCategoryAction(rId)
+
+      if (errors) {
+        message.error(msg)
+        setLoading(false)
+        return
+      }
+
+      message.success('Xóa danh mục thành công')
+      setLoading(false)
+      router.refresh()
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
+  }
+
+  const items: MenuProps['items'] = [
+    {
+      key: 'edit',
+      label: (
+        <ResourceCategoryModalForm mode="edit" initialValues={resource}>
+          Sửa danh mục
+        </ResourceCategoryModalForm>
+      ),
+    },
+    {
+      key: 'add',
+      label: (
+        <ResourceModalForm options={{ resourcesCategories }}>
+          Thêm tài liệu
+        </ResourceModalForm>
+      ),
+    },
+    {
+      key: 'delete',
+      label: 'Xóa danh mục',
+      danger: true,
+      onClick: () => {
+        modal.confirm({
+          title: 'Xóa danh mục',
+          content: 'Bạn có chắc chắn muốn xóa danh mục này không?',
+          onOk: () => handleDelete(resource?.id || 0),
+          onCancel: () => setOpen(false),
+          open,
+          okButtonProps: {
+            loading,
+          },
+        })
+      },
+    },
+  ]
+
+  return (
+    <Dropdown menu={{ items }} trigger={['click']}>
+      <Button icon={<EllipsisOutlined />} />
+    </Dropdown>
+  )
+}
+
+export default withApp(ResourcesExtra)

@@ -111,7 +111,7 @@ export const getAccounts = async (query?: any) => {
 }
 
 export const addAccount = async (data: any) =>
-  requestWithAuthorized('accounts', {
+  requestWithAuthorized('register', {
     method: 'POST',
     data,
   }).then((data) => data)

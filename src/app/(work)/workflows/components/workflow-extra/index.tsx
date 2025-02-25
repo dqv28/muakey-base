@@ -2,7 +2,7 @@
 
 import { withApp } from '@/hoc'
 import { App, Form, FormInstance, Modal } from 'antd'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
   addWorkflowCategoryAction,
   updateWorkflowCategoryAction,
@@ -16,25 +16,11 @@ const WorkflowExtra: React.FC<{
 }> = ({ action = 'create', initialValues, children }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [category, setCategory] = useState()
 
   const formRef = useRef<FormInstance>(null)
   const { message } = App.useApp()
 
-  const { workflowCategories, cate, id, departments } = initialValues
-
-  useEffect(() => {
-    const workflowCategory = workflowCategories?.find(
-      (category: any) => category.id === id,
-    )
-
-    setCategory({
-      ...(workflowCategory || cate),
-      members: (workflowCategory || cate)?.members?.map(
-        (m: any) => m?.username,
-      ),
-    })
-  }, [id, workflowCategories, cate])
+  const { cate, id, departments } = initialValues
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -43,12 +29,10 @@ const WorkflowExtra: React.FC<{
       if (action === 'edit') {
         var { errors } = await updateWorkflowCategoryAction(id || cate?.id, {
           ...formData,
-          members: (formData?.members || []).join(' '),
         })
       } else {
         var { errors } = await addWorkflowCategoryAction({
           ...formData,
-          members: (formData?.members || []).join(' '),
         })
       }
 
@@ -116,12 +100,7 @@ const WorkflowExtra: React.FC<{
         }}
         destroyOnClose
         modalRender={(dom) => (
-          <Form
-            onFinish={handleSubmit}
-            ref={formRef}
-            layout="vertical"
-            initialValues={category}
-          >
+          <Form onFinish={handleSubmit} ref={formRef} layout="vertical">
             {dom}
           </Form>
         )}

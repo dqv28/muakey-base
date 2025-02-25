@@ -1,7 +1,7 @@
 'use client'
 
 import { useAsyncEffect } from '@/libs/hook'
-import { Form, Input, Select } from 'antd'
+import { Form, Input } from 'antd'
 import { useState } from 'react'
 import { getAccountsAction } from './action'
 
@@ -30,28 +30,6 @@ const FormFields: React.FC<{
         ]}
       >
         <Input placeholder="Tên danh mục" />
-      </Form.Item>
-
-      <Form.Item
-        name="members"
-        label="Thành viên"
-        rules={[
-          {
-            required: true,
-            message: 'Chọn thành viên',
-          },
-        ]}
-      >
-        <Select
-          mode="multiple"
-          allowClear
-          style={{ width: '100%' }}
-          placeholder="Chọn thành viên"
-          options={accounts?.map((a: any) => ({
-            label: a?.full_name || a?.name,
-            value: a?.username || a?.id,
-          }))}
-        />
       </Form.Item>
 
       {/* <Form.Item label="Giai đoạn">
