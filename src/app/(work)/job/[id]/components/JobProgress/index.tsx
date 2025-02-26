@@ -28,7 +28,7 @@ const JobProgress: React.FC<JobProgressProps> = ({ steps = [] }) => {
         >
           <div
             className={clsx(
-              'relative min-h-[28px] flex-1 p-[8px] text-center font-[500] text-[#fff]',
+              'relative h-[28px] flex-1 p-[8px] text-center font-[500] text-[#fff]',
               !step?.status && 'bg-[#E5E5E5] before:border-l-[#E5E5E5]',
               {
                 [arrowClassName]: index !== steps.length - 1,
@@ -41,7 +41,7 @@ const JobProgress: React.FC<JobProgressProps> = ({ steps = [] }) => {
               },
             )}
           >
-            {step?.status && step?.name}
+            <span className="line-clamp-1">{step?.status && step?.name}</span>
           </div>
         </Tooltip>
       ))}

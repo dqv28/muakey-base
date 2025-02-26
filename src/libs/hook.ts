@@ -47,7 +47,7 @@ export const useDragScroll = () => {
 
       if (!node) return
 
-      // Lưu bị trí ban đầu
+      // Lưu vị trí ban đầu
       const startPosition = {
         left: node?.scrollLeft,
         // top: node?.scrollTop,
@@ -84,15 +84,24 @@ export const useDragScroll = () => {
     [node],
   )
 
+  const handleMouseUp = useCallback<any>(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.preventDefault()
+    },
+    [],
+  )
+
   useEffect(() => {
     if (!node) return
 
     node.addEventListener('mousedown', handleMouseDown)
+    node.addEventListener('mouseup', handleMouseUp)
 
     return () => {
       node.removeEventListener('mousedown', handleMouseDown)
+      node.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [node, handleMouseDown])
+  }, [node, handleMouseDown, handleMouseUp])
 
   return [ref]
 }

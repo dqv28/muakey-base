@@ -1,5 +1,7 @@
-import { getWorkflows } from '@/libs/data'
-import { getWorkScheduleAsMembers } from '@/libs/schedule'
+import {
+  getScheduleAsWorkflows,
+  getWorkScheduleAsMembers,
+} from '@/libs/schedule'
 import { getSchedule } from '@/libs/statistics'
 import { getWeek } from '@/libs/utils'
 import dayjs from 'dayjs'
@@ -19,7 +21,7 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
       'YYYY-MM-DD',
     ),
   )
-  const [schedule, scheduleAsMembers, workflows] = await Promise.all([
+  const [schedule, scheduleAsMembers, scheduleAsWorkflows] = await Promise.all([
     getSchedule({
       start: week[0].date,
       end: week[6].date,
@@ -27,7 +29,7 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
     getWorkScheduleAsMembers({
       date: currentDate,
     }),
-    getWorkflows(),
+    getScheduleAsWorkflows(),
   ])
 
   return (
@@ -44,10 +46,11 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
               as: searchParams?.as || '',
               schedule,
               accounts: scheduleAsMembers,
-              workflows,
+              workflows: scheduleAsWorkflows,
               currentDate,
             }}
           />
+          {/* <StatisticsScheduleComp /> */}
 
           <div className="absolute bottom-[16px] left-[16px]">
             <StatisticsModalForm

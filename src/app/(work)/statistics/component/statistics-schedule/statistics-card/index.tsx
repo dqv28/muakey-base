@@ -20,7 +20,7 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
         status === 'in_progress' || {
           'border-[#389E0D] bg-[#F6FFED]': status === 'completed',
           'border-[#CF1322] bg-[#FFF1F0]': status === 'overdue',
-          'border-[#A29BFE] bg-[#DCCEF7]': status === 'completed_late',
+          'border-[#B64FEE] bg-[#F7E6FF]': status === 'completed_late',
         },
       )}
     >

@@ -13,22 +13,12 @@ const StatisticsRowsWorkflow: React.FC<StatisticsRowsWorkflowProps> = ({
   todos,
   options,
 }) => {
-  const { days, currentDate } = options
+  const { days } = options
 
   return (
     <>
       {todos &&
         todos?.map((t: any) => {
-          const tasksOfDay = t?.tasks?.[currentDate]
-
-          const totalSuccessTasks = tasksOfDay?.filter(
-            (task: any) => task?.status === 'completed',
-          )?.length
-
-          const totalFailedTasks = tasksOfDay?.filter(
-            (task: any) => task?.status === 'failed',
-          )?.length
-
           return (
             <Row key={t?.name} className="w-max">
               <Col
@@ -52,12 +42,23 @@ const StatisticsRowsWorkflow: React.FC<StatisticsRowsWorkflowProps> = ({
 
                   <div className="mt-[12px] flex items-center gap-[8px] leading-[22px]">
                     <span>Hoàn thành:</span>
-                    <span>{Number(totalSuccessTasks)}</span>
+                    <span className="text-[#389E0D]">
+                      {Number(t?.workflow?.successTasks)}
+                    </span>
                   </div>
 
                   <div className="mt-[12px] flex items-center gap-[8px] leading-[22px]">
-                    <span>Thất bại:</span>
-                    <span>{Number(totalFailedTasks)}</span>
+                    <span>Hoàn thành & Quá hạn:</span>
+                    <span className="text-[#B64FEE]">
+                      {Number(t?.workflow?.failedTasks)}
+                    </span>
+                  </div>
+
+                  <div className="mt-[12px] flex items-center gap-[8px] leading-[22px]">
+                    <span>Chưa hoàn thành & Quá hạn:</span>
+                    <span className="text-[#F5222D]">
+                      {Number(t?.workflow?.latedTasks)}
+                    </span>
                   </div>
                 </div>
               </Col>
@@ -75,6 +76,7 @@ const StatisticsRowsWorkflow: React.FC<StatisticsRowsWorkflowProps> = ({
                         className="block rounded-[8px] bg-[#fff] hover:text-[#000]"
                         key={`${task?.name_task}_${index}`}
                         href={`/job/${task?.task_id}`}
+                        onClick={(e) => e.preventDefault()}
                       >
                         <StatisticsCard
                           title={

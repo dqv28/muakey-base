@@ -20,3 +20,8 @@ export const getWorkScheduleAsMembers = async (query?: any) =>
   requestWithAuthorized('schedule-accounts?' + new URLSearchParams(query))
     .then((data) => data)
     .catch(() => [])
+
+export const getScheduleAsWorkflows = async () =>
+  requestWithAuthorized('schedule-workflows')
+    .then((data) => data)
+    .catch(() => [])

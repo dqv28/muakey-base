@@ -41,8 +41,8 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
   const [roles, setRoles] = useState([])
 
   const [avatar, setAvatar] = useState<any>({
-    url: initialValues?.avatar || undefined,
-    preview: initialValues?.avatar || undefined,
+    url: '',
+    preview: '',
   })
 
   const { message } = App.useApp()
@@ -113,10 +113,12 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
   }
 
   useAsyncEffect(async () => {
+    if (!open) return
+
     const data = await getRolesRequest()
 
     setRoles(data)
-  }, [])
+  }, [open])
 
   const roleOptions: SelectProps['options'] = roles?.map((r: any) => ({
     label: r?.name,
@@ -161,7 +163,7 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
           <Upload onChange={handlUpload} showUploadList={false}>
             <div className="flex cursor-pointer items-end">
               <Avatar
-                src={avatar?.preview || avatar?.url}
+                src={avatar?.preview || initialValues?.avatar}
                 icon={action === 'create' ? <UserOutlined /> : undefined}
                 style={
                   action !== 'create'

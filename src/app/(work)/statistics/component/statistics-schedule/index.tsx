@@ -70,7 +70,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
         w?.date,
         [
           ...tasks
-            ?.filter((task: any) => task?.workflow_name === wf?.name)
+            ?.filter((task: any) => task?.workflow_id === wf?.id)
             .map((t: any) => {
               const user = accounts?.find(
                 (acc: any) => acc?.id === t?.account_id,
@@ -93,8 +93,9 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
       workflow: {
         id: wf?.id,
         name: wf?.name,
-        successTasks: wf?.totalSuccessTask,
-        failedTasks: wf?.totalFailedTask,
+        successTasks: wf?.count_task_completed,
+        failedTasks: wf?.count_task_completed_late,
+        latedTasks: wf?.count_task_overdue,
       },
       tasks: Object.fromEntries(days),
     }
