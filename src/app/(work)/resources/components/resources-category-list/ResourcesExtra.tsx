@@ -56,7 +56,11 @@ const ResourcesExtra: React.FC<ResourcesExtraProps> = ({
     {
       key: 'add',
       label: (
-        <ResourceModalForm options={{ resourcesCategories }}>
+        <ResourceModalForm
+          initialValues={{
+            category_resource_id: resourcesCategories[0]?.id,
+          }}
+        >
           Thêm tài liệu
         </ResourceModalForm>
       ),

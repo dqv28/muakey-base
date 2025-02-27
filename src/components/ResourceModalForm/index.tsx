@@ -8,8 +8,10 @@ import {
   Button,
   DatePicker,
   Form,
+  FormProps,
   Input,
   Modal,
+  ModalProps,
   Radio,
   Select,
   Upload,
@@ -22,14 +24,17 @@ import TiptapEditor from '../TiptapEditor'
 import {
   createResourceAction,
   getAccountsReuqest,
+  getResourceCategoriesRequest,
+  updateResourceAction,
   uploadImageAction,
 } from '../action'
 
-export type ResourceModalFormProps = {
+export type ResourceModalFormProps = ModalProps & {
   children?: React.ReactNode
   initialValues?: any
   mode?: 'create' | 'edit'
   options?: any
+  formProps?: Omit<FormProps, 'initialValues'>
 }
 
 const NOTIFICATION_BEFORE_DAYS = 1
@@ -40,19 +45,20 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
   initialValues,
   mode = 'create',
   options,
+  formProps,
+  ...modalProps
 }) => {
   const [accounts, setAccounts] = useState<any>([])
-  const [format, setFormat] = useState('text')
+  const [format, setFormat] = useState(initialValues?.type || 'text')
   const [expireType, setExpireType] = useState('has_expire')
   const [thumbnail, setThumbnail] = useState('')
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [resourcesCategories, setResourcesCategories] = useState<any>([])
 
   const { message } = App.useApp()
   const [form] = Form.useForm()
   const router = useRouter()
-
-  const { resourcesCategories } = options
 
   const categoryOptions = resourcesCategories?.map((item: any) => ({
     label: item.name,
@@ -60,9 +66,15 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
   }))
 
   useAsyncEffect(async () => {
-    if (!open) return
+    if (!open) {
+      setExpireType('has_expire')
+      return
+    }
 
     const res = await getAccountsReuqest()
+    const categories = await getResourceCategoriesRequest()
+
+    setResourcesCategories(categories)
     setAccounts(res)
   }, [open])
 
@@ -76,27 +88,28 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
         ? NOTIFICATION_BEFORE_DAYS
         : NOTIFICATION_BEFORE_HOURS
 
-    console.log({
-      ...rest,
-      [expire_notice]: notificationBeforeTime,
-      expired_date: String(dayjs(expired_date).format('YYYY-MM-DD HH:mm')),
-      thumbnail,
-    })
+    const expiredDate = expired_date
+      ? String(dayjs(expired_date).format('YYYY-MM-DD HH:mm'))
+      : null
 
     try {
       if (mode === 'create') {
         var { message: msg, errors } = await createResourceAction({
           ...rest,
           [expire_notice]: notificationBeforeTime,
-          expired_date: String(dayjs(expired_date).format('YYYY-MM-DD HH:mm')),
+          expired_date: expiredDate,
           thumbnail,
         })
       } else {
-        // var { message: msg, errors } = await updateResourceAction({
-        //   ...rest,
-        //   [expire_notice]: notificationBeforeTime,
-        //   expired_date: String(dayjs(expired_date).format('YYYY-MM-DD HH:mm')),
-        // })
+        var { message: msg, errors } = await updateResourceAction(
+          initialValues.id,
+          {
+            ...rest,
+            [expire_notice]: notificationBeforeTime,
+            expired_date: expiredDate,
+            thumbnail,
+          },
+        )
       }
 
       if (errors) {
@@ -154,7 +167,9 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
 
   return (
     <>
-      <div onClick={() => setOpen(true)}>{children}</div>
+      <div className="cursor-pointer" onClick={() => setOpen(true)}>
+        {children}
+      </div>
       <Modal
         title={mode === 'create' ? 'Tạo tài liệu mới' : 'Cập nhật tài liệu'}
         open={open}
@@ -173,17 +188,30 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
             initialValues={
               mode === 'create'
                 ? {
-                    category_resource_id: resourcesCategories[0].id,
+                    ...initialValues,
                     type: 'text',
                     expire_notice: 'notification_before_days',
                   }
-                : initialValues
+                : {
+                    ...initialValues,
+                    expired_date: initialValues?.expired_date
+                      ? dayjs(initialValues?.expired_date)
+                      : null,
+                    members: initialValues?.members?.map(
+                      (item: any) => item.id,
+                    ),
+                    receivers: initialValues?.receivers?.map(
+                      (item: any) => item.id,
+                    ),
+                  }
             }
             onFinish={handleSubmit}
+            {...formProps}
           >
             {dom}
           </Form>
         )}
+        {...modalProps}
       >
         <Form.Item
           name="category_resource_id"
@@ -233,12 +261,12 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
             >
               <Input placeholder="Nhập mật khẩu" type="password" />
             </Form.Item>
-            <Form.Item name="note" label="Ghi chú">
+            <Form.Item name="note" label="Ghi chú" valuePropName="content">
               <TiptapEditor />
             </Form.Item>
           </>
         ) : (
-          <Form.Item name="text_content">
+          <Form.Item name="text_content" valuePropName="content">
             <TiptapEditor />
           </Form.Item>
         )}

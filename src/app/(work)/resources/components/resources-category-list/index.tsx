@@ -31,7 +31,7 @@ const ResourcesCategoryList: React.FC = async () => {
     }),
   )
 
-  if (resourcesCategories.length <= 0) {
+  if (resourcesCategories?.length <= 0) {
     return (
       <Empty className="p-[60px]" description="Không có danh mục tài liệu" />
     )

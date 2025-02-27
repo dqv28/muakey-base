@@ -1,7 +1,11 @@
 'use server'
 
-import { deleteResourceCategory } from '@/libs/resources'
+import { deleteResource, deleteResourceCategory } from '@/libs/resources'
 
 export const deleteResourceCategoryAction = async (rId: number) => {
-  return deleteResourceCategory(rId)
+  return await deleteResourceCategory(rId)
+}
+
+export const deleteResourceAction = async (rId: number) => {
+  return await deleteResource(rId)
 }

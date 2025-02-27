@@ -2,7 +2,7 @@ import { randomColor } from '@/libs/utils'
 import { Avatar, Col, Row } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React from 'react'
 import StatisticsCard from '../statistics-card'
 type StatisticsRowsStaffProps = {
   todos?: any[]
@@ -13,7 +13,6 @@ const StatisticsRowsStaff: React.FC<StatisticsRowsStaffProps> = ({
   todos,
   options,
 }) => {
-  const [isDragging, setIsDragging] = useState(false)
   const { days } = options
 
   return (
@@ -64,21 +63,9 @@ const StatisticsRowsStaff: React.FC<StatisticsRowsStaffProps> = ({
                       className="block rounded-[8px] bg-[#fff] hover:text-[#000]"
                       key={`${task?.name_task}_${index}`}
                       href={`/job/${task?.task_id}`}
-                      onMouseDown={() => setIsDragging(false)}
-                      onMouseMove={() => setIsDragging(true)}
-                      onMouseUp={(e) => {
-                        if (isDragging) {
-                          e.preventDefault()
-                          console.log('Drag detected, navigation blocked.')
-                        }
-                      }}
-                      onClick={(e) => {
-                        if (isDragging) {
-                          e.preventDefault()
-                          return
-                        }
-                        console.log('Click triggered')
-                      }}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onMouseUp={(e) => e.preventDefault()}
+                      onClick={(e) => e.preventDefault()}
                     >
                       <StatisticsCard
                         title={

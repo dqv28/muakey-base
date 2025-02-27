@@ -23,6 +23,7 @@ import {
 import {
   createResource,
   createResourceCategory,
+  getResourceCategories,
   updateResource,
   updateResourceCategory,
 } from '@/libs/resources'
@@ -126,4 +127,8 @@ export const updateResourceAction = async (id: number, data: any) => {
 
 export const getAccountsReuqest = async () => {
   return await getAccounts()
+}
+
+export const getResourceCategoriesRequest = async () => {
+  return await getResourceCategories()
 }
