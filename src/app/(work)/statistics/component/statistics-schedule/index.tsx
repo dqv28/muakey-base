@@ -114,9 +114,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
   return (
     <div className="cursor-grab overflow-x-auto" ref={ref}>
       <Row wrap={false} className="sticky top-0 z-50 w-max">
-        <Col className="sticky left-0 z-10 w-[400px] border-r border-t bg-[#fff]">
-          <StatisticsColHeader title="Thành viên" />
-        </Col>
+        <Col className="w-[296px] border-y border-r bg-[#fff]" />
         {week.map((date) => {
           return (
             <Col

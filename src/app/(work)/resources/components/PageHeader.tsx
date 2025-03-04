@@ -7,7 +7,7 @@ import Search from './Search'
 const PageHeader: React.FC = () => {
   return (
     <div
-      className="flex h-[262px] flex-col items-center gap-[20px] bg-[#fff] p-[24px]"
+      className="flex h-[190px] flex-col items-center gap-[20px] bg-[#fff] p-[24px]"
       style={{
         backgroundImage: `url(${bg.src})`,
         backgroundSize: 'cover',
@@ -23,10 +23,12 @@ const PageHeader: React.FC = () => {
         cho nhân viên Muakey. Vui lòng không chia sẻ các tài nguyên này ra bên
         ngoài
       </p>
-      <ResourceCategoryModalForm>
-        <Button type="primary">Tạo danh mục mới</Button>
-      </ResourceCategoryModalForm>
-      <Search />
+      <div className="flex items-center gap-[24px]">
+        <Search />
+        <ResourceCategoryModalForm>
+          <Button type="primary">Tạo danh mục mới</Button>
+        </ResourceCategoryModalForm>
+      </div>
     </div>
   )
 }

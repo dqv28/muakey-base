@@ -1,11 +1,13 @@
 import { ResourceModalForm } from '@/components'
-import { randomColor } from '@/libs/utils'
+import { convertTime, randomColor } from '@/libs/utils'
 import {
   ClockCircleOutlined,
   EditOutlined,
   EyeOutlined,
 } from '@ant-design/icons'
 import { Avatar, Col, Empty, Row } from 'antd'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 import React from 'react'
 import ResourcesCard from '../resources-card'
 import ResourcesDetailModal, {
@@ -16,6 +18,8 @@ export type ResourcesListProps = {
   resources?: any
 }
 
+dayjs.extend(duration)
+
 const ResourcesList: React.FC<ResourcesListProps> = ({ resources }) => {
   if (!resources || resources?.length <= 0) {
     return <Empty description="Chưa có tài liệu" />
@@ -24,6 +28,9 @@ const ResourcesList: React.FC<ResourcesListProps> = ({ resources }) => {
   return (
     <Row gutter={[16, 16]}>
       {resources?.map((item: any) => {
+        const t = new Date(item?.expired_date).getTime() - new Date().getTime()
+        const time = dayjs.duration(Math.abs(t))
+
         const body =
           item.type === 'text'
             ? {
@@ -73,19 +80,19 @@ const ResourcesList: React.FC<ResourcesListProps> = ({ resources }) => {
                   ),
                 },
               ]),
-          {
-            label: 'Thời gian hết hạn',
-            value: (
-              <div className="flex items-center gap-[8px] text-[#F5222D]">
-                <ClockCircleOutlined />
-                <span>Còn 23 ngày</span>
-              </div>
-            ),
-          },
-          {
-            label: 'Quyền truy cập tài liệu',
-            value: item.members,
-          },
+          ...(item?.expired_date
+            ? [
+                {
+                  label: 'Thời gian hết hạn',
+                  value: (
+                    <div className="flex items-center gap-[8px] text-[#F5222D]">
+                      <ClockCircleOutlined />
+                      <span>Còn {convertTime(time.asSeconds())}</span>
+                    </div>
+                  ),
+                },
+              ]
+            : []),
         ]
 
         return (
@@ -102,13 +109,13 @@ const ResourcesList: React.FC<ResourcesListProps> = ({ resources }) => {
                   >
                     {item?.name?.charAt(0)?.toUpperCase()}
                   </Avatar>
-                  <span className="text-[16px] font-[700] leading-[24px]">
+                  <div className="line-clamp-1 flex-1 text-[16px] font-[500] leading-[24px]">
                     {item?.name}
-                  </span>
+                  </div>
                 </div>
               }
               extra={
-                <div className="flex items-center gap-[16px]">
+                <div className="flex items-center gap-[12px]">
                   <ResourcesDetailModal
                     resources={resourcesAsContent}
                     title={
@@ -139,6 +146,18 @@ const ResourcesList: React.FC<ResourcesListProps> = ({ resources }) => {
                 </div>
               }
               body={body}
+              footer={
+                item?.expired_date && (
+                  <div className="flex items-center gap-[8px] px-[24px] text-[#F5222D]">
+                    <ClockCircleOutlined />
+                    {t > 0 ? (
+                      <span>Còn {convertTime(time.asSeconds())}</span>
+                    ) : (
+                      <span>Đã hết hạn</span>
+                    )}
+                  </div>
+                )
+              }
             />
           </Col>
         )

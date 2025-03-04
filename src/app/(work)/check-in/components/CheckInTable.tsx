@@ -24,9 +24,12 @@ type CheckInTableProps = TableProps & {
   onDateSelect?: (date: any) => void
 }
 
-const generateTimestamp = (start: string, end: string, currentDate: number) => {
-  const startDate = new Date(start).getDate()
-  const endDate = new Date(end).getDate()
+const generateTimestamp = (start: string, end: string, current: number) => {
+  const startDate = String(dayjs(start).format('YYYY-MM-DD'))
+  const endDate = String(dayjs(end).format('YYYY-MM-DD'))
+  const currentDate = String(
+    `${dayjs(new Date()).format('YYYY-MM')}-${current > 9 ? current : `0${current}`}`,
+  )
 
   if (startDate <= currentDate && endDate >= currentDate) {
     if (startDate === currentDate && endDate === currentDate) {
@@ -233,14 +236,22 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           generateTimestamp(t?.start_date, t?.end_date, currentDate),
         )
 
+        const hoursPerDay = checkIn?.reduce((total: number, curr: any) => {
+          return total + (+curr?.hours || 0)
+        }, 0)
+
+        const dayWorking = checkIn?.reduce((total: number, curr: any) => {
+          return total + (+curr?.workday || 0)
+        }, 0)
+
         return [
           `${currentDate}/${month}`,
           {
             checkInValue,
             timeOff,
             ot,
-            hoursPerDay: checkIn?.[0]?.hours || 0,
-            dayWorking: checkIn?.[0]?.workday || 0,
+            hoursPerDay,
+            dayWorking,
             plan_time: checkIn?.[0]
               ? [
                   dayjs(checkIn?.[0]?.checkin).format('HH:mm'),

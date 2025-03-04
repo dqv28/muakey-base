@@ -47,7 +47,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                 ? dayjs(
                     `${String(dayjs(current).format('YYYY-MM-DD'))} ${info?.checkInValue?.pop()?.[0]}`,
                   )
-                : null,
+                : current,
             )
             router.push('?form=sua-gio-vao-ra')
           }}

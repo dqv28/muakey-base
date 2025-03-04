@@ -20,10 +20,7 @@ const StatisticsRowsStaff: React.FC<StatisticsRowsStaffProps> = ({
       {todos &&
         todos?.map((t: any, index: number) => (
           <Row key={t?.name} className="w-max">
-            <Col
-              className="sticky left-0 z-10 w-[400px] border-r bg-[#0000000F]"
-              span={3}
-            >
+            <Col className="sticky left-0 z-10 w-[296px] overflow-hidden border-r bg-[#f5f5f5]">
               <div
                 className={clsx('h-full w-[296px] bg-[#fff] p-[16px]', {
                   'pb-[80px]': index === todos?.length - 1,
@@ -56,7 +53,6 @@ const StatisticsRowsStaff: React.FC<StatisticsRowsStaffProps> = ({
                 <Col
                   className="w-[400px] space-y-[8px] border-r bg-[#f5f5f5] p-[8px]"
                   key={day}
-                  span={3}
                 >
                   {tasksOfDay?.map((task: any, index: number) => (
                     <Link

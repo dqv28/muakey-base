@@ -1,7 +1,6 @@
 'use client'
 
-import { ClockCircleOutlined } from '@ant-design/icons'
-import { Typography } from 'antd'
+import { Tooltip, Typography } from 'antd'
 import React from 'react'
 
 type TextType = {
@@ -45,23 +44,25 @@ const ResourcesCard: React.FC<ResourcesCardProps> = ({
         {account && (
           <div className="flex flex-col gap-[8px] px-[24px] py-[12px]">
             <div className="flex items-start gap-[8px]">
-              <span className="text-nowrap">Tài khoản:</span>
-              <Typography.Text className="font-[700]" copyable>
+              <div className="w-[70px] text-nowrap">Tài khoản:</div>
+              <Typography.Text className="flex-1 font-[500]" copyable>
                 {account.name}
               </Typography.Text>
             </div>
             <div className="flex items-start gap-[8px]">
-              <span className="text-nowrap">Mật khẩu:</span>
-              <Typography.Text className="font-[700]" copyable>
+              <div className="w-[70px] text-nowrap">Mật khẩu:</div>
+              <Typography.Text className="flex-1 font-[500]" copyable>
                 {account.password}
               </Typography.Text>
             </div>
             <div className="flex items-start gap-[8px]">
-              <span className="text-nowrap">Ghi chú:</span>
-              <span
-                className="line-clamp-3 font-[700]"
-                dangerouslySetInnerHTML={{ __html: account.note || '' }}
-              />
+              <div className="w-[70px] text-nowrap">Ghi chú:</div>
+              <Tooltip title={account.note}>
+                <div
+                  className="line-clamp-3 flex-1 font-[500]"
+                  dangerouslySetInnerHTML={{ __html: account.note || '' }}
+                />
+              </Tooltip>
             </div>
           </div>
         )}
@@ -73,10 +74,7 @@ const ResourcesCard: React.FC<ResourcesCardProps> = ({
           />
         )}
 
-        <div className="flex items-center gap-[8px] px-[24px] text-[#F5222D]">
-          <ClockCircleOutlined />
-          <span>Còn 23 ngày</span>
-        </div>
+        {footer}
       </div>
     </div>
   )

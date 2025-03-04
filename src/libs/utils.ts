@@ -238,6 +238,7 @@ export const convertTime = (seconds: number) => {
 
   const year = durationObj.years()
   const days = durationObj.days()
+  const months = durationObj.months()
   const hours = durationObj.hours()
   const minutes = durationObj.minutes()
   const secs = durationObj.seconds()
@@ -245,6 +246,9 @@ export const convertTime = (seconds: number) => {
   switch (true) {
     case !!year:
       return `${year} năm`
+
+    case !!months:
+      return `${months} tháng`
 
     case !!days:
       return `${days} ngày`

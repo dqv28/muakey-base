@@ -80,7 +80,13 @@ const ResourcesDetailModal: React.FC<ResourcesDetailModalProps> = ({
               onClick={() => {
                 modal.confirm({
                   title: 'Xóa tài liệu',
-                  content: 'Bạn có chắc chắn muốn xóa tài liệu này không?',
+                  content: (
+                    <span>
+                      Bạn có chắc chắn muốn xóa danh mục tài liệu{' '}
+                      <span className="font-[600]">{initialValues?.name}</span>{' '}
+                      không?
+                    </span>
+                  ),
                   onOk: () => handleDelete(initialValues?.id),
                   okButtonProps: {
                     loading,
@@ -133,7 +139,7 @@ const ResourcesDetailModal: React.FC<ResourcesDetailModalProps> = ({
                   })}
                 </Avatar.Group>
               ) : resource?.copyable ? (
-                <Typography.Text className="flex-1 font-[700]" copyable>
+                <Typography.Text className="flex-1 font-[500]" copyable>
                   {resource?.value}
                 </Typography.Text>
               ) : (

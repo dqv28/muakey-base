@@ -72,7 +72,12 @@ const ResourcesExtra: React.FC<ResourcesExtraProps> = ({
       onClick: () => {
         modal.confirm({
           title: 'Xóa danh mục',
-          content: 'Bạn có chắc chắn muốn xóa danh mục này không?',
+          content: (
+            <span>
+              Bạn có chắc chắn muốn xóa danh mục{' '}
+              <span className="font-[600]">{resource?.name}</span> không?
+            </span>
+          ),
           onOk: () => handleDelete(resource?.id || 0),
           onCancel: () => setOpen(false),
           open,

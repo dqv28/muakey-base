@@ -38,7 +38,7 @@ const ResourcesCategoryList: React.FC = async () => {
   }
 
   return (
-    <div className="h-[calc(100vh-262px)] overflow-y-auto py-[12px]">
+    <div className="h-[calc(100vh-190px)] overflow-y-auto py-[12px]">
       <Collapse
         items={items}
         className="border-none bg-transparent"
