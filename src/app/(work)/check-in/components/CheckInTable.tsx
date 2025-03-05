@@ -28,7 +28,7 @@ const generateTimestamp = (start: string, end: string, current: number) => {
   const startDate = String(dayjs(start).format('YYYY-MM-DD'))
   const endDate = String(dayjs(end).format('YYYY-MM-DD'))
   const currentDate = String(
-    `${dayjs(new Date()).format('YYYY-MM')}-${current > 9 ? current : `0${current}`}`,
+    `${dayjs(start).format('YYYY-MM')}-${current > 9 ? current : `0${current}`}`,
   )
 
   if (startDate <= currentDate && endDate >= currentDate) {

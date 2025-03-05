@@ -34,6 +34,9 @@ const nextConfig: NextConfig = {
       '@dnd-kit/utilities',
     ],
     webpackMemoryOptimizations: true,
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {

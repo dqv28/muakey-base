@@ -106,6 +106,8 @@ const ResourcesList: React.FC<ResourcesListProps> = ({ resources }) => {
                     style={{
                       backgroundColor: randomColor(String(item?.name || '')),
                     }}
+                    alt={String(item?.name || '')}
+                    size={32}
                   >
                     {item?.name?.charAt(0)?.toUpperCase()}
                   </Avatar>

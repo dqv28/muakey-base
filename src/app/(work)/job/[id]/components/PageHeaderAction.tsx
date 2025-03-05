@@ -122,7 +122,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
       }
 
       message.success(success)
-      router.push(`/workflows/${options?.workflow?.id}`)
+      router.push(`/workflows/${options?.workflowId}`)
     } catch (error: any) {
       throw new Error(error)
     }

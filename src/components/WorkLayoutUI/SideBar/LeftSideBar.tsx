@@ -32,8 +32,11 @@ export type SubSideProps = {
 }
 
 const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
+  const { hasCheckedIn } = options
+
   const [loading, setLoading] = useState(false)
   const [openNotice, setOpenNotice] = useState(false)
+  const [openCheckedIn, setOpenCheckedIn] = useState(!!hasCheckedIn)
   const [notifications, setNotifications] = useState<any[]>()
   const [notificationsWithNotRead, setNotificationsWithNotRead] =
     useState<any[]>()
@@ -104,18 +107,22 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   }
 
   useEffect(() => {
-    if (!options?.hasCheckedIn) {
-      modal.info({
+    if (!openCheckedIn) {
+      modal.confirm({
         title: `Điểm danh`,
         content: <p>Điểm danh please!</p>,
         okText: 'Điểm danh',
+        cancelText: 'Hủy',
+        icon: <ExclamationCircleFilled className="!text-[#1677ff]" />,
         okButtonProps: {
           loading,
         },
+        open: openCheckedIn,
+        onCancel: () => setOpenCheckedIn(false),
         onOk: handleCheckedIn,
       })
     }
-  }, [])
+  }, [openCheckedIn])
 
   useAsyncEffect(async () => {
     if (!openNotice) return

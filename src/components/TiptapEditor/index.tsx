@@ -1,6 +1,7 @@
 'use client'
 
 import { uploadImageAction } from '@/app/admin/accounts/account-actions/action'
+import { withApp } from '@/hoc'
 import BulletList from '@tiptap/extension-bullet-list'
 import CodeBlock from '@tiptap/extension-code-block'
 import FontFamily from '@tiptap/extension-font-family'
@@ -18,7 +19,7 @@ import {
   useEditor,
 } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { message } from 'antd'
+import { App } from 'antd'
 import React from 'react'
 import ImageResize from 'tiptap-extension-resize-image'
 import TiptapToolbars from './TiptapToolbars'
@@ -33,6 +34,8 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   onChange,
   ...rest
 }) => {
+  const { message } = App.useApp()
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure(),
@@ -162,6 +165,13 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
 
       if (!file) return
 
+      const maxSize = 2 * 1024 * 1024
+
+      if (file.size > maxSize) {
+        message.error('Kích thước file vượt quá 2MB')
+        return
+      }
+
       const formData = new FormData()
 
       formData.append('image', file || '')
@@ -191,4 +201,4 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   )
 }
 
-export default TiptapEditor
+export default withApp(TiptapEditor)

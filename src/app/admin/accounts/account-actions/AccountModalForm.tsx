@@ -90,7 +90,7 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
         var { message: msg, errors } = await editAccountAction(id, {
           ...restFormData,
           ...(formEmail === email ? {} : { email: formEmail }),
-          avatar: avatar?.url,
+          avatar: avatar?.url || initialValues?.avatar,
         })
       }
 

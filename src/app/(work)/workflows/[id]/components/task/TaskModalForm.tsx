@@ -183,7 +183,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             errors: [errors?.[name]],
           })),
         )
-
+        setLoading(false)
         return
       }
 

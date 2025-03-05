@@ -107,7 +107,7 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
             ...rest,
             [expire_notice]: notificationBeforeTime,
             expired_date: expiredDate,
-            thumbnail,
+            thumbnail: thumbnail || initialValues?.thumbnail,
           },
         )
       }

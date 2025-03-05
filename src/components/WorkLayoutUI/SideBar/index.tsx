@@ -119,6 +119,24 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
           ),
           href: '/resources',
         },
+        // {
+        //   label: (
+        //     <div className="flex items-center gap-[12px]">
+        //       <FileFilled className="text-[16px]" />
+        //       <span>Quản lý nhân sự</span>
+        //     </div>
+        //   ),
+        //   children: [
+        //     {
+        //       label: <div className="pl-[28px]">Danh sách tài khoản</div>,
+        //       href: '/accounts',
+        //     },
+        //     {
+        //       label: <div className="pl-[28px]">Danh sách nhân sự</div>,
+        //       href: '/staffs',
+        //     },
+        //   ],
+        // },
       ],
     },
     ...(workflowCategories && workflowCategories.length > 0
@@ -163,6 +181,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
           className="no-scroll mt-[20px] h-[calc(100vh-96px)] overflow-auto pb-[40px]"
           items={navigationItems}
         />
+        {/* <Menu mode="inline" items={navigationItems} /> */}
       </div>
     </Layout.Side>
   )

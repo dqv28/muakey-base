@@ -45,3 +45,6 @@ export { default as ResourceCategoryModalForm } from './ResourceCategoryModalFor
 
 export * from './ResourceModalForm'
 export { default as ResourceModalForm } from './ResourceModalForm'
+
+export * from './PageHeader'
+export { default as PageHeader } from './PageHeader'

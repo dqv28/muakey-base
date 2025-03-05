@@ -1,3 +1,4 @@
+import { useAsyncEffect } from '@/libs/hook'
 import { Col } from '@/ui'
 import {
   ExclamationCircleOutlined,
@@ -6,15 +7,24 @@ import {
 } from '@ant-design/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Button, Dropdown, Form, Input, Tooltip } from 'antd'
+import { Button, DatePicker, Dropdown, Form, Input, Tooltip } from 'antd'
+import locale from 'antd/es/date-picker/locale/vi_VN'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { useParams } from 'next/navigation'
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import TaskList from '../task/TaskList'
 import StageDropdownMenu from './StageDropdownMenu'
 import StageHeader from './StageHeader'
-import { refreshDataAction } from './action'
+import { getStagesByWorkflowIdRequest, refreshDataAction } from './action'
 
 type StageColumnProps = {
   stage?: any
@@ -24,15 +34,19 @@ type StageColumnProps = {
 
 const StageColumn: React.FC<StageColumnProps> = memo(
   ({ stage, userId, options }) => {
+    const { tasks: stageTasks } = stage
+
     const [loading, setLoading] = useState(false)
-    const [tasks, setTasks] = useState<any[]>(stage?.tasks || [])
-    const [filteredValues, setFilteredValues] = useState({
+    const [tasks, setTasks] = useState<any[]>(stageTasks || [])
+    const [filteredValues, setFilteredValues] = useState<any>({
       views: '',
       days: '',
+      range: null,
     })
 
     const now = new Date()
     const [form] = Form.useForm()
+    const { setStages } = useContext(WorkflowStageContext)
 
     const params = useParams()
     const { attributes, setNodeRef, transform, transition } = useSortable({
@@ -71,19 +85,18 @@ const StageColumn: React.FC<StageColumnProps> = memo(
       () => stage?.expired_after_hours,
       [stage?.expired_after_hours],
     )
+    const { views, days: formDays, range } = filteredValues
 
     useEffect(() => {
-      const { views, days: formDays } = filteredValues
-
       if (!views && !formDays) {
-        setTasks(stage?.tasks || [])
+        setTasks(stageTasks || [])
         return
       }
 
       setTasks(() => {
         if (views && formDays) {
           return [
-            ...stage?.tasks?.filter((t: any) => {
+            ...stageTasks?.filter((t: any) => {
               const days = Math.abs(dayjs(t?.date_posted).diff(now, 'day'))
 
               return t?.view_count < +views && days >= +formDays
@@ -92,12 +105,12 @@ const StageColumn: React.FC<StageColumnProps> = memo(
         }
 
         if (views) {
-          return [...stage?.tasks?.filter((t: any) => t?.view_count < +views)]
+          return [...stageTasks?.filter((t: any) => t?.view_count < +views)]
         }
 
         if (formDays) {
           return [
-            ...stage?.tasks.filter((t: any) => {
+            ...stageTasks.filter((t: any) => {
               const days = Math.abs(dayjs(t?.date_posted).diff(now, 'day'))
 
               return days >= +formDays
@@ -105,13 +118,30 @@ const StageColumn: React.FC<StageColumnProps> = memo(
           ]
         }
 
-        return [...stage?.tasks]
+        return [...stageTasks]
       })
-    }, [filteredValues])
+    }, [views, formDays, stageTasks])
 
     useEffect(() => {
-      setTasks(stage?.tasks)
-    }, [stage?.tasks])
+      setTasks(stageTasks)
+    }, [stageTasks])
+
+    useAsyncEffect(async () => {
+      if (range === null) return
+
+      const res = await getStagesByWorkflowIdRequest({
+        workflow_id: params?.id,
+        start: range?.[0] ? String(dayjs(range?.[0]).format('YYYY-MM-DD')) : '',
+        end: range?.[1] ? String(dayjs(range?.[1]).format('YYYY-MM-DD')) : '',
+      })
+
+      setStages(
+        res?.map((stage: any) => ({
+          ...stage,
+          id: `stage_${stage.id}`,
+        })),
+      )
+    }, [range])
 
     return (
       <Col
@@ -174,8 +204,11 @@ const StageColumn: React.FC<StageColumnProps> = memo(
                 <Dropdown
                   trigger={['click']}
                   dropdownRender={() => (
-                    <div className="max-w-[200px] rounded-[8px] bg-[#fff] p-[12px] shadow-lg">
+                    <div className="max-w-[400px] rounded-[8px] bg-[#fff] p-[12px] shadow-lg">
                       <Form onFinish={setFilteredValues} form={form}>
+                        <Form.Item className="!mb-[8px]" name="range">
+                          <DatePicker.RangePicker locale={locale} />
+                        </Form.Item>
                         <Form.Item className="!mb-[8px]" name="views">
                           <Input placeholder="< Lượt xem" type="number" />
                         </Form.Item>
@@ -191,6 +224,7 @@ const StageColumn: React.FC<StageColumnProps> = memo(
                                 setFilteredValues({
                                   views: '',
                                   days: '',
+                                  range: [],
                                 })
                               }}
                             >
