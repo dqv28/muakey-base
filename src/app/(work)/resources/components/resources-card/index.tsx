@@ -57,7 +57,13 @@ const ResourcesCard: React.FC<ResourcesCardProps> = ({
             </div>
             <div className="flex items-start gap-[8px]">
               <div className="w-[70px] text-nowrap">Ghi chú:</div>
-              <Tooltip title={account.note}>
+              <Tooltip
+                title={
+                  <span
+                    dangerouslySetInnerHTML={{ __html: account.note || '' }}
+                  />
+                }
+              >
                 <div
                   className="line-clamp-3 flex-1 font-[500]"
                   dangerouslySetInnerHTML={{ __html: account.note || '' }}

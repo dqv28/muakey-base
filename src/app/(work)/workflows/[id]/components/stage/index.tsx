@@ -122,6 +122,14 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
           .pop(),
       )
 
+      if (
+        !user?.role?.toLocaleLowerCase()?.includes('quản trị') &&
+        !activeData?.started_at
+      ) {
+        message.error('Nhiệm vụ chưa được bắt đầu.')
+        return
+      }
+
       const taskHistory = await getTaskHistoriesAction({
         task_id: activeData.id,
         stage_id: stageId,
@@ -158,6 +166,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
                       )
                     : null
                 : null,
+              started_at: taskHistory?.started_at || null,
             },
             ...overColumn.tasks,
           ]
@@ -242,7 +251,8 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
       toast.error('Nhiệm vụ chưa được giao.')
       return
     }
-    if (!String(user?.role).toLocaleLowerCase().includes('admin')) {
+
+    if (!String(user?.role).toLocaleLowerCase().includes('quản trị')) {
       if (activeData.account_id !== user?.id) {
         message.error(
           'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',

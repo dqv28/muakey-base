@@ -14,7 +14,11 @@ export async function middleware(request: NextRequest) {
   const session = await getSession()
   const today = new Date().getDate()
 
-  if (user?.role === 'Admin lv2' && path === '/admin') {
+  console.log('user', user)
+
+  const isAdmin = user?.role === 'Quản trị cấp cao'
+
+  if (isAdmin && path === '/admin') {
     return NextResponse.redirect(new URL('/admin/accounts', request.url))
   }
 
@@ -27,10 +31,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   } else if (
     isAuthenticated &&
-    (path === '/login' ||
-      path === '/signup' ||
-      path === '/' ||
-      (user?.role !== 'Admin lv2' && path.includes('admin')))
+    (['/login', '/signup', '/'].includes(path) ||
+      (!isAdmin && path.includes('admin')))
   ) {
     return NextResponse.redirect(new URL('/workflows', request.url))
   }

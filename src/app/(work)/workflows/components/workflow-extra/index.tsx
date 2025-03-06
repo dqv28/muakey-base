@@ -19,7 +19,6 @@ const WorkflowExtra: React.FC<{
 
   const formRef = useRef<FormInstance>(null)
   const { message } = App.useApp()
-
   const { cate, id, departments } = initialValues
 
   const handleSubmit = async (formData: any) => {
@@ -66,7 +65,7 @@ const WorkflowExtra: React.FC<{
   }
 
   const isAuth =
-    String(initialValues?.user?.role).toLowerCase().includes('admin') ||
+    String(initialValues?.user?.role).toLowerCase().includes('quản trị') ||
     initialValues?.members
       ?.map((mem: any) => mem?.id)
       .includes(initialValues?.user?.id)
@@ -100,7 +99,14 @@ const WorkflowExtra: React.FC<{
         }}
         destroyOnClose
         modalRender={(dom) => (
-          <Form onFinish={handleSubmit} ref={formRef} layout="vertical">
+          <Form
+            onFinish={handleSubmit}
+            ref={formRef}
+            layout="vertical"
+            initialValues={{
+              name: cate?.name,
+            }}
+          >
             {dom}
           </Form>
         )}

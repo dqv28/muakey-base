@@ -310,7 +310,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 
   return (
     <div>
-      {user?.role === 'Admin lv2' ? (
+      {user?.role === 'Quản trị cấp cao' ? (
         <div className="rounded bg-[#fff]">
           <Tabs
             tabBarExtraContent={
@@ -385,7 +385,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         </div>
       ) : (
         <div className="space-y-[16px]">
-          {user?.role !== 'Admin lv2' && (
+          {user?.role !== 'Quản trị cấp cao' && (
             <CheckInStatistics items={checkInStatisticsItems} />
           )}
           <div className="space-y-[24px] rounded-[16px] bg-[#fff] p-[16px]">

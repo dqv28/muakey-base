@@ -151,6 +151,7 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
             initialValues={{
               ...initialValues,
               day_off: initialValues?.day_off || 0,
+              role_id: initialValues?.role_id || 1,
             }}
           >
             {dom}
@@ -205,21 +206,8 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
         </div>
 
         <div className="flex items-center gap-[24px]">
-          <Form.Item
-            className="flex-1"
-            name="role_id"
-            label="Phân quyền"
-            initialValue={roleOptions[0]?.value}
-          >
-            <Select
-              options={[
-                {
-                  label: 'Người dùng',
-                  value: null,
-                },
-                ...roleOptions,
-              ]}
-            />
+          <Form.Item className="flex-1" name="role_id" label="Phân quyền">
+            <Select options={roleOptions} />
           </Form.Item>
           <Form.Item
             className="flex-1"

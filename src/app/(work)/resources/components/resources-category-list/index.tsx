@@ -1,7 +1,9 @@
+import { withSuspense } from '@/hoc'
 import { getResourceCategories } from '@/libs/resources'
 import { Collapse, CollapseProps, Empty } from 'antd'
 import React from 'react'
 import ResourcesList from '../resources-list'
+import ResourcesCategoryListSkeleton from './ResourcesCategoryListSkeleton'
 import ResourcesExtra from './ResourcesExtra'
 
 const ResourcesCategoryList: React.FC = async () => {
@@ -51,4 +53,6 @@ const ResourcesCategoryList: React.FC = async () => {
   )
 }
 
-export default ResourcesCategoryList
+export default withSuspense(ResourcesCategoryList, {
+  fallback: () => <ResourcesCategoryListSkeleton />,
+})

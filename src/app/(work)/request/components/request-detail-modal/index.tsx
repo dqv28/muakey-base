@@ -104,7 +104,7 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
           <Divider className="!my-0" />
 
           <RequestDetailActions
-            hasConfirm={userRole === 'Admin lv2'}
+            hasConfirm={userRole === 'Quản trị cấp cao'}
             options={{ requestId: request.id }}
           />
         </div>

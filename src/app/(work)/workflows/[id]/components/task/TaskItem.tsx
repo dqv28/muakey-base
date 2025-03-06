@@ -430,7 +430,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           ),
         })),
       },
-      ...(String(role).includes('Admin')
+      ...(String(role).toLocaleLowerCase().includes('quản trị')
         ? [
             {
               key: '3',
@@ -476,7 +476,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           </MarkTaskFailedModalForm>
         ),
       },
-      ...(String(role).includes('Admin')
+      ...(String(role).toLocaleLowerCase().includes('quản trị')
         ? [
             {
               key: '5',
@@ -578,13 +578,13 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             />
             {!isCompleted && !isFailed ? (
               <div>
-                {user ? (
+                {user || task?.started_at ? (
                   <div className="flex min-h-[28px] items-center justify-between gap-[8px]">
                     <div className="flex items-center gap-[4px]">
                       <Avatar
                         src={user?.avatar}
                         style={{
-                          backgroundColor: randomColor(user?.full_name),
+                          backgroundColor: randomColor(String(user?.full_name)),
                         }}
                         shape="circle"
                         size="small"
@@ -633,7 +633,23 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
         {!isCompleted && !isFailed && (
           <>
-            {!task?.started_at && (
+            {user ? (
+              !task?.started_at && (
+                <Button
+                  className="absolute bottom-[12px] right-[16px] !p-[10px] !text-[12px] text-[#fff]"
+                  size="small"
+                  type="primary"
+                  onClick={() => {
+                    modal.confirm({
+                      title: 'Bạn muốn nhận công việc này?',
+                      onOk: () => handleAssign(userId || 0),
+                    })
+                  }}
+                >
+                  Bắt đầu
+                </Button>
+              )
+            ) : (
               <Button
                 className="absolute bottom-[12px] right-[16px] !p-[10px] !text-[12px] text-[#fff]"
                 size="small"
@@ -641,11 +657,11 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                 onClick={() => {
                   modal.confirm({
                     title: 'Bạn muốn nhận công việc này?',
-                    onOk: () => handleAssign(userId || 0),
+                    onOk: () => handleAssignWithoutWork(userId || 0),
                   })
                 }}
               >
-                Bắt đầu
+                Nhận
               </Button>
             )}
           </>

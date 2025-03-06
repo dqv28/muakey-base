@@ -357,3 +357,6 @@ export const calculateDayOffTotal = (startDate: Date, endDate: Date) => {
 
   return Number((hourPerDayOff / 7.5).toFixed(3))
 }
+
+export const maskValue = (cc: any, num = 4, mask = '*') =>
+  `${cc}`.slice(-num).padStart(`${cc}`.length, mask)

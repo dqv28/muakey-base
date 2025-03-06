@@ -5,6 +5,7 @@ import React from 'react'
 type Tab = {
   items: TabsProps['items']
   className?: TabsProps['className']
+  onChangeTab?: (key: string) => void
 }
 
 export type PageHeaderProps = {
@@ -29,6 +30,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, extra, tab }) => {
               className={tab?.className}
               tabBarStyle={{ marginBottom: 0 }}
               items={tab?.items}
+              onChange={tab?.onChangeTab}
             />
           )}
         </div>

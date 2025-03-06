@@ -48,3 +48,6 @@ export { default as ResourceModalForm } from './ResourceModalForm'
 
 export * from './PageHeader'
 export { default as PageHeader } from './PageHeader'
+
+export * from './AccountModalForm'
+export { default as AccountModalForm } from './AccountModalForm'

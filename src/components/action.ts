@@ -2,10 +2,12 @@
 
 import { changeLoggedInDate, logout } from '@/libs/auth'
 import {
+  addAccount,
   addTask,
   assignTaskWithoutWork,
   checkIn,
   checkOut,
+  editAccount,
   editTask,
   getAccounts,
   getMe,
@@ -27,6 +29,7 @@ import {
   updateResource,
   updateResourceCategory,
 } from '@/libs/resources'
+import { getRoles } from '@/libs/role'
 import {
   addTag,
   addTagToTask,
@@ -131,4 +134,16 @@ export const getAccountsReuqest = async () => {
 
 export const getResourceCategoriesRequest = async () => {
   return await getResourceCategories()
+}
+
+export const getRolesRequest = async () => {
+  return await getRoles()
+}
+
+export const addAccountAction = async (account: any) => {
+  return await addAccount(account)
+}
+
+export const editAccountAction = async (id: number, account: any) => {
+  return await editAccount(id, account)
 }

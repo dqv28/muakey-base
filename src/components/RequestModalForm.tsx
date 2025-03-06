@@ -202,7 +202,7 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
         dataSource={groups}
         onItemClick={setGroup}
         onCancel={() => setOpen(false)}
-        isAdmin={options?.user?.role === 'Admin lv2'}
+        isAdmin={options?.user?.role === 'Quản trị cấp cao'}
       />
     </>
   )
