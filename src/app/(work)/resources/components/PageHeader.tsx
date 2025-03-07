@@ -16,12 +16,12 @@ const PageHeader: React.FC = () => {
       }}
     >
       <h1 className="text-[24px] font-[500] leading-[32px]">
-        Mơi lưu trữ tài nguyên của Muakey
+        Nơi lưu trữ tài nguyên của Muakey
       </h1>
       <p className="text-[14px] leading-[22px]">
         Đây là trang Tài nguyên nội bộ của Công ty TNHH Muakey, chỉ dành riêng
         cho nhân viên Muakey. Vui lòng không chia sẻ các tài nguyên này ra bên
-        ngoài
+        ngoài.
       </p>
       <div className="flex items-center gap-[24px]">
         <Search />

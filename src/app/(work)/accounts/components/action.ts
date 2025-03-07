@@ -1,5 +1,6 @@
 'use server'
 
+import { disableAccount } from '@/libs/account'
 import {
   addAccount,
   deleteAccount,
@@ -26,4 +27,8 @@ export const getRolesRequest = async () => {
 
 export const getAccountsRequest = async (query?: any) => {
   return await getAccounts(query)
+}
+
+export const disableAccountAction = async (id: number) => {
+  return await disableAccount(id)
 }

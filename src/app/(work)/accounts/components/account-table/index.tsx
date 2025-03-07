@@ -9,7 +9,7 @@ import { App, Avatar, Badge, Table, TableProps } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useContext, useState } from 'react'
 import { AccountPageContext } from '../AccountPageProvider'
-import { editAccountAction, getAccountsRequest } from '../action'
+import { disableAccountAction, getAccountsRequest } from '../action'
 
 export type AccountTableProps = TableProps & {}
 
@@ -59,9 +59,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
 
   const handleLockAccount = async (id: number) => {
     try {
-      const { message: msg, errors } = await editAccountAction(id, {
-        quit_work: true,
-      })
+      const { message: msg, errors } = await disableAccountAction(id)
 
       if (errors) {
         message.error(msg)

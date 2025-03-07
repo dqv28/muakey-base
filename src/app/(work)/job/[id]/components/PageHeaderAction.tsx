@@ -5,8 +5,12 @@ import MemberList from '@/components/MemberList'
 import TaskModalForm from '@/components/TaskModalForm'
 import { assignTaskWithoutWorkAction } from '@/components/action'
 import { withApp } from '@/hoc'
-import { DoubleRightOutlined, MenuOutlined } from '@ant-design/icons'
-import { App, Button, Dropdown, Input, MenuProps, Modal } from 'antd'
+import {
+  DoubleRightOutlined,
+  MenuOutlined,
+  SyncOutlined,
+} from '@ant-design/icons'
+import { App, Button, Dropdown, Input, MenuProps, Modal, Tag } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -34,7 +38,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
       return
     }
 
-    if (!String(user?.role).toLocaleLowerCase().includes('admin')) {
+    if (!String(user?.role).toLocaleLowerCase().includes('quản trị')) {
       if (rest?.task.account_id !== user?.id) {
         message.error(
           'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',
@@ -85,7 +89,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
   }
 
   const handleRemoveExecutor = async (id: number) => {
-    if (!String(options?.role).toLowerCase().includes('admin')) {
+    if (!String(options?.role).toLowerCase().includes('quản trị')) {
       if (options?.user?.id !== options?.task.account_id) {
         message.error('Không thể gỡ nhiệm vụ của người khác.')
         return
@@ -123,6 +127,25 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
 
       message.success(success)
       router.push(`/workflows/${options?.workflowId}`)
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+
+  const handleAssign = async (id: number) => {
+    try {
+      const { message: msg, errors } = await editTaskAction(rest?.task?.id, {
+        account_id: id,
+      })
+
+      if (errors) {
+        message.error(msg)
+        return
+      }
+
+      message.success('Nhận thành công.')
+      setAssignConfirmOpen(false)
+      router.refresh()
     } catch (error: any) {
       throw new Error(error)
     }
@@ -224,9 +247,48 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
     },
   ]
 
+  console.log(options?.task)
+  console.log(user)
+
   return (
     <>
       <div className="flex items-center gap-[8px]">
+        {!options?.task?.account_id ? (
+          <Button
+            type="primary"
+            onClick={() => {
+              modal.confirm({
+                title: 'Bạn muốn nhận công việc này?',
+                onOk: () => handleAssignWithoutWork(user?.id || 0),
+              })
+            }}
+          >
+            Nhận
+          </Button>
+        ) : (
+          user?.id === options?.task?.account_id &&
+          (options?.task?.started_at ? (
+            <Tag
+              className="!mr-0 h-[32px] rounded-[8px] !px-[12px] text-[14px] leading-[28px]"
+              color="processing"
+              icon={<SyncOutlined />}
+            >
+              Đang làm
+            </Tag>
+          ) : (
+            <Button
+              type="primary"
+              onClick={() => {
+                modal.confirm({
+                  title: 'Bạn muốn nhận công việc này?',
+                  onOk: () => handleAssign(user?.id || 0),
+                })
+              }}
+            >
+              Bắt đầu
+            </Button>
+          ))
+        )}
         <MarkTaskModalForm
           options={{
             ...rest,

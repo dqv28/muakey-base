@@ -66,8 +66,6 @@ const page: React.FC<any> = async (props: {
     getMe(),
   ])
 
-  console.log(task)
-
   const timeStages = await getTimeStagesByTaskId(task?.id)
 
   const filteredStages = stages?.filter(

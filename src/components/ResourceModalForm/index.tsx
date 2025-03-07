@@ -259,7 +259,7 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
               label="Mật khẩu"
               rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
             >
-              <Input placeholder="Nhập mật khẩu" type="password" />
+              <Input.Password placeholder="Nhập mật khẩu" />
             </Form.Item>
             <Form.Item name="note" label="Ghi chú" valuePropName="content">
               <TiptapEditor />

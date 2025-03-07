@@ -26,7 +26,9 @@ const page: React.FC<any> = async (prop: {
       getWorkSchedule({
         date: searchParams?.date || '',
       }),
-      getProposes(),
+      getProposes({
+        date: searchParams?.date || '',
+      }),
     ],
   )
 

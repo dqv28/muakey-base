@@ -52,12 +52,13 @@ const StageColumnList = dynamic(() => import('./StageColumnList'), {
 
 export type StageListProps = {
   members?: any
+  stages?: any
   options?: any
 }
 
 export const StageContext = createContext<any>({})
 
-const StageList: React.FC<StageListProps> = ({ members, options }) => {
+const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [currentStage, setCurrentStage] = useState<any>()
   const [activeItem, setActiveItem] = useState<any>()
@@ -68,7 +69,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
   const activeRef = useRef<any>(null)
 
   const { message } = App.useApp()
-  const { user, stages } = options
+  const { user, requiredLink } = options
 
   const { setStages } = useContext(WorkflowStageContext)
   const params = useParams()
@@ -121,6 +122,13 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
           .split('_')
           .pop(),
       )
+
+      const memberIds = members?.map((member: any) => member?.id)
+
+      if (!memberIds?.includes(user?.id)) {
+        message.error(' Bạn không phải thành viên trong quy trình này.')
+        return
+      }
 
       if (
         !user?.role?.toLocaleLowerCase()?.includes('quản trị') &&
@@ -261,7 +269,7 @@ const StageList: React.FC<StageListProps> = ({ members, options }) => {
       }
     }
 
-    if (overIndex === 1) {
+    if (overIndex === 1 && requiredLink) {
       setDoneOpen(true)
       return
     }

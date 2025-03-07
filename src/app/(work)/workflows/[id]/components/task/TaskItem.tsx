@@ -110,7 +110,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     const user = members?.find((u: any) => u?.id === task?.account_id)
 
     const handleRemoveExecutor = async (id: number) => {
-      if (!String(options?.role).toLowerCase().includes('admin')) {
+      if (!String(options?.role).toLowerCase().includes('quản trị')) {
         if (userId !== task.account_id) {
           toast.error('Không thể gỡ nhiệm vụ của người khác.')
           return
@@ -176,7 +176,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
         return
       }
 
-      if (!String(role).toLocaleLowerCase().includes('admin')) {
+      if (!String(role).toLocaleLowerCase().includes('quản trị')) {
         if (task.account_id !== userId) {
           message.error(
             'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',

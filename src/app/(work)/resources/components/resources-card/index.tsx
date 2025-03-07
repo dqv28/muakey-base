@@ -67,6 +67,9 @@ const ResourcesCard: React.FC<ResourcesCardProps> = ({
                 <div
                   className="line-clamp-3 flex-1 font-[500]"
                   dangerouslySetInnerHTML={{ __html: account.note || '' }}
+                  style={{
+                    overflowWrap: 'anywhere',
+                  }}
                 />
               </Tooltip>
             </div>
