@@ -12,6 +12,7 @@ import locale from 'antd/locale/vi_VN'
 import dayjs from 'dayjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
+import StatisticsColorGuide from './StatisticsColorGuide'
 
 type StatisticsFilteredProps = {}
 
@@ -27,6 +28,21 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = () => {
   const router = useRouter()
   const query = new URLSearchParams(searchParams)
   const filterBy = query.get('as')
+
+  const colorItems = [
+    {
+      label: 'Hoàn thành',
+      color: '#52C41A',
+    },
+    {
+      label: 'Hoàn thành & Quá hạn',
+      color: '#B64FEE',
+    },
+    {
+      label: 'Chưa hoàn thành & Quá hạn',
+      color: '#F5222D',
+    },
+  ]
 
   const memberOptions = [
     {
@@ -62,48 +78,52 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = () => {
   }
 
   return (
-    <div className="flex items-center gap-[8px] p-[16px]">
-      <ConfigProvider locale={locale}>
-        <DatePicker
-          className="w-full"
-          picker="week"
-          style={{ width: 280 }}
-          onChange={handleDateChange}
-          format={'YYYY-MM-DD'}
-          size="large"
-        />
-      </ConfigProvider>
+    <div className="flex items-center justify-between gap-[24px] p-[16px]">
       <div className="flex items-center gap-[8px]">
-        <Button
-          icon={<LeftOutlined />}
+        <ConfigProvider locale={locale}>
+          <DatePicker
+            className="w-full"
+            picker="week"
+            style={{ width: 280 }}
+            onChange={handleDateChange}
+            format={'YYYY-MM-DD'}
+            size="large"
+          />
+        </ConfigProvider>
+        <div className="flex items-center gap-[8px]">
+          <Button
+            icon={<LeftOutlined />}
+            size="large"
+            onClick={() => handleChangeDate(currentDate || today, 'sub')}
+          />
+          <Button size="large" onClick={() => handleChangeDate(today)}>
+            Hôm nay
+          </Button>
+          <Button
+            icon={<RightOutlined />}
+            size="large"
+            onClick={() => handleChangeDate(currentDate || today, 'add')}
+          />
+        </div>
+        <Select
+          allowClear
+          style={{ width: 240 }}
+          options={memberOptions}
           size="large"
-          onClick={() => handleChangeDate(currentDate || today, 'sub')}
-        />
-        <Button size="large" onClick={() => handleChangeDate(today)}>
-          Hôm nay
-        </Button>
-        <Button
-          icon={<RightOutlined />}
-          size="large"
-          onClick={() => handleChangeDate(currentDate || today, 'add')}
+          defaultValue={[filterBy || 'staff']}
+          onChange={(value) => {
+            if (value) {
+              query.set('as', String(value))
+            } else {
+              query.delete('as')
+            }
+
+            router.push(`?${String(query)}`)
+          }}
         />
       </div>
-      <Select
-        allowClear
-        style={{ width: 240 }}
-        options={memberOptions}
-        size="large"
-        defaultValue={[filterBy || 'staff']}
-        onChange={(value) => {
-          if (value) {
-            query.set('as', String(value))
-          } else {
-            query.delete('as')
-          }
 
-          router.push(`?${String(query)}`)
-        }}
-      />
+      <StatisticsColorGuide items={colorItems} />
     </div>
   )
 }

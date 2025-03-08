@@ -1,8 +1,7 @@
 'use client'
 
 import { randomColor } from '@/libs/utils'
-import { Avatar } from '@/ui'
-import { List, Progress } from 'antd'
+import { Avatar, List, Progress } from 'antd'
 import clsx from 'clsx'
 import React from 'react'
 
@@ -30,6 +29,8 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({
       <List
         dataSource={stages}
         renderItem={(stage: any, index: number) => {
+          console.log(stage)
+
           return (
             <List.Item className="py-[12px]">
               <div className="flex w-full items-start gap-[12px]">
@@ -72,6 +73,7 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({
                             String(stage?.account?.full_name),
                           ),
                         }}
+                        alt={stage?.account?.full_name}
                       >
                         {String(stage?.account?.full_name)
                           .charAt(0)

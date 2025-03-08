@@ -14,8 +14,6 @@ export type EmployeePageHeaderProps = {
 }
 
 const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
-  console.log(tabs)
-
   const tabItems: TabsProps['items'] = [
     {
       label: (

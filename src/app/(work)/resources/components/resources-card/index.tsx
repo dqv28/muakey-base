@@ -79,6 +79,9 @@ const ResourcesCard: React.FC<ResourcesCardProps> = ({
         {text && (
           <div
             className="line-clamp-4 h-[100px] overflow-hidden px-[24px] py-[12px] text-[14px] leading-[22px]"
+            style={{
+              overflowWrap: 'anywhere',
+            }}
             dangerouslySetInnerHTML={{ __html: text.content || '' }}
           />
         )}

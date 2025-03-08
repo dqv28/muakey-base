@@ -19,7 +19,6 @@ import {
   Input,
   MenuProps,
   Modal,
-  Popconfirm,
   Tag,
   Tooltip,
 } from 'antd'
@@ -499,17 +498,19 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             {
               key: '6',
               label: (
-                <Popconfirm
-                  title={
-                    <div>
-                      Xác nhận muốn xóa nhiệm vụ{' '}
-                      <span className="font-[600]">{task?.name}</span>?
-                    </div>
-                  }
-                  onConfirm={onDelete}
+                <div
+                  className="text-[#cc1111]"
+                  onClick={() => {
+                    modal.confirm({
+                      title: `Xác nhận xoá nhiệm vụ ${task?.name.toUpperCase()}?`,
+                      content: 'Nhiệm vụ sẽ bị xóa và không thể khôi phục.',
+                      width: 600,
+                      onOk: () => onDelete?.(),
+                    })
+                  }}
                 >
-                  <span className="text-[#cc1111]">Xóa nhiệm vụ</span>
-                </Popconfirm>
+                  Xóa nhiệm vụ
+                </div>
               ),
             },
           ]
