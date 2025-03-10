@@ -17,16 +17,17 @@ const AccountPageHeader: React.FC<AccountPageHeaderProps> = ({ options }) => {
   const { setRoleId } = useContext(AccountPageContext)
 
   const tabItems: TabsProps['items'] = [
-    {
-      label: `Tất cả (${accounts.length})`,
-      key: 'all',
-    },
-    ...[...roles.reverse(), { name: 'Vô hiệu hoá', id: 'disabled' }].map(
-      (role: any) => ({
-        label: `${role.name} (${accounts.filter((acc: any) => acc.role === role.name).length})`,
-        key: role.id,
-      }),
-    ),
+    ...[
+      {
+        name: 'Tất cả',
+        id: 'all',
+      },
+      ...roles,
+      { name: 'Vô hiệu hoá', id: 'disabled' },
+    ].map((role: any) => ({
+      label: `${role.name} (${role.id === 'all' ? accounts.length : accounts.filter((acc: any) => acc.role === role.name).length})`,
+      key: role.id,
+    })),
   ]
 
   return (

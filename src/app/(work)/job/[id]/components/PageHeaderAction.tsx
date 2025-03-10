@@ -247,9 +247,6 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
     },
   ]
 
-  console.log(options?.task)
-  console.log(user)
-
   return (
     <>
       <div className="flex items-center gap-[8px]">

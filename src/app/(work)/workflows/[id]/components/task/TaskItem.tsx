@@ -22,6 +22,7 @@ import {
   Tag,
   Tooltip,
 } from 'antd'
+import { createStyles } from 'antd-style'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
@@ -59,6 +60,16 @@ export type TaskItemProps = {
   style?: React.CSSProperties
 }
 
+const useStyle = createStyles(({ css }) => ({
+  menu: css`
+    .ant-dropdown-menu {
+      .ant-dropdown-menu-item {
+        padding: 0;
+      }
+    }
+  `,
+}))
+
 const TaskItem: React.FC<TaskItemProps> = memo(
   ({
     className,
@@ -83,6 +94,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     const { setStages } = useContext(WorkflowStageContext)
     const params = useParams()
     const { message, modal } = App.useApp()
+    const { styles } = useStyle()
     const converter = new Converter()
 
     const now = new Date()
@@ -407,7 +419,12 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       {
         key: '1',
         label: (
-          <Link href={`/job/${task?.id}?wid=${params?.id}`}>Xem nhiệm vụ</Link>
+          <Link
+            className="px-[12px] leading-[32px]"
+            href={`/job/${task?.id}?wid=${params?.id}`}
+          >
+            Xem nhiệm vụ
+          </Link>
         ),
       },
       {
@@ -443,7 +460,9 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                   }}
                   action="edit"
                 >
-                  Chỉnh sửa nhiệm vụ
+                  <span className="px-[12px] leading-[32px]">
+                    Chỉnh sửa nhiệm vụ
+                  </span>
                 </TaskModalForm>
               ),
             },
@@ -451,6 +470,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
               key: '7',
               label: (
                 <div
+                  className="px-[12px] leading-[32px]"
                   onClick={(e) => {
                     e.preventDefault()
                     setAssignConfirmOpen(true)
@@ -471,7 +491,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
               task,
             }}
           >
-            Đánh dấu thất bại
+            <span className="px-[12px] leading-[32px]">Đánh dấu thất bại</span>
           </MarkTaskFailedModalForm>
         ),
       },
@@ -481,6 +501,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
               key: '5',
               label: (
                 <div
+                  className="px-[12px] leading-[32px]"
                   onClick={() => {
                     modal.confirm({
                       title: 'Xác nhận gỡ người thực thi của nhiệm vụ này?',
@@ -499,7 +520,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
               key: '6',
               label: (
                 <div
-                  className="text-[#cc1111]"
+                  className="px-[12px] leading-[32px] text-[#cc1111]"
                   onClick={() => {
                     modal.confirm({
                       title: `Xác nhận xoá nhiệm vụ ${task?.name.toUpperCase()}?`,
@@ -671,9 +692,12 @@ const TaskItem: React.FC<TaskItemProps> = memo(
         <div className="absolute right-[16px] top-[12px] flex items-center">
           <Dropdown
             trigger={['click']}
-            rootClassName="!z-auto"
+            rootClassName={clsx('!z-auto', styles.menu)}
             placement="bottomRight"
-            menu={{ items: taskDropdownItems, style: { width: 200 } }}
+            menu={{
+              items: taskDropdownItems,
+              style: { width: 200 },
+            }}
           >
             <EllipsisOutlined
               className={clsx('p-[2px] text-[16px] leading-[20px]', {

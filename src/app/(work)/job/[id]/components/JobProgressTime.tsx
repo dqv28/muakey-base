@@ -29,8 +29,6 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({
       <List
         dataSource={stages}
         renderItem={(stage: any, index: number) => {
-          console.log(stage)
-
           return (
             <List.Item className="py-[12px]">
               <div className="flex w-full items-start gap-[12px]">
