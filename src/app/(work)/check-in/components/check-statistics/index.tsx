@@ -20,7 +20,7 @@ const CheckInStatistics: React.FC<CheckInStatisticsProps> = ({ items }) => {
           <Button type="primary">Lịch sử yêu cầu</Button>
         </Link>
       </div>
-      <Divider className="!my-[12px]" />
+      <Divider className="my-[12px]!" />
 
       <div className="flex items-center justify-around gap-[12px]">
         {items &&

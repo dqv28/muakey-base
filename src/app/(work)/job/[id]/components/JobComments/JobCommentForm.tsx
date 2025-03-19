@@ -49,9 +49,9 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
 
   return (
     <Form onFinish={handleSubmit} ref={formRef}>
-      <Form.Item className="!mb-[12px]" name="content">
+      <Form.Item className="mb-[12px]!" name="content">
         <InitializedMDXEditor
-          contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
+          contentEditableClassName="p-[12px] border border-[#eee] focus:outline-hidden rounded-[4px] min-h-[180px] prose max-w-full!"
           markdown=""
           placeholder="Bình luận"
           plugins={[linkPlugin()]}

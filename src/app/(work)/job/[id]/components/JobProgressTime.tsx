@@ -24,7 +24,7 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({
           Đã sử dụng <span className="text-[#000]">{total}h</span>
         </span>
       </div>
-      <Progress className="!m-0" percent={100} showInfo={false} />
+      <Progress className="m-0!" percent={100} showInfo={false} />
       <div className="text-[12px] font-[500]">TIẾN TRÌNH CỦA CÁC GIAI ĐOẠN</div>
       <List
         dataSource={stages}
@@ -33,10 +33,10 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({
             <List.Item className="py-[12px]">
               <div className="flex w-full items-start gap-[12px]">
                 <Avatar
-                  className={clsx('!text-[12px]', {
-                    '!bg-[#42b814]': stage?.status === 'completed',
-                    '!bg-[#c34343]': stage?.status === 'failed',
-                    '!bg-[#45AAF7]': stage?.status === 'pending',
+                  className={clsx('text-[12px]!', {
+                    'bg-[#42b814]!': stage?.status === 'completed',
+                    'bg-[#c34343]!': stage?.status === 'failed',
+                    'bg-[#45AAF7]!': stage?.status === 'pending',
                   })}
                   shape="circle"
                   size={24}
@@ -62,7 +62,7 @@ const JobProgressTime: React.FC<JobProgressTimeProps> = ({
                   {stage?.account && (
                     <div className="mt-[4px] flex items-center gap-[8px]">
                       <Avatar
-                        className="!text-[10px]"
+                        className="text-[10px]!"
                         src={stage?.account?.avatar}
                         size={20}
                         shape="circle"

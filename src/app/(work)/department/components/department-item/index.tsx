@@ -42,7 +42,7 @@ const DepartmentItem: React.FC<DepartmentItemProps> = ({ item, options }) => {
       <div className="flex items-center justify-between gap-[16px] leading-none">
         <span className="line-clamp-1 text-[16px]">{item?.name}</span>
         <Dropdown
-          rootClassName="!z-50"
+          rootClassName="z-50!"
           trigger={['click']}
           dropdownRender={() => (
             <div className="mt-[4px] rounded-[4px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">

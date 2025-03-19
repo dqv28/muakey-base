@@ -54,7 +54,7 @@ const NotificationsList: React.FC<NotificationsListProps> = (props) => {
   return (
     <List
       renderItem={(item: any) => (
-        <List.Item className="!p-0">
+        <List.Item className="p-0!">
           <Link
             className={clsx(
               'group flex w-full items-start gap-[24px] p-[16px] hover:bg-[#F5FCFF] hover:text-[#000]',

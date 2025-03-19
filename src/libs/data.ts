@@ -110,6 +110,14 @@ export const getAccounts = async (query?: any) => {
     .catch(() => [])
 }
 
+export const getAccountsAsAttendance = async (query?: any) => {
+  return requestWithAuthorized(
+    'attendance-accounts?' + new URLSearchParams(query),
+  )
+    .then((data) => data)
+    .catch(() => [])
+}
+
 export const addAccount = async (data: any) =>
   requestWithAuthorized('register', {
     method: 'POST',
@@ -277,8 +285,10 @@ export const getTaskReportsByTaskId = async (taskId: number) =>
     .then((data) => data)
     .catch(() => [])
 
-export const getMe = async (options?: RequestOptions) =>
-  requestWithAuthorized(`my-account`, { ...options })
+export const getMe = async (query?: any, options?: RequestOptions) =>
+  requestWithAuthorized(`my-account?` + new URLSearchParams(query), {
+    ...options,
+  })
     .then((data) => data)
     .catch(() => [])
 
@@ -361,4 +371,10 @@ export const getIpAddress = async () => {
   return await request('https://api.ipify.org?format=json')
     .then((data) => data)
     .catch(() => null)
+}
+
+export const getBankList = async () => {
+  return await request('https://api.vietqr.io/v2/banks')
+    .then((data) => data)
+    .catch(() => [])
 }

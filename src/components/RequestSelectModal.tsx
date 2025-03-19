@@ -146,7 +146,7 @@ const RequestSelectModal: React.FC<RequestSelectModalProps> = ({
             }
           />
           <Button
-            className="!w-[100px]"
+            className="w-[100px]!"
             type="primary"
             icon={<PlusOutlined />}
             onClick={handleAddGroup}

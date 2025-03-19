@@ -57,8 +57,8 @@ const StageInstructionsModal: React.FC<StageInstructionsModalProps> = ({
       <div onClick={() => setOpen(true)}>{children}</div>
       <Modal
         classNames={{
-          mask: '!z-auto',
-          wrapper: '!z-auto',
+          mask: 'z-auto!',
+          wrapper: 'z-auto!',
         }}
         title="Hướng dẫn hoàn thành các nhiệm vụ trong giai đoạn"
         open={open}

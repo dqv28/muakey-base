@@ -107,10 +107,12 @@ const AccountTable: React.FC<AccountTableProps> = ({
     {
       title: 'Chức danh',
       dataIndex: 'position',
+      render: (text: string) => text || '--',
     },
     {
       title: 'Điện thoại',
       dataIndex: 'phone',
+      render: (text: string) => text || '--',
     },
     {
       title: 'Hành động',
@@ -118,22 +120,24 @@ const AccountTable: React.FC<AccountTableProps> = ({
       render: (_, record) => (
         <div className="flex items-center gap-[8px]">
           <AccountModalForm initialValues={record} mode="edit">
-            <EditOutlined className="text-[#1677ff]" />
+            <EditOutlined className="!text-[#1677ff]" />
           </AccountModalForm>
-          <LockOutlined
-            className="cursor-pointer text-[#CF1322]"
-            onClick={() => {
-              modal.confirm({
-                title: 'Vô hiệu hóa tài khoản?',
-                okText: 'Xác nhận',
-                cancelText: 'Hủy',
-                content:
-                  'Tài khoản này sẽ không thể truy cập vào website, bạn có chắc chắn muốn vô hiệu hoá tài khoản không?',
-                onOk: () => handleLockAccount(record.id),
-                width: 455,
-              })
-            }}
-          />
+          {record?.role !== 'Vô hiệu hoá' && (
+            <LockOutlined
+              className="cursor-pointer !text-[#CF1322]"
+              onClick={() => {
+                modal.confirm({
+                  title: 'Vô hiệu hóa tài khoản?',
+                  okText: 'Xác nhận',
+                  cancelText: 'Hủy',
+                  content:
+                    'Tài khoản này sẽ không thể truy cập vào website, bạn có chắc chắn muốn vô hiệu hoá tài khoản không?',
+                  onOk: () => handleLockAccount(record.id),
+                  width: 455,
+                })
+              }}
+            />
+          )}
         </div>
       ),
     },

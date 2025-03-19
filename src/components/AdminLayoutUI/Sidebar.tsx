@@ -9,7 +9,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
   return (
     <div className="h-[calc(100vh-48px)] rounded-[16px] border-[4px] border-[#d6dde1] bg-[#f0f3f4] p-[24px] shadow-lg">
       <div className="px-[16px]">
-        <MainLogo className="aspect-[140/28]" color="#04091c" />
+        <MainLogo className="aspect-140/28" color="#04091c" />
       </div>
 
       <Divider className="border-t-[#c2ccd3]" />

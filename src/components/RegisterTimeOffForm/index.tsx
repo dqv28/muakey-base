@@ -124,7 +124,7 @@ const FormFields: React.FC<{
                   <div className="flex flex-1 items-end gap-[24px]">
                     <Form.Item
                       {...restField}
-                      className="!mb-0 flex-1"
+                      className="mb-0! flex-1"
                       label="Ngày/giờ bắt đầu"
                       name={[name, 'startDate']}
                     >
@@ -137,7 +137,7 @@ const FormFields: React.FC<{
                     </Form.Item>
                     <Form.Item
                       {...restField}
-                      className="!mb-0 flex-1"
+                      className="mb-0! flex-1"
                       name={[name, 'startTime']}
                     >
                       <DatePicker
@@ -157,7 +157,7 @@ const FormFields: React.FC<{
                   <div className="flex flex-1 items-end gap-[24px]">
                     <Form.Item
                       {...restField}
-                      className="!mb-0 flex-1"
+                      className="mb-0! flex-1"
                       label="Ngày/giờ kết thúc"
                       name={[name, 'endDate']}
                     >
@@ -171,7 +171,7 @@ const FormFields: React.FC<{
                     </Form.Item>
                     <Form.Item
                       {...restField}
-                      className="!mb-0 flex-1"
+                      className="mb-0! flex-1"
                       name={[name, 'endTime']}
                     >
                       <DatePicker
@@ -372,7 +372,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
             }}
           />
 
-          <Form.Item className="!mb-0 mt-[24px]">
+          <Form.Item className="mb-0! mt-[24px]">
             <Button htmlType="submit" type="primary" loading={loading}>
               Gửi yêu cầu
             </Button>

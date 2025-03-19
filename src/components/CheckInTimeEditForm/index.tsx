@@ -68,7 +68,7 @@ const FormFields: React.FC<{
           title="Sửa giờ vào/ra"
           checkIn={
             <Form.Item
-              className="!mb-0"
+              className="mb-0!"
               name="check_in"
               rules={[{ required: true, message: 'Vui lòng chọn giờ vào' }]}
             >
@@ -82,7 +82,7 @@ const FormFields: React.FC<{
           }
           checkOut={
             <Form.Item
-              className="!mb-0"
+              className="mb-0!"
               name="check_out"
               rules={[{ required: true, message: 'Vui lòng chọn giờ ra' }]}
             >
@@ -196,7 +196,7 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
           onDateChange={(d) => setDateVal(d)}
         />
 
-        <Form.Item className="!mb-0">
+        <Form.Item className="mb-0!">
           <Button type="primary" htmlType="submit" loading={loading}>
             Gửi yêu cầu
           </Button>

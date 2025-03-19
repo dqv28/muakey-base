@@ -11,12 +11,14 @@ type MarkTaskModalFormProps = {
   children?: React.ReactNode
   options?: any
   mark?: 'failed' | 'completed'
+  reportRequired?: boolean
 }
 
 const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
   children,
   options,
   mark = 'failed',
+  reportRequired = false,
 }) => {
   const [markOpen, setMarkOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -24,7 +26,7 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
   const router = useRouter()
 
   const { stageId, task } = options
-  const { message } = App.useApp()
+  const { message, modal } = App.useApp()
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -54,6 +56,41 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
       setLoading(false)
       throw new Error(error)
     }
+  }
+
+  const handleMarkCompleted = async () => {
+    try {
+      var { errors } = await moveStageAction(task?.id, stageId)
+
+      if (errors) {
+        message.error(errors)
+        setLoading(false)
+        return
+      }
+
+      setMarkOpen(false)
+      setLoading(false)
+      message.success('Đã đánh dấu hoàn thành.')
+      router.refresh()
+    } catch (error: any) {
+      setLoading(false)
+      throw new Error(error)
+    }
+  }
+
+  if (!reportRequired && mark === 'completed') {
+    return (
+      <div
+        onClick={() => {
+          modal.confirm({
+            title: 'Xác nhận nhiệm vụ hoàn thành?',
+            onOk: handleMarkCompleted,
+          })
+        }}
+      >
+        {children}
+      </div>
+    )
   }
 
   return (

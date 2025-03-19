@@ -5,7 +5,6 @@ import { Button, Form } from 'antd'
 import clsx from 'clsx'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
-import { Converter } from 'showdown'
 import { editTaskAction } from '../../../actions'
 
 type JobDescriptionProps = {
@@ -20,14 +19,13 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
   const [value, setValue] = useState(defaultValue || '')
   const [isEdit, setIsEdit] = useState(false)
   const [loading, setLoading] = useState(false)
-  const converter = new Converter()
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
 
     try {
       const { message, errors } = await editTaskAction(params?.task?.id, {
-        description: converter.makeHtml(formData?.description),
+        description: formData?.description,
       })
 
       if (errors) {
@@ -39,7 +37,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
       toast.success('Cập nhật thành công')
       setIsEdit(false)
       setLoading(false)
-      setValue(converter.makeHtml(formData?.description))
+      setValue(formData?.description)
     } catch (error: any) {
       setLoading(false)
       throw new Error(error)
@@ -59,12 +57,12 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
       </div>
       {isEdit ? (
         <Form
-          className="mt-[16px]"
+          className="!mt-[16px]"
           onFinish={handleSubmit}
           initialValues={{ description: value || '' }}
         >
           <Form.Item
-            rootClassName="min-h-[220px]"
+            rootClassName="!mb-[16px]"
             name="description"
             valuePropName="content"
           >
@@ -86,7 +84,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
       ) : (
         <div
           className={clsx(
-            'prose mt-[8px] !max-w-full',
+            'prose mt-[8px] max-w-full!',
             value ? 'text-[#333]' : 'text-[#999]',
           )}
           dangerouslySetInnerHTML={{ __html: value || 'Không có mô tả' }}

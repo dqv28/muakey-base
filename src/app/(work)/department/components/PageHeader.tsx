@@ -23,9 +23,9 @@ const PageHeader: React.FC<{
           }}
         >
           <Button
-            className="flex items-center gap-[8px] rounded-[4px] bg-[#1677ff] px-[15px] py-[5px] !text-[14px]"
+            className="flex items-center gap-[8px] rounded-[4px] bg-[#1677ff] px-[15px] py-[5px] text-[14px]!"
             type="primary"
-            icon={<PlusOutlined className="!text-[14px] text-[#fff]" />}
+            icon={<PlusOutlined className="text-[14px]! text-[#fff]" />}
           >
             <span className="leading-[22px] text-[#fff]">
               Tạo phòng ban mới

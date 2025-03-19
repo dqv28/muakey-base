@@ -94,14 +94,14 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
             </RequestDetailLine>
           </div>
 
-          <Divider className="!my-0" />
+          <Divider className="my-0!" />
 
           <RequestDetailChanges
             type={request?.category_name}
             request={request}
           />
 
-          <Divider className="!my-0" />
+          <Divider className="my-0!" />
 
           <RequestDetailActions
             hasConfirm={userRole === 'Quản trị cấp cao'}

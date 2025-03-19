@@ -1,4 +1,4 @@
-import { getAccounts, getAttendances, getMe } from '@/libs/data'
+import { getAccountsAsAttendance, getAttendances, getMe } from '@/libs/data'
 import { getProposes } from '@/libs/propose'
 import { getWorkSchedule } from '@/libs/schedule'
 import CheckInContent from './components/checkin-content'
@@ -19,7 +19,7 @@ const page: React.FC<any> = async (prop: {
       getAttendances({
         date: searchParams?.date || '',
       }),
-      getAccounts({
+      getAccountsAsAttendance({
         date: searchParams?.date || '',
       }),
       getMe(),

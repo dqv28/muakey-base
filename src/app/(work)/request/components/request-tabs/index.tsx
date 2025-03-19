@@ -47,10 +47,10 @@ const RequestTabs: React.FC<RequestTabsProps> = ({
         <WorkflowWrap key={item.label} trigger="click" menu={item?.children}>
           <div
             className={clsx(
-              'cursor-pointer border-b-[2px] pb-[5px] text-[13px] leading-[17px] transition-all duration-300 hover:text-[#111]',
+              'cursor-pointer border-b-[2px] pb-[8px] text-[13px] leading-[17px] transition-all duration-300 hover:text-[#111]',
               activeKey === item?.key
-                ? 'border-[#111] text-[#111]'
-                : 'border-transparent text-[#888]',
+                ? '!border-[#111] text-[#111]'
+                : '!border-transparent text-[#888]',
             )}
             onClick={() => {
               router.push(`?status=${item?.key}`)

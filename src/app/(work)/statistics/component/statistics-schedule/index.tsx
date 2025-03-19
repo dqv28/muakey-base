@@ -120,10 +120,10 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
             <Col
               key={date.day}
               ref={date.date === options?.currentDate ? colRef : null}
-              className={clsx('w-[400px] border-r border-t', {
+              className={clsx('w-[400px] border-t border-r', {
                 'text-[#1677ff]':
                   date.date === String(dayjs(today).format('YYYY-MM-DD')),
-                'border-t-[#096DD9] bg-[#E6F4FF]':
+                '!border-t-[#096DD9] bg-[#E6F4FF]':
                   date.date === options?.currentDate,
                 'bg-[#fff]': date.date !== options?.currentDate,
               })}

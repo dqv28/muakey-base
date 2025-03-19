@@ -10,7 +10,7 @@ const DepartmentListSkeleton: React.FC<any> = () => {
     <Row gutter={[24, 24]}>
       {times(48, () => (
         <Col span={6}>
-          <div className="aspect-[384/104] h-[104px] rounded-[4px] bg-[#fff] p-[16px]">
+          <div className="aspect-384/104 h-[104px] rounded-[4px] bg-[#fff] p-[16px]">
             <div className="flex items-center justify-between gap-[12px]">
               <Skeleton.Node style={{ width: 85, height: 16 }} active />
               <Skeleton.Node style={{ width: 16, height: 16 }} active />

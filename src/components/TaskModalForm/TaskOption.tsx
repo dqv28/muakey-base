@@ -74,10 +74,10 @@ const TagOption: React.FC<TagOptionProps> = ({ option, onDelete, onEdit }) => {
           }}
         />
       ) : (
-        <div className="visible z-[10020] flex !size-[16px] items-center gap-[8px] opacity-0 transition-all group-hover:opacity-100">
+        <div className="visible z-10020 flex size-[16px]! items-center gap-[8px] opacity-0 transition-all group-hover:opacity-100">
           <>
             <Button
-              className="absolute right-[44px] !p-0"
+              className="absolute right-[44px] p-0!"
               icon={<EditOutlined className="text-[12px] text-[#777]" />}
               type="text"
               onClick={(e) => {

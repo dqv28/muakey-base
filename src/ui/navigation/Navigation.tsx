@@ -52,7 +52,7 @@ const InternalNavigation: React.ForwardRefRenderFunction<
   const className = clsx(
     'space-y-[20px] text-[24px] text-[#fff]',
     {
-      'rounded-[24px]': !ghost,
+      // 'rounded-[24px]': !ghost,
       'space-y-[12px]': ghost,
     },
     customClassName,

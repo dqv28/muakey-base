@@ -1,7 +1,7 @@
 'use client'
 
-import { Input } from '@/ui'
 import { SearchOutlined } from '@/ui/icons'
+import { Input } from 'antd'
 import clsx from 'clsx'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
@@ -42,7 +42,6 @@ const WorkflowSearch: React.FC<WorkflowSearchProps> = ({ className }) => {
       <Input
         className="border-transparent"
         placeholder="Lọc nhanh"
-        borderless
         size="middle"
         onChange={handleChange}
       />

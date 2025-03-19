@@ -102,8 +102,8 @@ const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({
       <Button onClick={() => setOpen(true)}>Bộ lọc</Button>
       <Drawer
         classNames={{
-          header: '!pb-[16px] !pt-[20px] !border-b-0',
-          body: '!pt-0 !pb-[20px]',
+          header: 'pb-[16px]! pt-[20px]! border-b-0!',
+          body: 'pt-0! pb-[20px]!',
         }}
         title="Bộ lọc"
         open={open}
@@ -133,17 +133,17 @@ const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({
         }
         {...rest}
       >
-        <Form.Item className="!mb-[16px]" label="Sắp xếp theo" name="sort">
+        <Form.Item className="mb-[16px]!" label="Sắp xếp theo" name="sort">
           <Select options={typeOptions} />
         </Form.Item>
-        <Form.Item className="!mb-[16px]" label="Quy trình" name="workflow_id">
+        <Form.Item className="mb-[16px]!" label="Quy trình" name="workflow_id">
           <Select
             options={workflowOptions}
             mode="multiple"
             placeholder="Chọn quy trình"
           />
         </Form.Item>
-        <Form.Item className="!mb-[16px]" label="Người tạo" name="created_by">
+        <Form.Item className="mb-[16px]!" label="Người tạo" name="created_by">
           <Select
             options={userOptions}
             placeholder="Chọn người tạo"
@@ -152,14 +152,14 @@ const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({
         </Form.Item>
         <Divider />
         <Form.Item
-          className="!mb-[16px]"
+          className="mb-[16px]!"
           label="Hoàn thành từ ngày"
           name="start_completed_at"
         >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
         <Form.Item
-          className="!mb-[16px]"
+          className="mb-[16px]!"
           label="Hoàn thành đến ngày"
           name="end_completed_at"
         >
@@ -167,14 +167,14 @@ const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({
         </Form.Item>
         <Divider />
         <Form.Item
-          className="!mb-[16px]"
+          className="mb-[16px]!"
           label="Thời hạn từ ngày"
           name="start_expired"
         >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
         <Form.Item
-          className="!mb-[16px]"
+          className="mb-[16px]!"
           label="Thời hạn đến ngày"
           name="end_expired"
         >
@@ -182,21 +182,21 @@ const TodoFilteredDrawer: React.FC<TodoFilteredDrawerProps> = ({
         </Form.Item>
         <Divider />
         <Form.Item
-          className="!mb-[16px]"
+          className="mb-[16px]!"
           label="Tạo từ ngày"
           name="start_created_at"
         >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
         <Form.Item
-          className="!mb-[16px]"
+          className="mb-[16px]!"
           label="Tạo đến ngày"
           name="end_created_at"
         >
           <DatePicker className="w-full" locale={locale} />
         </Form.Item>
 
-        <Form.Item className="!mb-[16px]">
+        <Form.Item className="mb-[16px]!">
           <div className="flex justify-end gap-[8px]">
             <Button onClick={handleReset}>Reset</Button>
             <Button type="primary" htmlType="submit" loading={loading}>

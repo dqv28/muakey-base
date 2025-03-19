@@ -1,5 +1,6 @@
 'use client'
 
+import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import {
   CheckOutlined,
@@ -7,11 +8,20 @@ import {
   MenuOutlined,
   RightOutlined,
 } from '@ant-design/icons'
-import { Divider, Empty, Form, FormProps, Input, Modal, ModalProps } from 'antd'
+import {
+  App,
+  Divider,
+  Empty,
+  Form,
+  FormProps,
+  Input,
+  Modal,
+  ModalProps,
+} from 'antd'
 import clsx from 'clsx'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import { getViewFieldsAction } from '../action'
-
+import { createViewAction, getViewFieldsAction } from '../action'
 export type ViewModalFormProps = ModalProps & {
   formProps?: FormProps
   children?: React.ReactNode
@@ -23,13 +33,64 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
   ...rest
 }) => {
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [viewFields, setViewFields] = useState<any[]>([])
   const [selectedFields, setSelectedFields] = useState<any[]>([])
 
-  const handleSubmit = (values: any) => {
-    console.log({
-      ...values,
-      fields: selectedFields,
+  const { message } = App.useApp()
+  const router = useRouter()
+
+  const handleSubmit = async (values: any) => {
+    setLoading(true)
+
+    const types = [...new Set(selectedFields.map((field) => field.type))]
+    const fieldNames = Object.fromEntries(
+      types.map((type) => [
+        type,
+        selectedFields
+          .filter((field) => field.type === type)
+          .map((field) => field.value),
+      ]),
+    )
+
+    try {
+      const { message: msg, errors } = await createViewAction({
+        ...values,
+        field_name: fieldNames,
+      })
+
+      if (errors) {
+        message.error(msg)
+        setLoading(false)
+        return
+      }
+
+      message.success('Tạo views thành công')
+      setOpen(false)
+      setLoading(false)
+      setSelectedFields([])
+      router.refresh()
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
+  }
+
+  const handleSelect = (child: any, type: string, isSelected: boolean) => {
+    setSelectedFields((prev) => {
+      const newFields = [...prev]
+
+      if (isSelected) {
+        return newFields.filter((field) => field.value !== child.value)
+      }
+
+      return [
+        ...newFields,
+        {
+          ...child,
+          type,
+        },
+      ]
     })
   }
 
@@ -38,29 +99,8 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
 
     const res = await getViewFieldsAction()
 
-    const keys = Object.keys(res)
-
-    const views = keys.map((key: any) => {
-      const view = res[key]
-      const viewKeys = Object.keys(view)
-
-      return {
-        label: key,
-        children: viewKeys.map((viewKey: any) => {
-          const field = view[viewKey]
-
-          return {
-            label: field,
-            value: viewKey,
-          }
-        }),
-      }
-    })
-
-    setViewFields(views)
+    setViewFields(res)
   }, [open])
-
-  console.log(viewFields)
 
   return (
     <>
@@ -74,6 +114,7 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
         cancelText="Hủy"
         okButtonProps={{
           htmlType: 'submit',
+          loading,
         }}
         onCancel={() => setOpen(false)}
         destroyOnClose
@@ -107,7 +148,7 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
                   <div className="sticky top-0 mb-[4px] flex h-[40px] items-center justify-between gap-[12px] pl-[16px] pt-[4px]">
                     <div className="flex items-center gap-[8px] text-[14px] font-[600] leading-[22px]">
                       <RightOutlined className="text-[12px]" />
-                      <span>{field.label}</span>
+                      <span>{field.name}</span>
                     </div>
                     <div className="border-l pl-[12px] pr-[16px]">
                       <DoubleRightOutlined />
@@ -127,19 +168,9 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
                             isSelected && 'bg-[#e6f4ff]',
                           )}
                           key={child.value}
-                          onClick={() => {
-                            setSelectedFields((prev) => {
-                              const newFields = [...prev]
-
-                              if (isSelected) {
-                                return newFields.filter(
-                                  (field) => field.value !== child.value,
-                                )
-                              }
-
-                              return [...newFields, child]
-                            })
-                          }}
+                          onClick={() =>
+                            handleSelect(child, field.value, isSelected)
+                          }
                         >
                           <span>{child.label}</span>
                           {isSelected && (
@@ -179,7 +210,7 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
                     <span className="inline-block w-[20px] font-[600] text-[#1677FF]">
                       {index > 8 ? index + 1 : `0${index + 1}`}
                     </span>
-                    <Divider className="!mx-0 h-[27px]" type="vertical" />
+                    <Divider className="mx-0! h-[27px]" type="vertical" />
                     <span className="font-[600]">{field.label}</span>
                   </div>
                 ))
@@ -194,4 +225,4 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
   )
 }
 
-export default ViewModalForm
+export default withApp(ViewModalForm)

@@ -216,8 +216,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       </div>
       <Modal
         classNames={{
-          mask: '!z-auto',
-          wrapper: '!z-auto',
+          mask: 'z-auto!',
+          wrapper: 'z-auto!',
         }}
         title={title || 'TẠO NHIỆM VỤ MỚI'}
         open={open}

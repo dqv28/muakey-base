@@ -38,12 +38,12 @@ const FormFields: React.FC<{
           <Row gutter={[24, 24]}>
             {fields.map(({ key, name, ...restField }, index) => (
               <Col key={key} span={12}>
-                <div className="gutter-row relative overflow-hidden rounded-[16px] border border-[#D9D9D9] bg-[#F6F6F6] !px-[24px] py-[16px]">
+                <div className="gutter-row relative overflow-hidden rounded-[16px] border border-[#D9D9D9] bg-[#F6F6F6] px-[24px]! py-[16px]">
                   <div className="mb-[24px]">Thời gian đăng ký OT</div>
                   <div className="flex items-center gap-[24px]">
                     <Form.Item
                       {...restField}
-                      className="!mb-0 flex-1"
+                      className="mb-0! flex-1"
                       name={[name, 'from']}
                       label="Từ giờ"
                     >
@@ -57,7 +57,7 @@ const FormFields: React.FC<{
                     </Form.Item>
                     <Form.Item
                       {...restField}
-                      className="!mb-0 flex-1"
+                      className="mb-0! flex-1"
                       name={[name, 'to']}
                       label="Đến giờ"
                     >
@@ -220,7 +220,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
           onEndChange={setEndTime}
         />
 
-        <Form.Item className="!mb-0 mt-[24px]">
+        <Form.Item className="mb-0! mt-[24px]">
           <Button htmlType="submit" type="primary" loading={loading}>
             Gửi yêu cầu
           </Button>

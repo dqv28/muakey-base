@@ -5,6 +5,7 @@ import { Navigation } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
 import {
   CalendarFilled,
+  ContainerFilled,
   FileFilled,
   FolderOpenFilled,
   HddFilled,
@@ -84,7 +85,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                 <span>Công việc của tôi</span>
               </div>
               {todosCount > 0 && (
-                <div className="rounded-[4px] bg-[#ff5555] px-[6px] pb-[4px] pt-[2px] text-[12px] font-[500]">
+                <div className="rounded-[4px] bg-[#ff5555] px-[6px] pt-[2px] pb-[4px] text-[12px] font-[500]">
                   <span className="leading-[12px]">{todosCount}</span>
                 </div>
               )}
@@ -119,6 +120,17 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
           ),
           href: '/resources',
         },
+        user?.role === 'Quản trị cấp cao'
+          ? {
+              label: (
+                <div className="flex items-center gap-[12px]">
+                  <ContainerFilled className="text-[16px]" />
+                  <span>Danh sách tài khoản</span>
+                </div>
+              ),
+              href: '/accounts',
+            }
+          : {},
         // {
         //   label: (
         //     <div className="flex items-center gap-[12px]">

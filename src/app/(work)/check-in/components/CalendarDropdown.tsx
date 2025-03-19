@@ -95,7 +95,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
     >
       <div
         className={clsx(
-          'flex aspect-[220/160] min-h-[160px] w-full flex-col border-t px-[8px] pb-[8px] pt-[6px]',
+          'flex aspect-220/160 min-h-[160px] w-full flex-col border-t px-[8px] pb-[8px] pt-[6px]',
           day?.go_to_work !== undefined &&
             day?.go_to_work === 0 &&
             'bg-[#f5f5f5]',

@@ -7,9 +7,8 @@ import {
   getTimeStagesByTaskId,
   getWorkflowById,
 } from '@/libs/data'
-import { Col, Row } from '@/ui'
 import { ArrowLeftOutlined, ExclamationCircleFilled } from '@ant-design/icons'
-import { Tooltip } from 'antd'
+import { Col, Row, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import { Metadata } from 'next'
 import React from 'react'
@@ -108,6 +107,7 @@ const page: React.FC<any> = async (props: {
                   user,
                   members: workflow?.members,
                   workflowId: searchParams?.wid,
+                  reportRequired: workflow?.require_link_youtube === 1,
                 }}
               />
             }

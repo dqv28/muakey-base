@@ -44,7 +44,7 @@ const FormFields: React.FC<{
                   <div className="flex flex-1 items-start gap-[8px]">
                     <Form.Item
                       {...restField}
-                      className="!mb-0 flex-1"
+                      className="mb-0! flex-1"
                       name={[name, 'stage_name']}
                     >
                       <Input placeholder="Giai đoạn" />
@@ -60,14 +60,14 @@ const FormFields: React.FC<{
                               >
                                 <Form.Item
                                   {...restField}
-                                  className="!mb-0 flex-1"
+                                  className="mb-0! flex-1"
                                   name={[name, 'name']}
                                 >
                                   <Input placeholder="Tên trường báo cáo" />
                                 </Form.Item>
                                 <Form.Item
                                   {...restField}
-                                  className="!mb-0 flex-1"
+                                  className="mb-0! flex-1"
                                   name={[name, 'type']}
                                   initialValue="number"
                                 >
@@ -88,7 +88,7 @@ const FormFields: React.FC<{
                                 />
                               </div>
                             ))}
-                            <Form.Item className="!mb-0">
+                            <Form.Item className="mb-0!">
                               <Button
                                 type="dashed"
                                 onClick={() => addReport()}

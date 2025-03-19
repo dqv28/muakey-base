@@ -250,57 +250,60 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
   return (
     <>
       <div className="flex items-center gap-[8px]">
-        {!options?.task?.account_id ? (
-          <Button
-            type="primary"
-            onClick={() => {
-              modal.confirm({
-                title: 'Bạn muốn nhận công việc này?',
-                onOk: () => handleAssignWithoutWork(user?.id || 0),
-              })
+        {!options?.task?.account_id
+          ? !options?.task?.completed_at && (
+              <Button
+                type="primary"
+                onClick={() => {
+                  modal.confirm({
+                    title: 'Bạn muốn nhận công việc này?',
+                    onOk: () => handleAssignWithoutWork(user?.id || 0),
+                  })
+                }}
+              >
+                Nhận
+              </Button>
+            )
+          : user?.id === options?.task?.account_id &&
+            (options?.task?.started_at ? (
+              <Tag
+                className="mr-0! h-[32px]! rounded-[8px] px-[12px]! leading-[28px]!"
+                color="processing"
+                icon={<SyncOutlined />}
+              >
+                Đang làm
+              </Tag>
+            ) : (
+              <Button
+                type="primary"
+                onClick={() => {
+                  modal.confirm({
+                    title: 'Bạn muốn nhận công việc này?',
+                    onOk: () => handleAssign(user?.id || 0),
+                  })
+                }}
+              >
+                Bắt đầu
+              </Button>
+            ))}
+        {!options?.task?.completed_at && (
+          <MarkTaskModalForm
+            options={{
+              ...rest,
+              stageId: completedStageId,
             }}
+            mark="completed"
+            reportRequired={options?.reportRequired}
           >
-            Nhận
-          </Button>
-        ) : (
-          user?.id === options?.task?.account_id &&
-          (options?.task?.started_at ? (
-            <Tag
-              className="!mr-0 h-[32px] rounded-[8px] !px-[12px] text-[14px] leading-[28px]"
-              color="processing"
-              icon={<SyncOutlined />}
-            >
-              Đang làm
-            </Tag>
-          ) : (
-            <Button
-              type="primary"
-              onClick={() => {
-                modal.confirm({
-                  title: 'Bạn muốn nhận công việc này?',
-                  onOk: () => handleAssign(user?.id || 0),
-                })
-              }}
-            >
-              Bắt đầu
-            </Button>
-          ))
+            <div className="cursor-pointer rounded-[8px] bg-[#D9F7BE] px-[16px] py-[5px] text-[14px] leading-[22px] font-[500] text-nowrap text-[#389E0D] brightness-100 transition-all duration-300 hover:brightness-95">
+              Đánh dấu hoàn thành
+            </div>
+          </MarkTaskModalForm>
         )}
-        <MarkTaskModalForm
-          options={{
-            ...rest,
-            stageId: completedStageId,
-          }}
-          mark="completed"
-        >
-          <div className="cursor-pointer text-nowrap rounded-[8px] bg-[#D9F7BE] px-[16px] py-[5px] text-[14px] font-[500] leading-[22px] text-[#389E0D] brightness-100 transition-all duration-300 hover:brightness-95">
-            Đánh dấu hoàn thành
-          </div>
-        </MarkTaskModalForm>
         {!!stages && stages?.length > 0 && (
           <Dropdown
             trigger={['click']}
-            rootClassName="!z-auto"
+            rootClassName="z-auto!"
             placement="bottomLeft"
             open={dropdownOpen}
             onOpenChange={setDropdownOpen}
@@ -311,7 +314,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
         )}
         <Dropdown
           trigger={['click']}
-          rootClassName="!z-auto"
+          rootClassName="z-auto!"
           placement="bottomLeft"
           menu={{ items }}
         >

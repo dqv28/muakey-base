@@ -39,7 +39,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, extra, tab }) => {
               <>
                 <Divider
                   type="vertical"
-                  className="!mx-[32px] h-[20px] !border-r-[#e5e7eb]"
+                  className="mx-[32px]! h-[20px] border-r-[#e5e7eb]!"
                 />
                 {tab?.extra}
               </>

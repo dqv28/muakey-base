@@ -1,7 +1,8 @@
 'use client'
 
-import { Avatar, Input, InputProps } from '@/ui'
+import { Avatar } from '@/ui'
 import { ArrowDownOutlined } from '@/ui/icons'
+import { Input, InputProps } from 'antd'
 import clsx from 'clsx'
 import { uniqueId } from 'lodash'
 import React from 'react'
@@ -30,14 +31,13 @@ const TaskSelect: React.FC<TaskSelectProps> = ({
           <Input
             placeholder="-- Lựa chọn một người dưới đây --"
             value={text || value}
-            borderless
             {...rest}
           />
         </div>
         <ArrowDownOutlined className="w-[16px] text-[#555]" />
       </div>
       {open && (
-        <div className="absolute left-0 right-0 top-[100%] h-max bg-[#fff] p-[6px] shadow-[0_2px_10px_0_rgba(0,0,0,0.2)]">
+        <div className="absolute top-[100%] right-0 left-0 h-max bg-[#fff] p-[6px] shadow-[0_2px_10px_0_rgba(0,0,0,0.2)]">
           {(options || []).map((option: any) => {
             const active = (text || (value as string))
               .split(' ')

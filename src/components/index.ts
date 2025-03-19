@@ -51,3 +51,9 @@ export { default as PageHeader } from './PageHeader'
 
 export * from './AccountModalForm'
 export { default as AccountModalForm } from './AccountModalForm'
+
+export * from './SwitchFormItem'
+export { default as SwitchFormItem } from './SwitchFormItem'
+
+export * from './AreaChart'
+export { default as AreaChart } from './AreaChart'

@@ -550,13 +550,13 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       >
         <div
           className={clsx(
-            '-z-10 border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none !transition-all',
+            '-z-10 border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none transition-all!',
             isCompleted
               ? isNotAchieved
-                ? 'bg-yellow-400 text-[#fff]'
-                : 'bg-[#2bbf3d] text-[#fff]'
+                ? 'bg-yellow-400 text-[#fff]!'
+                : 'bg-[#2bbf3d] text-[#fff]!'
               : isFailed
-                ? 'bg-[#c34343] text-[#fff]'
+                ? 'bg-[#c34343] text-[#fff]!'
                 : 'bg-[#fff] hover:bg-[#f8f8f8]',
             className,
           )}
@@ -564,7 +564,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
         >
           <Link
             className={clsx(
-              '!pointer-events-auto space-y-[8px]',
+              'pointer-events-auto! space-y-[8px]',
               isCompleted || isFailed
                 ? 'hover:text-[#fff]'
                 : 'hover:text-[#000]',
@@ -574,7 +574,10 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             prefetch={false}
           >
             <div
-              className="line-clamp-2 flex items-center justify-between pr-[24px] text-[14px] font-[600] leading-[18px]"
+              className={clsx(
+                'line-clamp-2 flex items-center justify-between pr-[24px] text-[14px] leading-[18px] font-[600] !text-[#000000D9]',
+                isCompleted || isFailed ? 'text-[#fff]!' : 'text-[#000000D9]!',
+              )}
               title={task?.name}
             >
               {task?.name}
@@ -593,7 +596,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
               ))}
             </div>
             <div
-              className="line-clamp-2 leading-[17px]"
+              className="line-clamp-2 leading-[17px] !text-[#000000D9]"
               dangerouslySetInnerHTML={{
                 __html: task?.description || 'Không có mô tả',
               }}
@@ -614,7 +617,9 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                       >
                         {String(user?.full_name)?.charAt(0).toUpperCase()}
                       </Avatar>
-                      {user?.full_name}
+                      <span className="text-[#000000D9]">
+                        {user?.full_name}
+                      </span>
                     </div>
                     {task?.started_at &&
                       (task?.expired ? (
@@ -655,44 +660,44 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
         {!isCompleted && !isFailed && (
           <>
-            {user ? (
-              !task?.started_at && (
-                <Button
-                  className="absolute bottom-[12px] right-[16px] !p-[10px] !text-[12px] text-[#fff]"
-                  size="small"
-                  type="primary"
-                  onClick={() => {
-                    modal.confirm({
-                      title: 'Bạn muốn nhận công việc này?',
-                      onOk: () => handleAssign(userId || 0),
-                    })
-                  }}
-                >
-                  Bắt đầu
-                </Button>
-              )
-            ) : (
-              <Button
-                className="absolute bottom-[12px] right-[16px] !p-[10px] !text-[12px] text-[#fff]"
-                size="small"
-                type="primary"
-                onClick={() => {
-                  modal.confirm({
-                    title: 'Bạn muốn nhận công việc này?',
-                    onOk: () => handleAssignWithoutWork(userId || 0),
-                  })
-                }}
-              >
-                Nhận
-              </Button>
-            )}
+            {user
+              ? !task?.started_at && (
+                  <Button
+                    className="!absolute right-[16px] bottom-[12px] p-[10px]! text-[12px]! text-[#fff]"
+                    size="small"
+                    type="primary"
+                    onClick={() => {
+                      modal.confirm({
+                        title: 'Bạn muốn nhận công việc này?',
+                        onOk: () => handleAssign(userId || 0),
+                      })
+                    }}
+                  >
+                    Bắt đầu
+                  </Button>
+                )
+              : !task?.expired && (
+                  <Button
+                    className="!absolute right-[16px] bottom-[12px] p-[10px]! text-[12px]! text-[#fff]"
+                    size="small"
+                    type="primary"
+                    onClick={() => {
+                      modal.confirm({
+                        title: 'Bạn muốn nhận công việc này?',
+                        onOk: () => handleAssignWithoutWork(userId || 0),
+                      })
+                    }}
+                  >
+                    Nhận
+                  </Button>
+                )}
           </>
         )}
 
-        <div className="absolute right-[16px] top-[12px] flex items-center">
+        <div className="absolute top-[12px] right-[16px] flex items-center">
           <Dropdown
             trigger={['click']}
-            rootClassName={clsx('!z-auto', styles.menu)}
+            rootClassName={clsx('z-auto!', styles.menu)}
             placement="bottomRight"
             menu={{
               items: taskDropdownItems,
@@ -701,7 +706,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           >
             <EllipsisOutlined
               className={clsx('p-[2px] text-[16px] leading-[20px]', {
-                'text-[#fff]': isCompleted || isFailed,
+                'text-[#fff]!': isCompleted || isFailed,
               })}
             />
           </Dropdown>

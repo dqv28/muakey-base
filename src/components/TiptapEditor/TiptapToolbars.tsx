@@ -245,7 +245,7 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
             <div>{option?.component}</div>
           ) : (
             <Button
-              className={clsx('!px-[12px]', {
+              className={clsx('px-[12px]!', {
                 'bg-[#e0e1e6]': option?.active,
               })}
               type="text"
@@ -261,7 +261,7 @@ const TiptapToolbars: React.FC<TiptapToolbarsProps> = ({ editor }) => {
               editor={editor}
               shouldShow={({ editor }) => editor.isActive('link')}
             >
-              <div className="w-max rounded border bg-[#fff] p-[8px] shadow-lg">
+              <div className="w-max rounded-sm border bg-[#fff] p-[8px] shadow-lg">
                 <TiptapLinkAction
                   editor={editor}
                   href={editor.getAttributes('link').href || ''}

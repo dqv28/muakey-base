@@ -42,7 +42,7 @@ const CustomFields: React.FC<CustomFieldsProps> = async ({
             }}
           >
             <Button
-              className="bg-[#42b814] !px-[12px] !py-[8px] !text-[13px] font-[500] text-[#fff]"
+              className="bg-[#42b814] px-[12px]! py-[8px]! text-[13px]! font-[500] text-[#fff]"
               color="primary"
               icon={<PlusOutlined />}
             >

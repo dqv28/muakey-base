@@ -17,15 +17,18 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
     <div
       className={clsx(
         'flex items-center justify-between gap-[16px] rounded-[4px] border p-[12px] text-[13px] leading-[17px]',
-        status === 'in_progress' || {
-          'border-[#389E0D] bg-[#F6FFED]': status === 'completed',
-          'border-[#CF1322] bg-[#FFF1F0]': status === 'overdue',
-          'border-[#B64FEE] bg-[#F7E6FF]': status === 'completed_late',
+        {
+          '!bg-[#fff]': status === 'in_progress',
+          '!border-[#389E0D] !bg-[#F6FFED]': status === 'completed',
+          '!border-[#CF1322] !bg-[#FFF1F0]': status === 'overdue',
+          '!border-[#B64FEE] !bg-[#F7E6FF]': status === 'completed_late',
         },
       )}
     >
       <Tooltip title={title}>
-        <div className="line-clamp-2 flex-1 font-[500]">{title}</div>
+        <div className="line-clamp-2 flex-1 font-[500] !text-[#000000D9]">
+          {title}
+        </div>
       </Tooltip>
       {extra}
     </div>

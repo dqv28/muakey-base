@@ -112,7 +112,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
       </Link>
       <div className="absolute right-[20px] top-[20px]">
         <Dropdown
-          rootClassName="!z-50"
+          rootClassName="z-50!"
           trigger={['click']}
           dropdownRender={() => (
             <div className="mt-[4px] rounded-[4px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">

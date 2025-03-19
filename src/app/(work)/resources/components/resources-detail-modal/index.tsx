@@ -67,7 +67,7 @@ const ResourcesDetailModal: React.FC<ResourcesDetailModalProps> = ({
       </div>
       <Modal
         classNames={{
-          header: '!mb-[16px]',
+          header: 'mb-[16px]!',
         }}
         open={open}
         onCancel={() => setOpen(false)}

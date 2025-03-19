@@ -1,8 +1,8 @@
 'use client'
 
 import { useAsyncEffect } from '@/libs/hook'
-import { Button } from '@/ui'
 import { PlusOutlined } from '@/ui/icons'
+import { Button } from 'antd'
 import React, { useState } from 'react'
 import { getReportFieldsByWorkflowIdRequest } from '../action'
 import ReportFieldList from './ReportFieldList'
@@ -44,8 +44,8 @@ const ReportFields: React.FC<ReportFieldsProps> = ({ stages, workflowId }) => {
             }}
           >
             <Button
-              className="bg-[#42b814] !px-[12px] !py-[8px] !text-[13px] font-[500] text-[#fff]"
-              color="primary"
+              className="!bg-[#42b814] px-[12px]! py-[8px]! text-[13px]! font-[500] text-[#fff]"
+              type="primary"
               icon={<PlusOutlined />}
             >
               Thêm

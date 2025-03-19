@@ -154,8 +154,8 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
       </div>
       <Modal
         classNames={{
-          mask: '!z-auto',
-          wrapper: '!z-auto',
+          mask: 'z-auto!',
+          wrapper: 'z-auto!',
         }}
         title={title || 'THÊM 1 GIAI ĐOẠN MỚI VÀO LUỒNG CÔNG VIỆC'}
         open={open}

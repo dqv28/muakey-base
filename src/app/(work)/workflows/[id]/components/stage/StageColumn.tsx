@@ -206,16 +206,16 @@ const StageColumn: React.FC<StageColumnProps> = memo(
                   dropdownRender={() => (
                     <div className="max-w-[400px] rounded-[8px] bg-[#fff] p-[12px] shadow-lg">
                       <Form onFinish={setFilteredValues} form={form}>
-                        <Form.Item className="!mb-[8px]" name="range">
+                        <Form.Item className="mb-[8px]!" name="range">
                           <DatePicker.RangePicker locale={locale} />
                         </Form.Item>
-                        <Form.Item className="!mb-[8px]" name="views">
+                        <Form.Item className="mb-[8px]!" name="views">
                           <Input placeholder="< Lượt xem" type="number" />
                         </Form.Item>
-                        <Form.Item className="!mb-[8px]" name="days">
+                        <Form.Item className="mb-[8px]!" name="days">
                           <Input placeholder="> Ngày" type="number" />
                         </Form.Item>
-                        <Form.Item className="!mb-0">
+                        <Form.Item className="mb-0!">
                           <div className="flex items-center justify-between">
                             <Button
                               size="small"

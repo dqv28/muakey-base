@@ -22,20 +22,11 @@ export { default as Button } from './button'
 export type * from './dropdown'
 export { default as Dropdown } from './dropdown'
 
-export type * from './radio'
-export { default as Radio } from './radio'
-
 export type * from './space'
 export { default as Space } from './space'
 
 export type * from './list'
 export { default as List } from './list'
-
-export type * from './form'
-export { default as Form } from './form'
-
-export type * from './input'
-export { default as Input } from './input'
 
 export type * from './toast'
 export { ToastHolder, toast } from './toast'

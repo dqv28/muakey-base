@@ -57,7 +57,7 @@ const WorkflowItem: React.FC<WorkflowItemProps> = ({ cate, options }) => {
             )}
           />
           <Avatar
-            className="!rounded-full !text-[16px]"
+            className="rounded-full! text-[16px]!"
             size={36}
             shape="circle"
             style={{ backgroundColor: randomColor(String(cate.label)) }}
@@ -69,7 +69,7 @@ const WorkflowItem: React.FC<WorkflowItemProps> = ({ cate, options }) => {
           </span>
         </div>
         <Dropdown
-          rootClassName="!z-50"
+          rootClassName="z-50!"
           trigger={['click']}
           dropdownRender={() => (
             <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">

@@ -84,7 +84,7 @@ const InternalDropdown: React.ForwardRefRenderFunction<
     <div {...rest} className={className} ref={mergeRefs([dropdownRef, ref])}>
       <div onClick={handleToggleDropdown}>{children}</div>
       <div
-        className={clsx('absolute z-[9999]', {
+        className={clsx('absolute z-9999', {
           'left-[50%] top-full -translate-x-[50%]': placement === 'bottom',
           'left-0 top-full': placement === 'bottomLeft',
           'right-0 top-full': placement === 'bottomRight',

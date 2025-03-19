@@ -174,7 +174,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
             <div className="flex flex-col gap-[4px]">
               {checkIn?.map((c: any, index: number) => (
                 <>
-                  {index > 0 && <Divider className="!my-[4px]" />}
+                  {index > 0 && <Divider className="my-[4px]!" />}
                   <div key={c[0]}>
                     {c[0]} - {c[1] ? c[1] : '--:--'}
                   </div>
@@ -316,7 +316,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
   return (
     <div>
       {user?.role === 'Quản trị cấp cao' ? (
-        <div className="rounded bg-[#fff]">
+        <div className="rounded-sm bg-[#fff]">
           <Tabs
             tabBarExtraContent={
               mode === 'schedule' && (

@@ -1,4 +1,3 @@
-import { flatMap } from 'lodash'
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -8,46 +7,46 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/ui/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  safelist: [
-    ...flatMap(['', 'sm:', 'md:', 'lg:', 'xl:', '2xl:'], (prefix) =>
-      Array.from({ length: 24 }, (_, i) => [
-        `${prefix}w-${i + 1}-24`,
-        `${prefix}w-col-${i + 1}`,
-        `${prefix}ms-${i + 1}-24`,
-        `${prefix}order-${i + 1}-24`,
-      ]).flat(),
-    ),
-    ...flatMap(['', 'sm:', 'md:', 'lg:', 'xl:', '2xl:'], (prefix) =>
-      Array.from({ length: 100 }, (_, i) => [
-        `${prefix}gap-y-dynamic-${i + 1}`,
-        `${prefix}px-dynamic-${i + 1}`,
-        `${prefix}-mx-dynamic-${i + 1}`,
-      ]).flat(),
-    ),
-    ...flatMap(['sm:', 'md:', 'lg:', 'xl:', '2xl:'], (prefix) => [
-      ...flatMap(['start', 'center', 'end', 'stretch'], (value) => [
-        `${prefix}items-${value}`,
-      ]),
-      ...flatMap(
-        [
-          'start',
-          'end',
-          'center',
-          'space-around',
-          'space-between',
-          'space-evenly',
-        ],
-        (value) => [
-          `${prefix}justify-${
-            (value === 'space-around' && 'around') ||
-            (value === 'space-between' && 'between') ||
-            (value === 'space-evenly' && 'evenly') ||
-            value
-          }`,
-        ],
-      ),
-    ]),
-  ],
+  // safelist: [
+  //   ...flatMap(['', 'sm:', 'md:', 'lg:', 'xl:', '2xl:'], (prefix) =>
+  //     Array.from({ length: 24 }, (_, i) => [
+  //       `${prefix}w-${i + 1}-24`,
+  //       `${prefix}w-col-${i + 1}`,
+  //       `${prefix}ms-${i + 1}-24`,
+  //       `${prefix}order-${i + 1}-24`,
+  //     ]).flat(),
+  //   ),
+  //   ...flatMap(['', 'sm:', 'md:', 'lg:', 'xl:', '2xl:'], (prefix) =>
+  //     Array.from({ length: 100 }, (_, i) => [
+  //       `${prefix}gap-y-dynamic-${i + 1}`,
+  //       `${prefix}px-dynamic-${i + 1}`,
+  //       `${prefix}-mx-dynamic-${i + 1}`,
+  //     ]).flat(),
+  //   ),
+  //   ...flatMap(['sm:', 'md:', 'lg:', 'xl:', '2xl:'], (prefix) => [
+  //     ...flatMap(['start', 'center', 'end', 'stretch'], (value) => [
+  //       `${prefix}items-${value}`,
+  //     ]),
+  //     ...flatMap(
+  //       [
+  //         'start',
+  //         'end',
+  //         'center',
+  //         'space-around',
+  //         'space-between',
+  //         'space-evenly',
+  //       ],
+  //       (value) => [
+  //         `${prefix}justify-${
+  //           (value === 'space-around' && 'around') ||
+  //           (value === 'space-between' && 'between') ||
+  //           (value === 'space-evenly' && 'evenly') ||
+  //           value
+  //         }`,
+  //       ],
+  //     ),
+  //   ]),
+  // ],
   theme: {
     container: {
       center: true,
@@ -105,8 +104,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require('@tailwindcss/typography')],
 }
 export default config

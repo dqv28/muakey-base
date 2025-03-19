@@ -34,7 +34,7 @@ const CheckInFormOptions: React.FC<CheckInFormOptionsProps> = ({
         <Col key={index} span={6}>
           <div
             className={clsx(
-              'flex !h-[40px] w-full cursor-pointer items-center justify-center rounded-[4px] p-[16px] transition-all',
+              'flex h-[40px]! w-full cursor-pointer items-center justify-center rounded-[4px] p-[16px] transition-all',
               {
                 'bg-[#fff]': item?.value !== params?.search,
                 'bg-[#1677ff] text-[#fff]': item?.value === params?.search,

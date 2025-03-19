@@ -94,7 +94,7 @@ const InternalCol: React.ForwardRefRenderFunction<HTMLDivElement, ColProps> = (
   const className = clsx(
     {
       hidden: typeof span === 'number' && span === 0,
-      'flex-shrink-0 flex-grow-0': span,
+      'shrink-0 grow-0': span,
     },
     spanClass,
     customClassName,

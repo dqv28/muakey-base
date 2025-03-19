@@ -7,7 +7,7 @@ const Search: React.FC = () => {
       <SearchOutlined className="text-[16px]" />
       <input
         type="text"
-        className="bg-transparent pl-[16px] text-[12px] text-[#fffc] placeholder:text-[#fffc] focus-visible:outline-none"
+        className="bg-transparent pl-[16px] text-[12px] text-[#fffc] placeholder:text-[#fffc] focus-visible:outline-hidden"
         placeholder="Tìm nhanh"
       />
     </div>

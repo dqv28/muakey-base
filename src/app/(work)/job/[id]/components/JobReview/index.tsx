@@ -59,7 +59,7 @@ const JobReview: React.FC<JobReviewProps> = ({ task, query }) => {
         )}
       </div>
       <YouTubeEmbed videoid={videoId || ''} />
-      <div className="!mt-[16px] flex items-center justify-between gap-[12px] text-nowrap">
+      <div className="mt-[16px]! flex items-center justify-between gap-[12px] text-nowrap">
         <div className="flex items-center gap-[12px]">
           <div>
             <Tooltip title="Lượt xem">

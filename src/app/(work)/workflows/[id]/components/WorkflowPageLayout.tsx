@@ -84,7 +84,7 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
                 }}
               >
                 <Button
-                  className="!p-[10px] !text-[12px] text-[#fff]"
+                  className="p-[10px]! text-[12px]! text-[#fff]"
                   icon={<PlusOutlined className="text-[16px]" />}
                   type="primary"
                 >
@@ -97,7 +97,7 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
                 }}
               >
                 <Button
-                  className="!p-[10px] !text-[12px] text-[#fff]"
+                  className="p-[10px]! text-[12px]! text-[#fff]"
                   icon={<PlusOutlined className="text-[16px]" />}
                   type="primary"
                 >

@@ -45,7 +45,7 @@ const AccountPageHeader: React.FC<AccountPageHeaderProps> = ({ options }) => {
       }
       tab={{
         items: tabItems,
-        className: 'pt-[8px]',
+        className: '!pt-[8px]',
         onChangeTab: setRoleId,
       }}
     />

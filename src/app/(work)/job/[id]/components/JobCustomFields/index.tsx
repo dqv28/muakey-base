@@ -27,7 +27,7 @@ const generateValue = (type: string, value: any) => {
       return (
         <Flex wrap gap={8}>
           {value.map((v: any) => (
-            <Tag className="!m-0" key={v}>
+            <Tag className="m-0!" key={v}>
               {v}
             </Tag>
           ))}
@@ -60,7 +60,7 @@ const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ query }) => {
       </div>
 
       <Collapse
-        className="mt-[16px] !rounded-[4px] bg-[#fff]"
+        className="mt-[16px] rounded-[4px]! bg-[#fff]"
         expandIcon={({ isActive }) => (
           <CaretRightOutlined
             className={clsx(isActive ? 'rotate-90' : 'rotate-0')}

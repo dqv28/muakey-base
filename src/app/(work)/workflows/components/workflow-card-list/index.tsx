@@ -1,4 +1,4 @@
-import { Col, Row } from '@/ui'
+import { Col, Row } from 'antd'
 import React from 'react'
 import WorkflowCard from './WorkflowCard'
 

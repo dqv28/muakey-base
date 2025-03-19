@@ -118,7 +118,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
                       status="approved"
                     >
                       <Tooltip title="Duyệt đề xuất">
-                        <CheckOutlined className="cursor-pointer text-[#389e0d]" />
+                        <CheckOutlined className="cursor-pointer !text-[#389e0d]" />
                       </Tooltip>
                     </RequestConfirmModalForm>
                     <RequestConfirmModalForm
@@ -128,7 +128,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
                       status="canceled"
                     >
                       <Tooltip title="Từ chối đề xuất">
-                        <CloseOutlined className="cursor-pointer text-[#cf1322]" />
+                        <CloseOutlined className="cursor-pointer !text-[#cf1322]" />
                       </Tooltip>
                     </RequestConfirmModalForm>
                   </>
@@ -157,7 +157,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
               </>
             )}
             <Link href={`/request-history/${record?.id}`}>
-              <EyeOutlined className="cursor-pointer text-[#1677ff]" />
+              <EyeOutlined className="cursor-pointer !text-[#1677ff]" />
             </Link>
           </div>
         ),

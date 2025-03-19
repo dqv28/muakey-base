@@ -63,7 +63,7 @@ const columns: TableProps['columns'] = [
         <>
           <Link
             href={`/job/${record?.id}?wid=${record?.workflowId}`}
-            className="mb-[4px] block"
+            className="mb-[4px] block font-[600] !text-[#000000E0]"
           >
             {name}
           </Link>

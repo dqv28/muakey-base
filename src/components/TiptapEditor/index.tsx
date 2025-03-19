@@ -155,7 +155,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
     editorProps: {
       attributes: {
         class:
-          'min-h-[150px] p-[8px] border-x border-b rounded-b-[12px] focus:outline-none',
+          'min-h-[150px] p-[8px] border-x border-b rounded-b-[12px] focus:outline-hidden',
       },
     },
     onPaste: async (e) => {

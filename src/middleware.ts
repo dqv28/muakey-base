@@ -14,8 +14,6 @@ export async function middleware(request: NextRequest) {
   const session = await getSession()
   const today = new Date().getDate()
 
-  console.log('user', user)
-
   const isAdmin = user?.role === 'Quản trị cấp cao'
 
   if (isAdmin && path === '/admin') {

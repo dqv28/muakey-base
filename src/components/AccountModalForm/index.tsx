@@ -117,7 +117,7 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
       >
         <div className="flex items-start gap-[16px]">
           <Form.Item
-            className="!mb-[16px] flex-1"
+            className="mb-[16px]! flex-1"
             label="Họ và tên"
             name="full_name"
             rules={[{ required: true, message: 'Họ và tên là bắt buộc' }]}
@@ -125,7 +125,7 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
             <Input placeholder="Nhập họ và tên" />
           </Form.Item>
           <Form.Item
-            className="!mb-[16px] flex-1"
+            className="mb-[16px]! flex-1"
             label="Tài khoản"
             name="username"
           >
@@ -134,7 +134,7 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
         </div>
         <div className="flex items-start gap-[16px]">
           <Form.Item
-            className="!mb-[16px] flex-1"
+            className="mb-[16px]! flex-1"
             label="Email"
             name="email"
             rules={[{ required: true, message: 'Email là bắt buộc' }]}
@@ -142,7 +142,7 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
             <Input placeholder="Nhập email" />
           </Form.Item>
           <Form.Item
-            className="!mb-[16px] flex-1"
+            className="mb-[16px]! flex-1"
             label="Phân quyền sử dụng"
             name="role"
             initialValue="Thành viên thông thường"

@@ -20,9 +20,9 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
       <PageHeader
-        className="h-[82px] bg-[#fff]"
+        className="h-[85px] bg-[#fff]"
         title={
-          <h1 className="text-[24px] font-[600] leading-[28px]">
+          <h1 className="text-[24px] leading-[28px] font-[600]">
             Danh sách yêu cầu
           </h1>
         }

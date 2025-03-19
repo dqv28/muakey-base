@@ -150,7 +150,7 @@ const JobCommentCollapse: React.FC<{
             }
             ref={formRef}
           >
-            <Form.Item className="!mb-[12px]" name="content">
+            <Form.Item className="mb-[12px]!" name="content">
               <Input placeholder="Viết thảo luận của bạn" />
             </Form.Item>
           </Form>

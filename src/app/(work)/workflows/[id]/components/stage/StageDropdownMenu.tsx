@@ -182,7 +182,7 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
 
   return (
     <Dropdown
-      rootClassName="!z-auto"
+      rootClassName="z-auto!"
       placement="bottomRight"
       trigger={['click']}
       menu={{ items, style: { width: 240 } }}

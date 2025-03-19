@@ -52,7 +52,7 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
       {...rest}
     >
       <Form.Item
-        className="!mb-[40px]"
+        className="mb-[40px]!"
         name="link_youtube"
         label="Link sản phẩm"
         rules={[

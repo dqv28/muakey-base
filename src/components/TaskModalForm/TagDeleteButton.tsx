@@ -36,7 +36,7 @@ const TagDeleteButton: React.FC<
 
   return (
     <Button
-      className="!p-0"
+      className="p-0!"
       icon={<CloseOutlined className="text-[12px] text-[#777]" />}
       type="text"
       loading={tagDeleteLoading}

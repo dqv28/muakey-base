@@ -228,7 +228,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           label="Mô tả"
         >
           <InitializedMDXEditor
-            contentEditableClassName="p-[12px] border border-[#eee] focus:outline-none rounded-[4px] min-h-[180px] prose !max-w-full"
+            contentEditableClassName="p-[12px] border border-[#eee] focus:outline-hidden rounded-[4px] min-h-[180px] prose max-w-full!"
             ref={editorRef}
             markdown={converter.makeMarkdown(description || '')}
             placeholder="Mô tả nhiệm vụ"

@@ -9,7 +9,7 @@ export const getViews = async (query?: any) => {
 export const createView = async (data: any) => {
   return await requestWithAuthorized('views', {
     method: 'POST',
-    body: data,
+    data,
   })
 }
 

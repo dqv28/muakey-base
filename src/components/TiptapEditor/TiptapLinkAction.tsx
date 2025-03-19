@@ -1,6 +1,6 @@
 import { DeleteOutlined, EditOutlined, LinkOutlined } from '@ant-design/icons'
 import { Editor } from '@tiptap/react'
-import { Button, Divider, Form, FormInstance, Input } from 'antd'
+import { Button, Divider, FormInstance, Input } from 'antd'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 
@@ -16,11 +16,12 @@ const TiptapLinkAction: React.FC<TiptapLinkActionProps> = ({
   onEdit,
 }) => {
   const [isEdit, setIsEdit] = useState(false)
+  const [linkInput, setLinkInput] = useState('')
   const formRef = useRef<FormInstance>(null)
 
-  const handleSubmit = ({ url }: any) => {
+  const handleAdd = (url: string) => {
     onEdit?.(url)
-    formRef.current?.resetFields()
+
     setIsEdit(false)
   }
 
@@ -41,27 +42,22 @@ const TiptapLinkAction: React.FC<TiptapLinkActionProps> = ({
   return (
     <>
       {isEdit ? (
-        <Form
-          className="flex items-center gap-[8px]"
-          onFinish={handleSubmit}
-          ref={formRef}
-          initialValues={{
-            url: href,
-          }}
-        >
-          <Form.Item className="!mb-0 w-[232px]" name="url">
-            <Input
-              className="h-[32px] border-none bg-[#f5f5f5]"
-              prefix={<LinkOutlined />}
-              placeholder="Nhập url"
-            />
-          </Form.Item>
-          <Form.Item className="!mb-0">
-            <Button type="primary" htmlType="submit">
-              Sửa
-            </Button>
-          </Form.Item>
-        </Form>
+        <div className="flex items-center gap-[8px]">
+          <Input
+            className="h-[32px] flex-1 border-none bg-[#f5f5f5]"
+            prefix={<LinkOutlined />}
+            placeholder="Nhập url"
+            defaultValue={href}
+            onChange={(e) => setLinkInput(e.target.value)}
+          />
+          <Button
+            className="w-[70px]"
+            type="primary"
+            onClick={() => handleAdd(linkInput || href)}
+          >
+            Sửa
+          </Button>
+        </div>
       ) : (
         <div className="flex items-center gap-[4px]">
           <Link

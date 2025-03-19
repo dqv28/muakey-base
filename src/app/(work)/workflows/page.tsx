@@ -23,9 +23,9 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
     <PageProvider>
       <div className="flex h-full flex-col">
         <PageHeader
-          className="h-[82px] bg-[#fff]"
+          className="h-[85px] bg-[#fff]"
           title={
-            <h1 className="text-[24px] font-[600] leading-[28px]">Quy trình</h1>
+            <h1 className="text-[24px] leading-[28px] font-[600]">Quy trình</h1>
           }
           extra={
             <div className="flex items-center gap-[12px]">
@@ -37,7 +37,7 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
                 }}
               >
                 <Button
-                  className="w-[150px] !p-[10px] !text-[12px] text-[#fff]"
+                  className="w-[150px] p-[10px]! text-[12px]! text-[#fff]"
                   icon={<PlusOutlined className="text-[16px]" />}
                   type="primary"
                 >

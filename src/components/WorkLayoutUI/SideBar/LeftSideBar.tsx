@@ -175,7 +175,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
               '!shadow-[0_0_0_1px_#1469c9] !p-[2px] !text-[10px] !leading-none',
           }}
         >
-          <BellFilled className="text-[16px] text-[#fff]" />
+          <BellFilled className="text-[16px] !text-[#fff]" />
         </Badge>
       </div>
       <Drawer

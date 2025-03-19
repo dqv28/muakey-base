@@ -29,7 +29,7 @@ const StageHeader: React.FC<StageHeaderProps> = ({
         <span className="text-[16px] font-[500]">{title}</span>
         <span>{extra}</span>
       </div>
-      <Divider className="!my-[10px] border-t-[4px] border-[#0003]" />
+      <Divider className="!my-[10px] !border-t-[4px] !border-[#0003]" />
       {children}
     </div>
   )

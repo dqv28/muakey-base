@@ -210,7 +210,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
           <ColorPicker defaultValue="#888" onChange={onColorChange} showText />
         </div>
         <Button
-          className="!w-[130px]"
+          className="w-[130px]!"
           icon={<PlusOutlined />}
           onClick={handleAdd}
           loading={tagAddLoading}
