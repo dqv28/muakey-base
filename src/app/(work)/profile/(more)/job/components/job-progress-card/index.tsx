@@ -10,15 +10,23 @@ import JobProgressModalForm from './job-progress-modal-form'
 
 export type JobProgressCardProps = {
   title?: string
-  items?: any[]
+  data?: any
   extra?: React.ReactNode
 }
 
 const JobProgressCard: React.FC<JobProgressCardProps> = ({
   title,
-  items,
+  data,
   extra,
 }) => {
+  const {
+    job_position,
+    full_name,
+    position,
+    personnel_class,
+    department_name,
+  } = data
+
   const guideItems = [
     {
       label: 'Lương khi tuyển',
@@ -38,15 +46,6 @@ const JobProgressCard: React.FC<JobProgressCardProps> = ({
     },
   ]
 
-  const tableData = [
-    {
-      position: 'Trưởng phòng',
-      salary: '100,000,000 đ',
-      attachment: 'Tệp đính kèm',
-      time: '15/03/2025',
-    },
-  ]
-
   return (
     <Card
       classNames={{
@@ -56,7 +55,14 @@ const JobProgressCard: React.FC<JobProgressCardProps> = ({
       <div className="flex items-center justify-between">
         <div className="text-[20px] leading-[28px] font-[500]">{title}</div>
         {extra || (
-          <JobProgressModalForm>
+          <JobProgressModalForm
+            initialValues={{
+              full_name,
+              position,
+              personnel_class,
+              department_name,
+            }}
+          >
             <Button icon={<PlusOutlined />} type="primary">
               Tạo mới
             </Button>
@@ -69,7 +75,7 @@ const JobProgressCard: React.FC<JobProgressCardProps> = ({
         <JobProgressGuide items={guideItems} />
       </div>
 
-      <JobProgressTable dataSource={tableData} />
+      <JobProgressTable dataSource={job_position} />
     </Card>
   )
 }

@@ -77,7 +77,6 @@ const AccountTable: React.FC<AccountTableProps> = ({
     {
       title: 'Tài khoản',
       dataIndex: 'username',
-      render: (text: string) => text?.substring(1),
     },
     {
       title: 'Họ và tên',

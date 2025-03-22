@@ -378,3 +378,12 @@ export const getBankList = async () => {
     .then((data) => data)
     .catch(() => [])
 }
+
+export const uploadFiles = async (data: FormData) => {
+  return await requestWithFile('upload-files', {
+    method: 'POST',
+    body: data,
+  }).catch((error) => {
+    console.log(error)
+  })
+}

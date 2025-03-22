@@ -10,11 +10,8 @@ const ContractPage: React.FC = async () => {
 
   return (
     <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">
-      <ContractCard title="Tất cả hợp đồng" items={user?.contracts} />
-      <ContractDocumentCard
-        title="Giấy tờ nhân sự"
-        items={user?.personal_documents}
-      />
+      <ContractCard title="Tất cả hợp đồng" items={user} />
+      <ContractDocumentCard title="Giấy tờ nhân sự" items={user} />
     </div>
   )
 }

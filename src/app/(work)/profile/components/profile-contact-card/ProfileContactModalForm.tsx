@@ -29,7 +29,6 @@ const ProfileContactModalForm: React.FC<ProfileContactModalFormProps> = ({
   const { userId, ...restInitialValues } = initialValues
 
   const handleSubmit = async (values: any) => {
-    console.log(values)
     setLoading(true)
 
     try {
@@ -103,6 +102,7 @@ const ProfileContactModalForm: React.FC<ProfileContactModalFormProps> = ({
             className="mb-[16px]! flex-1"
             label="Họ và tên"
             name="name"
+            rules={[{ required: true, message: 'Họ và tên là bắt buộc' }]}
           >
             <Input placeholder="Nhập" />
           </Form.Item>
@@ -111,12 +111,18 @@ const ProfileContactModalForm: React.FC<ProfileContactModalFormProps> = ({
             className="mb-[16px]! flex-1"
             label="Mối quan hệ"
             name="relationship"
+            rules={[{ required: true, message: 'Mối quan hệ là bắt buộc' }]}
           >
             <Input placeholder="Nhập" />
           </Form.Item>
         </div>
 
-        <Form.Item className="mb-[16px]!" label="Liên hệ" name="phone_number">
+        <Form.Item
+          className="mb-[16px]!"
+          label="Liên hệ"
+          name="phone_number"
+          rules={[{ required: true, message: 'Liên hệ là bắt buộc' }]}
+        >
           <Input placeholder="Nhập" />
         </Form.Item>
 

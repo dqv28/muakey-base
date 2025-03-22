@@ -62,7 +62,7 @@ const columns: TableProps['columns'] = [
       return (
         <>
           <Link
-            href={`/job/${record?.id}?wid=${record?.workflowId}`}
+            href={`/task/${record?.id}`}
             className="mb-[4px] block font-[600] !text-[#000000E0]"
           >
             {name}
@@ -136,7 +136,7 @@ const columns: TableProps['columns'] = [
     render: (_, record) => {
       return (
         <div className="flex items-center gap-[8px]">
-          <Link href={`/job/${record?.id}?wid=${record?.workflow_id}`}>
+          <Link href={`/task/${record?.id}`}>
             <EyeOutlined className="text-[#1677ff]" />
           </Link>
           {record?.stage_name === 'Không có' &&

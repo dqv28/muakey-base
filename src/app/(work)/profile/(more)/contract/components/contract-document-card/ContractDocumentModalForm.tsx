@@ -1,43 +1,78 @@
 'use client'
 
-import { TiptapEditor } from '@/components'
+import { withApp } from '@/hoc'
 import { UploadOutlined } from '@ant-design/icons'
-import {
-  Button,
-  DatePicker,
-  Form,
-  FormProps,
-  Input,
-  Modal,
-  ModalProps,
-  Select,
-  Upload,
-} from 'antd'
-import locale from 'antd/es/date-picker/locale/vi_VN'
+import { App, Button, Form, FormProps, Modal, ModalProps, Upload } from 'antd'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { updateAccountAction, uploadFilesAction } from '../../../action'
+import { mapAsFile } from '../ultils'
 
 type ContractDocumentModalFormProps = ModalProps & {
   children?: React.ReactNode
   formProps?: FormProps
+  initialValues?: any
 }
 
 const ContractDocumentModalForm: React.FC<ContractDocumentModalFormProps> = ({
   children,
   formProps,
+  initialValues,
   ...props
 }) => {
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (values: any) => {
-    console.log(values)
+  const { message } = App.useApp()
+  const router = useRouter()
+
+  const handleSubmit = async (values: any) => {
+    setLoading(true)
+
+    const { fileList } = values
+
+    const originFileList = mapAsFile(fileList)
+
+    const formData = new FormData()
+
+    originFileList.forEach((file: File) => {
+      formData.append('files[]', file)
+    })
+
+    try {
+      const files = await uploadFilesAction(formData)
+
+      var { messgae: msg, errors } = await updateAccountAction(
+        initialValues.id,
+        {
+          personal_documents: files,
+        },
+      )
+
+      if (errors) {
+        message.error(msg)
+        setLoading(false)
+        return
+      }
+
+      message.success('Thêm thành công')
+      setOpen(false)
+      setLoading(false)
+      router.refresh()
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
   }
 
-  const typeOptions = [
-    {
-      label: 'Giấy khám sức khoẻ',
-      value: 'health_checkup',
-    },
-  ]
+  const normFile = (e: any) => {
+    if (Array.isArray(e)) {
+      return e
+    }
+
+    return e && e.fileList
+  }
+
   return (
     <>
       <div className="cursor-pointer" onClick={() => setOpen(true)}>
@@ -49,76 +84,40 @@ const ContractDocumentModalForm: React.FC<ContractDocumentModalFormProps> = ({
         onCancel={() => setOpen(false)}
         destroyOnClose
         width={846}
-        okText="Tạo mới"
+        okText="Thêm"
         cancelText="Hủy"
-        onOk={handleSubmit}
         okButtonProps={{
           htmlType: 'submit',
+          loading,
         }}
         modalRender={(dom) => (
-          <Form layout="vertical" {...formProps}>
+          <Form
+            layout="vertical"
+            onFinish={handleSubmit}
+            initialValues={{
+              ...initialValues,
+            }}
+            {...formProps}
+          >
             {dom}
           </Form>
         )}
         {...props}
       >
-        <div className="flex items-center gap-[16px]">
-          <Form.Item className="mb-[16px]! flex-1" label="Nhân sự" name="staff">
-            <Input placeholder="Nhập" />
-          </Form.Item>
-
-          <Form.Item
-            className="mb-[16px]! flex-1"
-            label="Loại giấy tờ"
-            name="type"
-            initialValue="health_checkup"
-          >
-            <Select options={typeOptions} />
-          </Form.Item>
-        </div>
-
-        <div className="flex items-center gap-[16px]">
-          <Form.Item
-            className="mb-[16px]! flex-1"
-            label="Ngày cấp"
-            name="issued_date"
-          >
-            <DatePicker className="w-full" locale={locale} />
-          </Form.Item>
-
-          <Form.Item
-            className="mb-[16px]! flex-1"
-            label="Ngày hết hạn"
-            name="expired_date"
-          >
-            <DatePicker className="w-full" locale={locale} />
-          </Form.Item>
-        </div>
-
-        <Form.Item
-          className="mb-[16px]! flex-1"
-          label="Nơi cấp"
-          name="issued_place"
-        >
-          <Input placeholder="Nhập" />
-        </Form.Item>
-
         <Form.Item
           className="mb-[16px]! flex-1"
           label="Tệp đính kèm"
-          name="attachment"
+          name="fileList"
+          valuePropName="fileList"
+          getValueFromEvent={normFile}
         >
-          <Upload>
+          <Upload multiple>
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
-        </Form.Item>
-
-        <Form.Item className="mb-0! flex-1" label="Ghi chú" name="note">
-          <TiptapEditor />
         </Form.Item>
       </Modal>
     </>
   )
 }
 
-export default ContractDocumentModalForm
+export default withApp(ContractDocumentModalForm)

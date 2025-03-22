@@ -80,7 +80,6 @@ export const requestWithAuthorized = async (
     ...options,
     headers: {
       authorization: `Bearer ${accessToken}`,
-      // 'ip-address': ip,
       ...options?.headers,
     },
   })

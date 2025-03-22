@@ -1,9 +1,20 @@
 'use client'
 
 import { withApp } from '@/hoc'
-import { App, Card, Form, FormProps, Input, Modal, ModalProps } from 'antd'
+import { formatCurrency } from '@/lib/utils'
+import {
+  App,
+  Card,
+  Form,
+  FormInstance,
+  FormProps,
+  InputNumber,
+  InputNumberProps,
+  Modal,
+  ModalProps,
+} from 'antd'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { updateProfileAction } from '../../../action'
 
 export type JobSalaryModalFormProps = ModalProps & {
@@ -20,11 +31,23 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [basicSalary, setBasicSalary] = useState(0)
+  const [salaries, setSalaries] = useState({
+    travel_allowance: 0,
+    eat_allowance: 0,
+    kpi: 0,
+  })
 
   const router = useRouter()
   const { message } = App.useApp()
+  const formRef = useRef<FormInstance>(null)
 
   const { salary, ...restInitialValues } = initialValues
+  const totalSalary =
+    salary?.basic_salary +
+    salary?.travel_allowance +
+    salary?.eat_allowance +
+    salary?.kpi
 
   const handleSubmit = async (values: any) => {
     setLoading(true)
@@ -58,6 +81,49 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
     }
   }
 
+  const handleSalariesChange = useCallback((_: any, allValues: any) => {
+    const { basic_salary, travel_allowance, eat_allowance, kpi } = allValues
+
+    setBasicSalary(+basic_salary)
+
+    setSalaries((prev: any) => ({
+      ...prev,
+      travel_allowance,
+      eat_allowance,
+      kpi,
+    }))
+  }, [])
+
+  useEffect(() => {
+    formRef.current?.setFieldsValue({
+      insurance: Number(basicSalary * 0.215),
+      insurance_employee: Number(basicSalary * 0.105),
+    })
+  }, [basicSalary])
+
+  useEffect(() => {
+    const insurance = Number(basicSalary * 0.215)
+    const insurance_employee = Number(basicSalary * 0.105)
+    const total_salary =
+      basicSalary +
+      salaries.travel_allowance +
+      salaries.eat_allowance +
+      salaries.kpi
+
+    formRef.current?.setFieldsValue({
+      gross_salary: Number(
+        (total_salary + insurance + insurance_employee).toFixed(2),
+      ),
+      net_salary: Number(total_salary.toFixed(2)),
+    })
+  }, [salaries, basicSalary])
+
+  const formatProps: Pick<InputNumberProps, 'formatter' | 'parser'> = {
+    formatter: (value) =>
+      typeof value !== 'number' ? String(value) : formatCurrency(Number(value)),
+    parser: (value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number,
+  }
+
   return (
     <>
       <div className="cursor-pointer" onClick={() => setOpen(true)}>
@@ -79,9 +145,19 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
         modalRender={(dom) => (
           <Form
             onFinish={handleSubmit}
+            onValuesChange={handleSalariesChange}
             layout="vertical"
+            ref={formRef}
             initialValues={{
               ...salary,
+              insurance: Number(salary?.basic_salary * 0.215),
+              insurance_employee: Number(salary?.basic_salary * 0.105),
+              gross_salary: Number(
+                totalSalary +
+                  Number(salary?.basic_salary * 0.215) +
+                  Number(salary?.basic_salary * 0.105),
+              ),
+              net_salary: Number(totalSalary),
             }}
             {...formProps}
           >
@@ -101,7 +177,11 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
               label="Lương cơ bản"
               name="basic_salary"
             >
-              <Input placeholder="Nhập" />
+              <InputNumber
+                className="w-full!"
+                placeholder="Nhập"
+                {...formatProps}
+              />
             </Form.Item>
 
             <Form.Item
@@ -109,7 +189,11 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
               label="Phụ cấp đi lại"
               name="travel_allowance"
             >
-              <Input placeholder="Nhập" />
+              <InputNumber
+                className="w-full!"
+                placeholder="Nhập"
+                {...formatProps}
+              />
             </Form.Item>
           </div>
 
@@ -119,7 +203,11 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
               label="Phụ cấp ăn uống"
               name="eat_allowance"
             >
-              <Input placeholder="Nhập" />
+              <InputNumber
+                className="w-full!"
+                placeholder="Nhập"
+                {...formatProps}
+              />
             </Form.Item>
 
             <Form.Item
@@ -127,7 +215,11 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
               label="Thưởng, KPI"
               name="kpi"
             >
-              <Input placeholder="Nhập" />
+              <InputNumber
+                className="w-full!"
+                placeholder="Nhập"
+                {...formatProps}
+              />
             </Form.Item>
           </div>
 
@@ -137,7 +229,12 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
               label="BHXH, BHYT, BHTN do công ty đóng (21,5%)"
               name="insurance"
             >
-              <Input disabled />
+              <InputNumber
+                className="w-full!"
+                placeholder="BHXH, BHYT, BHTN do công ty đóng (21,5%)"
+                disabled
+                {...formatProps}
+              />
             </Form.Item>
 
             <Form.Item
@@ -145,7 +242,12 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
               label="BHXH, BHYT, BHTN do NLĐ đóng (10,5%)"
               name="insurance_employee"
             >
-              <Input disabled />
+              <InputNumber
+                className="w-full!"
+                placeholder="BHXH, BHYT, BHTN do NLĐ đóng (10,5%)"
+                disabled
+                {...formatProps}
+              />
             </Form.Item>
           </div>
         </Card>
@@ -156,7 +258,12 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
             label="Lương Gross (Lương sau khi cộng BHXH, BHYT, BHTN)"
             name="gross_salary"
           >
-            <Input placeholder="Nhập" disabled />
+            <InputNumber
+              className="w-full!"
+              placeholder="Lương Gross (Lương sau khi cộng BHXH, BHYT, BHTN)"
+              disabled
+              {...formatProps}
+            />
           </Form.Item>
 
           <Form.Item
@@ -164,7 +271,12 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
             label="Lương Net"
             name="net_salary"
           >
-            <Input placeholder="Nhập" disabled />
+            <InputNumber
+              className="w-full!"
+              placeholder="Lương Net"
+              disabled
+              {...formatProps}
+            />
           </Form.Item>
         </div>
       </Modal>

@@ -19,13 +19,13 @@ const WorkflowStatisticsTable: React.FC<
     {
       title: 'STT',
       dataIndex: 'index',
-      width: 60
+      width: 60,
     },
     {
       title: 'Tên nhiệm vụ',
       dataIndex: 'task_name',
       render: (value, record) => (
-        <Link href={`/job/${record?.task_id}?wid=${params?.id}`}>{value}</Link>
+        <Link href={`/task/${record?.task_id}`}>{value}</Link>
       ),
     },
     {

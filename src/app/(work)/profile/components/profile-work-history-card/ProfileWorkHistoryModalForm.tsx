@@ -120,6 +120,12 @@ const ProfileWorkHistoryModalForm: React.FC<
             className="mb-[16px]! flex-1"
             label="Tên tổ chức, doanh nghiệp"
             name="company_name"
+            rules={[
+              {
+                required: true,
+                message: 'Tên tổ chức, doanh nghiệp là bắt buộc',
+              },
+            ]}
           >
             <Input placeholder="Nhập" />
           </Form.Item>
@@ -128,12 +134,18 @@ const ProfileWorkHistoryModalForm: React.FC<
             className="mb-[16px]! flex-1"
             label="Thời gian (Bắt đầu - kết thúc)"
             name="timestamp"
+            rules={[{ required: true, message: 'Thời gian là bắt buộc' }]}
           >
             <DatePicker.RangePicker className="w-full" locale={locale} />
           </Form.Item>
         </div>
 
-        <Form.Item className="mb-0! flex-1" label="Vị trí" name="position">
+        <Form.Item
+          className="mb-0! flex-1"
+          label="Vị trí"
+          name="position"
+          rules={[{ required: true, message: 'Vị trí là bắt buộc' }]}
+        >
           <Input placeholder="Nhập" />
         </Form.Item>
       </Modal>

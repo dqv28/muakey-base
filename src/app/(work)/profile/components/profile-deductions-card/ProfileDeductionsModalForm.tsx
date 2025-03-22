@@ -96,8 +96,9 @@ const ProfileDeductionsModalForm: React.FC<ProfileDeductionsModalFormProps> = ({
             onFinish={handleSubmit}
             initialValues={{
               ...initialValues,
-              tax_reduced: initialValues?.tax_reduced || 1,
-              salary_scale: initialValues?.salary_scale || 1,
+              tax_reduced: [0, 1].includes(initialValues?.tax_reduced)
+                ? initialValues?.tax_reduced
+                : 1,
             }}
             {...formProps}
           >

@@ -125,6 +125,7 @@ const ProfileEduInfomationModalForm: React.FC<
             className="mb-[16px]! flex-1"
             label="Trường học"
             name="school_name"
+            rules={[{ required: true, message: 'Trường học là bắt buộc' }]}
           >
             <Input placeholder="Nhập" />
           </Form.Item>
@@ -133,6 +134,7 @@ const ProfileEduInfomationModalForm: React.FC<
             className="mb-[16px]! flex-1"
             label="Chuyên ngành"
             name="major"
+            rules={[{ required: true, message: 'Chuyên ngành là bắt buộc' }]}
           >
             <Input placeholder="Nhập" />
           </Form.Item>
@@ -143,11 +145,17 @@ const ProfileEduInfomationModalForm: React.FC<
             className="mb-0! flex-1"
             label="Thời gian (Bắt đầu - kết thúc)"
             name="timestamp"
+            rules={[{ required: true, message: 'Thời gian là bắt buộc' }]}
           >
             <DatePicker.RangePicker className="w-full" locale={locale} />
           </Form.Item>
 
-          <Form.Item className="mb-0! flex-1" label="Bằng cấp" name="degree">
+          <Form.Item
+            className="mb-0! flex-1"
+            label="Bằng cấp"
+            name="degree"
+            rules={[{ required: true, message: 'Bằng cấp là bắt buộc' }]}
+          >
             <Input placeholder="Nhập" />
           </Form.Item>
         </div>

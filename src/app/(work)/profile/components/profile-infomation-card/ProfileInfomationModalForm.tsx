@@ -63,7 +63,9 @@ const ProfileInfomationModalForm: React.FC<ProfileInfomationModalFormProps> = ({
         initialValues?.id,
         {
           ...values,
-          birthday: String(dayjs(values?.birthday)?.format('YYYY-MM-DD')),
+          birthday: values?.birthday
+            ? String(dayjs(values?.birthday)?.format('YYYY-MM-DD'))
+            : null,
         },
       )
 
@@ -117,7 +119,9 @@ const ProfileInfomationModalForm: React.FC<ProfileInfomationModalFormProps> = ({
             onFinish={handleSubmit}
             initialValues={{
               ...initialValues,
-              birthday: dayjs(initialValues?.birthday),
+              birthday: initialValues?.birthday
+                ? dayjs(initialValues?.birthday)
+                : null,
               name_bank: initialValues?.name_bank || 'VietinBank',
             }}
             {...formProps}
@@ -236,7 +240,16 @@ const ProfileInfomationModalForm: React.FC<ProfileInfomationModalFormProps> = ({
             name="name_bank"
             label="Ngân hàng"
           >
-            <Select options={bankOptions} placeholder="Chọn ngân hàng" />
+            <Select
+              showSearch
+              options={bankOptions}
+              placeholder="Chọn ngân hàng"
+              filterOption={(input, option) =>
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            />
           </Form.Item>
           <Form.Item
             className="mb-0! flex-1"

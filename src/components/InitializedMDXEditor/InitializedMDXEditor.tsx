@@ -1,6 +1,6 @@
 'use client'
 
-import { uploadImageAction } from '@/app/(work)/job/actions'
+import { uploadImageAction } from '@/app/(work)/task/actions'
 import { withApp } from '@/hoc'
 import { EDITOR_ICON_KEYS } from '@/libs/constant'
 import {

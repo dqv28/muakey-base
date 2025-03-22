@@ -7,7 +7,7 @@ import ContractDocumentModalForm from './ContractDocumentModalForm'
 export type ContractDocumentCardProps = {
   title?: React.ReactNode
   extra?: React.ReactNode
-  items?: any[]
+  items?: any
 }
 
 const ContractDocumentCard: React.FC<ContractDocumentCardProps> = ({
@@ -15,6 +15,8 @@ const ContractDocumentCard: React.FC<ContractDocumentCardProps> = ({
   extra,
   items,
 }) => {
+  const { personal_documents, full_name, id } = items
+
   return (
     <Card
       classNames={{
@@ -24,7 +26,7 @@ const ContractDocumentCard: React.FC<ContractDocumentCardProps> = ({
       <div className="flex items-center justify-between">
         <div className="text-[20px] leading-[28px] font-[500]">{title}</div>
         {extra || (
-          <ContractDocumentModalForm>
+          <ContractDocumentModalForm initialValues={{ full_name, id }}>
             <Button icon={<PlusOutlined />} type="primary">
               Thêm mới
             </Button>
@@ -32,7 +34,7 @@ const ContractDocumentCard: React.FC<ContractDocumentCardProps> = ({
         )}
       </div>
 
-      <ContractDocumentList dataSource={items} />
+      <ContractDocumentList dataSource={personal_documents || []} />
     </Card>
   )
 }

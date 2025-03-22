@@ -18,3 +18,7 @@ export const getThumbnailFromYoutubeUrl = (url: string, size?: string) => {
 
   return `https://img.youtube.com/vi/${videoId}/0.jpg`
 }
+
+export const formatCurrency = (value: number) => {
+  return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}

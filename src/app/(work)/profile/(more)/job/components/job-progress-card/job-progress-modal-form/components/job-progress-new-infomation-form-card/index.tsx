@@ -1,4 +1,5 @@
-import { Card, Form, Input } from 'antd'
+import { formatCurrency } from '@/lib/utils'
+import { Card, Form, InputNumber, InputNumberProps } from 'antd'
 import React from 'react'
 
 export type JobProgressNewInfomationFormCardProps = {
@@ -8,6 +9,12 @@ export type JobProgressNewInfomationFormCardProps = {
 const JobProgressNewInfomationFormCard: React.FC<
   JobProgressNewInfomationFormCardProps
 > = ({ title }) => {
+  const formatProps: Pick<InputNumberProps, 'formatter' | 'parser'> = {
+    formatter: (value) =>
+      typeof value !== 'number' ? String(value) : formatCurrency(Number(value)),
+    parser: (value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number,
+  }
+
   return (
     <Card>
       <div className="mb-[16px] text-[14px] leading-[22px] font-[600]">
@@ -20,7 +27,11 @@ const JobProgressNewInfomationFormCard: React.FC<
           label="Lương cơ bản"
           name="basic_salary"
         >
-          <Input placeholder="Nhập" />
+          <InputNumber
+            className="w-full!"
+            placeholder="Nhập"
+            {...formatProps}
+          />
         </Form.Item>
 
         <Form.Item
@@ -28,7 +39,11 @@ const JobProgressNewInfomationFormCard: React.FC<
           label="Phụ cấp đi lại"
           name="travel_allowance"
         >
-          <Input placeholder="Nhập" />
+          <InputNumber
+            className="w-full!"
+            placeholder="Nhập"
+            {...formatProps}
+          />
         </Form.Item>
       </div>
 
@@ -36,13 +51,21 @@ const JobProgressNewInfomationFormCard: React.FC<
         <Form.Item
           className="mb-[16px]! flex-1"
           label="Phụ cấp ăn uống"
-          name="food_allowance"
+          name="eat_allowance"
         >
-          <Input placeholder="Nhập" />
+          <InputNumber
+            className="w-full!"
+            placeholder="Nhập"
+            {...formatProps}
+          />
         </Form.Item>
 
         <Form.Item className="mb-[16px]! flex-1" label="Thưởng, KPI" name="kpi">
-          <Input placeholder="Nhập" />
+          <InputNumber
+            className="w-full!"
+            placeholder="Nhập"
+            {...formatProps}
+          />
         </Form.Item>
       </div>
 
@@ -52,7 +75,12 @@ const JobProgressNewInfomationFormCard: React.FC<
           label="BHXH, BHYT, BHTN do công ty đóng (21,5%)"
           name="insurance"
         >
-          <Input placeholder="Nhập" disabled />
+          <InputNumber
+            className="w-full!"
+            placeholder="Nhập"
+            disabled
+            {...formatProps}
+          />
         </Form.Item>
 
         <Form.Item
@@ -60,7 +88,12 @@ const JobProgressNewInfomationFormCard: React.FC<
           label="BHXH, BHYT, BHTN do NLĐ đóng (10,5%)"
           name="insurance_employee"
         >
-          <Input placeholder="Nhập" disabled />
+          <InputNumber
+            className="w-full!"
+            placeholder="Nhập"
+            disabled
+            {...formatProps}
+          />
         </Form.Item>
       </div>
 
@@ -70,11 +103,21 @@ const JobProgressNewInfomationFormCard: React.FC<
           label="Lương Gross (Lương sau khi cộng BHXH, BHYT, BHTN)"
           name="gross_salary"
         >
-          <Input placeholder="Nhập" disabled />
+          <InputNumber
+            className="w-full!"
+            placeholder="Nhập"
+            disabled
+            {...formatProps}
+          />
         </Form.Item>
 
         <Form.Item className="mb-0! flex-1" label="Lương Net" name="net_salary">
-          <Input placeholder="Nhập" disabled />
+          <InputNumber
+            className="w-full!"
+            placeholder="Nhập"
+            disabled
+            {...formatProps}
+          />
         </Form.Item>
       </div>
     </Card>

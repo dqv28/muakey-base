@@ -22,7 +22,11 @@ const ProfileDeductionsCard: React.FC<ProfileDeductionsCardProps> = ({
     },
     {
       label: 'Giảm trừ thuế thu nhập cá nhân',
-      value: user?.tax_reduced || '--',
+      value: [0, 1].includes(user?.tax_reduced)
+        ? user?.tax_reduced === 1
+          ? 'Có'
+          : 'Không'
+        : '--',
     },
     {
       label: 'Số sổ BHXH',

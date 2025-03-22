@@ -7,6 +7,7 @@ import {
   getTimeStagesByTaskId,
   getWorkflowById,
 } from '@/libs/data'
+import { getStageById } from '@/libs/stage'
 import { ArrowLeftOutlined, ExclamationCircleFilled } from '@ant-design/icons'
 import { Col, Row, Tooltip } from 'antd'
 import dayjs from 'dayjs'
@@ -53,14 +54,16 @@ const page: React.FC<any> = async (props: {
   searchParams: any
 }) => {
   const params = await props.params
-  const searchParams = await props.searchParams
 
-  const [task, stages, workflow, reports, user] = await Promise.all([
-    getTaskById(params?.id),
+  const task = await getTaskById(params?.id)
+
+  const stage = await getStageById(task?.stage_id)
+
+  const [stages, workflow, reports, user] = await Promise.all([
     getStagesByWorkflowId({
-      workflow_id: searchParams?.wid,
+      workflow_id: stage?.workflow_id,
     }),
-    getWorkflowById(searchParams?.wid),
+    getWorkflowById(stage?.workflow_id),
     getTaskReportsByTaskId(params?.id),
     getMe(),
   ])
@@ -106,7 +109,7 @@ const page: React.FC<any> = async (props: {
                   stages,
                   user,
                   members: workflow?.members,
-                  workflowId: searchParams?.wid,
+                  workflowId: stage?.workflow_id,
                   reportRequired: workflow?.require_link_youtube === 1,
                 }}
               />
@@ -162,7 +165,7 @@ const page: React.FC<any> = async (props: {
 
             <JobCustomFields
               query={{
-                workflow_id: searchParams?.wid,
+                workflow_id: stage?.workflow_id,
                 task_id: task?.id,
               }}
             />
@@ -181,7 +184,7 @@ const page: React.FC<any> = async (props: {
             <JobReview
               task={task}
               query={{
-                workflowId: searchParams?.wid,
+                workflowId: stage?.workflow_id,
               }}
             />
           )}

@@ -1,5 +1,6 @@
 'use client'
 
+import { formatCurrency } from '@/lib/utils'
 import {
   HeartFilled,
   MailOutlined,
@@ -8,7 +9,7 @@ import {
 } from '@ant-design/icons'
 import { Player } from '@lottiefiles/react-lottie-player'
 import { Avatar, Badge, Card, Progress } from 'antd'
-import React from 'react'
+import React, { useMemo } from 'react'
 import animation from './lotties/gold-coin-animation.json'
 
 export type ProfileOverviewProps = {
@@ -16,6 +17,13 @@ export type ProfileOverviewProps = {
 }
 
 const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
+  const { basic_salary, travel_allowance, kpi, eat_allowance } =
+    user?.salary || {}
+
+  const totalSalary = useMemo(() => {
+    return basic_salary + travel_allowance + kpi + eat_allowance
+  }, [basic_salary, travel_allowance, kpi, eat_allowance])
+
   const items = [
     {
       icon: <HeartFilled className="!text-[#F5222D]" />,
@@ -38,9 +46,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
           style={{ height: 16, width: 16, transform: 'scale(2.6)' }}
         />
       ),
-      label: user?.now_salary
-        ? `${Number(user?.now_salary).toLocaleString()}đ`
-        : '--',
+      label: user?.salary ? `${formatCurrency(totalSalary)}đ` : '--',
     },
   ]
 

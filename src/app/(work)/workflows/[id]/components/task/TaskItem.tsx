@@ -419,10 +419,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       {
         key: '1',
         label: (
-          <Link
-            className="px-[12px] leading-[32px]"
-            href={`/job/${task?.id}?wid=${params?.id}`}
-          >
+          <Link className="px-[12px] leading-[32px]" href={`/task/${task?.id}`}>
             Xem nhiệm vụ
           </Link>
         ),
@@ -570,7 +567,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                 : 'hover:text-[#000]',
             )}
             key={task?.id}
-            href={`/job/${task?.id}?wid=${params?.id}`}
+            href={`/task/${task?.id}`}
             prefetch={false}
           >
             <div

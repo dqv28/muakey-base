@@ -7,10 +7,12 @@ import ContractDocumentItemCard from './ContractDocumentItemCard'
 export type ContractDocumentListProps = ListProps<any> & {}
 
 const ContractDocumentList: React.FC<ContractDocumentListProps> = ({
+  dataSource,
   ...props
 }) => {
   return (
     <List
+      dataSource={dataSource}
       grid={{
         gutter: [16, 16],
         column: 2,

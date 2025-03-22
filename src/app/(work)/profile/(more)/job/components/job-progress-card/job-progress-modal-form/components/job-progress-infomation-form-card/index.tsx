@@ -1,5 +1,7 @@
+import { useAsyncEffect } from '@/libs/hook'
 import { Card, Form, Input, Select } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
+import { getDepartmentListRequest } from '../../../../action'
 
 export type JobProgressInfomationFormCardProps = {
   title?: string
@@ -8,20 +10,12 @@ export type JobProgressInfomationFormCardProps = {
 const JobProgressInfomationFormCard: React.FC<
   JobProgressInfomationFormCardProps
 > = ({ title }) => {
-  const departmentOptions = [
-    {
-      label: 'Phòng nhân sự',
-      value: '1',
-    },
-    {
-      label: 'Phòng code',
-      value: '2',
-    },
-    {
-      label: 'Phòng kế toán',
-      value: '3',
-    },
-  ]
+  const [department, setDepartment] = useState([])
+
+  const departmentOptions = department?.map((item: any) => ({
+    label: item.name,
+    value: item.name,
+  }))
 
   const staffTypeOptions = [
     {
@@ -33,6 +27,12 @@ const JobProgressInfomationFormCard: React.FC<
       value: 'parttime',
     },
   ]
+
+  useAsyncEffect(async () => {
+    const res = await getDepartmentListRequest()
+    setDepartment(res)
+  }, [])
+
   return (
     <Card>
       <div className="mb-[16px] text-[14px] leading-[22px] font-[600]">
@@ -51,7 +51,7 @@ const JobProgressInfomationFormCard: React.FC<
         <Form.Item
           className="mb-[16px]! flex-1"
           label="Vị trí cũ"
-          name="old_position"
+          name="position"
         >
           <Input placeholder="Nhập" disabled />
         </Form.Item>
@@ -61,10 +61,12 @@ const JobProgressInfomationFormCard: React.FC<
         <Form.Item
           className="mb-[16px]! flex-1"
           label="Phòng ban mới"
-          name="new_department"
-          initialValue={departmentOptions[0].value}
+          name="department_name"
         >
-          <Select options={departmentOptions} />
+          <Select
+            options={departmentOptions}
+            placeholder="Chọn phòng ban mới"
+          />
         </Form.Item>
 
         <Form.Item
@@ -79,10 +81,12 @@ const JobProgressInfomationFormCard: React.FC<
       <Form.Item
         className="mb-0! flex-1"
         label="Phân loại nhân sự mới"
-        name="new_staff_type"
-        initialValue={staffTypeOptions[0].value}
+        name="personnel_class"
       >
-        <Select options={staffTypeOptions} />
+        <Select
+          options={staffTypeOptions}
+          placeholder="Chọn phân loại nhân sự mới"
+        />
       </Form.Item>
     </Card>
   )

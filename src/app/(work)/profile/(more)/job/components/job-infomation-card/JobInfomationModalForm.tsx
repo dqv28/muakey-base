@@ -70,12 +70,12 @@ const JobInfomationModalForm: React.FC<JobInfomationModalFormProps> = ({
         restInitialValues?.id,
         {
           ...values,
-          start_work_date: String(
-            dayjs(values.start_work_date)?.format('YYYY-MM-DD'),
-          ),
-          start_trial_date: String(
-            dayjs(values.start_trial_date)?.format('YYYY-MM-DD'),
-          ),
+          start_work_date: values.start_work_date
+            ? String(dayjs(values.start_work_date)?.format('YYYY-MM-DD'))
+            : undefined,
+          start_trial_date: values.start_trial_date
+            ? String(dayjs(values.start_trial_date)?.format('YYYY-MM-DD'))
+            : undefined,
         },
       )
 

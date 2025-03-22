@@ -1,8 +1,13 @@
-import { LinkOutlined } from '@ant-design/icons'
-import { Modal, ModalProps } from 'antd'
+import { useAsyncEffect } from '@/libs/hook'
+import { randomColor } from '@/libs/utils'
+import { PaperClipOutlined } from '@ant-design/icons'
+import { Avatar, Modal, ModalProps } from 'antd'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 import React, { useState } from 'react'
+import { getAccountByIdAction } from '../../../action'
 import Detail from '../Detail'
+import { genStatus } from '../ultils'
 
 export type ContractDetailModalProps = ModalProps & {
   children?: React.ReactNode
@@ -15,6 +20,16 @@ const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
   ...props
 }) => {
   const [open, setOpen] = useState(false)
+
+  const [account, setAccount] = useState<any>(null)
+
+  useAsyncEffect(async () => {
+    if (!open) return
+
+    const data = await getAccountByIdAction(item?.account_id)
+
+    setAccount(data)
+  }, [open])
 
   return (
     <>
@@ -39,7 +54,11 @@ const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
             label="Loại hợp đồng"
             value={item?.category?.name}
           />
-          <Detail className="flex-1" label="Trạng thái" value={item?.status} />
+          <Detail
+            className="flex-1"
+            label="Trạng thái"
+            value={genStatus(item?.status)}
+          />
         </div>
 
         <div className="flex items-start gap-[16px]">
@@ -61,22 +80,56 @@ const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
             label="Ngày tạo"
             value={dayjs(item?.created_at).format('DD/MM/YYYY')}
           />
-          <Detail className="flex-1" label="Tạo bởi" value={item?.account_id} />
+          <Detail
+            className="flex-1"
+            label="Tạo bởi"
+            value={
+              <div className="flex items-center gap-[8px]">
+                <Avatar
+                  src={account?.avatar}
+                  alt={account?.full_name}
+                  style={{
+                    backgroundColor: randomColor(String(account?.full_name)),
+                  }}
+                  shape="circle"
+                >
+                  {String(account?.full_name)?.charAt(0).toUpperCase()}
+                </Avatar>
+                <span>{account?.full_name}</span>
+              </div>
+            }
+          />
         </div>
 
-        <Detail
-          label="Tệp đính kèm"
-          value={
-            <div className="flex items-center gap-[8px]">
-              <LinkOutlined className="!text-[#00000073]" />
-              <span className="text-[14px] leading-[22px] font-[400] text-[#1890FF]">
-                {item?.name}
-              </span>
-            </div>
-          }
-        />
+        {item?.files && (
+          <Detail
+            label="Tệp đính kèm"
+            value={
+              <div className="flex flex-col gap-[8px]">
+                {item?.files?.map((file: any, index: number) => (
+                  <Link
+                    href={file?.file_url}
+                    className="flex items-center gap-[8px]"
+                    key={index}
+                    target="_blank"
+                  >
+                    <PaperClipOutlined className="text-[#00000073]!" />
+                    <span className="text-[14px] leading-[22px] font-[400] text-[#1890FF]">
+                      {file?.file_name}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            }
+          />
+        )}
 
-        <Detail label="Ghi chú" value={item?.note} />
+        {item?.note && (
+          <Detail
+            label="Ghi chú"
+            value={<div dangerouslySetInnerHTML={{ __html: item?.note }} />}
+          />
+        )}
       </Modal>
     </>
   )

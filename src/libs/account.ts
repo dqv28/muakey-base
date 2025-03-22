@@ -5,3 +5,21 @@ export const disableAccount = async (id: number) => {
     method: 'PUT',
   })
 }
+
+export const getAccountById = async (id: number) => {
+  return await requestWithAuthorized(`accounts/${id}`)
+    .then((data) => data)
+    .catch(() => null)
+}
+
+export const updateAccount = async (
+  id: number,
+  data: any,
+  formData?: FormData,
+) => {
+  return await requestWithAuthorized(`accounts/${id}`, {
+    method: 'PUT',
+    data,
+    body: formData,
+  })
+}

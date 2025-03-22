@@ -1,5 +1,6 @@
 import { EditOutlined } from '@ant-design/icons'
 import { Table, TableProps } from 'antd'
+import dayjs from 'dayjs'
 import React from 'react'
 
 export type JobProgressTableProps = TableProps & {}
@@ -8,19 +9,25 @@ const JobProgressTable: React.FC<JobProgressTableProps> = (props) => {
   const columns = [
     {
       title: 'Vị trí công việc',
-      dataIndex: 'position',
+      dataIndex: 'name',
     },
     {
       title: 'Lương',
-      dataIndex: 'salary',
+      dataIndex: ['salary', 'basic_salary'],
     },
     {
       title: 'Tệp đính kèm',
       dataIndex: 'attachment',
+      render: (value: string) => {
+        return value ? value : '--'
+      },
     },
     {
       title: 'Thời gian',
-      dataIndex: 'time',
+      dataIndex: 'created_at',
+      render: (value: string) => {
+        return value ? dayjs(value).format('DD/MM/YYYY') : '--'
+      },
     },
     {
       title: 'Hành động',
