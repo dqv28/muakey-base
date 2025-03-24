@@ -1,7 +1,6 @@
 'use client'
 
-import { InitializedMDXEditor } from '@/components'
-import { linkPlugin } from '@mdxeditor/editor'
+import { TiptapEditor } from '@/components'
 import { Button, Form, FormInstance } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
@@ -49,17 +48,8 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
 
   return (
     <Form onFinish={handleSubmit} ref={formRef}>
-      <Form.Item className="mb-[12px]!" name="content">
-        <InitializedMDXEditor
-          contentEditableClassName="p-[12px] border border-[#eee] focus:outline-hidden rounded-[4px] min-h-[180px] prose max-w-full!"
-          markdown=""
-          placeholder="Bình luận"
-          plugins={[linkPlugin()]}
-          onChange={(markdown) => {
-            setDisabled(!markdown)
-            console.log(markdown)
-          }}
-        />
+      <Form.Item className="mb-[12px]!" name="content" valuePropName="content">
+        <TiptapEditor hasToolbar={false} />
       </Form.Item>
 
       <Form.Item className="flex justify-end">

@@ -4,11 +4,15 @@ import ScheduleHolidayCalendar from './ScheduleHolidayCalendar'
 import ScheduleHolidayCalendarFilter from './ScheduleHolidayCalendarFilter'
 import ScheduleHolidayCalendarGuide from './ScheduleHolidayCalendarGuide'
 
-export type ScheduleHolidayCalendarCardProps = CardProps & {}
+export type ScheduleHolidayCalendarCardProps = CardProps & {
+  data?: any
+}
 
 const ScheduleHolidayCalendarCard: React.FC<
   ScheduleHolidayCalendarCardProps
-> = ({ ...props }) => {
+> = ({ data, ...props }) => {
+  console.log('SCHEDULE ->', data)
+
   return (
     <Card
       classNames={{

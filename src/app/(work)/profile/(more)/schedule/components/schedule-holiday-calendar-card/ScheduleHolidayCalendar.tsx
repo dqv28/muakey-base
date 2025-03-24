@@ -1,5 +1,6 @@
 'use client'
 
+import { cn } from '@/lib/utils'
 import { Calendar, CalendarProps } from 'antd'
 import { createStyles } from 'antd-style'
 import locale from 'antd/es/date-picker/locale/vi_VN'
@@ -59,20 +60,48 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = (
 
   return (
     <Calendar
-      className={styles.customCalendar}
+      className={cn(styles.customCalendar, '!h-full w-full')}
       headerRender={() => <></>}
       fullCellRender={(date) => {
+        const day = String(date.format('DD/MM'))
+        const month = String(date.format('MM'))
+        const currentMonth = String(dayjs(new Date()).format('MM'))
+
+        const isToday = day === today
+        const isCurrentMonth = month === currentMonth
+
         return (
           <div
             className={clsx(
-              'aspect-172/130 w-full max-w-[172px] border-t border-r px-[8px] py-[16px] text-center',
+              'h-auto min-h-[130px] w-full flex-1 border-t border-r p-[8px] text-center',
               {
-                '!border-t-[#096DD9] bg-[#E6F7FF]':
-                  String(date.format('DD/MM')) === today,
+                '!border-t-[#096DD9] bg-[#E6F7FF]': isToday,
               },
             )}
           >
-            {date.format('DD/MM')}
+            <div className="text-[14px] leading-[22px]!">
+              {date.format('DD/MM')}
+            </div>
+
+            {isCurrentMonth && (
+              <div className="flex flex-col gap-[4px]">
+                <div className="rounded-full bg-[#1890FF] py-[4px] text-center text-[#fff]">
+                  09:00 - 18:30
+                </div>
+                <div className="rounded-full bg-[#237804] py-[4px] text-center text-[#fff]">
+                  09:00 - 18:30
+                </div>
+                {/* <div className="rounded-full bg-[#F5222D] py-[4px] text-center text-[#fff]">
+                  09:00 - 18:30
+                </div>
+                <div className="rounded-full bg-[#FA8C16] py-[4px] text-center text-[#fff]">
+                  09:00 - 18:30
+                </div>
+                <div className="rounded-full bg-[#722ED1] py-[4px] text-center text-[#fff]">
+                  09:00 - 18:30
+                </div> */}
+              </div>
+            )}
           </div>
         )
       }}
