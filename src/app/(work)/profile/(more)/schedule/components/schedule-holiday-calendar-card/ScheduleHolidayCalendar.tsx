@@ -7,8 +7,11 @@ import locale from 'antd/es/date-picker/locale/vi_VN'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import React from 'react'
+import ScheduleHolidayTagList from './schedule-holiday-tag-list'
 
-export type ScheduleHolidayCalendarProps = CalendarProps<any> & {}
+export type ScheduleHolidayCalendarProps = CalendarProps<any> & {
+  data?: any
+}
 
 const useStyle = createStyles(({ css, prefixCls }) => {
   return {
@@ -52,9 +55,10 @@ const useStyle = createStyles(({ css, prefixCls }) => {
   }
 })
 
-const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = (
-  props,
-) => {
+const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
+  data,
+  ...props
+}) => {
   const { styles } = useStyle()
   const today = String(dayjs(new Date()).format('DD/MM'))
 
@@ -62,10 +66,13 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = (
     <Calendar
       className={cn(styles.customCalendar, '!h-full w-full')}
       headerRender={() => <></>}
-      fullCellRender={(date) => {
-        const day = String(date.format('DD/MM'))
-        const month = String(date.format('MM'))
+      fullCellRender={(d) => {
+        const date = String(d.format('DD/MM/YYYY'))
+        const day = String(d.format('DD/MM'))
+        const month = String(d.format('MM'))
         const currentMonth = String(dayjs(new Date()).format('MM'))
+
+        const value = data?.find((item: any) => item?.checkInDay === date)
 
         const isToday = day === today
         const isCurrentMonth = month === currentMonth
@@ -80,27 +87,14 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = (
             )}
           >
             <div className="text-[14px] leading-[22px]!">
-              {date.format('DD/MM')}
+              {d.format('DD/MM')}
             </div>
 
-            {isCurrentMonth && (
-              <div className="flex flex-col gap-[4px]">
-                <div className="rounded-full bg-[#1890FF] py-[4px] text-center text-[#fff]">
-                  09:00 - 18:30
-                </div>
-                <div className="rounded-full bg-[#237804] py-[4px] text-center text-[#fff]">
-                  09:00 - 18:30
-                </div>
-                {/* <div className="rounded-full bg-[#F5222D] py-[4px] text-center text-[#fff]">
-                  09:00 - 18:30
-                </div>
-                <div className="rounded-full bg-[#FA8C16] py-[4px] text-center text-[#fff]">
-                  09:00 - 18:30
-                </div>
-                <div className="rounded-full bg-[#722ED1] py-[4px] text-center text-[#fff]">
-                  09:00 - 18:30
-                </div> */}
-              </div>
+            {isCurrentMonth && !!value && (
+              <ScheduleHolidayTagList
+                dataSource={value?.items}
+                isToday={isToday}
+              />
             )}
           </div>
         )

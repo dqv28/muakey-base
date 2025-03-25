@@ -28,13 +28,13 @@ import TiptapToolbars from './TiptapToolbars'
 type TiptapEditorProps = Omit<EditorContentProps, 'editor' | 'ref'> & {
   content?: Content
   onChange?: (content: string) => void
-  hasToolbar?: boolean
+  showToolbar?: boolean
 }
 
 const TiptapEditor: React.FC<TiptapEditorProps> = ({
   content,
   onChange,
-  hasToolbar = true,
+  showToolbar = true,
   ...rest
 }) => {
   const { message } = App.useApp()
@@ -160,7 +160,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         class: cn(
           'min-h-[150px] p-[8px] border-x border-b rounded-b-[12px] focus:outline-hidden',
           {
-            '!min-h-[180px] border-t rounded-t-[12px]': !hasToolbar,
+            '!min-h-[180px] border-t rounded-t-[12px]': !showToolbar,
           },
         ),
       },
@@ -202,7 +202,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
 
   return (
     <div>
-      {hasToolbar && <TiptapToolbars editor={editor} />}
+      {showToolbar && <TiptapToolbars editor={editor} />}
       <EditorContent editor={editor} {...rest} />
     </div>
   )

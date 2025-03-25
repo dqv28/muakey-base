@@ -5,7 +5,6 @@ import { Button, Form, FormInstance } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
-import { Converter } from 'showdown'
 import { addCommentAction } from './action'
 
 type JobCommentFormProps = {
@@ -17,7 +16,6 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
   const [disabled, setDisabled] = useState(true)
   const router = useRouter()
   const formRef = useRef<FormInstance>(null)
-  const converter = new Converter()
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -26,7 +24,7 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
       const { message, errors } = await addCommentAction({
         ...formData,
         task_id: options?.taskId,
-        content: converter.makeHtml(formData?.content),
+        content: formData?.content,
       })
 
       if (errors) {
@@ -47,9 +45,15 @@ const JobCommentForm: React.FC<JobCommentFormProps> = ({ options }) => {
   }
 
   return (
-    <Form onFinish={handleSubmit} ref={formRef}>
+    <Form
+      onFinish={handleSubmit}
+      ref={formRef}
+      onValuesChange={(changedValues) => {
+        setDisabled(changedValues?.content?.length === 0)
+      }}
+    >
       <Form.Item className="mb-[12px]!" name="content" valuePropName="content">
-        <TiptapEditor hasToolbar={false} />
+        <TiptapEditor showToolbar={false} />
       </Form.Item>
 
       <Form.Item className="flex justify-end">

@@ -1,4 +1,5 @@
 import { Card, CardProps } from 'antd'
+import dayjs from 'dayjs'
 import React from 'react'
 import ScheduleHolidayCalendar from './ScheduleHolidayCalendar'
 import ScheduleHolidayCalendarFilter from './ScheduleHolidayCalendarFilter'
@@ -8,10 +9,38 @@ export type ScheduleHolidayCalendarCardProps = CardProps & {
   data?: any
 }
 
+const genAttendanceData = (startDate: string, endDate: string) => {
+  return []
+}
+
 const ScheduleHolidayCalendarCard: React.FC<
   ScheduleHolidayCalendarCardProps
 > = ({ data, ...props }) => {
-  console.log('SCHEDULE ->', data)
+  const { attendances, ot_and_holiday } = data
+
+  const attendancesData = attendances?.map((attend: any) => {
+    return {
+      items: [
+        {
+          key: 'planTime',
+          value: [
+            dayjs(attend?.checkin).format('HH:mm'),
+            dayjs(attend?.check_out_regulation).format('HH:mm'),
+          ],
+        },
+        {
+          key: 'realTime',
+          value: [
+            dayjs(attend?.checkin).format('HH:mm'),
+            attend?.checkout ? dayjs(attend?.checkout).format('HH:mm') : null,
+          ],
+        },
+      ],
+      checkInDay: String(dayjs(attend?.checkin).format('DD/MM/YYYY')),
+    }
+  })
+
+  console.log('DATA ->', data)
 
   return (
     <Card
@@ -25,7 +54,7 @@ const ScheduleHolidayCalendarCard: React.FC<
         <ScheduleHolidayCalendarGuide />
       </div>
 
-      <ScheduleHolidayCalendar />
+      <ScheduleHolidayCalendar data={attendancesData} />
     </Card>
   )
 }
