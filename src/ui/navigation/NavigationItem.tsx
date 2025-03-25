@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import Link from 'next/link'
-import React, { ReactNode, useState } from 'react'
+import React, { useState } from 'react'
 import { NavigationMenuType } from '.'
 import { DownOutlined } from '../icons'
 import NavigationSubmenu from './NavigationSubmenu'
@@ -30,7 +30,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
   const [show, setShow] = useState(true)
   const active = item?.children ? !show : initActive
   const layout = clsx(
-    item?.icon && show && 'bg-gradient-to-b from-[#FFFFFF33] to-[#99999933]',
+    item?.layout && show && 'bg-gradient-to-b from-[#FFFFFF33] to-[#99999933]',
   )
 
   const className = clsx(
@@ -39,7 +39,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
     {
       'hover:bg-[#FFFFFF1A]': !ghost && !item?.children,
       'py-[12px]': ghost,
-      'hover:rounded-2xl': item?.shouldRound,
+      'hover:rounded-2xl rounded-2xl': item?.shouldRound,
     },
     customClassName,
   )
@@ -50,6 +50,10 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
         className={clsx(
           'flex flex-1 items-center gap-[8px] leading-none',
           ghost ? 'text-[16px]' : 'text-[24px]',
+          // !show ? 'text-[#ffffff4d]' : 'text-[#ffffff]',
+          {
+            'text-[#FFFFFF99]': item?.children && !item.layout
+          },
         )}
       >
         {item?.icon}
@@ -75,7 +79,6 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
     if (!item?.children) return;
     setShow(!show);
   }
-
 
   return (
     <div className={layout}>
