@@ -1,20 +1,37 @@
+'use client'
+
 import { PageHeader } from '@/components'
-import { getAssets, getAssetsByStatus } from '@/libs/asset'
+import { useFilterStore } from '@/stores/filterStore'
+import { useEffect, useState } from 'react'
 import PageContent from './components/PageContent'
+import { getAssetsAction } from './components/action'
 import AssetFilter from './components/asset-filter'
 import AssetTable from './components/asset-table'
-
 interface AssetPageProps {
   searchParams: { status?: string }
 }
 
-const AssetPage = async ({ searchParams }: AssetPageProps) => {
+const AssetPage = ({ searchParams }: AssetPageProps) => {
   const status = searchParams.status || 'all'
-  console.log('status from URL:', status)
+  const { filterResults } = useFilterStore()
+  console.log('filterResults', filterResults)
+  const [assets, setAssets] = useState<any[]>([])
 
-  // Gọi API dựa vào status
-  const assets =
-    status === 'all' ? await getAssets() : await getAssetsByStatus(status)
+  useEffect(() => {
+    const fetchAssets = async () => {
+      console.log('status from URL:', status)
+
+      let assetsData = await getAssetsAction()
+
+      if (filterResults.length > 0) {
+        assetsData = filterResults
+      }
+
+      setAssets(assetsData)
+    }
+
+    fetchAssets()
+  }, [status, filterResults]) // Chạy lại khi status hoặc filterResults thay đổi
 
   return (
     <>

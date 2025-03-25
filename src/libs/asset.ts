@@ -16,6 +16,11 @@ export const getAssets = async () => {
     .then(({ data }) => data)
     .catch(() => [])
 }
+export const filterAssets = async (query: string) => {
+  return await requestWithAuthorized(`assets?${query}`)
+    .then(({ data }) => data)
+    .catch(() => [])
+}
 
 export const getAssetsByStatus = async (status: string) => {
   return await requestWithAuthorized(`assets?status=${status}`)

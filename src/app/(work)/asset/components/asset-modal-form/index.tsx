@@ -2,7 +2,6 @@
 
 import { TiptapEditor } from '@/components'
 import { withApp } from '@/hoc'
-import { useAsyncEffect } from '@/libs/hook'
 import {
   App,
   DatePicker,
@@ -15,12 +14,8 @@ import {
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import { useRouter } from 'next/navigation'
-import React, { useMemo, useState } from 'react'
-import {
-  getAccountsAsAttendanceAction,
-  getAssetCategoriesAction,
-  getBrandAction,
-} from '../action'
+import React, { useState } from 'react'
+import { useAssetForm } from '../../hooks/useAssetForm'
 import { addAssetAction } from './action'
 
 export type AssetModalFormProps = ModalProps & {
@@ -40,107 +35,19 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [users, setUsers] = useState<Array<any>>([])
-  const [brands, setBrands] = useState<Array<any>>([])
-  const [categories, setCategories] = useState<Array<any>>([])
-
   const router = useRouter()
   const { message } = App.useApp()
 
-  useAsyncEffect(async () => {
-    try {
-      const res = await getAccountsAsAttendanceAction()
-      const validUsers = Array.isArray(res)
-        ? res.filter((user) => user && user.id)
-        : []
-      setUsers(validUsers)
-    } catch (error) {
-      console.error('Error fetching users:', error)
-      setUsers([])
-    }
-  }, [])
-
-  useAsyncEffect(async () => {
-    try {
-      const res = await getBrandAction()
-      console.log('res', res)
-      const validBrands = Array.isArray(res)
-        ? res.filter((brand) => brand && brand.id)
-        : []
-      setBrands(validBrands)
-    } catch (error) {
-      console.error('Error fetching brands:', error)
-      setBrands([])
-    }
-  }, [])
-  useAsyncEffect(async () => {
-    try {
-      const res = await getAssetCategoriesAction()
-      setCategories(res)
-    } catch (error) {
-      console.error('Error fetching categories:', error)
-      setCategories([])
-    }
-  }, [])
-
-  const statusOptions = useMemo(
-    () => [
-      { label: 'Đang sử dụng', value: 'using', key: 'using' },
-      { label: 'Chưa sử dụng', value: 'unused', key: 'unused' },
-      { label: 'Đã thanh lý', value: 'liquidated', key: 'liquidated' },
-      { label: 'Đang bảo hành', value: 'warranty', key: 'warranty' },
-      { label: 'Hỏng', value: 'broken', key: 'broken' },
-    ],
-    [],
-  )
-
-  const categoryOptions = useMemo(() => {
-    return (categories || []).map((category: any) => ({
-      label: category?.name || '',
-      value: category?.id || '',
-      key: category?.id || '',
-    }))
-  }, [categories])
-
-  const userOptions = useMemo(() => {
-    return (users || []).map((user: any) => ({
-      label: user?.full_name || '',
-      value: user?.id || '',
-      key: user?.id || '',
-    }))
-  }, [users])
-
-  const brandOptions = useMemo(() => {
-    return (brands || []).map((brand: any) => ({
-      label: brand?.name || '',
-      value: brand?.id || '',
-      key: brand?.id || '',
-    }))
-  }, [brands])
+  const { statusOptions, categoryOptions, userOptions, brandOptions } =
+    useAssetForm()
 
   const handleOk = async () => {
     try {
       const values = await form.validateFields()
       console.log('values', values)
 
-      const formData = {
-        ...values,
-        start_date: values.start_date?.format('YYYY-MM-DD'),
-        buy_date: values.buy_date?.format('YYYY-MM-DD'),
-        warranty_date: values.warranty_date?.format('YYYY-MM-DD'),
-        sell_date: values.sell_date?.format('YYYY-MM-DD'),
-        price: values.price ? Number(values.price) : null,
-        sell_price: values.sell_price ? Number(values.sell_price) : null,
-        account_id: values.account_id || null,
-        buyer_id: values.buyer_id || null,
-        seller_id: values.seller_id || null,
-        description: values.description || null,
-        brand_link: values.brand_link || null,
-        serial_number: values.serial_number || null,
-      }
-
       setLoading(true)
-      const response = await addAssetAction(formData)
+      const response = await addAssetAction(values)
 
       if (!response.success) {
         throw new Error(response.error)
@@ -200,6 +107,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
         >
           <div className="flex items-center gap-[16px]">
             <Form.Item
+              key="name"
               className="mb-[16px]! flex-1"
               name="name"
               label="Tên tài sản"
@@ -211,6 +119,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
               <Input placeholder="Nhập tên tài sản" />
             </Form.Item>
             <Form.Item
+              key="code"
               className="mb-[16px]! flex-1"
               name="code"
               label="Mã tài sản"
@@ -225,6 +134,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
           <div className="flex items-center gap-[16px]">
             <Form.Item
+              key="status"
               className="mb-[16px]! flex-1"
               name="status"
               label="Trạng thái"
@@ -233,6 +143,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
               <Select options={statusOptions} placeholder="Chọn trạng thái" />
             </Form.Item>
             <Form.Item
+              key="asset_category_id"
               className="mb-[16px]! flex-1"
               name="asset_category_id"
               label="Loại tài sản"
@@ -247,6 +158,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
           <div className="flex items-center gap-[16px]">
             <Form.Item
+              key="serial_number"
               className="mb-[16px]! flex-1"
               name="serial_number"
               label="Số Serial"
@@ -254,6 +166,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
               <Input placeholder="Nhập số Serial" />
             </Form.Item>
             <Form.Item
+              key="account_id"
               className="mb-[16px]! flex-1"
               name="account_id"
               label="Người sử dụng"
@@ -264,6 +177,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
           <div className="flex items-center gap-[16px]">
             <Form.Item
+              key="start_date"
               className="mb-[16px]! flex-1"
               name="start_date"
               label="Ngày bắt đầu sử dụng"
@@ -271,6 +185,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
               <DatePicker className="w-full" locale={locale} />
             </Form.Item>
             <Form.Item
+              key="time_used"
               className="mb-[16px]! flex-1"
               name="time_used"
               label="Thời gian sử dụng"
@@ -284,6 +199,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
           <div className="flex items-center gap-[16px]">
             <Form.Item
+              key="brand_id"
               className="mb-[16px]! flex-1"
               name="brand_id"
               label="Tên nhà cung cấp"
@@ -291,6 +207,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
               <Select options={brandOptions} placeholder="Chọn nhà cung cấp" />
             </Form.Item>
             <Form.Item
+              key="brand_link"
               className="mb-[16px]! flex-1"
               name="brand_link"
               label="Link nhà cung cấp"
@@ -301,6 +218,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
           <div className="flex items-center gap-[16px]">
             <Form.Item
+              key="price"
               className="mb-[16px]! flex-1"
               name="price"
               label="Giá mua"
@@ -308,6 +226,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
               <Input placeholder="Nhập giá mua" />
             </Form.Item>
             <Form.Item
+              key="buy_date"
               className="mb-[16px]! flex-1"
               name="buy_date"
               label="Ngày mua"
@@ -318,6 +237,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
           <div className="flex items-center gap-[16px]">
             <Form.Item
+              key="warranty_date"
               className="mb-[16px]! flex-1"
               name="warranty_date"
               label="Hạn bảo hành"
@@ -325,6 +245,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
               <DatePicker className="w-full" locale={locale} />
             </Form.Item>
             <Form.Item
+              key="buyer_id"
               className="mb-[16px]! flex-1"
               name="buyer_id"
               label="Người mua"
@@ -335,6 +256,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
           <div className="flex items-center gap-[16px]">
             <Form.Item
+              key="sell_date"
               className="mb-[16px]! flex-1"
               name="sell_date"
               label="Ngày thanh lý"
@@ -342,6 +264,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
               <DatePicker className="w-full" locale={locale} disabled />
             </Form.Item>
             <Form.Item
+              key="sell_price"
               className="mb-[16px]! flex-1"
               name="sell_price"
               label="Giá thanh lý"
@@ -351,6 +274,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
           </div>
 
           <Form.Item
+            key="seller_id"
             className="mb-[16px]! flex-1"
             name="seller_id"
             label="Người thanh lý"
@@ -363,6 +287,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
           </Form.Item>
 
           <Form.Item
+            key="description"
             className="mb-0! flex-1"
             name="description"
             label="Ghi chú"

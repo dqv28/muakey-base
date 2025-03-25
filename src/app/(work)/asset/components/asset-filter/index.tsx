@@ -4,6 +4,7 @@ import { FilterOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Input, Select } from 'antd'
 import React, { useState } from 'react'
 import AssetModalForm from '../asset-modal-form'
+import AssetDrawer from '../asset-drawer'
 
 export type AssetFilterProps = {
   onAdd?: () => void
@@ -43,7 +44,9 @@ const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
         />
       </div>
       <div className="flex items-center gap-[16px]">
-        <Button icon={<FilterOutlined />}>Bộ lọc</Button>
+        <AssetDrawer>
+          <Button icon={<FilterOutlined />}>Bộ lọc</Button>
+        </AssetDrawer>
         <AssetModalForm
           open={isModalOpen}
           onCancel={handleModalClose}
