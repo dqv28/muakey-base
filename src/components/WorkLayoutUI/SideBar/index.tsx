@@ -50,7 +50,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       label: 'Quản lý công việc',
       icon: <FolderOpenFilled className="text-[16px]" />,
       expand: true,
-      layout: true,
+      type: 'filled-rounded',
       children: [
         {
           label: (
@@ -85,7 +85,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       label: 'Quản lý nhân sự',
       icon: <FolderOpenFilled className="text-[16px]" />,
       expand: true,
-      layout: true,
+      type: 'filled-rounded',
       children: [
         {
           label: (
@@ -117,7 +117,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       label: 'Quản lý chấm công',
       icon: <FolderOpenFilled className="text-[16px]" />,
       expand: true,
-      layout: true,
+      type: 'filled-rounded',
       children: [
         {
           label: (
@@ -141,14 +141,14 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       label: 'Marketing',
       icon: <FolderOpenFilled className="text-[16px]" />,
       expand: true,
-      layout: true,
+      type: 'filled-rounded',
       children: [],
     },
     {
       label: 'Tài nguyên',
       icon: <FolderOpenFilled className="text-[16px]" />,
       expand: true,
-      layout: true,
+      type: 'filled-rounded',
       children: [],
     },
     {

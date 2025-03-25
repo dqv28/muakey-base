@@ -30,7 +30,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
   const [show, setShow] = useState(true)
   const active = item?.children ? !show : initActive
   const layout = clsx(
-    item?.layout && show && 'bg-gradient-to-b from-[#FFFFFF33] to-[#99999933]',
+    item?.type && item.children?.length !== 0 && show && 'bg-gradient-to-b from-[#FFFFFF33] to-[#99999933]',
   )
 
   const className = clsx(
@@ -50,9 +50,8 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
         className={clsx(
           'flex flex-1 items-center gap-[8px] leading-none',
           ghost ? 'text-[16px]' : 'text-[24px]',
-          // !show ? 'text-[#ffffff4d]' : 'text-[#ffffff]',
           {
-            'text-[#FFFFFF99]': item?.children && !item.layout
+            'text-[#FFFFFF99]': item?.children && !item.type
           },
         )}
       >

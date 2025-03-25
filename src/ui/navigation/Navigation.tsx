@@ -14,7 +14,7 @@ export type NavigationMenuType = {
   label?: React.ReactNode
   href?: LinkProps['href']
   expand?: boolean
-  layout?: boolean
+  type?: 'filled-rounded' | 'plain'
   shouldRound?: boolean,
   children?: NavigationMenuType[]
   exact?: boolean
