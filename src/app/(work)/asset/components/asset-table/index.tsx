@@ -4,9 +4,13 @@ import { formatCurrency } from '@/lib/utils'
 import { ColumnHeightOutlined, SettingOutlined } from '@ant-design/icons'
 import { Table, TableProps, Tabs, TabsProps, Tag } from 'antd'
 import dayjs from 'dayjs'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
 
-export type AssetTableProps = TableProps & {}
+export type AssetTableProps = TableProps & {
+  onStatusChange?: (status: string) => void
+  defaultActiveKey?: string
+}
 
 const genStatus = (
   status: 'using' | 'unused' | 'warranty' | 'broken' | 'liquidated',
@@ -25,7 +29,25 @@ const genStatus = (
   }
 }
 
-const AssetTable: React.FC<AssetTableProps> = (props) => {
+const AssetTable: React.FC<AssetTableProps> = ({
+  onStatusChange,
+  defaultActiveKey = 'all',
+  ...props
+}) => {
+  const router = useRouter()
+
+  const [tab, setTab] = useState(defaultActiveKey)
+
+  const handleChangeTab = (key: string) => {
+    setTab(key)
+    onStatusChange?.(key)
+    router.push(`/asset?status=${key}`)
+  }
+
+  const handleRowClick = (record: any) => {
+    router.push(`/asset/${record.id}`)
+  }
+
   const tabs: TabsProps['items'] = [
     {
       label: 'Tất cả',
@@ -33,11 +55,11 @@ const AssetTable: React.FC<AssetTableProps> = (props) => {
     },
     {
       label: 'Đang sử dụng',
-      key: 'active',
+      key: 'using',
     },
     {
       label: 'Chưa sử dụng',
-      key: 'inactive',
+      key: 'unused',
     },
     {
       label: 'Đang bảo hành',
@@ -72,7 +94,7 @@ const AssetTable: React.FC<AssetTableProps> = (props) => {
     },
     {
       title: 'Nhà cung cấp',
-      dataIndex: 'brand',
+      dataIndex: ['brand', 'name'],
     },
     {
       title: 'Giá mua',
@@ -107,9 +129,20 @@ const AssetTable: React.FC<AssetTableProps> = (props) => {
 
   return (
     <div className="rounded-[8px] bg-[#fff] px-[16px]">
-      <Tabs items={tabs} tabBarExtraContent={tabActions} />
+      <Tabs
+        items={tabs}
+        tabBarExtraContent={tabActions}
+        activeKey={tab}
+        onChange={handleChangeTab}
+      />
 
-      <Table columns={columns} {...props} />
+      <Table
+        columns={columns}
+        {...props}
+        onRow={(record) => ({
+          onClick: () => handleRowClick(record),
+        })}
+      />
     </div>
   )
 }
