@@ -73,6 +73,8 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
             </Avatar>
             <span>{text}</span>
           </div>
+        ) : Array.isArray(text) ? (
+          ''
         ) : (
           text
         )

@@ -84,13 +84,13 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
   const handleSalariesChange = useCallback((_: any, allValues: any) => {
     const { basic_salary, travel_allowance, eat_allowance, kpi } = allValues
 
-    setBasicSalary(+basic_salary)
+    setBasicSalary(+(basic_salary || 0))
 
     setSalaries((prev: any) => ({
       ...prev,
-      travel_allowance,
-      eat_allowance,
-      kpi,
+      travel_allowance: travel_allowance || 0,
+      eat_allowance: eat_allowance || 0,
+      kpi: kpi || 0,
     }))
   }, [])
 
@@ -119,8 +119,7 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
   }, [salaries, basicSalary])
 
   const formatProps: Pick<InputNumberProps, 'formatter' | 'parser'> = {
-    formatter: (value) =>
-      typeof value !== 'number' ? String(value) : formatCurrency(Number(value)),
+    formatter: formatCurrency,
     parser: (value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number,
   }
 

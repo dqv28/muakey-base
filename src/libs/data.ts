@@ -124,10 +124,11 @@ export const addAccount = async (data: any) =>
     data,
   }).then((data) => data)
 
-export const editAccount = async (id: number, data: any) =>
+export const editAccount = async (id: number, data: any, body?: FormData) =>
   requestWithAuthorized(`accounts/${id}`, {
     method: 'PUT',
     data,
+    body,
   }).then((data) => data)
 
 export const deleteAccount = async (id: number) =>

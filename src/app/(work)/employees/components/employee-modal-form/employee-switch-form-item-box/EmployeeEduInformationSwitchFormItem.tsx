@@ -13,42 +13,66 @@ const EmployeeEduInformationSwitchFormItem: React.FC<
 > = ({ className }) => {
   return (
     <div className={className}>
-      <SwitchFormItem
-        title="Nhập thông tin học vấn"
-        extra={<Button icon={<PlusOutlined />} />}
-      >
-        <Card>
-          <div className="flex items-center gap-[16px]">
-            <Form.Item
-              className="mb-[16px]! flex-1"
-              name="school"
-              label="Tên trường"
+      <Form.List name="education_list" initialValue={[{ name: 0, key: 0 }]}>
+        {(fields, { add }) => (
+          <>
+            <SwitchFormItem
+              title="Nhập thông tin học vấn"
+              extra={
+                <Button
+                  icon={<PlusOutlined />}
+                  onClick={() => add({ name: 0, key: 0 })}
+                />
+              }
             >
-              <Input placeholder="Nhập tên trường" />
-            </Form.Item>
-            <Form.Item
-              className="mb-[16px]! flex-1"
-              name="major"
-              label="Chuyên ngành"
-            >
-              <Input placeholder="Nhập chuyên ngành" />
-            </Form.Item>
-          </div>
+              {fields?.map(({ key, name, ...restFields }) => (
+                <Card key={key}>
+                  <div className="flex items-center gap-[16px]">
+                    <Form.Item
+                      {...restFields}
+                      className="mb-[16px]! flex-1"
+                      name={[name, 'school']}
+                      label="Tên trường"
+                    >
+                      <Input placeholder="Nhập tên trường" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restFields}
+                      className="mb-[16px]! flex-1"
+                      name={[name, 'major']}
+                      label="Chuyên ngành"
+                    >
+                      <Input placeholder="Nhập chuyên ngành" />
+                    </Form.Item>
+                  </div>
 
-          <div className="flex items-center gap-[16px]">
-            <Form.Item
-              className="mb-0! flex-1"
-              name="time_range"
-              label="Thời gian (Bắt đầu - kết thúc)"
-            >
-              <DatePicker.RangePicker className="w-full" locale={locale} />
-            </Form.Item>
-            <Form.Item className="mb-0! flex-1" name="degree" label="Bằng cấp">
-              <Input placeholder="Nhập" />
-            </Form.Item>
-          </div>
-        </Card>
-      </SwitchFormItem>
+                  <div className="flex items-center gap-[16px]">
+                    <Form.Item
+                      {...restFields}
+                      className="mb-0! flex-1"
+                      name={[name, 'time_range']}
+                      label="Thời gian (Bắt đầu - kết thúc)"
+                    >
+                      <DatePicker.RangePicker
+                        className="w-full"
+                        locale={locale}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      {...restFields}
+                      className="mb-0! flex-1"
+                      name={[name, 'degree']}
+                      label="Bằng cấp"
+                    >
+                      <Input placeholder="Nhập" />
+                    </Form.Item>
+                  </div>
+                </Card>
+              ))}
+            </SwitchFormItem>
+          </>
+        )}
+      </Form.List>
     </div>
   )
 }
