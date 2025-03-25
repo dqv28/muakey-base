@@ -61,7 +61,7 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
       const response = await filterAssetsAction(queryString)
       console.log('response', response)
       setFilterResults(response.data)
-
+      setLoading(false)
       setOpen(false)
     } catch (error) {
       console.error('Error filtering assets:', error)

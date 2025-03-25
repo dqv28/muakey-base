@@ -1,10 +1,10 @@
 'use client'
 
 import { FilterOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Input, Select } from 'antd'
+import { Button, Input } from 'antd'
 import React, { useState } from 'react'
-import AssetModalForm from '../asset-modal-form'
 import AssetDrawer from '../asset-drawer'
+import AssetModalForm from '../asset-modal-form'
 
 export type AssetFilterProps = {
   onAdd?: () => void
@@ -12,13 +12,6 @@ export type AssetFilterProps = {
 
 const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const statusOptions = [
-    { label: 'Tất cả trạng thái', value: 'all' },
-    { label: 'Hoạt động', value: 'active' },
-    { label: 'Ngừng hoạt động', value: 'inactive' },
-    { label: 'Đã bán', value: 'sold' },
-  ]
 
   const handleAdd = () => {
     setIsModalOpen(true)
@@ -32,15 +25,17 @@ const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
     setIsModalOpen(false)
     onAdd?.()
   }
+  const handleSearch = (value: string) => {
+    console.log(value)
+  }
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-[16px]">
-        <Input.Search className="w-[240px]!" placeholder="Tìm kiếm tài sản" />
-        <Select
+        <Input.Search
           className="w-[240px]!"
-          options={statusOptions}
-          defaultValue="all"
+          placeholder="Tìm kiếm tài sản"
+          onSearch={handleSearch}
         />
       </div>
       <div className="flex items-center gap-[16px]">

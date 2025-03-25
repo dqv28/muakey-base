@@ -1,11 +1,13 @@
 'use client'
 
 import { formatCurrency } from '@/lib/utils'
+import { useFilterStore } from '@/stores/filterStore'
 import { ColumnHeightOutlined, SettingOutlined } from '@ant-design/icons'
 import { Table, TableProps, Tabs, TabsProps, Tag } from 'antd'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { filterAssetsAction } from '../asset-drawer/action'
 
 export type AssetTableProps = TableProps & {
   onStatusChange?: (status: string) => void
@@ -32,16 +34,38 @@ const genStatus = (
 const AssetTable: React.FC<AssetTableProps> = ({
   onStatusChange,
   defaultActiveKey = 'all',
+  dataSource,
   ...props
 }) => {
   const router = useRouter()
-
   const [tab, setTab] = useState(defaultActiveKey)
+  const [assets, setAssets] = useState(dataSource)
+  const [initialData] = useState(dataSource)
+  const { filterResults } = useFilterStore()
 
-  const handleChangeTab = (key: string) => {
+  // Xử lý filterResults thay đổi
+  useEffect(() => {
+    if (filterResults && filterResults.length > 0) {
+      setAssets(filterResults)
+    } else {
+      setAssets(initialData)
+    }
+  }, [filterResults, initialData])
+
+  const handleChangeTab = async (key: string) => {
     setTab(key)
     onStatusChange?.(key)
-    router.push(`/asset?status=${key}`)
+    if (key === 'all') {
+      setAssets(initialData)
+      return
+    }
+    try {
+      const queryString = `status=${key}`
+      const res = await filterAssetsAction(queryString)
+      setAssets(res.data)
+    } catch (error) {
+      console.error('Error fetching assets:', error)
+    }
   }
 
   const handleRowClick = (record: any) => {
@@ -138,10 +162,12 @@ const AssetTable: React.FC<AssetTableProps> = ({
 
       <Table
         columns={columns}
+        dataSource={assets}
         {...props}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}
+        pagination={{ pageSize: 6 }}
       />
     </div>
   )

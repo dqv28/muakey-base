@@ -1,6 +1,6 @@
 'use server'
 
-import { addAsset, getAssetCategories, getBrand, getAssets } from '@/libs/asset'
+import { addAsset, getAssetCategories, getAssets, getBrand } from '@/libs/asset'
 import { getAccountsAsAttendance } from '@/libs/data'
 
 export const addAssetAction = async (values: any) => {
@@ -19,6 +19,3 @@ export const getAssetCategoriesAction = async () => {
   return await getAssetCategories()
 }
 
-export const getAssetsAction = async () => {
-  return await getAssets()
-}
