@@ -51,6 +51,7 @@ const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
           <Button icon={<FilterOutlined />}>Bộ lọc</Button>
         </AssetDrawer>
         <AssetModalForm
+          title="Thêm mới tài sản"
           open={isModalOpen}
           onCancel={handleModalClose}
           onSuccess={handleModalSuccess}

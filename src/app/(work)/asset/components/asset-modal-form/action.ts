@@ -1,6 +1,6 @@
 'use server'
 
-import { addAsset } from '@/libs/asset'
+import { addAsset, updateAsset } from '@/libs/asset'
 
 export async function addAssetAction(formData: any) {
   try {
@@ -10,6 +10,18 @@ export async function addAssetAction(formData: any) {
     return {
       success: false,
       error: error.message || 'Có lỗi xảy ra khi thêm tài sản',
+    }
+  }
+}
+
+export async function updateAssetAction(formData: any) {
+  try {
+    const response = await updateAsset(formData.id, formData)
+    return { success: true, data: response }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || 'Có lỗi xảy ra khi sửa tài sản',
     }
   }
 }

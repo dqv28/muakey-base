@@ -30,7 +30,7 @@ export const getAssetsByStatus = async (status: string) => {
 
 export const getAssetById = async (id: number) => {
   return await requestWithAuthorized(`assets/${id}`)
-    .then(({ data }) => data)
+    .then(( data ) => data)
     .catch(() => [])
 }
 export const searchAsset = async (query: string) => {

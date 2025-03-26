@@ -132,15 +132,22 @@ const AssetTable: React.FC<AssetTableProps> = ({
     {
       title: 'Ngày mua',
       dataIndex: 'buy_date',
-      render: (value: string) =>
-        value ? String(dayjs(value).format('DD/MM/YYYY')) : '--',
+      render: (value: string | null | undefined) => {
+        console.log('Giá trị buy_date:', value)
+        const date = dayjs(value)
+        return date.isValid() ? date.format('YYYY/MM/DD') : '--'
+      },
     },
     {
       title: 'Hạn bảo hành',
       dataIndex: 'warranty_date',
-      render: (value: string) =>
-        value ? String(dayjs(value).format('DD/MM/YYYY')) : '--',
+      render: (value: string | null | undefined) => {
+        console.log('Giá trị warranty_date:', value)
+        const date = dayjs(value)
+        return date.isValid() ? date.format('YYYY/MM/DD') : '--'
+      },
     },
+
     {
       title: 'Trạng thái',
       dataIndex: 'status',
