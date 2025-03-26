@@ -6,6 +6,7 @@ import { Layout, SideProps } from '@/ui/layout'
 import {
   CalendarFilled,
   ContainerFilled,
+  DatabaseOutlined,
   FileFilled,
   FolderOpenFilled,
   HddFilled,
@@ -119,6 +120,15 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
             </div>
           ),
           href: '/resources',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <DatabaseOutlined className="text-[16px]" />
+              <span>Tài sản công ty</span>
+            </div>
+          ),
+          href: '/asset',
         },
         user?.role === 'Quản trị cấp cao'
           ? {

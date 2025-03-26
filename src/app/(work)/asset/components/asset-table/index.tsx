@@ -1,12 +1,19 @@
 'use client'
 
 import { formatCurrency } from '@/lib/utils'
+import { useFilterStore } from '@/stores/filterStore'
+import { useSearchStore } from '@/stores/searchStore'
 import { ColumnHeightOutlined, SettingOutlined } from '@ant-design/icons'
 import { Table, TableProps, Tabs, TabsProps, Tag } from 'antd'
 import dayjs from 'dayjs'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
+import { filterAssetsAction } from '../asset-drawer/action'
 
-export type AssetTableProps = TableProps & {}
+export type AssetTableProps = TableProps & {
+  onStatusChange?: (status: string) => void
+  defaultActiveKey?: string
+}
 
 const genStatus = (
   status: 'using' | 'unused' | 'warranty' | 'broken' | 'liquidated',
@@ -25,7 +32,50 @@ const genStatus = (
   }
 }
 
-const AssetTable: React.FC<AssetTableProps> = (props) => {
+const AssetTable: React.FC<AssetTableProps> = ({
+  onStatusChange,
+  defaultActiveKey = 'all',
+  dataSource,
+  ...props
+}) => {
+  const router = useRouter()
+  const [tab, setTab] = useState(defaultActiveKey)
+  const [assets, setAssets] = useState(dataSource)
+  const [initialData] = useState(dataSource)
+  const { filterResults } = useFilterStore()
+  const { searchResults } = useSearchStore()
+
+  // Xử lý filterResults thay đổi
+  useEffect(() => {
+    if (filterResults && filterResults.length > 0) {
+      setAssets(filterResults)
+    } else if (searchResults && searchResults.length > 0) {
+      setAssets(searchResults)
+    } else {
+      setAssets(initialData)
+    }
+  }, [filterResults, initialData, searchResults])
+
+  const handleChangeTab = async (key: string) => {
+    setTab(key)
+    onStatusChange?.(key)
+    if (key === 'all') {
+      setAssets(initialData)
+      return
+    }
+    try {
+      const queryString = `status=${key}`
+      const res = await filterAssetsAction(queryString)
+      setAssets(res.data)
+    } catch (error) {
+      console.error('Error fetching assets:', error)
+    }
+  }
+
+  const handleRowClick = (record: any) => {
+    router.push(`/asset/${record.id}`)
+  }
+
   const tabs: TabsProps['items'] = [
     {
       label: 'Tất cả',
@@ -33,11 +83,11 @@ const AssetTable: React.FC<AssetTableProps> = (props) => {
     },
     {
       label: 'Đang sử dụng',
-      key: 'active',
+      key: 'using',
     },
     {
       label: 'Chưa sử dụng',
-      key: 'inactive',
+      key: 'unused',
     },
     {
       label: 'Đang bảo hành',
@@ -72,7 +122,7 @@ const AssetTable: React.FC<AssetTableProps> = (props) => {
     },
     {
       title: 'Nhà cung cấp',
-      dataIndex: 'brand',
+      dataIndex: ['brand', 'name'],
     },
     {
       title: 'Giá mua',
@@ -82,15 +132,22 @@ const AssetTable: React.FC<AssetTableProps> = (props) => {
     {
       title: 'Ngày mua',
       dataIndex: 'buy_date',
-      render: (value: string) =>
-        value ? String(dayjs(value).format('DD/MM/YYYY')) : '--',
+      render: (value: string | null | undefined) => {
+        console.log('Giá trị buy_date:', value)
+        const date = dayjs(value)
+        return date.isValid() ? date.format('YYYY/MM/DD') : '--'
+      },
     },
     {
       title: 'Hạn bảo hành',
       dataIndex: 'warranty_date',
-      render: (value: string) =>
-        value ? String(dayjs(value).format('DD/MM/YYYY')) : '--',
+      render: (value: string | null | undefined) => {
+        console.log('Giá trị warranty_date:', value)
+        const date = dayjs(value)
+        return date.isValid() ? date.format('YYYY/MM/DD') : '--'
+      },
     },
+
     {
       title: 'Trạng thái',
       dataIndex: 'status',
@@ -107,9 +164,22 @@ const AssetTable: React.FC<AssetTableProps> = (props) => {
 
   return (
     <div className="rounded-[8px] bg-[#fff] px-[16px]">
-      <Tabs items={tabs} tabBarExtraContent={tabActions} />
+      <Tabs
+        items={tabs}
+        tabBarExtraContent={tabActions}
+        activeKey={tab}
+        onChange={handleChangeTab}
+      />
 
-      <Table columns={columns} {...props} />
+      <Table
+        columns={columns}
+        dataSource={assets}
+        {...props}
+        onRow={(record) => ({
+          onClick: () => handleRowClick(record),
+        })}
+        pagination={{ pageSize: 6 }}
+      />
     </div>
   )
 }

@@ -1,33 +1,62 @@
 'use client'
 
+import { useSearchStore } from '@/stores/searchStore'
 import { FilterOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Input, Select } from 'antd'
-import React from 'react'
+import { Button, Input } from 'antd'
+import React, { useState } from 'react'
+import AssetDrawer from '../asset-drawer'
 import AssetModalForm from '../asset-modal-form'
-export type AssetFilterProps = {}
+import { searchAssetAction } from './action'
 
-const AssetFilter: React.FC<AssetFilterProps> = () => {
-  const statusOptions = [
-    { label: 'Tất cả trạng thái', value: 'all' },
-    { label: 'Hoạt động', value: 'active' },
-    { label: 'Ngừng hoạt động', value: 'inactive' },
-    { label: 'Đã bán', value: 'sold' },
-  ]
+export type AssetFilterProps = {
+  onAdd?: () => void
+}
+
+const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { setSearchResults } = useSearchStore()
+
+  const handleAdd = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleModalSuccess = () => {
+    setIsModalOpen(false)
+    onAdd?.()
+  }
+  const handleSearch = async (value: string) => {
+    try {
+      const result = await searchAssetAction(value)
+      setSearchResults(result)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-[16px]">
-        <Input.Search className="w-[240px]!" placeholder="Tìm kiếm tài sản" />
-        <Select
+        <Input.Search
           className="w-[240px]!"
-          options={statusOptions}
-          defaultValue="all"
+          placeholder="Tìm kiếm tài sản"
+          onSearch={handleSearch}
         />
       </div>
       <div className="flex items-center gap-[16px]">
-        <Button icon={<FilterOutlined />}>Bộ lọc</Button>
-        <AssetModalForm>
-          <Button icon={<PlusOutlined />} type="primary">
+        <AssetDrawer>
+          <Button icon={<FilterOutlined />}>Bộ lọc</Button>
+        </AssetDrawer>
+        <AssetModalForm
+          title="Thêm mới tài sản"
+          open={isModalOpen}
+          onCancel={handleModalClose}
+          onSuccess={handleModalSuccess}
+        >
+          <Button icon={<PlusOutlined />} type="primary" onClick={handleAdd}>
             Thêm
           </Button>
         </AssetModalForm>
