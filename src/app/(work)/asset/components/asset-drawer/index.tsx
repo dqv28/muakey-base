@@ -56,10 +56,10 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
             : [[key, value?.toString()]],
         ),
       ).toString()
-      console.log('queryString', queryString)
+    
 
       const response = await filterAssetsAction(queryString)
-      console.log('response', response)
+
       setFilterResults(response.data)
       setLoading(false)
       setOpen(false)

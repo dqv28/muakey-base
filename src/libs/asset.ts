@@ -33,6 +33,11 @@ export const getAssetById = async (id: number) => {
     .then(({ data }) => data)
     .catch(() => [])
 }
+export const searchAsset = async (query: string) => {
+  return await requestWithAuthorized(`assets?search=${query}`)
+    .then(({ data }) => data)
+    .catch(() => [])
+}
 
 export const updateAsset = async (id: number, data: any) => {
   return await requestWithAuthorized(`assets/${id}`, {

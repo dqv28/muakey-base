@@ -2,6 +2,7 @@
 
 import { formatCurrency } from '@/lib/utils'
 import { useFilterStore } from '@/stores/filterStore'
+import { useSearchStore } from '@/stores/searchStore'
 import { ColumnHeightOutlined, SettingOutlined } from '@ant-design/icons'
 import { Table, TableProps, Tabs, TabsProps, Tag } from 'antd'
 import dayjs from 'dayjs'
@@ -42,15 +43,18 @@ const AssetTable: React.FC<AssetTableProps> = ({
   const [assets, setAssets] = useState(dataSource)
   const [initialData] = useState(dataSource)
   const { filterResults } = useFilterStore()
+  const { searchResults } = useSearchStore()
 
   // Xử lý filterResults thay đổi
   useEffect(() => {
     if (filterResults && filterResults.length > 0) {
       setAssets(filterResults)
+    } else if (searchResults && searchResults.length > 0) {
+      setAssets(searchResults)
     } else {
       setAssets(initialData)
     }
-  }, [filterResults, initialData])
+  }, [filterResults, initialData, searchResults])
 
   const handleChangeTab = async (key: string) => {
     setTab(key)

@@ -1,10 +1,12 @@
 'use client'
 
+import { useSearchStore } from '@/stores/searchStore'
 import { FilterOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Input } from 'antd'
 import React, { useState } from 'react'
 import AssetDrawer from '../asset-drawer'
 import AssetModalForm from '../asset-modal-form'
+import { searchAssetAction } from './action'
 
 export type AssetFilterProps = {
   onAdd?: () => void
@@ -12,6 +14,7 @@ export type AssetFilterProps = {
 
 const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { setSearchResults } = useSearchStore()
 
   const handleAdd = () => {
     setIsModalOpen(true)
@@ -25,8 +28,13 @@ const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
     setIsModalOpen(false)
     onAdd?.()
   }
-  const handleSearch = (value: string) => {
-    console.log(value)
+  const handleSearch = async (value: string) => {
+    try {
+      const result = await searchAssetAction(value)
+      setSearchResults(result)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (

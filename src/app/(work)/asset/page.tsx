@@ -6,7 +6,6 @@ import { getAssets } from '@/libs/asset'
 
 const AssetPage: React.FC<any> = async () => {
   const assets = await getAssets()
-  console.log(assets)
 
   return (
     <>

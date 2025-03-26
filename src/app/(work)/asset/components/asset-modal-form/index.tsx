@@ -44,7 +44,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
   const handleOk = async () => {
     try {
       const values = await form.validateFields()
-      console.log('values', values)
+     
 
       setLoading(true)
       const response = await addAssetAction(values)

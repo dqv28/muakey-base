@@ -105,7 +105,7 @@ const AssetDetailPage = ({ params }: { params: { id: string } }) => {
     fetchAsset()
   }, [])
 
-  console.log('asset', asset)
+
   //bg-[#f6f6f6]
   return (
     <div className="flex flex-col">
