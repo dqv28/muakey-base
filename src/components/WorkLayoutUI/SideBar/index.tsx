@@ -48,13 +48,13 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const navigationItems = [
     {
       label: 'Quản lý công việc',
-      icon: <FolderOpenFilled className="text-[16px]" />,
+      icon: <FolderOpenFilled className="text-[14px]" />,
       expand: true,
       type: 'filled-rounded',
       children: [
         {
           label: (
-            <div className="flex items-center gap-[8px]">
+            <div className="flex items-center gap-[10px]">
               <div className='h-[16px] w-[16px]' />
               <span>Quản lý quy trình</span>
             </div>
@@ -63,7 +63,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
         {
           label: (
-            <div className="flex items-center gap-[8px]">
+            <div className="flex items-center gap-[10px]">
               <div className='h-[16px] w-[16px]' />
               <span>Công việc của tôi</span>
             </div>
@@ -72,7 +72,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
         {
           label: (
-            <div className="flex items-center gap-[8px]">
+            <div className="flex items-center gap-[10px]">
               <div className='h-[16px] w-[16px]' />
               <span>Thống kê</span>
             </div>
@@ -83,21 +83,22 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
     },
     {
       label: 'Quản lý nhân sự',
-      icon: <FolderOpenFilled className="text-[16px]" />,
+      icon: <FolderOpenFilled className="text-[14px]" />,
       expand: true,
       type: 'filled-rounded',
       children: [
         {
           label: (
-            <div className="flex items-center gap-[8px]">
+            <div className="flex items-center gap-[10px]">
               <div className='h-[16px] w-[16px]' />
               <span>Danh sách tài khoản</span>
             </div>
           ),
+
         },
         {
           label: (
-            <div className="flex items-center gap-[8px]">
+            <div className="flex items-center gap-[10px]">
               <div className='h-[16px] w-[16px]' />
               <span>Danh sách nhân sự</span>
             </div>
@@ -105,7 +106,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
         {
           label: (
-            <div className="flex items-center gap-[8px]">
+            <div className="flex items-center gap-[10px]">
               <div className='h-[16px] w-[16px]' />
               <span>Phòng ban</span>
             </div>
@@ -115,13 +116,13 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
     },
     {
       label: 'Quản lý chấm công',
-      icon: <FolderOpenFilled className="text-[16px]" />,
+      icon: <FolderOpenFilled className="text-[14px]" />,
       expand: true,
       type: 'filled-rounded',
       children: [
         {
           label: (
-            <div className="flex items-center gap-[8px]">
+            <div className="flex items-center gap-[10px]">
               <div className='h-[16px] w-[16px]' />
               <span>Chấm công</span>
             </div>
@@ -129,7 +130,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
         {
           label: (
-            <div className="flex items-center gap-[8px]">
+            <div className="flex items-center gap-[10px]">
               <div className='h-[16px] w-[16px]' />
               <span>Yêu cầu</span>
             </div>
@@ -139,14 +140,14 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
     },
     {
       label: 'Marketing',
-      icon: <FolderOpenFilled className="text-[16px]" />,
+      icon: <FolderOpenFilled className="text-[14px]" />,
       expand: true,
       type: 'filled-rounded',
       children: [],
     },
     {
       label: 'Tài nguyên',
-      icon: <FolderOpenFilled className="text-[16px]" />,
+      icon: <FolderOpenFilled className="text-[14px]" />,
       expand: true,
       type: 'filled-rounded',
       children: [],
@@ -154,11 +155,12 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
     {
       label: 'Danh mục 1',
       expand: true,
+      type: 'plain',
       children: [
         {
           label: (
-            <div className="flex items-center gap-[8px]">
-              <FolderOpenFilled className="text-[16px]" />
+            <div className="flex items-center gap-[10px]">
+              <FolderOpenFilled className="text-[14px]" />
               <span>Quy trình 1</span>
             </div>
           ),
@@ -166,8 +168,8 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
         {
           label: (
-            <div className="flex items-center gap-[8px]">
-              <FolderOpenFilled className="text-[16px]" />
+            <div className="flex items-center gap-[10px]">
+              <FolderOpenFilled className="text-[14px]" />
               <span>Quy trình 2</span>
             </div>
           ),
@@ -178,11 +180,12 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
     {
       label: 'Danh mục 2',
       expand: true,
+      type: 'plain',
       children: [
         {
           label: (
-            <div className="flex items-center gap-[8px]">
-              <FolderOpenFilled className="text-[16px]" />
+            <div className="flex items-center gap-[10px]">
+              <FolderOpenFilled className="text-[14px]" />
               <span>Quy trình 1</span>
             </div>
           ),
@@ -190,13 +193,12 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
         {
           label: (
-            <div className="flex items-center gap-[8px]">
-              <FolderOpenFilled className="text-[16px]" />
+            <div className="flex items-center gap-[10px]">
+              <FolderOpenFilled className="text-[14px]" />
               <span>Quy trình 2</span>
             </div>
           ),
           shouldRound: true,
-          // href: '/workflows',
         },
       ],
     },
@@ -217,7 +219,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       }
       {...props}
     >
-      <div className="flex-1 pr-[6px]">
+      <div className="flex-1 pr-[4px]">
         <User user={user} />
         <Search />
         <Navigation

@@ -30,28 +30,30 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
   const [show, setShow] = useState(true)
   const active = item?.children ? !show : initActive
   const layout = clsx(
-    item?.type && item.children?.length !== 0 && show && 'bg-gradient-to-b from-[#FFFFFF33] to-[#99999933]',
+    item?.type === "filled-rounded" && item.children?.length !== 0 && show && 'bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16',
+    item?.type === "plain" && 'mt-[16px]'
   )
 
   const className = clsx(
-    'inline-block w-full transition-all duration-300 px-[16px] py-[8px]',
+    'inline-block w-full transition-all duration-300 px-[16px]',
     show && active ? 'bg-[#FFFFFF29]' : 'bg-transparent',
     {
       'hover:bg-[#FFFFFF1A]': !ghost && !item?.children,
       'py-[12px]': ghost,
-      'hover:rounded-2xl rounded-2xl': item?.shouldRound,
+      'rounded-3xl': item?.shouldRound,
+      'h-[40px]': item?.type === "filled-rounded" || item?.type === undefined,
+      'h-[22px]': item?.type === "plain"
     },
     customClassName,
   )
-
   const node = (
-    <div className="flex items-center justify-between">
+    <div className={`flex items-center justify-between gap-[10px] ${item?.type === "plain" ? 'h-[22px]' : 'h-[40px]'} ${item?.type === "plain" && show && 'pb-[12px]'} `}>
       <div
         className={clsx(
           'flex flex-1 items-center gap-[8px] leading-none',
           ghost ? 'text-[16px]' : 'text-[24px]',
           {
-            'text-[#FFFFFF99]': item?.children && !item.type
+            'text-[#FFFFFF99]': item?.children && item.type === "plain",
           },
         )}
       >
@@ -61,14 +63,13 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
 
       {item?.children && item.children.length > 0 && (
         <DownOutlined
-          className={
-            clsx(
-              'text-white',
-              {
-                'rotate-0 text-[#fff]': !show,
-                'rotate-180 text-[#ffffff4d]': show,
-                'text-[16px]': ghost,
-              })}
+          className={clsx(
+            'text-white',
+            {
+              'rotate-0 text-[#fff]': !show,
+              'rotate-180 text-[#ffffff4d]': show,
+              'text-[16px]': ghost,
+            })}
         />
       )}
     </div>
@@ -83,7 +84,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
     <div className={layout}>
       <li
         key={item?.key}
-        className="cursor-pointer rounded-full text-[16px] leading-none"
+        className={"cursor-pointer rounded-full text-[16px] leading-none"}
         onClick={handleClick}
       >
         {item?.children ? (
@@ -111,7 +112,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
             </div>
           ))}
       </li>
-    </div>
+    </div >
   )
 }
 

@@ -12,9 +12,9 @@ export type NavigationMenuType = {
   key?: React.Key
   icon?: React.ReactNode
   label?: React.ReactNode
-  href?: LinkProps['href']
-  expand?: boolean
-  type?: 'filled-rounded' | 'plain'
+  href?: LinkProps['href'];
+  expand?: boolean;
+  type?: 'filled-rounded' | 'plain';
   shouldRound?: boolean,
   children?: NavigationMenuType[]
   exact?: boolean
@@ -52,7 +52,7 @@ const InternalNavigation: React.ForwardRefRenderFunction<
     }
 
     const className = clsx(
-      ' space-y-[10px] text-[24px] text-[#fff]',
+      'space-y-[8px] text-[24px] text-[#fff]',
       {
         // 'rounded-[24px]': !ghost,
         'space-y-[12px]': ghost,
