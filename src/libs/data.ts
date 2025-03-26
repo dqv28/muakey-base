@@ -384,7 +384,5 @@ export const uploadFiles = async (data: FormData) => {
   return await requestWithFile('upload-files', {
     method: 'POST',
     body: data,
-  }).catch((error) => {
-    console.log(error)
-  })
+  }).catch(() => null)
 }

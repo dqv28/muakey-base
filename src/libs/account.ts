@@ -23,3 +23,11 @@ export const updateAccount = async (
     body: formData,
   })
 }
+
+export const addStaff = async (data: any, formData?: FormData) => {
+  return await requestWithAuthorized(`staffs`, {
+    method: 'POST',
+    data,
+    body: formData,
+  })
+}

@@ -43,7 +43,6 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    optimizeCss: true,
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {

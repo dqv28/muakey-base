@@ -44,8 +44,6 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
   const searchParams = useSearchParams()
   const view = searchParams.get('view')
 
-  console.log({ externalColumns, dataSource })
-
   useEffect(() => {
     const c = externalColumns?.find(
       (column) => convertToSlug(column.name) === (view || 'tong-quan'),

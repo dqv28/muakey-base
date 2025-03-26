@@ -19,7 +19,7 @@ const EmployeeSelectFormItemBox: React.FC<EmployeeSelectFormItemBoxProps> = ({
 
   const accountOptions: SelectProps['options'] = data?.map((item: any) => ({
     label: item.full_name,
-    value: item.username,
+    value: item.id,
   }))
 
   return (
@@ -28,6 +28,7 @@ const EmployeeSelectFormItemBox: React.FC<EmployeeSelectFormItemBoxProps> = ({
         <Form.Item
           className="mb-[16px]! flex-1"
           label="Tài khoản"
+          name="account_id"
           rules={[{ required: true, message: 'Nhập tài khoản' }]}
         >
           <Select

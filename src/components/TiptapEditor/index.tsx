@@ -1,7 +1,6 @@
 'use client'
 
 import { uploadImageAction } from '@/app/admin/accounts/account-actions/action'
-import { withApp } from '@/hoc'
 import { cn } from '@/lib/utils'
 import BulletList from '@tiptap/extension-bullet-list'
 import CodeBlock from '@tiptap/extension-code-block'
@@ -208,4 +207,4 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   )
 }
 
-export default withApp(TiptapEditor)
+export default TiptapEditor

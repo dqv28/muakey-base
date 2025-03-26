@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { formatCurrency } from '@/lib/utils'
 import {
   App,
@@ -283,4 +282,4 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
   )
 }
 
-export default withApp(JobSalaryModalForm)
+export default JobSalaryModalForm

@@ -1,7 +1,6 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import { withApp } from '@/hoc'
 import { mapAsFile } from '@/lib/utils'
 import { useAsyncEffect } from '@/libs/hook'
 import { UploadOutlined } from '@ant-design/icons'
@@ -281,4 +280,4 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
   )
 }
 
-export default withApp(ContractModalForm)
+export default ContractModalForm
