@@ -5,8 +5,9 @@ import { useFilterStore } from '@/stores/filterStore'
 import { useSearchStore } from '@/stores/searchStore'
 import { ColumnHeightOutlined, SettingOutlined } from '@ant-design/icons'
 import { Table, TableProps, Tabs, TabsProps, Tag } from 'antd'
+import { TableRowSelection } from 'antd/es/table/interface'
 import dayjs from 'dayjs'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { filterAssetsAction } from '../asset-drawer/action'
 
@@ -44,6 +45,8 @@ const AssetTable: React.FC<AssetTableProps> = ({
   const [initialData] = useState(dataSource)
   const { filterResults } = useFilterStore()
   const { searchResults } = useSearchStore()
+  const searchParams = useSearchParams()
+
 
   // Xử lý filterResults thay đổi
   useEffect(() => {
@@ -57,15 +60,25 @@ const AssetTable: React.FC<AssetTableProps> = ({
   }, [filterResults, initialData, searchResults])
 
   const handleChangeTab = async (key: string) => {
-    setTab(key)
-    onStatusChange?.(key)
     if (key === 'all') {
+      router.push('/asset')
+      setTab(key)
       setAssets(initialData)
+      onStatusChange?.(key)
       return
     }
+
+    // Tạo query mới, giữ lại các query hiện tại
+    const currentParams = new URLSearchParams(searchParams.toString())
+    currentParams.set('status', key)
+
+    router.push(`/asset?${currentParams.toString()}`)
+
+    setTab(key)
+    onStatusChange?.(key)
+
     try {
-      const queryString = `status=${key}`
-      const res = await filterAssetsAction(queryString)
+      const res = await filterAssetsAction(currentParams.toString())
       setAssets(res.data)
     } catch (error) {
       console.error('Error fetching assets:', error)
@@ -127,13 +140,14 @@ const AssetTable: React.FC<AssetTableProps> = ({
     {
       title: 'Giá mua',
       dataIndex: 'price',
-      render: (value: number) => `${formatCurrency(value)}đ`,
+      render: (value: number) => {
+        return value ? `${formatCurrency(value)}đ` : '--'
+      },
     },
     {
       title: 'Ngày mua',
       dataIndex: 'buy_date',
       render: (value: string | null | undefined) => {
-        console.log('Giá trị buy_date:', value)
         const date = dayjs(value)
         return date.isValid() ? date.format('YYYY/MM/DD') : '--'
       },
@@ -142,7 +156,6 @@ const AssetTable: React.FC<AssetTableProps> = ({
       title: 'Hạn bảo hành',
       dataIndex: 'warranty_date',
       render: (value: string | null | undefined) => {
-        console.log('Giá trị warranty_date:', value)
         const date = dayjs(value)
         return date.isValid() ? date.format('YYYY/MM/DD') : '--'
       },
@@ -161,7 +174,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
       <SettingOutlined />
     </div>
   )
-
+  
   return (
     <div className="rounded-[8px] bg-[#fff] px-[16px]">
       <Tabs
@@ -174,11 +187,12 @@ const AssetTable: React.FC<AssetTableProps> = ({
       <Table
         columns={columns}
         dataSource={assets}
+ 
         {...props}
         onRow={(record) => ({
           onClick: () => handleRowClick(record),
         })}
-        pagination={{ pageSize: 6 }}
+        className="cursor-pointer"
       />
     </div>
   )

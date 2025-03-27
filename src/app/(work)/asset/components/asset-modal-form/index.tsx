@@ -81,8 +81,6 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
     note: initialValues?.note || '',
   }
 
-  
-
   const handleSubmit = async (values: any) => {
     setLoading(true)
     try {
@@ -103,7 +101,6 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
         start_date: formatDate(value.start_date),
         sell_date: formatDate(value.sell_date),
       }
-      console.log('formData', formData)
 
       // Xác định action (add / update)
       const actionFn = action === 'add' ? addAssetAction : updateAssetAction
@@ -289,6 +286,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
             className="mb-[16px]! flex-1"
             name="buy_date"
             label="Ngày mua"
+            rules={[{ required: true, message: 'Ngày mua là bắt buộc' }]}
           >
             <DatePicker className="w-full" locale={locale} />
           </Form.Item>
@@ -300,6 +298,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
             className="mb-[16px]! flex-1"
             name="warranty_date"
             label="Hạn bảo hành"
+            rules={[{ required: true, message: 'Hạn bảo hành là bắt buộc' }]}
           >
             <DatePicker className="w-full" locale={locale} />
           </Form.Item>
@@ -308,6 +307,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
             className="mb-[16px]! flex-1"
             name="buyer_id"
             label="Người mua"
+            rules={[{ required: true, message: 'Người mua là bắt buộc' }]}
           >
             <Select placeholder="Chọn người mua" options={userOptions} />
           </Form.Item>

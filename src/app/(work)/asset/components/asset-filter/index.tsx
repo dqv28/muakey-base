@@ -3,11 +3,11 @@
 import { useSearchStore } from '@/stores/searchStore'
 import { FilterOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Input } from 'antd'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import AssetDrawer from '../asset-drawer'
 import AssetModalForm from '../asset-modal-form'
 import { searchAssetAction } from './action'
-
 export type AssetFilterProps = {
   onAdd?: () => void
 }
@@ -15,6 +15,7 @@ export type AssetFilterProps = {
 const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { setSearchResults } = useSearchStore()
+  const router = useRouter()
 
   const handleAdd = () => {
     setIsModalOpen(true)

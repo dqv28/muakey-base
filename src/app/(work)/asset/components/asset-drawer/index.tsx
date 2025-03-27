@@ -11,10 +11,10 @@ import {
   ModalProps,
   Select,
 } from 'antd'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useAssetForm } from '../../hooks/useAssetForm'
 import { filterAssetsAction } from './action'
-
 export type AssetDrawerProps = ModalProps & {
   children: React.ReactNode
   formProps?: FormProps<any>
@@ -31,7 +31,7 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
   const { statusOptions, categoryOptions, userOptions, brandOptions } =
     useAssetForm()
   const { setFilterResults } = useFilterStore()
-
+  const router = useRouter()
   const handleCancel = () => {
     form.resetFields()
     setOpen(false)
@@ -56,10 +56,10 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
             : [[key, value?.toString()]],
         ),
       ).toString()
-    
+      router.push(`/asset?${queryString}`)
 
       const response = await filterAssetsAction(queryString)
-
+      console.log('response', response)
       setFilterResults(response.data)
       setLoading(false)
       setOpen(false)
