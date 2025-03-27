@@ -4,11 +4,6 @@ import { getMe } from './libs/data'
 import { getSession } from './libs/session'
 
 export async function middleware(request: NextRequest) {
-  const res = await fetch(`${request.nextUrl.origin}/api/ip`)
-  const data = await res.json()
-
-  console.log(data)
-
   const path = request.nextUrl.pathname
   const isAuthenticated = await isLoggedIn()
 

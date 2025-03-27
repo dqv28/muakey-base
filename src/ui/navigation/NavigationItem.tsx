@@ -31,9 +31,9 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
 
   const className = clsx(
     'inline-block w-full transition-all duration-300',
-    active ? 'bg-[#FFFFFF1A]' : 'bg-transparent',
+    active ? 'bg-[#FFFFFF1A]!' : 'bg-transparent',
     {
-      'hover:bg-[#FFFFFF1A]': !ghost && !item?.children,
+      'hover:bg-[#FFFFFF1A]!': !ghost && !item?.children,
       'py-[12px]': ghost,
       'px-[16px] py-[8px]': item?.children,
     },
