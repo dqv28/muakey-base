@@ -77,7 +77,6 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
               <span>Thống kê</span>
             </div>
           ),
-          href: '/check-in',
         },
       ],
     },
@@ -165,6 +164,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
             </div>
           ),
           shouldRound: true,
+          href: '/check-in',
         },
         {
           label: (

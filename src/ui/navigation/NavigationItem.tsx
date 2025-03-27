@@ -29,25 +29,36 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
 
   const [show, setShow] = useState(true)
   const active = item?.children ? !show : initActive
+
   const layout = clsx(
-    item?.type === "filled-rounded" && item.children?.length !== 0 && show && 'bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16',
-    item?.type === "plain" && 'mt-[16px]'
+    {
+      'bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16': item?.type === "filled-rounded" && item.children?.length !== 0 && show,
+      'mt-[16px]': item?.type === "plain"
+    }
   )
 
   const className = clsx(
     'inline-block w-full transition-all duration-300 px-[16px]',
-    show && active ? 'bg-[#FFFFFF29]' : 'bg-transparent',
+    item?.type === "plain" ? 'h-[22px]' : 'h-[40px]',
     {
-      'hover:bg-[#FFFFFF1A]': !ghost && !item?.children,
+      'bg-[#FFFFFF29]': show && active && !item?.shouldRound,
+      'bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16': active && item?.shouldRound,
       'py-[12px]': ghost,
       'rounded-3xl': item?.shouldRound,
-      'h-[40px]': item?.type === "filled-rounded" || item?.type === undefined,
-      'h-[22px]': item?.type === "plain"
+      'hover:bg-[#FFFFFF1A]': !ghost && !item?.children && !item?.shouldRound,
+      'hover:bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16': item?.shouldRound,
     },
     customClassName,
   )
   const node = (
-    <div className={`flex items-center justify-between gap-[10px] ${item?.type === "plain" ? 'h-[22px]' : 'h-[40px]'} ${item?.type === "plain" && show && 'pb-[12px]'} `}>
+    <div className={clsx(
+      "flex items-center justify-between gap-[10px]",
+      item?.type === "plain" ? 'h-[22px]' : 'h-[40px]',
+      {
+        'pb-[12px]': item?.type === "plain" && show
+      }
+    )}
+    >
       <div
         className={clsx(
           'flex flex-1 items-center gap-[8px] leading-none',
