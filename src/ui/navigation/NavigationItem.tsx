@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { NavigationMenuType } from '.'
 import { DownOutlined } from '../icons'
 import NavigationSubmenu from './NavigationSubmenu'
+import { cn } from '@/lib/utils'
 
 export type NavigationItemProps = {
   item?: NavigationMenuType
@@ -37,7 +38,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
     }
   )
 
-  const className = clsx(
+  const className = cn(
     'inline-block w-full transition-all duration-300 px-[16px]',
     item?.type === "plain" ? 'h-[22px]' : 'h-[40px]',
     {
@@ -70,6 +71,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
       >
         {item?.icon}
         <div className="w-full text-[14px]">{item?.label}</div>
+        {item?.taskCount && <p className='rounded-[4px] bg-[#ff5555] px-[6px] pt-[2px] pb-[4px] text-[12px] font-[500]'>{item?.taskCount}</p>}
       </div>
 
       {item?.children && item.children.length > 0 && (

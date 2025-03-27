@@ -68,6 +68,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
               <span>Công việc của tôi</span>
             </div>
           ),
+          taskCount: 10,
           href: '/department',
         },
         {
@@ -220,10 +221,12 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       {...props}
     >
       <div className="flex-1 pr-[4px]">
-        <User user={user} />
-        <Search />
+        <div className='flex flex-col justify-center px-[13px] w-[207px]'>
+          <User user={user} />
+          <Search />
+        </div>
         <Navigation
-          className="no-scroll mt-[20px] h-[calc(100vh-96px)] overflow-auto pb-[40px]"
+          className="no-scroll mt-[24px] h-[calc(100vh-96px)] overflow-auto pb-[40px]"
           items={navigationItems}
         />
         {/* <Menu mode="inline" items={navigationItems} /> */}

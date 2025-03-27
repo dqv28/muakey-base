@@ -15,6 +15,7 @@ export type NavigationMenuType = {
   href?: LinkProps['href'];
   expand?: boolean;
   type?: 'filled-rounded' | 'plain';
+  taskCount?: number,
   shouldRound?: boolean,
   children?: NavigationMenuType[]
   exact?: boolean
