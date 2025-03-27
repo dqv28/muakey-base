@@ -1,39 +1,62 @@
 'use client'
 
-import { EyeOutlined } from "@ant-design/icons";
+import { CheckOutlined, EyeOutlined } from "@ant-design/icons";
 import { Checkbox, Form, Modal, Select, SelectProps } from "antd"
-import { useState } from "react";
+import clsx from "clsx";
+import React, { useState } from "react";
 
 const rightToViewInformationOptions: SelectProps['options'] = [
     {
         label: 'Công khai (Công khai thông tin liên hệ của tất cả nhân viên)',
-        value: 'Công khai (Công khai thông tin liên hệ của tất cả nhân viên)'
+        value: 'public'
     },
     {
         label: 'Riêng tư (Chỉ hiển thị thông tin cho người quản lý, quản trị cấp cao và cấp cao hơn)',
-        value: 'Riêng tư (Chỉ hiển thị thông tin cho người quản lý, quản trị cấp cao và cấp cao hơn)'
+        value: 'private'
     },
 ];
 
-const ProfileRightToViewInformation = () => {
+type ProfileRightToViewInformationModalFormProps = {
+    active?: boolean,
+    label?: string,
+    onChangeValue?: (text: string) => void
+}
+
+const ProfileRightToViewInformationModalForm: React.FC<ProfileRightToViewInformationModalFormProps> = ({
+    active,
+    onChangeValue,
+    label
+}) => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectItemDropDown, setSelectItemDropDown] = useState("public");
+
+    const handelCancel = () => {
+        setIsModalOpen(false);
+        onChangeValue && onChangeValue("")
+    }
 
     return (
         <>
             <div
-                className="flex cursor-pointer hover:text-[#1890FF] gap-[10px]"
-                onClick={() => setIsModalOpen(true)}>
+                className={clsx(
+                    'flex cursor-pointer hover:text-[#1890FF] gap-[10px]',
+                    { 'text-[#1890FF]': active }
+                )}
+                onClick={() => {
+                    setIsModalOpen(true);
+                    onChangeValue && onChangeValue(label || "")
+                }}>
                 <EyeOutlined />
-                <p>Quyền xem thông tin</p>
+                {label}
             </div>
             <Modal
                 okText="Lưu"
                 cancelText="Hủy"
                 title="Quyền xem thông tin"
                 open={isModalOpen}
-                onOk={() => setIsModalOpen(false)}
-                onCancel={() => setIsModalOpen(false)}
+                onOk={handelCancel}
+                onCancel={handelCancel}
                 width={634}
             >
                 <Form
@@ -48,6 +71,17 @@ const ProfileRightToViewInformation = () => {
                             <Select
                                 defaultValue="Công khai (Công khai thông tin liên hệ của tất cả nhân viên)"
                                 options={rightToViewInformationOptions}
+                                optionRender={(option) => (
+                                    <div
+                                        className="flex items-center"
+                                        onClick={() => { setSelectItemDropDown(option.value?.toString() || "") }}
+                                    >
+                                        {option.value === selectItemDropDown && (
+                                            <CheckOutlined style={{ color: 'green', marginRight: 8 }} />
+                                        )}
+                                        {option.label}
+                                    </div>
+                                )}
                             />
                         </Form.Item>
                     </div>
@@ -87,4 +121,4 @@ const ProfileRightToViewInformation = () => {
     );
 };
 
-export default ProfileRightToViewInformation;
+export default ProfileRightToViewInformationModalForm;
