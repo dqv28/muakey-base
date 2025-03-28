@@ -51,7 +51,7 @@ const WorkflowItem: React.FC<WorkflowItemProps> = ({ cate, options }) => {
         >
           <DownOutlined
             className={clsx(
-              'text-[16px] text-[#000]',
+              'text-[16px]! text-[#000]!',
               !ids.includes(cate.id) && '-rotate-90',
             )}
           />

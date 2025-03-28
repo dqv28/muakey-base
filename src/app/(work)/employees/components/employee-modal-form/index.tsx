@@ -1,11 +1,16 @@
 'use client'
 
 import { mapAsFile } from '@/lib/utils'
+import { useAsyncEffect } from '@/libs/hook'
 import { App, Form, FormInstance, FormProps, Modal, ModalProps } from 'antd'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { addStaffAction, uploadFilesAction } from '../action'
+import React, { useCallback, useRef, useState } from 'react'
+import {
+  addStaffAction,
+  getAccountByIdAction,
+  uploadFilesAction,
+} from '../action'
 import EmployeeSwitchFormItemBox from './employee-switch-form-item-box'
 import EmployeeInfomationFormItemBox from './EmployeeInfomationFormItemBox'
 import EmployeeResumeFormItemBox from './EmployeeResumeFormItemBox'
@@ -51,6 +56,27 @@ const genFormArrayValues = (key: string, values: any[]) => {
   }
 }
 
+const calculateSalary = (salary: any) => {
+  const { basic_salary, travel_allowance, eat_allowance, kpi } = salary || {}
+
+  const insurance = Number((basic_salary || 0) * 0.215)
+  const insurance_employee = Number((basic_salary || 0) * 0.105)
+  const total_salary =
+    (basic_salary || 0) +
+    (travel_allowance || 0) +
+    (eat_allowance || 0) +
+    (kpi || 0)
+
+  return {
+    insurance,
+    insurance_employee,
+    gross_salary: Number(
+      (total_salary + insurance + insurance_employee).toFixed(2),
+    ),
+    net_salary: Number(total_salary.toFixed(2)),
+  }
+}
+
 const EmployeeModalForm: React.FC<EmployeeModalFormProps> = ({
   children,
   formProps,
@@ -59,11 +85,13 @@ const EmployeeModalForm: React.FC<EmployeeModalFormProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [basicSalary, setBasicSalary] = useState(0)
-  const [salaries, setSalaries] = useState({
-    travel_allowance: 0,
-    eat_allowance: 0,
-    kpi: 0,
+  const [accountId, setAccountId] = useState(0)
+  const [switchFormState, setSwitchFormState] = useState({
+    shouldShowSalary: false,
+    shouldShowLegal: false,
+    shouldShowEducation: false,
+    shouldShowHistory: false,
+    shouldShowContact: false,
   })
 
   const formRef = useRef<FormInstance>(null)
@@ -138,41 +166,90 @@ const EmployeeModalForm: React.FC<EmployeeModalFormProps> = ({
   }
 
   const handleSalariesChange = useCallback((_: any, allValues: any) => {
-    const { basic_salary, travel_allowance, eat_allowance, kpi } = allValues
+    const { account_id, basic_salary, travel_allowance, eat_allowance, kpi } =
+      allValues
 
-    setBasicSalary(+(basic_salary || 0))
+    setAccountId(account_id || 0)
 
-    setSalaries((prev: any) => ({
-      ...prev,
-      travel_allowance: travel_allowance || 0,
-      eat_allowance: eat_allowance || 0,
-      kpi: kpi || 0,
-    }))
+    const fields = calculateSalary({
+      basic_salary,
+      travel_allowance,
+      eat_allowance,
+      kpi,
+    })
+
+    formRef.current?.setFieldsValue(fields)
   }, [])
 
-  useEffect(() => {
-    formRef.current?.setFieldsValue({
-      insurance: Number(basicSalary * 0.215),
-      insurance_employee: Number(basicSalary * 0.105),
-    })
-  }, [basicSalary])
+  useAsyncEffect(async () => {
+    if (!accountId) return
 
-  useEffect(() => {
-    const insurance = Number(basicSalary * 0.215)
-    const insurance_employee = Number(basicSalary * 0.105)
-    const total_salary =
-      basicSalary +
-      salaries.travel_allowance +
-      salaries.eat_allowance +
-      salaries.kpi
-
-    formRef.current?.setFieldsValue({
-      gross_salary: Number(
-        (total_salary + insurance + insurance_employee).toFixed(2),
-      ),
-      net_salary: Number(total_salary.toFixed(2)),
+    const data = await getAccountByIdAction(accountId, {
+      include: 'profile',
     })
-  }, [salaries, basicSalary])
+
+    const {
+      educations,
+      work_histories,
+      family_members,
+      birthday,
+      official_date,
+      start_date,
+      salary,
+      ...restData
+    } = data || {}
+
+    const salaryFields = calculateSalary(salary)
+
+    const legalInformation: Record<string, any> = {
+      tax_code: restData?.tax_code,
+      tax_reduced: restData?.tax_reduced,
+      BHXH: restData?.BHXH,
+      place_of_registration: restData?.place_of_registration,
+      salary_scale: restData?.salary_scale,
+    }
+
+    const hasLegalInformation = Object.keys(legalInformation).some(
+      (key: string) => !!legalInformation?.[key],
+    )
+    setSwitchFormState({
+      shouldShowSalary: !!salary,
+      shouldShowLegal: hasLegalInformation,
+      shouldShowEducation: !!educations?.length,
+      shouldShowHistory: !!work_histories?.length,
+      shouldShowContact: !!family_members?.length,
+    })
+
+    const fields = {
+      ...restData,
+      ...salary,
+      ...salaryFields,
+      birthday: birthday ? dayjs(birthday) : null,
+      official_date: official_date ? dayjs(official_date) : null,
+      start_date: start_date ? dayjs(start_date) : null,
+      education_list: educations?.length
+        ? educations?.map((edu: any) => ({
+            ...edu,
+            time_range: [
+              edu?.start_date ? dayjs(edu?.start_date) : null,
+              edu?.end_date ? dayjs(edu?.end_date) : null,
+            ],
+          }))
+        : [{}],
+      history_list: work_histories?.length
+        ? work_histories?.map((history: any) => ({
+            ...history,
+            time_range: [
+              history?.start_date ? dayjs(history?.start_date) : null,
+              history?.end_date ? dayjs(history?.end_date) : null,
+            ],
+          }))
+        : [{}],
+      contact_list: family_members?.length ? family_members : [{}],
+    }
+
+    formRef.current?.setFieldsValue(fields)
+  }, [accountId])
 
   return (
     <>
@@ -216,7 +293,10 @@ const EmployeeModalForm: React.FC<EmployeeModalFormProps> = ({
 
           <EmployeeResumeFormItemBox className="mb-0! py-[16px]!" />
 
-          <EmployeeSwitchFormItemBox className="pt-[16px]" />
+          <EmployeeSwitchFormItemBox
+            className="pt-[16px]"
+            state={switchFormState}
+          />
         </div>
       </Modal>
     </>

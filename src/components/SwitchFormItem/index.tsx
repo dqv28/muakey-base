@@ -2,29 +2,35 @@
 
 import { cn } from '@/lib/utils'
 import { Switch } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 type ClassNamesType = {
   header?: string
   body?: string
 }
 
-export type EmployeeSwitchFormItemProps = {
+export type SwitchFormItemProps = {
   className?: string
   title?: React.ReactNode
   children?: React.ReactNode
   extra?: React.ReactNode
   classNames?: ClassNamesType
+  checked?: boolean
 }
 
-const EmployeeSwitchFormItem: React.FC<EmployeeSwitchFormItemProps> = ({
+const SwitchFormItem: React.FC<SwitchFormItemProps> = ({
   className,
   title,
   children,
   extra,
   classNames,
+  checked: externalChecked,
 }) => {
   const [checked, setChecked] = useState(false)
+
+  useEffect(() => {
+    setChecked(!!externalChecked)
+  }, [externalChecked])
 
   return (
     <div className={className}>
@@ -44,4 +50,4 @@ const EmployeeSwitchFormItem: React.FC<EmployeeSwitchFormItemProps> = ({
   )
 }
 
-export default EmployeeSwitchFormItem
+export default SwitchFormItem

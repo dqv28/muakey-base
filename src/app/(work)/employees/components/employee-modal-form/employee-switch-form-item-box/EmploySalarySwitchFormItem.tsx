@@ -1,14 +1,18 @@
-import { SwitchFormItem } from '@/components'
+import { SwitchFormItem, SwitchFormItemProps } from '@/components'
 import { formatCurrency } from '@/lib/utils'
 import { Card, Form, InputNumber, InputNumberProps } from 'antd'
 import React from 'react'
 
-export type EmploySalarySwitchFormItemProps = {
+export type EmploySalarySwitchFormItemProps = Pick<
+  SwitchFormItemProps,
+  'checked'
+> & {
   className?: string
 }
 
 const EmploySalarySwitchFormItem: React.FC<EmploySalarySwitchFormItemProps> = ({
   className,
+  checked,
 }) => {
   const formatProps: Pick<InputNumberProps, 'formatter' | 'parser'> = {
     formatter: formatCurrency,
@@ -17,7 +21,7 @@ const EmploySalarySwitchFormItem: React.FC<EmploySalarySwitchFormItemProps> = ({
 
   return (
     <div className={className}>
-      <SwitchFormItem title="Nhập thông tin lương (VND)">
+      <SwitchFormItem title="Nhập thông tin lương (VND)" checked={checked}>
         <div className="space-y-[16px]!">
           <Card>
             <div className="mb-[16px] text-[14px] leading-[22px] font-[600]">

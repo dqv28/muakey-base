@@ -1,6 +1,6 @@
 'use server'
 
-import { addStaff } from '@/libs/account'
+import { addStaff, getAccountById } from '@/libs/account'
 import { getAccountsAsAttendance, getBankList, uploadFiles } from '@/libs/data'
 import { createView, getViewFields } from '@/libs/view'
 
@@ -26,4 +26,8 @@ export const uploadFilesAction = async (data: any) => {
 
 export const addStaffAction = async (data: any, body?: FormData) => {
   return await addStaff(data, body)
+}
+
+export const getAccountByIdAction = async (id: number, query?: any) => {
+  return await getAccountById(id, query)
 }

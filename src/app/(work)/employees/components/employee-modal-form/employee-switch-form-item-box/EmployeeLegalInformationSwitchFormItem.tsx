@@ -1,14 +1,15 @@
-import { SwitchFormItem } from '@/components'
+import { SwitchFormItem, SwitchFormItemProps } from '@/components'
 import { Card, Form, Input, Radio, RadioGroupProps, Select } from 'antd'
 import React from 'react'
 
 export type EmployeeLegalInformationSwitchFormItemProps = {
   className?: string
+  checked?: SwitchFormItemProps['checked']
 }
 
 const EmployeeLegalInformationSwitchFormItem: React.FC<
   EmployeeLegalInformationSwitchFormItemProps
-> = ({ className }) => {
+> = ({ className, checked }) => {
   const options: RadioGroupProps['options'] = [
     { label: 'Có', value: '1' },
     { label: 'Không', value: '0' },
@@ -23,7 +24,7 @@ const EmployeeLegalInformationSwitchFormItem: React.FC<
 
   return (
     <div className={className}>
-      <SwitchFormItem title="Nhập thông tin pháp lý">
+      <SwitchFormItem title="Nhập thông tin pháp lý" checked={checked}>
         <Card>
           <div className="flex items-center gap-[16px]">
             <Form.Item

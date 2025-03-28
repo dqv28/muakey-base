@@ -70,8 +70,8 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
         const date = String(d.format('DD/MM/YYYY'))
         const day = String(d.format('DD/MM'))
         const month = String(d.format('MM'))
-        const currentMonth = String(dayjs(new Date()).format('MM'))
 
+        const currentMonth = String(dayjs(new Date()).format('MM'))
         const value = data?.find((item: any) => item?.checkInDay === date)
 
         const isToday = day === today

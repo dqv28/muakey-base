@@ -1,15 +1,16 @@
-import { SwitchFormItem } from '@/components'
+import { SwitchFormItem, SwitchFormItemProps } from '@/components'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Card, Checkbox, Form, Input } from 'antd'
 import React from 'react'
 
 export type EmployeeContactSwitchFormItemProps = {
   className?: string
+  checked?: SwitchFormItemProps['checked']
 }
 
 const EmployeeContactSwitchFormItem: React.FC<
   EmployeeContactSwitchFormItemProps
-> = ({ className }) => {
+> = ({ className, checked }) => {
   return (
     <div className={className}>
       <Form.List name="contact_list" initialValue={[{}]}>
@@ -20,6 +21,7 @@ const EmployeeContactSwitchFormItem: React.FC<
             }}
             title="Nhập thông tin gia đình, người phụ thuộc và liên hệ khác"
             extra={<Button icon={<PlusOutlined />} onClick={() => add({})} />}
+            checked={checked}
           >
             {fields.map(({ key, name, ...restFields }) => (
               <Card key={key}>

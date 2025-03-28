@@ -1,4 +1,4 @@
-import { SwitchFormItem } from '@/components'
+import { SwitchFormItem, SwitchFormItemProps } from '@/components'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Card, DatePicker, Form, Input } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
@@ -6,11 +6,12 @@ import React from 'react'
 
 export type EmployeeHistorySwitchFormItemProps = {
   className?: string
+  checked?: SwitchFormItemProps['checked']
 }
 
 const EmployeeHistorySwitchFormItem: React.FC<
   EmployeeHistorySwitchFormItemProps
-> = ({ className }) => {
+> = ({ className, checked }) => {
   return (
     <div className={className}>
       <Form.List name="history_list" initialValue={[{}]}>
@@ -21,6 +22,7 @@ const EmployeeHistorySwitchFormItem: React.FC<
             }}
             title="Nhập thông tin lịch sử làm việc"
             extra={<Button icon={<PlusOutlined />} onClick={() => add({})} />}
+            checked={checked}
           >
             {fields?.map(({ key, name, ...restFields }) => (
               <Card key={key}>

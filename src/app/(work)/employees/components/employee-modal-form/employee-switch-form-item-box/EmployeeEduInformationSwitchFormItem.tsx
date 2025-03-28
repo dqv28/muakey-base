@@ -1,4 +1,4 @@
-import { SwitchFormItem } from '@/components'
+import { SwitchFormItem, SwitchFormItemProps } from '@/components'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Card, DatePicker, Form, Input } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
@@ -6,11 +6,12 @@ import React from 'react'
 
 export type EmployeeEduInformationSwitchFormItemProps = {
   className?: string
+  checked?: SwitchFormItemProps['checked']
 }
 
 const EmployeeEduInformationSwitchFormItem: React.FC<
   EmployeeEduInformationSwitchFormItemProps
-> = ({ className }) => {
+> = ({ className, checked }) => {
   return (
     <div className={className}>
       <Form.List name="education_list" initialValue={[{}]}>
@@ -20,6 +21,7 @@ const EmployeeEduInformationSwitchFormItem: React.FC<
               body: 'space-y-[16px]!',
             }}
             title="Nhập thông tin học vấn"
+            checked={checked}
             extra={<Button icon={<PlusOutlined />} onClick={() => add({})} />}
           >
             {fields?.map(({ key, name, ...restFields }) => (
@@ -28,7 +30,7 @@ const EmployeeEduInformationSwitchFormItem: React.FC<
                   <Form.Item
                     {...restFields}
                     className="mb-[16px]! flex-1"
-                    name={[name, 'school']}
+                    name={[name, 'school_name']}
                     label="Tên trường"
                   >
                     <Input placeholder="Nhập tên trường" />

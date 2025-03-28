@@ -9,10 +9,6 @@ export type ScheduleHolidayCalendarCardProps = CardProps & {
   data?: any
 }
 
-const genAttendanceData = (startDate: string, endDate: string) => {
-  return []
-}
-
 const ScheduleHolidayCalendarCard: React.FC<
   ScheduleHolidayCalendarCardProps
 > = ({ data, ...props }) => {

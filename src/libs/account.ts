@@ -6,8 +6,10 @@ export const disableAccount = async (id: number) => {
   })
 }
 
-export const getAccountById = async (id: number) => {
-  return await requestWithAuthorized(`accounts/${id}`)
+export const getAccountById = async (id: number, query?: any) => {
+  return await requestWithAuthorized(
+    `accounts/${id}?` + new URLSearchParams(query),
+  )
     .then((data) => data)
     .catch(() => null)
 }
