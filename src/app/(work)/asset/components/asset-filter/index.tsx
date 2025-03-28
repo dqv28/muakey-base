@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import AssetDrawer from '../asset-drawer'
 import AssetModalForm from '../asset-modal-form'
-import { searchAssetAction } from './action'
 export type AssetFilterProps = {
   onAdd?: () => void
 }
@@ -31,8 +30,7 @@ const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
   }
   const handleSearch = async (value: string) => {
     try {
-      const result = await searchAssetAction(value)
-      setSearchResults(result)
+      router.push(`/asset?search=${value}`)
     } catch (error) {
       console.error(error)
     }

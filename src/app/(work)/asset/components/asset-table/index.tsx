@@ -82,6 +82,13 @@ const AssetTable: React.FC<AssetTableProps> = ({
   const [assets, setAssets] = useState<Asset[]>(dataSource || [])
 
   useEffect(() => {
+    const status = searchParams.get('status')
+    if (status) {
+      setTab(status)
+    }
+  }, [searchParams])
+
+  useEffect(() => {
     if (filterResults?.length) {
       setAssets(filterResults)
     } else if (searchResults?.length) {
@@ -92,7 +99,11 @@ const AssetTable: React.FC<AssetTableProps> = ({
   }, [filterResults, searchResults, dataSource])
 
   const handleChangeTab = async (key: string) => {
+    const currentParams = new URLSearchParams(searchParams.toString())
+    currentParams.delete('page')
+
     if (key === 'all') {
+      currentParams.delete('status')
       router.push('/asset')
       setTab(key)
       setAssets(dataSource || [])
@@ -100,10 +111,8 @@ const AssetTable: React.FC<AssetTableProps> = ({
       return
     }
 
-    const currentParams = new URLSearchParams(searchParams.toString())
     currentParams.set('status', key)
     router.push(`/asset?${currentParams.toString()}`)
-
     setTab(key)
     onStatusChange?.(key)
 
@@ -114,6 +123,28 @@ const AssetTable: React.FC<AssetTableProps> = ({
       }
     } catch (error) {
       console.error('Error fetching assets:', error)
+    }
+  }
+
+  const handleSearch = async (searchValue: string) => {
+    const currentParams = new URLSearchParams(searchParams.toString())
+    currentParams.delete('page')
+
+    if (searchValue) {
+      currentParams.set('search', searchValue)
+    } else {
+      currentParams.delete('search')
+    }
+
+    router.push(`/asset?${currentParams.toString()}`)
+
+    try {
+      const res = await getAssetsByPagnitionAction(currentParams.toString())
+      if (res.success && Array.isArray(res.data)) {
+        setAssets(res.data)
+      }
+    } catch (error) {
+      console.error('Error searching assets:', error)
     }
   }
 
@@ -194,6 +225,12 @@ const AssetTable: React.FC<AssetTableProps> = ({
           onChange: async (page) => {
             const newParams = new URLSearchParams(searchParams.toString())
             newParams.set('page', page.toString())
+
+            const status = searchParams.get('status')
+            const search = searchParams.get('search')
+            if (status) newParams.set('status', status)
+            if (search) newParams.set('search', search)
+
             router.push(`/asset?${newParams.toString()}`)
 
             try {

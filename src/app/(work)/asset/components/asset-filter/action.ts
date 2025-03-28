@@ -1,8 +1,11 @@
-"use server"
+'use server'
 
-import { searchAsset } from "@/libs/asset"
+import { getAssets, searchAsset } from '@/libs/asset'
 
 export const searchAssetAction = async (query: string) => {
   return await searchAsset(query)
 }
 
+export const getAssetsAction = async () => {
+  return await getAssets()
+}
