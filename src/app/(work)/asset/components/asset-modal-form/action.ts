@@ -14,9 +14,9 @@ export async function addAssetAction(formData: any) {
   }
 }
 
-export async function updateAssetAction(formData: any) {
+export async function updateAssetAction(id: number, formData: any) {
   try {
-    const response = await updateAsset(formData.id, formData)
+    const response = await updateAsset(id, formData)
     return { success: true, data: response }
   } catch (error: any) {
     return {

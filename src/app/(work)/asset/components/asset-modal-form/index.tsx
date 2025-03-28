@@ -15,7 +15,7 @@ import {
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { useAssetForm } from '../../hooks/useAssetForm'
 import { addAssetAction, updateAssetAction } from './action'
@@ -44,6 +44,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
   const router = useRouter()
   const { message } = App.useApp()
   const { updateResult, setUpdateResult } = useUpdateStore()
+  const { id } = useParams()
 
   const { statusOptions, categoryOptions, userOptions, brandOptions } =
     useAssetForm()
@@ -88,7 +89,6 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
       const value = {
         ...values,
-        id: initialValues.id,
       }
 
       // Chuẩn hóa ngày tháng
@@ -103,14 +103,17 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
       }
 
       // Xác định action (add / update)
-      const actionFn = action === 'add' ? addAssetAction : updateAssetAction
+      const actionFn =
+        action === 'add'
+          ? addAssetAction(formData)
+          : updateAssetAction(Number(id), formData)
       const successMessage =
         action === 'add'
           ? 'Thêm tài sản thành công'
           : 'Cập nhật tài sản thành công'
 
       // Gọi API
-      const res = await actionFn(formData)
+      const res = await actionFn
       setUpdateResult(res.data)
 
       if (!res.success) throw new Error(res.error || 'Có lỗi xảy ra')
