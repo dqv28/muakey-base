@@ -13,12 +13,17 @@ export const getAssetCategories = async () => {
 
 export const getAssets = async () => {
   return await requestWithAuthorized('assets')
-    .then(({ data }) => data)
+    .then((data) => data)
     .catch(() => [])
 }
 export const filterAssets = async (query: string) => {
   return await requestWithAuthorized(`assets?${query}`)
     .then(({ data }) => data)
+    .catch(() => [])
+}
+export const getAssetsByPagnition = async (query: string) => {
+  return await requestWithAuthorized(`assets?page=${query}`)
+    .then((data) => data)
     .catch(() => [])
 }
 
@@ -30,7 +35,7 @@ export const getAssetsByStatus = async (status: string) => {
 
 export const getAssetById = async (id: number) => {
   return await requestWithAuthorized(`assets/${id}`)
-    .then(( data ) => data)
+    .then((data) => data)
     .catch(() => [])
 }
 export const searchAsset = async (query: string) => {

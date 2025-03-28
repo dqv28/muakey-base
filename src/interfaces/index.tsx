@@ -42,5 +42,14 @@ export interface Asset {
       }
     },
   ]
+
   // Thêm các trường khác tùy theo API của bạn
 }
+
+export interface AssetFull extends Asset {
+  current_page: number
+  data: Asset[]
+  per_page: number
+  total: number
+}
+
